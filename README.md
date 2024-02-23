@@ -16,6 +16,8 @@ set(TOOLPATH  "C:/MounRiver/MounRiver_Studio/toolchain/RISC-V Embedded GCC/bin/r
 Complie.
 
 ```bash
+git submodule init
+git submodule update
 cmake -G"Ninja"
 ninja
 ```
