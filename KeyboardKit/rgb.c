@@ -114,6 +114,7 @@ void rgb_init()
 }
 
 #define COLOR_INTERVAL(key, low, up) (uint8_t)((key) < 0 ? (low) : ((key) > 1.0 ? (up) : (key) * (up)))
+
 void rgb_update()
 {
     ColorHSV temp_hsv;
@@ -133,13 +134,16 @@ void rgb_update()
     case RGB_GLOBAL_MODE_INDIVIDUAL:
         for (uint8_t i = 0; i < ADVANCED_KEY_NUM; i++)
         {
-            uint8_t rgb_index = RGB_Mapping[i];
+            uint8_t rgb_index = RGB_Mapping[i];                
+            float r = Keyboard_AdvancedKeys[i].value < Keyboard_AdvancedKeys[i].upper_deadzone ?  0 : Keyboard_AdvancedKeys[i].value > 1.0 ? 1.0 :Keyboard_AdvancedKeys[i].value;
+
             switch (RGB_Configs[rgb_index].mode)
             {
             case RGB_MODE_REACT_LINEAR:
-                RGB_Colors[rgb_index].r = COLOR_INTERVAL(Keyboard_AdvancedKeys[i].value, 0, (float)(RGB_Configs[rgb_index].rgb.r));
-                RGB_Colors[rgb_index].g = COLOR_INTERVAL(Keyboard_AdvancedKeys[i].value, 0, (float)(RGB_Configs[rgb_index].rgb.g));
-                RGB_Colors[rgb_index].b = COLOR_INTERVAL(Keyboard_AdvancedKeys[i].value, 0, (float)(RGB_Configs[rgb_index].rgb.b));
+            
+                RGB_Colors[rgb_index].r = COLOR_INTERVAL(r, 0, (float)(RGB_Configs[rgb_index].rgb.r));
+                RGB_Colors[rgb_index].g = COLOR_INTERVAL(r, 0, (float)(RGB_Configs[rgb_index].rgb.g));
+                RGB_Colors[rgb_index].b = COLOR_INTERVAL(r, 0, (float)(RGB_Configs[rgb_index].rgb.b));
                 break;
             case RGB_MODE_REACT_TRIGGER:
                 RGB_Configs[rgb_index].argument = Keyboard_AdvancedKeys[i].key.state ? 1.0 : RGB_Configs[rgb_index].argument * (1.0 - fabsf(RGB_Configs[rgb_index].speed));

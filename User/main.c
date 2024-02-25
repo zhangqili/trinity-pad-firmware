@@ -662,7 +662,7 @@ int main(void)
             ADC_Averages[i]+=ADC_Buffer[i+j*ADVANCED_KEY_NUM];
         }
         ADC_Averages[i]/=ANALOG_BUFFER_LENGTH;
-        advanced_key_set_range(Keyboard_AdvancedKeys + i, ADC_Averages[i], 120);
+        advanced_key_set_range(Keyboard_AdvancedKeys + i, ADC_Averages[i], 200);
         advanced_key_set_deadzone(Keyboard_AdvancedKeys + i, 0.04, 0.1);
         Keyboard_AdvancedKeys[i].mode = LEFL_KEY_ANALOG_RAPID_MODE;
         Keyboard_AdvancedKeys[i].trigger_distance = 0.05;

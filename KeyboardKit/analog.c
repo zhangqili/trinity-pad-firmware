@@ -111,7 +111,11 @@ void analog_check()
     {
         state=Keyboard_AdvancedKeys[i].key.state;
         if(Keyboard_AdvancedKeys[i].mode!=KEY_DIGITAL_MODE)
+        {
+            if(ADC_Averages[i]<Keyboard_AdvancedKeys[i].lower_bound)
+                Keyboard_AdvancedKeys[i].lower_bound = ADC_Averages[i];
             advanced_key_update_raw(Keyboard_AdvancedKeys+i, ADC_Averages[i]);
+        }
         if(Keyboard_AdvancedKeys[i].key.state&&!state)
         {
             a.rgb_ptr = RGB_Mapping[i];
