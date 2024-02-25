@@ -1052,11 +1052,13 @@ void advanced_key_update(AdvancedKey* advanced_key,float value)
         {
             state = false;
             advanced_key->minimum = advanced_key->value;
+            break;
         }
         if (advanced_key->value >= 1.0 - advanced_key->lower_deadzone)
         {
             state = true;
             advanced_key->maximum = advanced_key->value;
+            break;
         }
         if (advanced_key->key.state)
         {
