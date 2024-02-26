@@ -625,29 +625,40 @@ void fezui_draw_animated_menu(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, 
     }
     for (uint16_t i = 0; i < menu->len; i++)
     {
-        u8g2_DrawStr(&(fezui_ptr->u8g2), x + 1, (u8g2_int_t)floorf(y+(item_height * (i + 1) - (u8g2_int_t)menu->offset - adjust) * menu->animation + 0.5), menu->items[i].header + 1);
+        char *_Format=strrchr(menu->items[i].header,'%');
+        char _FormatStr[16];
+        if(_Format)
+        {
+            memcpy(fezui_buffer,menu->items[i].header+1,_Format-menu->items[i].header-1);
+            u8g2_DrawStr(&(fezui_ptr->u8g2), x + 1, (u8g2_int_t)floorf(y+(item_height * (i + 1) - (u8g2_int_t)menu->offset - adjust) * menu->animation + 0.5), fezui_buffer);
+            sprintf(_FormatStr,"[%s]",_Format);
+        }
+        else
+        {
+            u8g2_DrawStr(&(fezui_ptr->u8g2), x + 1, (u8g2_int_t)floorf(y+(item_height * (i + 1) - (u8g2_int_t)menu->offset - adjust) * menu->animation + 0.5), menu->items[i].header + 1);
+        }
         switch (*(menu->items[i].header))
         {
         case FEZUI_TYPE_FLOAT:
-            sprintf(fezui_buffer, "[%.1f]", *(float *)menu->items[i].target);
+            sprintf(fezui_buffer, _Format ? _FormatStr :  "[%f]", *(float *)menu->items[i].target);
             break;
         case FEZUI_TYPE_DOUBLE:
-            sprintf(fezui_buffer, "[%.1lf]", *(double *)menu->items[i].target);
+            sprintf(fezui_buffer,  _Format ? _FormatStr : "[%lf]", *(double *)menu->items[i].target);
             break;
         case FEZUI_TYPE_INT16:
-            sprintf(fezui_buffer, "[%d]", *(int16_t*)menu->items[i].target);
+            sprintf(fezui_buffer,  _Format ? _FormatStr : "[%d]", *(int16_t*)menu->items[i].target);
             break;
         case FEZUI_TYPE_INT32:
-            sprintf(fezui_buffer, "[%ld]", *(int32_t*)menu->items[i].target);
+            sprintf(fezui_buffer,  _Format ? _FormatStr :  "[%ld]", *(int32_t*)menu->items[i].target);
             break;
         case FEZUI_TYPE_UINT16:
-            sprintf(fezui_buffer, "[%u]", *(uint16_t*)menu->items[i].target);
+            sprintf(fezui_buffer,  _Format ? _FormatStr :  "[%u]", *(uint16_t*)menu->items[i].target);
             break;
         case FEZUI_TYPE_UINT32:
-            sprintf(fezui_buffer, "[%lu]", *(uint32_t*)menu->items[i].target);
+            sprintf(fezui_buffer,  _Format ? _FormatStr :  "[%lu]", *(uint32_t*)menu->items[i].target);
             break;
         case FEZUI_TYPE_UINT8:
-            sprintf(fezui_buffer, "[%d]", *(uint8_t *)menu->items[i].target);
+            sprintf(fezui_buffer,  _Format ? _FormatStr :  "[%d]", *(uint8_t *)menu->items[i].target);
             break;
         case FEZUI_TYPE_BOOL:
         case 'B':

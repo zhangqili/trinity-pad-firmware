@@ -8,7 +8,15 @@
 #include "fezui_var.h"
 #include "main.h"
 fezui_animated_listbox_t settingsmenu;
-const char *settingsmenu_items[] = {"Keys Configuration", "Keymap", "RGB", "Calibration", "Display", "Debug", "Reboot", "Enter BootLoader", "About"};
+const char *settingsmenu_items[] = 
+{
+    "Keys Configuration", 
+    "Keymap", 
+    "RGB", 
+    "Calibration", 
+    "Display", 
+    "Advanced Settings", 
+    "About"};
 fezui_link_page_t settingspage = {settingspage_logic, settingspage_draw, settingspage_load};
 
 #define ROW_HEIGHT 16
@@ -51,16 +59,9 @@ void settings_menu_cb(void *menu)
         fezui_link_frame_navigate(&mainframe, &displayconfigpage);
         break;
     case 5:
-        fezui_link_frame_navigate(&mainframe, &debugpage);
+        fezui_link_frame_navigate(&mainframe, &advancedsettingspage);
         break;
     case 6:
-        keyboard_system_reset();
-        break;
-    case 7:
-        //__set_FAULTMASK(1);
-        //JumpToBootloader();
-        break;
-    case 8:
         fezui_link_frame_navigate(&mainframe, &aboutpage);
         break;
     default:

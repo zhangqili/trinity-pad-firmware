@@ -646,6 +646,7 @@ int main(void)
     hid_init();
     uint8_t usb_state=usb_device_is_configured();
     rgb_flash();
+    /*
     while (1)
     {
         break;
@@ -653,6 +654,8 @@ int main(void)
         GPIO_WriteBit(LED_GPIO_Port, LED_Pin, !GPIO_ReadInputDataBit(LED_GPIO_Port, LED_Pin));
         hid_mouse_test();
     }
+    */
+    keyboard_recovery();
     Delay_Ms(100);
     for (uint8_t i = 0; i < ADVANCED_KEY_NUM; i++)
     {
@@ -663,10 +666,10 @@ int main(void)
         }
         ADC_Averages[i]/=ANALOG_BUFFER_LENGTH;
         advanced_key_set_range(Keyboard_AdvancedKeys + i, ADC_Averages[i], 200);
-        advanced_key_set_deadzone(Keyboard_AdvancedKeys + i, 0.04, 0.1);
-        Keyboard_AdvancedKeys[i].mode = LEFL_KEY_ANALOG_RAPID_MODE;
-        Keyboard_AdvancedKeys[i].trigger_distance = 0.05;
-        Keyboard_AdvancedKeys[i].release_distance = 0.05;
+        //advanced_key_set_deadzone(Keyboard_AdvancedKeys + i, 0.04, 0.1);
+        //Keyboard_AdvancedKeys[i].mode = LEFL_KEY_ANALOG_RAPID_MODE;
+        //Keyboard_AdvancedKeys[i].trigger_distance = 0.05;
+        //Keyboard_AdvancedKeys[i].release_distance = 0.05;
     }
     fram_read_bytes(0x400,fezui_keytotalcounts,sizeof(fezui_keytotalcounts));
     memcpy(fezui_keyinitcounts,fezui_keytotalcounts,sizeof(fezui_keytotalcounts));

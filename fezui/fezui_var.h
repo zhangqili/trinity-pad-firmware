@@ -86,6 +86,14 @@ void settingspage_draw(void *page);
 void settingspage_load(void *page);
 void settings_menu_cb(void *menu);
 
+
+extern fezui_link_page_t advancedsettingspage;
+void advancedsettingspage_init();
+void advancedsettingspage_logic(void *page);
+void advancedsettingspage_draw(void *page);
+void advancedsettingspage_load(void *page);
+void advancedsettings_menu_cb(void *menu);
+
 extern fezui_link_page_t oscilloscopepage;
 void oscilloscopepage_logic(void *page);
 void oscilloscopepage_draw(void *page);

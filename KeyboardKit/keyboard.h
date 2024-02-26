@@ -78,5 +78,6 @@ void keyboard_init();
 void keyboard_id_recovery();
 void keyboard_scan();
 void keyboard_send_report();
+void keyboard_save();
 
 #endif /* KEYBOARD_H_ */

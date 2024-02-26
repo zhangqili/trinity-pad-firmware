@@ -62,6 +62,7 @@ void fezui_init()
     rgbconfigpage_init();
     displayconfigpage_init();
     panelpage_init();
+    advancedsettingspage_init();
 
     fezui_link_frame_navigate(&mainframe, &homepage);
     //Keybaord_SendReport_Enable=false;
