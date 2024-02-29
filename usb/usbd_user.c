@@ -335,34 +335,6 @@ static const uint8_t hid_raw_report_desc[HID_RAW_REPORT_DESC_SIZE] = {
     0xC0 /*     END_COLLECTION	             */
 };
 
-USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t read_buffer[HIDRAW_OUT_EP_SIZE];
-USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t send_buffer[HIDRAW_IN_EP_SIZE];
-void usbd_event_handler(uint8_t event)
-{
-    switch (event) {
-        case USBD_EVENT_RESET:
-            break;
-        case USBD_EVENT_CONNECTED:
-            break;
-        case USBD_EVENT_DISCONNECTED:
-            break;
-        case USBD_EVENT_RESUME:
-            break;
-        case USBD_EVENT_SUSPEND:
-            break;
-        case USBD_EVENT_CONFIGURED:
-            /* setup first out ep read transfer */
-            usbd_ep_start_read(HIDRAW_OUT_EP, read_buffer, HIDRAW_OUT_EP_SIZE);
-            break;
-        case USBD_EVENT_SET_REMOTE_WAKEUP:
-            break;
-        case USBD_EVENT_CLR_REMOTE_WAKEUP:
-            break;
-
-        default:
-            break;
-    }
-}
 
 #define HID_STATE_IDLE 0
 #define HID_STATE_BUSY 1
@@ -370,6 +342,43 @@ void usbd_event_handler(uint8_t event)
 /*!< hid state ! Data can be sent only when state is idle  */
 static volatile uint8_t custom_state;
 static volatile uint8_t hid_state = HID_STATE_IDLE;
+
+USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t read_buffer[HIDRAW_OUT_EP_SIZE];
+USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t send_buffer[HIDRAW_IN_EP_SIZE];
+void usbd_event_handler(uint8_t event)
+{
+    switch (event) {
+        case USBD_EVENT_RESET:
+            custom_state=HID_STATE_IDLE;
+            hid_state=HID_STATE_IDLE;
+            break;
+        case USBD_EVENT_CONNECTED:
+            //fezui_notification_begin(&fezui,&fezui_notification,"USBD_EVENT_CONNECTED",500,0.1);
+            break;
+        case USBD_EVENT_DISCONNECTED:
+            //fezui_notification_begin(&fezui,&fezui_notification,"USBD_EVENT_DISCONNECTED",500,0.1);
+            break;
+        case USBD_EVENT_RESUME:
+            //fezui_notification_begin(&fezui,&fezui_notification,"USBD_EVENT_RESUME",500,0.1);
+            break;
+        case USBD_EVENT_SUSPEND:
+            //fezui_notification_begin(&fezui,&fezui_notification,"USBD_EVENT_SUSPEND",500,0.1);
+            break;
+        case USBD_EVENT_CONFIGURED:
+            /* setup first out ep read transfer */
+            usbd_ep_start_read(HIDRAW_OUT_EP, read_buffer, HIDRAW_OUT_EP_SIZE);
+            break;
+        case USBD_EVENT_SET_REMOTE_WAKEUP:
+            //fezui_notification_begin(&fezui,&fezui_notification,"USBD_EVENT_SET_REMOTE_WAKEUP",500,0.1);
+            break;
+        case USBD_EVENT_CLR_REMOTE_WAKEUP:
+            //fezui_notification_begin(&fezui,&fezui_notification,"USBD_EVENT_CLR_REMOTE_WAKEUP",500,0.1);
+            break;
+
+        default:
+            break;
+    }
+}
 
 void usbd_hid_kayboard_int_callback(uint8_t ep, uint32_t nbytes)
 {
