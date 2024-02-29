@@ -347,7 +347,7 @@ typedef struct __fezui_animated_menu_t
     bool show_scrollbar;
     void (*menu_cb)(void *menu);
 } fezui_animated_menu_t;
-void fezui_animated_menu_init(fezui_animated_menu_t *menu, fezui_menuitem_t *items, uint8_t len, void (*cb)(void *menu));
+void fezui_animated_menu_init(fezui_animated_menu_t *menu,const fezui_menuitem_t *items, uint8_t len, void (*cb)(void *menu));
 void fezui_animated_menu_index_increase(fezui_animated_menu_t *menu, int8_t delta);
 void fezui_animated_menu_click(fezui_animated_menu_t *menu);
 void fezui_animated_menu_update(fezui_t *fezui_ptr, fezui_animated_menu_t *menu);

@@ -185,7 +185,7 @@ void fezui_POST()
     u8log_WriteString(&u8log,"Testing FRAM...");
     u8g2_SendBuffer(&fezui.u8g2);
 	uint32_t fram_id = fram_read_device_id();
-    if(fram_id&&(~fram_id));
+    if((fram_id)&&(~fram_id));
     {
         u8log_WriteString(&u8log," [OK]\n");
     }

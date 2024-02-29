@@ -1,7 +1,7 @@
 #include "fezui.h"
 void fezui_animated_cursor_goto(fezui_animated_cursor_t*cursor, float x, float y, float w, float h)
 {
-    fezui_animated_cursor_begin(cursor);
+    //fezui_animated_cursor_begin(cursor);
     cursor->target_cursor.x = x;
     cursor->target_cursor.y = y;
     cursor->target_cursor.w = w;

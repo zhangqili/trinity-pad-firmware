@@ -139,3 +139,4 @@ _deps
 *.bin
 *.lst
 obj/*
+~$*

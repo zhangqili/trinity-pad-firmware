@@ -42,7 +42,7 @@ void debugpage_logic(void *page)
 void debugpage_draw(void *page)
 {
 
-    sprintf(fezui_buffer, "%#x", fezui_debug);
+    sprintf(fezui_buffer, "%#lx", fezui_debug);
     u8g2_DrawStr(&(fezui.u8g2), 64, 16, fezui_buffer);
 
     // u8g2_SetFont(&fezui.u8g2, u8g2_font_8x13B_mf);
@@ -71,7 +71,7 @@ void debugpage_load(void *page)
     key_attach(&KEY_KNOB, KEY_EVENT_DOWN, LAMBDA(
                                                    void, (void *k) {fezui_link_frame_go_back(&mainframe);fezui_cursor_set(&cursor ,0 ,0 ,WIDTH ,HEIGHT); }));
     key_attach(&KEY_KNOB_CLOCKWISE, KEY_EVENT_DOWN, LAMBDA(
-                                                             void, (void *k) { fezui_numberic_dialog_increase(&dialog, 1); }));
+                                                             void, (void *k) { fezui_numberic_dialog_increase(&dialog.dialog, 1); }));
     key_attach(&KEY_KNOB_ANTICLOCKWISE, KEY_EVENT_DOWN, LAMBDA(
-                                                                 void, (void *k) { fezui_numberic_dialog_increase(&dialog, -1); }));
+                                                                 void, (void *k) { fezui_numberic_dialog_increase(&dialog.dialog, -1); }));
 }

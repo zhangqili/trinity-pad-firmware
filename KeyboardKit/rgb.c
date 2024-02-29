@@ -337,7 +337,7 @@ void rgb_set(uint8_t r, uint8_t g, uint8_t b, uint16_t index)
 
 void rgb_flash()
 {
-    for (uint8_t i = 1; i < 64; i++)
+    for (uint8_t i = 1; i < 128; i++)
     {
         for (uint8_t j = 0; j < RGB_NUM; j++)
         {
@@ -345,7 +345,7 @@ void rgb_flash()
         }
         Delay_Ms(10);
     }
-    for (uint8_t i = 64; i > 1; i--)
+    for (uint8_t i = 128; i > 0; i--)
     {
         for (uint8_t j = 0; j < RGB_NUM; j++)
         {

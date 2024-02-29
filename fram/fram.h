@@ -12,8 +12,8 @@
 #define    REG_READ_DEVICE_ID  0x9F
 
 uint32_t fram_read_device_id();
-void fram_read_bytes(uint16_t read_addr, uint8_t *read_buff, uint16_t read_bytes);
-void fram_write_bytes(uint16_t write_addr, uint8_t *write_buff, uint16_t write_bytes);
+void fram_read_bytes(uint16_t read_addr, void *read_buff, uint16_t read_bytes);
+void fram_write_bytes(uint16_t write_addr, void *write_buff, uint16_t write_bytes);
 void fram_write_enable(uint8_t select);
 uint8_t fram_read_status(void);
 void fram_write_status(uint8_t write_data);

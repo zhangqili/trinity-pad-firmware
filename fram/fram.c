@@ -116,6 +116,7 @@ int fram_spi_device_init()
 		*/
 	return fram_init();
 }
+
 int fram_init()
 {
 	  //rt_err_t res = RT_EOK;
@@ -134,6 +135,7 @@ int fram_init()
 		rt_spi_configure(spi_dev_mb85rs16, &cfg);
 		*/
 		//return res;
+	return 0;
 }
 
 void fram_write_enable(uint8_t select)
@@ -151,25 +153,25 @@ void fram_write_byte(uint16_t write_addr, uint8_t write_data)
 		fram_write_enable(REG_WRITE_DISABLE);	
 }
 
-void fram_write_bytes(uint16_t write_addr, uint8_t *write_buff, uint16_t write_bytes)
+void fram_write_bytes(uint16_t write_addr, void *write_buff, uint16_t write_bytes)
 {
 		uint8_t send_buff[3];
 		fram_write_enable(REG_WRITE_ENABLE);
 		send_buff[0] = REG_WRITE_COMMAND;
 		send_buff[1] = (write_addr>>8) &0xff;
 		send_buff[2] = write_addr&0xff;
-		fram_spi_send_then_send(send_buff, 3,write_buff, write_bytes);
+		fram_spi_send_then_send(send_buff, 3,(uint8_t*)write_buff, write_bytes);
 		fram_write_enable(REG_WRITE_DISABLE);
 	
 }
 
-void fram_read_bytes(uint16_t read_addr, uint8_t *read_buff, uint16_t read_bytes)
+void fram_read_bytes(uint16_t read_addr, void *read_buff, uint16_t read_bytes)
 {
-			uint8_t send_buff[3] = {0};
-			send_buff[0] = REG_READ_COMMAND;
-			send_buff[1] = (read_addr>>8)&0xff;
-			send_buff[2] = read_addr&0xff;
-			fram_spi_send_then_recv(send_buff,3, read_buff, read_bytes);
+	uint8_t send_buff[3] = {0};
+	send_buff[0] = REG_READ_COMMAND;
+	send_buff[1] = (read_addr>>8)&0xff;
+	send_buff[2] = read_addr&0xff;
+	fram_spi_send_then_recv(send_buff,3, (uint8_t*)read_buff, read_bytes);
 }
 
 uint32_t fram_read_device_id()

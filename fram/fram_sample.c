@@ -7,7 +7,7 @@
 #define DBG_LEVEL         DBG_LOG
 
 
-
+/*
 void fram_cmd(int argc, char **argv)
 {
 		uint16_t addr = 0;
@@ -58,4 +58,4 @@ void fram_cmd(int argc, char **argv)
 				fram_write_status(0);
 		}
 }
-
+*/

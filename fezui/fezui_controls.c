@@ -250,7 +250,7 @@ void fezui_veil_full_screen(fezui_t *fezui_ptr, uint8_t level)
         {
             for (u8g2_uint_t j = 0; j < h; j++)
             {
-                *(p+j*w+i)&=(~0xFF);
+                *(p+j*w+i)&=0;
             }
         }
         break;
@@ -554,7 +554,7 @@ void fezui_draw_animated_listbox(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t 
     u8g2_SetMaxClipWindow(&(fezui_ptr->u8g2));
 }
 
-void fezui_animated_menu_init(fezui_animated_menu_t *menu, fezui_menuitem_t *items, uint8_t len, void (*cb)(void *menu))
+void fezui_animated_menu_init(fezui_animated_menu_t *menu,const fezui_menuitem_t *items, uint8_t len, void (*cb)(void *menu))
 {
     menu->items = items;
     menu->len = len;

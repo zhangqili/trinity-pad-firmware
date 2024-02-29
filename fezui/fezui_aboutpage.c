@@ -7,7 +7,7 @@
 #include "fezui.h"
 #include "fezui_var.h"
 
-#define PROJECT_URL "github.com/zhangqili/gemini-pad"
+#define PROJECT_URL "github.com/zhangqili/trinity-pad-firmware"
 
 #define ROW_HEIGHT 6
 
@@ -73,9 +73,9 @@ fezui_link_page_t aboutpage={aboutpage_logic,aboutpage_draw,aboutpage_load};
 
 static char single_char[2];
 
-static const char* device_name = "Gemini Pad";
-static float device_name_offsets[10] = {WIDTH,WIDTH,WIDTH,WIDTH,WIDTH,WIDTH,WIDTH,WIDTH,WIDTH,WIDTH};
-static uint8_t device_name_width[10] = {11,9,13,3,9,3,6,10,8,10};
+static const char* device_name = "Trinity Pad";
+static float device_name_offsets[11] = {WIDTH,WIDTH,WIDTH,WIDTH,WIDTH,WIDTH,WIDTH,WIDTH,WIDTH,WIDTH,WIDTH};
+static uint8_t device_name_width[11] = {10,6,3,9,3,5,5,6,10,8,10};
 
 static const char* device_version = "Version: 1.0.0";
 static float device_version_offsets[14] = {WIDTH,WIDTH,WIDTH,WIDTH,WIDTH,WIDTH,WIDTH,WIDTH,WIDTH,WIDTH,WIDTH,WIDTH,WIDTH,WIDTH};
@@ -83,8 +83,7 @@ static float device_version_offsets[14] = {WIDTH,WIDTH,WIDTH,WIDTH,WIDTH,WIDTH,W
 static const char* device_information[]={
         "Copyright (c) 2023 Lzq12345",
         "",
-        "Master MCU: STM32F303RBT6",
-        "Slave MCU: STM32G431CBT6",
+        "MCU: CH32V307WCU6",
         "",
 };
 
@@ -130,7 +129,7 @@ void aboutpage_logic(void *page)
     CONVERGE_TO(url_y,target_url_y,fezui.speed);
     CONVERGE_TO_ROUNDED(device_name_offsets[0],icon_x,fezui.speed);
     CONVERGE_TO_ROUNDED(device_version_offsets[0],icon_x,fezui.speed);
-    for (uint8_t i = 1; i < 10; i++)
+    for (uint8_t i = 1; i < 11; i++)
     {
         CONVERGE_TO(device_name_offsets[i],device_name_offsets[i-1]+device_name_width[i-1],fezui.speed);
     }
@@ -149,7 +148,7 @@ void aboutpage_logic(void *page)
 void aboutpage_draw(void *page)
 {
     u8g2_SetFont(&(fezui.u8g2), u8g2_font_helvB12_tr);
-    for (uint8_t i = 0; i < 10; i++)
+    for (uint8_t i = 0; i < 11; i++)
     {
         single_char[0]=device_name[i];
         u8g2_DrawStr(&(fezui.u8g2), 19+device_name_offsets[i], 12, single_char);
@@ -182,11 +181,11 @@ void aboutpage_load(void *page)
     target_ordinate=-text_box_height;
     icon_x=WIDTH;
     url_y=HEIGHT;
-    for (uint8_t i = 0; i < 10; i++)
+    for (uint8_t i = 0; i < 11; i++)
     {
         device_name_offsets[i]=WIDTH;
     }
-    for (uint8_t i = 1; i < 14; i++)
+    for (uint8_t i = 0; i < 14; i++)
     {
         device_version_offsets[i]=WIDTH;
     }

@@ -18,16 +18,11 @@
 
 #define ROW_HEIGHT 8
 
-static fezui_scrollview_t scrollview = { .content_height = ROW_HEIGHT*sizeof(hid_usage_names)/sizeof(const char*), .content_width =
-        128, .abscissa = 0, .ordinate = 0 };
-
 fezui_animated_listbox_t keylist;
 uint16_t* current_target_id;
 KeyBinding* current_target_key_binding;
 
 fezui_link_page_t keylistpage = {keylistpage_logic, keylistpage_draw, keylistpage_load};
-
-static lefl_bit_array_t head_key_usage;
 
 void keylist_cb(void *m)
 {
