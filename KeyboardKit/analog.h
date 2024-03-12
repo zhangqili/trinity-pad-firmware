@@ -4,10 +4,10 @@
  *  Created on: 2023骞�5鏈�21鏃�
  *      Author: xq123
  */
-#include "keyboard.h"
 
 #ifndef ANALOG_H_
 #define ANALOG_H_
+#include "keyboard.h"
 
 #define Analog_Clean() (ADC_Conversion_Count=0)
 

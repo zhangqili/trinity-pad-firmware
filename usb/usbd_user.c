@@ -391,13 +391,13 @@ void usbd_hid_mouse_int_callback(uint8_t ep, uint32_t nbytes)
 
 static void usbd_hid_custom_in_callback(uint8_t ep, uint32_t nbytes)
 {
-    USB_LOG_RAW("actual in len:%d\r\n", nbytes);
+    USB_LOG_RAW("actual in len:%ld\r\n", nbytes);
     custom_state = HID_STATE_IDLE;
 }
 
 static void usbd_hid_custom_out_callback(uint8_t ep, uint32_t nbytes)
 {
-    USB_LOG_RAW("actual out len:%d\r\n", nbytes);
+    USB_LOG_RAW("actual out len:%ld\r\n", nbytes);
     usbd_ep_start_read(HIDRAW_OUT_EP, read_buffer, 64);
     char out_buf[32];
     sprintf(out_buf,"%x",read_buffer[1]);

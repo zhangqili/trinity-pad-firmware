@@ -15,10 +15,10 @@
 static bool key_selected = false;
 static bool configing = false;
 
-lefl_menu_t rgb_key_select_menu;
+fezui_list_base_t rgb_key_select_menu;
 static const char* rgb_key_select_menu_items[] = {"Global", "KEY1", "KEY2", "KEY3", "KEY4"};
 
-lefl_menu_t rgb_config_menu;
+fezui_list_base_t rgb_config_menu;
 static const char* rgb_config_menu_items[] = {"Mode", "R", "G", "B", "H", "S", "V", "Speed"};
 
 static const char* rgb_mode_items[]={"Static","Cycle","Linear","Trigger"};
@@ -29,7 +29,7 @@ static ColorHSV *target_hsv;
 
 static fezui_cursor_t config_cursor;
 static fezui_cursor_t target_config_cursor;
-lefl_menu_t rgb_global_config_menu;
+fezui_list_base_t rgb_global_config_menu;
 static const char* rgb_global_config_menu_items[] = {"Mode", "R", "G", "B", "H", "S", "V", "Speed"};
 
 void set_target_color()
@@ -55,15 +55,15 @@ void rgb_key_select_menu_cb(void*m)
 
 void rgbconfigpage_init()
 {
-    lefl_menu_init(&rgb_key_select_menu, rgb_key_select_menu_items, sizeof(rgb_key_select_menu_items)/sizeof(const char*), rgb_key_select_menu_cb);
-    lefl_menu_init(&rgb_config_menu, rgb_config_menu_items, sizeof(rgb_config_menu_items)/sizeof(const char*), LAMBDA(void,(void*k)
+    fezui_list_base_init(&rgb_key_select_menu, rgb_key_select_menu_items, sizeof(rgb_key_select_menu_items)/sizeof(const char*), rgb_key_select_menu_cb);
+    fezui_list_base_init(&rgb_config_menu, rgb_config_menu_items, sizeof(rgb_config_menu_items)/sizeof(const char*), LAMBDA(void,(void*k)
     {
         configing = true;
     }));
-    lefl_menu_init(&rgb_global_config_menu, rgb_global_config_menu_items, sizeof(rgb_global_config_menu_items)/sizeof(const char*), NULL);
+    fezui_list_base_init(&rgb_global_config_menu, rgb_global_config_menu_items, sizeof(rgb_global_config_menu_items)/sizeof(const char*), NULL);
 }
 
-void rgbconfigpage_logic(void *page)
+static void rgbconfigpage_logic(void *page)
 {
     
     fezui_cursor_set(
@@ -131,7 +131,7 @@ void rgbconfigpage_logic(void *page)
     fezui_cursor_move(&fezui, &config_cursor, &target_config_cursor);
 }
 
-void rgbconfigpage_draw(void *page)
+static void rgbconfigpage_draw(void *page)
 {
     
     u8g2_SetFont(&(fezui.u8g2), u8g2_font_5x8_mr);
@@ -282,12 +282,12 @@ static void key_up_cb(void *k)
         }
         else
         {
-            lefl_menu_index_increase(&rgb_config_menu, 1);
+            fezui_list_base_index_increase(&rgb_config_menu, 1);
         }
     }
     else
     {
-        lefl_menu_index_increase(&rgb_key_select_menu, 1);
+        fezui_list_base_index_increase(&rgb_key_select_menu, 1);
         set_target_color();
     }
     
@@ -354,18 +354,18 @@ static void key_down_cb(void *k)
         }
         else
         {
-            lefl_menu_index_increase(&rgb_config_menu, -1);
+            fezui_list_base_index_increase(&rgb_config_menu, -1);
         }
     }
     else
     {
-        lefl_menu_index_increase(&rgb_key_select_menu, -1);
+        fezui_list_base_index_increase(&rgb_key_select_menu, -1);
         set_target_color();
     }
     
 }
 
-void rgbconfigpage_load(void *page)
+static void rgbconfigpage_load(void *page)
 {
     fezui_cursor_set(
             &config_cursor,
@@ -401,7 +401,7 @@ void rgbconfigpage_load(void *page)
         }
         else
         {
-            lefl_menu_click(&rgb_key_select_menu);
+            fezui_list_base_click(&rgb_key_select_menu);
         }
     }));
     key_attach(&KEY_KNOB, KEY_EVENT_DOWN, LAMBDA(void,(void*k)
@@ -412,7 +412,7 @@ void rgbconfigpage_load(void *page)
         }
         else
         {
-            lefl_menu_click(&rgb_key_select_menu);
+            fezui_list_base_click(&rgb_key_select_menu);
         }
     }));
     key_attach(&KEY_KNOB_CLOCKWISE, KEY_EVENT_DOWN, key_up_cb);

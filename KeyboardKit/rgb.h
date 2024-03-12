@@ -90,7 +90,7 @@ typedef struct __RGBLoopQueue
 void rgb_loop_queue_init(RGBLoopQueue* q, RGBLoopQueueElm*data, uint16_t len);
 RGBLoopQueueElm rgb_loop_queue_dequeue(RGBLoopQueue* q);
 void rgb_loop_queue_enqueue(RGBLoopQueue* q, RGBLoopQueueElm t);
-//#define lefl_loop_queue_foreach(q,i) for(uint16_t (i)=(q)->front;(i)!=(q)->rear;(i)=(i+1)%(q)->len)
+//#define loop_queue_foreach(q,i) for(uint16_t (i)=(q)->front;(i)!=(q)->rear;(i)=(i+1)%(q)->len)
 
 #define ARGUMENT_BUFFER_LENGTH 16
 #ifdef USE_RGB

@@ -11,10 +11,10 @@
 #define ROW_HEIGHT 16
 #define SPERATOR_X 80
 
-lefl_menu_t knobconfig_menu;
+fezui_list_base_t knobconfig_menu;
 
 static const char* knobconfig_menu_items[] = {"Press", "Clockwise", "Anticlockwise"};
-lefl_menu_t knobconfig_menu;
+fezui_list_base_t knobconfig_menu;
 static char press_binding_text[128];
 static char clockwise_binding_text[128];
 static char anticlockwise_binding_text[128];
@@ -30,7 +30,7 @@ static fezui_scrolling_text_t anticlockwise_scrolling_text;
 
 void knobconfig_menu_cb(void *m)
 {
-    switch (((lefl_menu_t*)m)->selected_index)
+    switch (((fezui_list_base_t*)m)->selected_index)
     {
         case 0:
             current_target_id = current_target_knob_press_id;
@@ -50,10 +50,10 @@ void knobconfig_menu_cb(void *m)
 
 void knobconfigpage_init()
 {
-    lefl_menu_init(&knobconfig_menu, knobconfig_menu_items, sizeof(knobconfig_menu_items)/sizeof(const char*), knobconfig_menu_cb);
+    fezui_list_base_init(&knobconfig_menu, knobconfig_menu_items, sizeof(knobconfig_menu_items)/sizeof(const char*), knobconfig_menu_cb);
 }
 
-void knobconfigpage_logic(void *page)
+static void knobconfigpage_logic(void *page)
 {
 
     fezui_cursor_set(
@@ -67,7 +67,7 @@ void knobconfigpage_logic(void *page)
     fezui_scrolling_text_update(&anticlockwise_scrolling_text);
 }
 
-void knobconfigpage_draw(void *page)
+static void knobconfigpage_draw(void *page)
 {
     uint8_t color = u8g2_GetDrawColor(&(fezui.u8g2));
 
@@ -98,7 +98,7 @@ void go_back_cb(void*k)
     fezui_link_frame_go_back(&mainframe);
 }
 
-void knobconfigpage_load(void *page)
+static void knobconfigpage_load(void *page)
 {
     //keyid_prase(*current_target_knob_press_id, press_binding_text, 128);
     fezui_scrolling_text_init(&fezui, &press_scrolling_text, 78, 0.2, u8g2_font_4x6_mr, press_binding_text);
@@ -112,20 +112,20 @@ void knobconfigpage_load(void *page)
     key_attach(&KEY_FN_K6, KEY_EVENT_DOWN, go_back_cb);
     key_attach(&KEY_FN_K5, KEY_EVENT_DOWN, LAMBDA(void,(void*k)
     {
-        lefl_menu_click(&knobconfig_menu);
+        fezui_list_base_click(&knobconfig_menu);
     }));
     key_attach(&KEY_KNOB, KEY_EVENT_DOWN, LAMBDA(void,(void*k)
     {
-        lefl_menu_click(&knobconfig_menu);
+        fezui_list_base_click(&knobconfig_menu);
     }));
 
     key_attach(&KEY_KNOB_CLOCKWISE, KEY_EVENT_DOWN, LAMBDA(void,(void*k)
     {
-        lefl_menu_index_increase(&knobconfig_menu, 1);
+        fezui_list_base_index_increase(&knobconfig_menu, 1);
     }));
     key_attach(&KEY_KNOB_ANTICLOCKWISE, KEY_EVENT_DOWN, LAMBDA(void,(void*k)
     {
-        lefl_menu_index_increase(&knobconfig_menu, -1);
+        fezui_list_base_index_increase(&knobconfig_menu, -1);
     }));
 }
 

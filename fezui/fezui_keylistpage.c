@@ -22,20 +22,18 @@ fezui_animated_listbox_t keylist;
 uint16_t* current_target_id;
 KeyBinding* current_target_key_binding;
 
-fezui_link_page_t keylistpage = {keylistpage_logic, keylistpage_draw, keylistpage_load};
 
 void keylist_cb(void *m)
 {
-    if(((fezui_animated_listbox_t*)m)->selected_index<8)
+    if(((fezui_list_base_t*)m)->selected_index<8)
     {
-        //lefl_bit_array_set(&head_key_usage, ((lefl_menu_t*)m)->selected_index, !lefl_bit_array_get(&head_key_usage, ((lefl_menu_t*)m)->selected_index));
-        bool b = !(current_target_key_binding->modifier&BIT(((lefl_menu_t*)m)->selected_index));
-        current_target_key_binding->modifier&=(~(1<<((lefl_menu_t*)m)->selected_index));
-        current_target_key_binding->modifier|=(b<<((lefl_menu_t*)m)->selected_index);
+        bool b = !(current_target_key_binding->modifier&BIT(((fezui_list_base_t*)m)->selected_index));
+        current_target_key_binding->modifier&=(~(1<<((fezui_list_base_t*)m)->selected_index));
+        current_target_key_binding->modifier|=(b<<((fezui_list_base_t*)m)->selected_index);
     }
     else
     {
-        current_target_key_binding->keycode = ((lefl_menu_t*)m)->selected_index-8;
+        current_target_key_binding->keycode = ((fezui_list_base_t*)m)->selected_index-8;
     }
 }
 
@@ -45,16 +43,16 @@ void keylistpage_init()
     keylist.show_scrollbar=true;
 }
 
-void keylistpage_logic(void *page)
+static void keylistpage_logic(void *page)
 {
     fezui_animated_listbox_update(&fezui,&keylist);
 }
-void keylistpage_draw(void *page)
+static void keylistpage_draw(void *page)
 {
     u8g2_SetFont(&(fezui.u8g2), u8g2_font_5x8_mr);
     fezui_draw_animated_listbox(&fezui,0,0,WIDTH,HEIGHT,&keylist,ROW_HEIGHT,1);
     fezui_animated_listbox_get_cursor(&fezui,0,0,WIDTH,HEIGHT,&keylist,ROW_HEIGHT,&target_cursor);
-    for(uint8_t i=0;i<keylist.len;i++)
+    for(uint8_t i=0;i<keylist.list.len;i++)
     {
         u8g2_DrawFrame(&(fezui.u8g2),116, (u8g2_int_t)floorf((ROW_HEIGHT * (i) -  FEZUI_ANIMATION_GET_VALUE(&keylist.scroll_animation, keylist.offset,keylist.targetoffset) + 1) * keylist.start_animation.value + 0.5),6,6);
     }
@@ -69,7 +67,7 @@ void keylistpage_draw(void *page)
     fezui_draw_cursor(&fezui, &cursor);
 }
 
-void keylistpage_load(void *page)
+static void keylistpage_load(void *page)
 {
     //lefl_bit_array_init(&head_key_usage, (size_t*)&(current_target_key_binding->modifier), 8);
     fezui_animated_listbox_begin(&keylist);
@@ -79,3 +77,5 @@ void keylistpage_load(void *page)
     key_attach(&KEY_KNOB_CLOCKWISE, KEY_EVENT_DOWN, LAMBDA(void,(void*k){fezui_animated_listbox_index_increase(&keylist, 1);}));
     key_attach(&KEY_KNOB_ANTICLOCKWISE, KEY_EVENT_DOWN, LAMBDA(void,(void*k){fezui_animated_listbox_index_increase(&keylist, -1);}));
 }
+
+fezui_link_page_t keylistpage = {keylistpage_logic, keylistpage_draw, keylistpage_load};

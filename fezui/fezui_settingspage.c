@@ -17,31 +17,30 @@ const char *settingsmenu_items[] =
     "Display", 
     "Advanced Settings", 
     "About"};
-fezui_link_page_t settingspage = {settingspage_logic, settingspage_draw, settingspage_load};
 
 #define ROW_HEIGHT 16
-
+static void settings_menu_cb(void *menu);
 void settingspage_init()
 {
     fezui_animated_listbox_init(&settingsmenu, settingsmenu_items, sizeof(settingsmenu_items) / sizeof(const char *), settings_menu_cb);
     settingsmenu.show_scrollbar = true;
 }
 
-void settingspage_logic(void *page)
+static void settingspage_logic(void *page)
 {
     fezui_animated_listbox_update(&fezui, &settingsmenu);
 }
-void settingspage_draw(void *page)
+static void settingspage_draw(void *page)
 {
     u8g2_SetFont(&(fezui.u8g2), u8g2_font_6x13_mr);
     fezui_draw_animated_listbox(&fezui, 0, 0, WIDTH, HEIGHT, &settingsmenu, ROW_HEIGHT, 3);
     fezui_animated_listbox_get_cursor(&fezui, 0, 0, WIDTH, HEIGHT, &settingsmenu, ROW_HEIGHT, &target_cursor);
     fezui_draw_cursor(&fezui, &cursor);
 }
-void settings_menu_cb(void *menu)
+static void settings_menu_cb(void *menu)
 {
 
-    switch (((fezui_animated_listbox_t *)menu)->selected_index)
+    switch (((fezui_list_base_t *)menu)->selected_index)
     {
     case 0:
         fezui_link_frame_navigate(&mainframe, &panelpage);
@@ -68,7 +67,7 @@ void settings_menu_cb(void *menu)
         break;
     }
 }
-void settingspage_load(void *page)
+static void settingspage_load(void *page)
 {
     fezui_animated_listbox_begin(&settingsmenu);
     key_attach(&KEY_FN_K5, KEY_EVENT_DOWN, LAMBDA(
@@ -82,3 +81,5 @@ void settingspage_load(void *page)
     key_attach(&KEY_KNOB_ANTICLOCKWISE, KEY_EVENT_DOWN, LAMBDA(
                                                                  void, (void *k) { fezui_animated_listbox_index_increase(&settingsmenu, -1); }));
 }
+
+fezui_link_page_t settingspage = {settingspage_logic, settingspage_draw, settingspage_load};

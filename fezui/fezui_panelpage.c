@@ -4,7 +4,7 @@
 
 #define MARGIN_TILE 3
 
-lefl_menu_t panelmenu;
+fezui_list_base_t panelmenu;
 const char *panelmenu_items[] = {"KEY1", "KEY2", "KEY3", "KEY4"};
 static fezui_progressbar_t bars[4] = 
 {
@@ -14,18 +14,18 @@ static fezui_progressbar_t bars[4] =
     {.max = 0, .min = 1, .orientation = ORIENTATION_VERTICAL},
 };
 
-void panelmenu_cb(void *m)
+static void panelmenu_cb(void *m)
 {
-    current_config_advanced_key = Keyboard_AdvancedKeys + ((lefl_menu_t *)m)->selected_index;
+    current_config_advanced_key = Keyboard_AdvancedKeys + ((fezui_list_base_t *)m)->selected_index;
     fezui_link_frame_navigate(&mainframe, &advancedconfigpage);
 }
 
 void panelpage_init()
 {
-    lefl_menu_init(&panelmenu, panelmenu_items, sizeof(panelmenu_items) / sizeof(const char *), panelmenu_cb);
+    fezui_list_base_init(&panelmenu, panelmenu_items, sizeof(panelmenu_items) / sizeof(const char *), panelmenu_cb);
 }
 
-void panelpage_logic(void *page)
+static void panelpage_logic(void *page)
 {
     fezui_cursor_set(
         &target_cursor,
@@ -36,7 +36,7 @@ void panelpage_logic(void *page)
         HEIGHT);
 }
 
-void panelpage_draw(void *page)
+static void panelpage_draw(void *page)
 {
     
     u8g2_SetFont(&(fezui.u8g2), u8g2_font_5x8_mr);
@@ -50,18 +50,18 @@ void panelpage_draw(void *page)
 }
 
 
-void panelpage_load(void *page)
+static void panelpage_load(void *page)
 {
     key_attach(&KEY_FN_K5, KEY_EVENT_DOWN, LAMBDA(
-                                                    void, (void *k) { lefl_menu_click(&panelmenu); }));
+                                                    void, (void *k) { fezui_list_base_click(&panelmenu); }));
     key_attach(&KEY_KNOB, KEY_EVENT_DOWN, LAMBDA(
-                                                   void, (void *k) { lefl_menu_click(&panelmenu); }));
+                                                   void, (void *k) { fezui_list_base_click(&panelmenu); }));
     key_attach(&KEY_FN_K6, KEY_EVENT_DOWN, LAMBDA(
                                                     void, (void *k) { fezui_link_frame_go_back(&mainframe); }));
     key_attach(&KEY_KNOB_CLOCKWISE, KEY_EVENT_DOWN, LAMBDA(
-                                                             void, (void *k) { lefl_menu_index_increase(&panelmenu, 1); }));
+                                                             void, (void *k) { fezui_list_base_index_increase(&panelmenu, 1); }));
     key_attach(&KEY_KNOB_ANTICLOCKWISE, KEY_EVENT_DOWN, LAMBDA(
-                                                                 void, (void *k) { lefl_menu_index_increase(&panelmenu, -1); }));
+                                                                 void, (void *k) { fezui_list_base_index_increase(&panelmenu, -1); }));
 }
 
 fezui_link_page_t panelpage = {panelpage_logic, panelpage_draw, panelpage_load};

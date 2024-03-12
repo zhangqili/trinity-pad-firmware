@@ -48,13 +48,13 @@ void displayconfigpage_init()
     fezui_animated_menu_init(&displayconfig_menu, displayconfig_menu_items, sizeof(displayconfig_menu_items)/sizeof(fezui_menuitem_t), displayconfig_menu_cb);
 }
 
-void displayconfigpage_logic(void *page)
+static void displayconfigpage_logic(void *page)
 {
     fezui_animated_menu_update(&fezui,&displayconfig_menu);
     fezui_flyout_numberic_dialog_update(&fezui,&dialog);
 }
 
-void displayconfigpage_draw(void *page)
+static void displayconfigpage_draw(void *page)
 {
     u8g2_SetFont(&(fezui.u8g2), u8g2_font_6x13_mr);
     fezui_draw_animated_menu(&fezui,0,0,WIDTH,HEIGHT,&displayconfig_menu,16,3);
@@ -123,7 +123,7 @@ static void key_down_cb(void *k)
     }
 }
 
-void displayconfigpage_load(void *page)
+static void displayconfigpage_load(void *page)
 {
     fezui_animated_menu_begin(&displayconfig_menu);
     speed = fezui.speed*100;

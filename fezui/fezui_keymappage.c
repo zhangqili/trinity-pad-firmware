@@ -21,7 +21,7 @@ static float start_animation=0;
 fezui_animated_listbox_t key_select_list;
 static const char* key_select_list_items[] = {"KEY1", "KEY2", "KEY3", "KEY4","FN_KEY1", "FN_KEY2", "FN_KEY3", "FN_KEY4", "FN_KEY5", "FN_KEY6", "KNOB","KNOB_CW","KNOB_CCW"};
 
-lefl_menu_t layer_select_menu;
+fezui_list_base_t layer_select_menu;
 static const char* layer_select_menu_items[]={"Layer 1","Layer 2","Layer 3"};
 
 static fezui_cursor_t config_cursor;
@@ -31,14 +31,14 @@ static char binding_text[LAYER_NUM][128];
 extern KeyBinding* current_target_key_binding;
 void layer_select_menu_cb(void* menu)
 {
-    current_target_key_binding = &keymap[layer_select_menu.selected_index][key_select_list.selected_index];
+    current_target_key_binding = &keymap[layer_select_menu.selected_index][key_select_list.list.selected_index];
     fezui_link_frame_navigate(&mainframe,&keylistpage);
 }
 
 
 void keymappage_init()
 {
-    lefl_menu_init(&layer_select_menu, layer_select_menu_items, sizeof(layer_select_menu_items)/sizeof(const char*), layer_select_menu_cb);
+    fezui_list_base_init(&layer_select_menu, layer_select_menu_items, sizeof(layer_select_menu_items)/sizeof(const char*), layer_select_menu_cb);
     fezui_animated_listbox_init(&key_select_list, key_select_list_items, sizeof(key_select_list_items)/sizeof(const char*), LAMBDA(void,(void*k)
     {
         key_selected = true;
@@ -46,7 +46,7 @@ void keymappage_init()
     key_select_list.show_scrollbar = true;
 }
 
-void keymappage_logic(void *page)
+static void keymappage_logic(void *page)
 {
     if(key_selected)
     {
@@ -71,13 +71,13 @@ void keymappage_logic(void *page)
     {
         fezui_scrolling_text_update(scrolling_text+i);
     }
-    if((key_select_list.selected_index+1)*ROW_HEIGHT-target_ordinate>64)
+    if((key_select_list.list.selected_index+1)*ROW_HEIGHT-target_ordinate>64)
     {
-        target_ordinate = (key_select_list.selected_index+1)*ROW_HEIGHT-64;
+        target_ordinate = (key_select_list.list.selected_index+1)*ROW_HEIGHT-64;
     }
-    if((key_select_list.selected_index)*ROW_HEIGHT<target_ordinate)
+    if((key_select_list.list.selected_index)*ROW_HEIGHT<target_ordinate)
     {
-        target_ordinate = (key_select_list.selected_index)*ROW_HEIGHT;
+        target_ordinate = (key_select_list.list.selected_index)*ROW_HEIGHT;
     }
     CONVERGE_TO_ROUNDED(scrollview.ordinate, target_ordinate, fezui.speed);
     CONVERGE_TO(start_animation, 1, fezui.speed);
@@ -85,7 +85,7 @@ void keymappage_logic(void *page)
     fezui_cursor_move(&fezui, &config_cursor, &target_config_cursor);
 }
 
-void keymappage_draw(void *page)
+static void keymappage_draw(void *page)
 {
     u8g2_SetFont(&(fezui.u8g2), u8g2_font_5x8_mr);
     fezui_draw_animated_listbox(&fezui,0,0,SPERATOR_X,HEIGHT,&key_select_list,ROW_HEIGHT,1);
@@ -105,7 +105,7 @@ static void show_binding_text()
 {
     for (uint8_t i = 0; i < LAYER_NUM; i++)
     {
-        keyid_prase(keymap[i][key_select_list.selected_index], binding_text[i], 128);
+        keyid_prase(keymap[i][key_select_list.list.selected_index], binding_text[i], 128);
         fezui_scrolling_text_init(&fezui,scrolling_text+i, 78, 0.2, u8g2_font_4x6_mr, binding_text[i]);
         fezui_scrolling_text_begin(scrolling_text+i);
     }
@@ -116,7 +116,7 @@ static void key_up_cb(void *k)
     
     if(key_selected)
     {
-        lefl_menu_index_increase(&layer_select_menu, 1);
+        fezui_list_base_index_increase(&layer_select_menu, 1);
     }
     else
     {
@@ -132,7 +132,7 @@ static void key_down_cb(void *k)
     
     if(key_selected)
     {
-        lefl_menu_index_increase(&layer_select_menu, -1);
+        fezui_list_base_index_increase(&layer_select_menu, -1);
     }
     else
     {
@@ -143,7 +143,7 @@ static void key_down_cb(void *k)
 }
 
 
-void keymappage_load(void *page)
+static void keymappage_load(void *page)
 {
     show_binding_text();
     start_animation=0;
@@ -169,7 +169,7 @@ void keymappage_load(void *page)
     {
         if(key_selected)
         {
-            lefl_menu_click(&layer_select_menu);
+            fezui_list_base_click(&layer_select_menu);
         }
         else
         {
@@ -180,7 +180,7 @@ void keymappage_load(void *page)
     {
         if(key_selected)
         {
-            lefl_menu_click(&layer_select_menu);
+            fezui_list_base_click(&layer_select_menu);
         }
         else
         {

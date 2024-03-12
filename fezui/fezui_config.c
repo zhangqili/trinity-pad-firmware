@@ -11,6 +11,7 @@
 #include "sfud.h"
 #include "fram.h"
 #include "lfs.h"
+#include "record.h"
 
 
 uint8_t tempuint;
@@ -32,23 +33,6 @@ void fezui_init()
 
     fezui_reset();
     fezui_POST();
-
-    lefl_loop_array_init(&KPS_history, KPS_history_data, sizeof(KPS_history_data)/sizeof(lefl_array_elm_t));
-    lefl_loop_array_init(&KPS_queue, KPS_queue_data, sizeof(KPS_queue_data)/sizeof(lefl_array_elm_t));
-    lefl_loop_array_init(analog_historys+0, analog_history1_data, sizeof(analog_history1_data)/sizeof(lefl_array_elm_t));
-    lefl_loop_array_init(analog_historys+1, analog_history2_data, sizeof(analog_history2_data)/sizeof(lefl_array_elm_t));
-    lefl_loop_array_init(analog_historys+2, analog_history3_data, sizeof(analog_history3_data)/sizeof(lefl_array_elm_t));
-    lefl_loop_array_init(analog_historys+3, analog_history4_data, sizeof(analog_history4_data)/sizeof(lefl_array_elm_t));
-
-    lefl_bit_array_init(lines+0, lines1_data, sizeof(lines1_data)*8);
-    lefl_bit_array_init(lines+1, lines2_data, sizeof(lines2_data)*8);
-    lefl_bit_array_init(lines+2, lines3_data, sizeof(lines3_data)*8);
-    lefl_bit_array_init(lines+3, lines4_data, sizeof(lines4_data)*8);
-
-    key_attach(&(Keyboard_AdvancedKeys[0].key), KEY_EVENT_DOWN, LAMBDA(void,(void*k){fezui_keytotalcounts[0]++;Keyriggered_count[0]++;}));
-    key_attach(&(Keyboard_AdvancedKeys[1].key), KEY_EVENT_DOWN, LAMBDA(void,(void*k){fezui_keytotalcounts[1]++;Keyriggered_count[1]++;}));
-    key_attach(&(Keyboard_AdvancedKeys[2].key), KEY_EVENT_DOWN, LAMBDA(void,(void*k){fezui_keytotalcounts[2]++;Keyriggered_count[2]++;}));
-    key_attach(&(Keyboard_AdvancedKeys[3].key), KEY_EVENT_DOWN, LAMBDA(void,(void*k){fezui_keytotalcounts[3]++;Keyriggered_count[3]++;}));
 
     debugpage_init();
     menupage_init();
@@ -77,31 +61,12 @@ void fezui_timer_handler()
     fezui_notification_update(&fezui,&fezui_notification);
     fezui_cursor_move(&fezui ,&cursor, &target_cursor);
     //fezui_animated_cursor_update(&animated_cursor);
-    lefl_loop_array_push_back(&KPS_queue, Keyriggered_count[0]+Keyriggered_count[1]+Keyriggered_count[2]+Keyriggered_count[3]);
-    for (uint8_t i = 0; i < ADVANCED_KEY_NUM; i++)
-    {
-        lefl_bit_array_shift(lines+i, 1);
-        if (Keyboard_AdvancedKeys[i].key.state||Keyriggered_count[i])
-        {
-            lefl_bit_array_set(lines+i, 0, true);
-        }
-        Keyriggered_count[i]=0;
-    }
-    fezui_kps = 0;
-    for (uint8_t i = 0; i < REFRESH_RATE; i++)
-    {
-        fezui_kps += KPS_queue.data[i];
-    }
+    fezui_kps = record_get_kps();
     if (fezui_kps > UI_KPSMaximumPerSecond)
     {
         UI_KPSMaximumPerSecond = fezui_kps;
     }
-    KPS_history_max=lefl_loop_array_max(&KPS_history);
-    if(fezui_kps>KPS_history_max)
-    {
-        KPS_history_max=fezui_kps;
-        KPS_history.data[KPS_history.index]=fezui_kps;
-    }
+    KPS_history_max=loop_array_max(&g_kps_history);
     //fezui_save_counts();
 
     uint8_t key_pressed_num=0;

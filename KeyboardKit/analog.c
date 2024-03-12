@@ -9,6 +9,7 @@
 #include "stdio.h"
 #include "rgb.h"
 #include "analog.h"
+#include "record.h"
 
 uint8_t ADC_Conversion_Count=0;
 int16_t ADC_Values[ADVANCED_KEY_NUM][64];
@@ -118,6 +119,12 @@ void analog_check()
         }
         if(Keyboard_AdvancedKeys[i].key.state&&!state)
         {
+            #ifdef ENABLE_KPS
+            record_kps_tick();
+            #endif
+            #ifdef ENABLE_COUNTER
+            g_key_counts[i]++;
+            #endif
             a.rgb_ptr = RGB_Mapping[i];
             a.argument=0.0;
             rgb_loop_queue_enqueue(&RGB_Argument_Queue, a);

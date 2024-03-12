@@ -76,6 +76,7 @@ void keyboard_system_reset();
 void keyboard_factory_reset();
 void keyboard_init();
 void keyboard_id_recovery();
+void keyboard_recovery();
 void keyboard_scan();
 void keyboard_send_report();
 void keyboard_save();

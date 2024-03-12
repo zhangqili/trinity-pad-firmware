@@ -69,7 +69,6 @@
 
 #define DRAW_LINE_BETWEEN(a,b) u8g2_DrawLine(&(fezui.u8g2), CONSTELLATION_X + a##_X*ZOOM, CONSTELLATION_Y + a##_Y*ZOOM, CONSTELLATION_X + b##_X*ZOOM, CONSTELLATION_Y+b##_Y*ZOOM);
 
-fezui_link_page_t aboutpage={aboutpage_logic,aboutpage_draw,aboutpage_load};
 
 static char single_char[2];
 
@@ -123,7 +122,7 @@ void draw_gemini()
     DRAW_LINE_BETWEEN(TAU,THETA);
 }
 
-void aboutpage_logic(void *page)
+static void aboutpage_logic(void *page)
 {
     CONVERGE_TO(icon_x,target_icon_x,fezui.speed);
     CONVERGE_TO(url_y,target_url_y,fezui.speed);
@@ -145,7 +144,7 @@ void aboutpage_logic(void *page)
         target_ordinate=-text_box_height;
     }
 }
-void aboutpage_draw(void *page)
+static void aboutpage_draw(void *page)
 {
     u8g2_SetFont(&(fezui.u8g2), u8g2_font_helvB12_tr);
     for (uint8_t i = 0; i < 11; i++)
@@ -175,7 +174,7 @@ void aboutpage_draw(void *page)
     u8g2_SetMaxClipWindow(&(fezui.u8g2));
 }
 
-void aboutpage_load(void *page)
+static void aboutpage_load(void *page)
 {
     ordinate=-text_box_height;
     target_ordinate=-text_box_height;
@@ -211,4 +210,5 @@ void aboutpage_load(void *page)
 
 }
 
+fezui_link_page_t aboutpage={aboutpage_logic,aboutpage_draw,aboutpage_load};
 

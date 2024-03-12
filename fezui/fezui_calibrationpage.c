@@ -48,9 +48,8 @@ typedef enum
     CMD_RESET=0xFF,
 } USART_CMD;
 
-fezui_link_page_t calibrationpage={calibrationpage_logic,calibrationpage_draw,calibrationpage_load};
 
-lefl_menu_t calibrationmenu;
+fezui_list_base_t calibrationmenu;
 const char* calibrationmenu_items[] = {"KEY1","KEY2","KEY3","KEY4"};
 
 uint8_t calibrationstate=0;
@@ -91,10 +90,10 @@ void drawrawdata(uint8_t x, uint8_t y,uint8_t n)
 
 void calibrationpage_init()
 {
-    lefl_menu_init(&calibrationmenu, calibrationmenu_items, sizeof(calibrationmenu_items)/sizeof(const char*), NULL);
+    fezui_list_base_init(&calibrationmenu, calibrationmenu_items, sizeof(calibrationmenu_items)/sizeof(const char*), NULL);
 }
 
-void calibrationpage_logic(void *page)
+static void calibrationpage_logic(void *page)
 {\
     fezui_cursor_set(
             &target_cursor ,
@@ -104,7 +103,7 @@ void calibrationpage_logic(void *page)
             9);
 }
 
-void calibrationpage_draw(void *page)
+static void calibrationpage_draw(void *page)
 {
     switch(calibrationstate)
     {
@@ -150,12 +149,14 @@ void calibrationpage_draw(void *page)
     }
 }
 
-void calibrationpage_load(void *page)
+static void calibrationpage_load(void *page)
 {
     calibrationstate=0;
     key_attach(&KEY_FN_K6, KEY_EVENT_DOWN, LAMBDA(void,(void*k){fezui_link_frame_go_back(&mainframe);}));
     key_attach(&KEY_FN_K5, KEY_EVENT_DOWN, LAMBDA(void,(void*k){;}));
     key_attach(&KEY_KNOB, KEY_EVENT_DOWN, LAMBDA(void,(void*k){;}));
-    key_attach(&KEY_KNOB_CLOCKWISE, KEY_EVENT_DOWN, LAMBDA(void,(void*k){lefl_menu_index_increase(&calibrationmenu, 1);}));
-    key_attach(&KEY_KNOB_ANTICLOCKWISE, KEY_EVENT_DOWN, LAMBDA(void,(void*k){lefl_menu_index_increase(&calibrationmenu, -1);}));\
+    key_attach(&KEY_KNOB_CLOCKWISE, KEY_EVENT_DOWN, LAMBDA(void,(void*k){fezui_list_base_index_increase(&calibrationmenu, 1);}));
+    key_attach(&KEY_KNOB_ANTICLOCKWISE, KEY_EVENT_DOWN, LAMBDA(void,(void*k){fezui_list_base_index_increase(&calibrationmenu, -1);}));\
 }
+
+fezui_link_page_t calibrationpage={calibrationpage_logic,calibrationpage_draw,calibrationpage_load};

@@ -9,98 +9,16 @@
 
 
 void fezui_draw_flowingwater(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g2_uint_t w,
-                             u8g2_uint_t h, lefl_bit_array_t *bits)
+                             u8g2_uint_t h, uint8_t *bits)
 {
     for (uint8_t i = 0; i < w; i++)
     {
-        // if (lefl_bit_array_get(bits, i))
-        //   u8g2_DrawVLine(&(fezui.u8g2),x+i,y,h);
-        if (lefl_bit_array_get(bits, i))
+        if (bits[i/8]&BIT(i%8))
             u8g2_DrawVLine(&(fezui_ptr->u8g2), x + i, y + 1, h - 2);
-        if (lefl_bit_array_get(bits, i) ^ lefl_bit_array_get(bits, i + 1))
+        if (((bool)(bits[i/8]&BIT(i%8))) ^ ((bool)(bits[(i+1)/8]&BIT((i+1)%8))))
             u8g2_DrawVLine(&(fezui_ptr->u8g2), x + i, y, h);
+        
     }
-}
-
-void fezui_draw_wave(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g2_uint_t w,
-                     u8g2_uint_t h, lefl_loop_array_t *arr, lefl_bit_array_t *l)
-{
-    uint8_t color_backup = u8g2_GetDrawColor(&(fezui_ptr->u8g2));
-    u8g2_uint_t y1;
-    u8g2_uint_t y2;
-    for (u8g2_uint_t i = 0; i < w - 1; i++)
-    {
-        y1 = lefl_loop_array_get(arr, i) / 128;
-        y2 = lefl_loop_array_get(arr, i + 1) / 128;
-        if (y1 > h || y2 > h)
-            if (!lefl_bit_array_get(l, i))
-                u8g2_DrawLine(&(fezui_ptr->u8g2), x + w - i - 1, y + 1, x + w - i - 2, y + 1);
-            else
-            {
-                u8g2_DrawVLine(&(fezui_ptr->u8g2), x + w - i - 1, y + i, h - 1);
-                u8g2_DrawLine(&(fezui_ptr->u8g2), x + w - i - 1, y + 1, x + w - i - 2, y + 1);
-            }
-        else if (lefl_bit_array_get(l, i))
-        {
-            u8g2_DrawVLine(&(fezui_ptr->u8g2), x + w - i - 1, y + h - y1, y1);
-            u8g2_DrawLine(&(fezui_ptr->u8g2), x + w - i - 1, y + h - y1, x + w - i - 2, y + h - y2);
-        }
-        else
-            u8g2_DrawLine(&(fezui_ptr->u8g2), x + w - i - 1, y + h - y1, x + w - i - 2, y + h - y2);
-    }
-    y1 = lefl_loop_array_get(arr, w - 1) / 128;
-    if (lefl_bit_array_get(l, w - 1))
-    {
-        u8g2_DrawVLine(&(fezui_ptr->u8g2), x, y + h - y1, y1);
-    }
-    u8g2_SetFont(&(fezui_ptr->u8g2), u8g2_font_micro_tr);
-    u8g2_DrawBox(&(fezui_ptr->u8g2), x, y, 17, 7);
-    u8g2_SetDrawColor(&(fezui_ptr->u8g2), 2);
-    sprintf(fezui_buffer, "%04d", lefl_loop_array_get(arr, 0));
-    u8g2_DrawStr(&(fezui_ptr->u8g2), x + 1, y + 6, fezui_buffer);
-    u8g2_SetDrawColor(&(fezui_ptr->u8g2), color_backup);
-    // u8g2_SetDrawColor(&(fezui_ptr->u8g2), !fezui_ptr->invert);
-}
-
-void fezui_draw_detailed_wave(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, AdvancedKey *key, lefl_loop_array_t *arr, lefl_bit_array_t *l)
-{
-    uint8_t color_backup = u8g2_GetDrawColor(&(fezui_ptr->u8g2));
-    u8g2_uint_t y1;
-    u8g2_uint_t y2;
-    u8g2_uint_t w = 128;
-    u8g2_uint_t h = 64;
-
-    for (u8g2_uint_t i = 0; i < w - 1; i++)
-    {
-        y1 = lefl_loop_array_get(arr, i) / 64;
-        y2 = lefl_loop_array_get(arr, i + 1) / 64;
-        if (y1 > h || y2 > h)
-            if (!lefl_bit_array_get(l, i))
-                u8g2_DrawLine(&(fezui_ptr->u8g2), x + w - i - 1, y + 1, x + w - i - 2, y + 1);
-            else
-            {
-                u8g2_DrawVLine(&(fezui_ptr->u8g2), x + w - i - 1, y + i, h - 1);
-                u8g2_DrawLine(&(fezui_ptr->u8g2), x + w - i - 1, y + 1, x + w - i - 2, y + 1);
-            }
-        else if (lefl_bit_array_get(l, i))
-        {
-            u8g2_DrawVLine(&(fezui_ptr->u8g2), x + w - i - 1, y + h - y1, y1);
-            u8g2_DrawLine(&(fezui_ptr->u8g2), x + w - i - 1, y + h - y1, x + w - i - 2, y + h - y2);
-        }
-        else
-            u8g2_DrawLine(&(fezui_ptr->u8g2), x + w - i - 1, y + h - y1, x + w - i - 2, y + h - y2);
-    }
-    if (lefl_bit_array_get(l, w - 1))
-    {
-        u8g2_DrawVLine(&(fezui_ptr->u8g2), x, y + h - y1, y1);
-    }
-    u8g2_SetFont(&(fezui_ptr->u8g2), u8g2_font_micro_tr);
-    u8g2_DrawBox(&(fezui_ptr->u8g2), x, y, 17, 7);
-    u8g2_SetDrawColor(&(fezui_ptr->u8g2), 2);
-    sprintf(fezui_buffer, "%04d", lefl_loop_array_get(arr, 0));
-    u8g2_DrawStr(&(fezui_ptr->u8g2), x + 1, y + 6, fezui_buffer);
-    u8g2_SetDrawColor(&(fezui_ptr->u8g2), color_backup);
-    // u8g2_SetDrawColor(&(fezui_ptr->u8g2), !fezui_ptr->invert);
 }
 
 void fezui_draw_chart(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g2_uint_t w,
@@ -471,12 +389,35 @@ void fezui_scrolling_text_begin_once(fezui_scrolling_text_t *text)
     text->offset = text->width;
 }
 
+void fezui_list_base_init(fezui_list_base_t* list, const char* *items,uint8_t len,void (*cb)(void* list))
+{
+    list->items=items;
+    list->len=len;
+    list->list_cb=cb;
+    list->selected_index=0;
+}
+
+void fezui_list_base_index_increase(fezui_list_base_t *list, int8_t delta)
+{
+    list->selected_index+=delta;
+    if(list->selected_index>=list->len)
+    {
+        list->selected_index=0;
+    }
+    if(list->selected_index<0)
+    {
+        list->selected_index=list->len-1;
+    }
+}
+void fezui_list_base_click(fezui_list_base_t *list)
+{
+    if(list->list_cb!=NULL)
+        list->list_cb(list);
+}
+
 void fezui_animated_listbox_init(fezui_animated_listbox_t *listbox, const char **items, uint8_t len, void (*cb)(void *listbox))
 {
-    listbox->items = items;
-    listbox->len = len;
-    listbox->listbox_cb = cb;
-    listbox->selected_index = 0;
+    fezui_list_base_init(&listbox->list,items,len,cb);
     listbox->scroll_animation.begin_time=fezui_tick;
     listbox->scroll_animation.duration = DEFAULT_ANIMATION_DURATION;
     listbox->scroll_animation.easing_func = DEFAULT_ANIMATION_EASE_FUNCTION;
@@ -487,21 +428,13 @@ void fezui_animated_listbox_index_increase(fezui_animated_listbox_t *listbox, in
 {
     fezui_animation_begin(&listbox->scroll_animation);
     listbox->offset = FEZUI_ANIMATION_GET_VALUE(&listbox->scroll_animation,listbox->offset,listbox->targetoffset);
-    listbox->selected_index += delta;
-    if (listbox->selected_index >= listbox->len)
-    {
-        listbox->selected_index = 0;
-    }
-    if (listbox->selected_index < 0)
-    {
-        listbox->selected_index = listbox->len - 1;
-    }
+    fezui_list_base_index_increase(&listbox->list,delta);
 }
 
 void fezui_animated_listbox_click(fezui_animated_listbox_t *listbox)
 {
-    if (listbox->listbox_cb != NULL)
-        listbox->listbox_cb(listbox);
+    if (listbox->list.list_cb != NULL)
+        listbox->list.list_cb(&listbox->list);
 }
 
 void fezui_animated_listbox_update(fezui_t *fezui_ptr, fezui_animated_listbox_t *listbox)
@@ -511,9 +444,9 @@ void fezui_animated_listbox_update(fezui_t *fezui_ptr, fezui_animated_listbox_t 
 void fezui_animated_listbox_get_cursor(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g2_uint_t w, u8g2_uint_t h, fezui_animated_listbox_t *listbox, u8g2_uint_t item_height, fezui_cursor_t *c)
 {
     c->x = x;
-    c->y = item_height * (listbox->selected_index) - FEZUI_ANIMATION_GET_VALUE(&listbox->scroll_animation,listbox->offset,listbox->targetoffset);
+    c->y = item_height * (listbox->list.selected_index) - FEZUI_ANIMATION_GET_VALUE(&listbox->scroll_animation,listbox->offset,listbox->targetoffset);
     c->h = item_height;
-    c->w = u8g2_GetStrWidth(&fezui_ptr->u8g2, listbox->items[listbox->selected_index]) + 1;
+    c->w = u8g2_GetStrWidth(&fezui_ptr->u8g2, listbox->list.items[listbox->list.selected_index]) + 1;
     if (c->y + item_height > y + h)
     {
         c->y = y + h - item_height;
@@ -534,22 +467,22 @@ void fezui_draw_animated_listbox(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t 
 {
     fezui_animation_calculate(&listbox->start_animation);
     fezui_animation_calculate(&listbox->scroll_animation);
-    if ((listbox->selected_index + 1) * item_height - listbox->targetoffset > h)
+    if ((listbox->list.selected_index + 1) * item_height - listbox->targetoffset > h)
     {
-        listbox->targetoffset = (listbox->selected_index + 1) * item_height - h;
+        listbox->targetoffset = (listbox->list.selected_index + 1) * item_height - h;
     }
-    if ((listbox->selected_index) * item_height < listbox->targetoffset)
+    if ((listbox->list.selected_index) * item_height < listbox->targetoffset)
     {
-        listbox->targetoffset = (listbox->selected_index) * item_height;
+        listbox->targetoffset = (listbox->list.selected_index) * item_height;
     }
     u8g2_SetClipWindow(&(fezui_ptr->u8g2), x, y, x + w, y + h);
-    for (uint16_t i = 0; i < listbox->len; i++)
+    for (uint16_t i = 0; i < listbox->list.len; i++)
     {
-        u8g2_DrawStr(&(fezui_ptr->u8g2), x + 1, (u8g2_int_t)floorf(y+(item_height * (i + 1) - FEZUI_ANIMATION_GET_VALUE(&listbox->scroll_animation,listbox->offset,listbox->targetoffset) - adjust) * listbox->start_animation.value + 0.5), listbox->items[i]);
+        u8g2_DrawStr(&(fezui_ptr->u8g2), x + 1, (u8g2_int_t)floorf(y+(item_height * (i + 1) - FEZUI_ANIMATION_GET_VALUE(&listbox->scroll_animation,listbox->offset,listbox->targetoffset) - adjust) * listbox->start_animation.value + 0.5), listbox->list.items[i]);
     }
     if (listbox->show_scrollbar)
     {
-        fezui_draw_scrollbar(fezui_ptr, x + w - 5, y, 5, (u8g2_int_t)(FEZUI_ANIMATION_GET_VALUE(&listbox->start_animation,0,h)  + 0.5), (float)h / (float)(item_height * listbox->len), FEZUI_ANIMATION_GET_VALUE(&listbox->scroll_animation,listbox->offset,listbox->targetoffset) / (float)(item_height * listbox->len - h), ORIENTATION_VERTICAL);
+        fezui_draw_scrollbar(fezui_ptr, x + w - 5, y, 5, (u8g2_int_t)(FEZUI_ANIMATION_GET_VALUE(&listbox->start_animation,0,h)  + 0.5), (float)h / (float)(item_height * listbox->list.len), FEZUI_ANIMATION_GET_VALUE(&listbox->scroll_animation,listbox->offset,listbox->targetoffset) / (float)(item_height * listbox->list.len - h), ORIENTATION_VERTICAL);
     }
     u8g2_SetMaxClipWindow(&(fezui_ptr->u8g2));
 }

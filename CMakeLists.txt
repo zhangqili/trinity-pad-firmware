@@ -34,7 +34,7 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_C_STANDARD 11)
 
 # 编译参数 一般不用改
-add_compile_options(-march=rv32imafc -mabi=ilp32f -mcmodel=medany -msmall-data-limit=8 -mno-save-restore)
+add_compile_options(-march=rv32imafcxw -mabi=ilp32f -mcmodel=medany -msmall-data-limit=8 -mno-save-restore)
 add_compile_options(-fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -fno-common -fsingle-precision-constant)
 
 # 编译等级
@@ -87,7 +87,7 @@ set(CONFIG_CHERRYUSB_DEVICE_HID TRUE)
 # 链接参数
 set(LINKER_SCRIPT  ${CMAKE_SOURCE_DIR}/Ld/Link.ld)
 add_link_options(
-                -march=rv32imafc -mabi=ilp32f
+                -march=rv32imafcxw -mabi=ilp32f
 	            -nostartfiles 
                 -Xlinker --gc-sections  
                 -Wl,--print-memory-usage

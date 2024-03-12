@@ -6,11 +6,11 @@
  */
 #include "fezui.h"
 #include "fezui_var.h"
+#include "record.h"
 
 #define ROW_HEIGHT 10
 #define KEY_WIDTH 5
 
-fezui_link_page_t statisticpage={statisticpage_logic,statisticpage_draw,statisticpage_load};
 
 static fezui_scrollview_t scrollview =
 {
@@ -21,11 +21,11 @@ static fezui_scrollview_t scrollview =
 
 static float target_ordinate=0;
 
-void statisticpage_logic(void *page)
+static void statisticpage_logic(void *page)
 {
     CONVERGE_TO_ROUNDED(scrollview.ordinate, target_ordinate, fezui.speed);
 }
-void statisticpage_draw(void *page)
+static void statisticpage_draw(void *page)
 {
 
 
@@ -60,16 +60,16 @@ void statisticpage_draw(void *page)
     //u8g2_DrawStr(&(fezui.u8g2),WIDTH-KEY_WIDTH*4,ROW_HEIGHT*8-(u8g2_int_t)(scrollview.ordinate),fezui_buffer);
 
 
-    sprintf(fezui_buffer,"%8ld",fezui_keytotalcounts[0]);
+    sprintf(fezui_buffer,"%8ld",g_key_counts[0]);
     u8g2_DrawStr(&(fezui.u8g2),WIDTH-KEY_WIDTH*9,ROW_HEIGHT*2-(u8g2_int_t)(scrollview.ordinate),fezui_buffer);
 
-    sprintf(fezui_buffer,"%8ld",fezui_keytotalcounts[1]);
+    sprintf(fezui_buffer,"%8ld",g_key_counts[1]);
     u8g2_DrawStr(&(fezui.u8g2),WIDTH-KEY_WIDTH*9,ROW_HEIGHT*3-(u8g2_int_t)(scrollview.ordinate),fezui_buffer);
 
-    sprintf(fezui_buffer,"%8ld",fezui_keytotalcounts[2]);
+    sprintf(fezui_buffer,"%8ld",g_key_counts[2]);
     u8g2_DrawStr(&(fezui.u8g2),WIDTH-KEY_WIDTH*9,ROW_HEIGHT*4-(u8g2_int_t)(scrollview.ordinate),fezui_buffer);
 
-    sprintf(fezui_buffer,"%8ld",fezui_keytotalcounts[3]);
+    sprintf(fezui_buffer,"%8ld",g_key_counts[3]);
     u8g2_DrawStr(&(fezui.u8g2),WIDTH-KEY_WIDTH*9,ROW_HEIGHT*5-(u8g2_int_t)(scrollview.ordinate),fezui_buffer);
 
 
@@ -77,7 +77,7 @@ void statisticpage_draw(void *page)
     fezui_draw_scrollview(&fezui, 0, 0, 128, 64, &scrollview);
 }
 
-void statisticpage_load(void *page)
+static void statisticpage_load(void *page)
 {
     key_attach(&KEY_FN_K6, KEY_EVENT_DOWN, LAMBDA(void,(void*k){fezui_link_frame_go_back(&mainframe);fezui_cursor_set(&cursor ,0 ,0 ,WIDTH ,HEIGHT);}));
     key_attach(&KEY_FN_K5, KEY_EVENT_DOWN, LAMBDA(void,(void*k){fezui_link_frame_go_back(&mainframe);fezui_cursor_set(&cursor ,0 ,0 ,WIDTH ,HEIGHT);}));
@@ -85,3 +85,5 @@ void statisticpage_load(void *page)
     key_attach(&KEY_KNOB_CLOCKWISE, KEY_EVENT_DOWN, LAMBDA(void,(void*k){target_ordinate+=10;if(target_ordinate+64>scrollview.content_height)target_ordinate=scrollview.content_height-64;}));
     key_attach(&KEY_KNOB_ANTICLOCKWISE, KEY_EVENT_DOWN, LAMBDA(void,(void*k){target_ordinate-=10;if(target_ordinate<0)target_ordinate=0;}));
 }
+
+fezui_link_page_t statisticpage={statisticpage_logic,statisticpage_draw,statisticpage_load};

@@ -228,9 +228,9 @@ typedef enum
     ORIENTATION_HORIZAIONTAL,
     ORIENTATION_VERTICAL
 } fezui_orientation_t;
-void fezui_draw_flowingwater(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g2_uint_t w, u8g2_uint_t h, lefl_bit_array_t *bits);
-void fezui_draw_wave(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g2_uint_t w, u8g2_uint_t h, lefl_loop_array_t *arr, lefl_bit_array_t *l);
-void fezui_draw_detailed_wave(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, AdvancedKey *key, lefl_loop_array_t *arr, lefl_bit_array_t *l);
+void fezui_draw_flowingwater(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g2_uint_t w, u8g2_uint_t h, uint8_t *bits);
+//void fezui_draw_wave(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g2_uint_t w, u8g2_uint_t h, lefl_loop_array_t *arr, uint8_t *bits);
+//void fezui_draw_detailed_wave(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, AdvancedKey *key, lefl_loop_array_t *arr, uint8_t *bits);
 void fezui_draw_chart(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g2_uint_t w, u8g2_uint_t h, lefl_loop_array_t *arr, uint8_t max);
 void fezui_veil(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g2_uint_t w, u8g2_uint_t h, uint8_t level, uint8_t color);
 void fezui_veil_full_screen(fezui_t *fezui_ptr, uint8_t level);
@@ -308,18 +308,25 @@ void fezui_scrolling_text_init(fezui_t *fezui_ptr, fezui_scrolling_text_t *text,
 void fezui_scrolling_text_begin(fezui_scrolling_text_t *text);
 void fezui_scrolling_text_begin_once(fezui_scrolling_text_t *text);
 void fezui_scrolling_text_get_status(fezui_t *fezui_ptr, fezui_scrolling_text_t *text);
-typedef struct __fezui_animated_listbox_t
+typedef struct __fezui_list_base_t
 {
     const char **items;
     int16_t selected_index;
     uint16_t len;
+    void (*list_cb)(void *list);
+} fezui_list_base_t;
+void fezui_list_base_init(fezui_list_base_t* list, const char* *items,uint8_t len,void (*cb)(void* list));
+void fezui_list_base_index_increase(fezui_list_base_t* list, int8_t delta);
+void fezui_list_base_click(fezui_list_base_t* list);
+typedef struct __fezui_animated_listbox_t
+{
+    fezui_list_base_t list;
     u8g2_int_t content_height;
     fezui_animation_base_t scroll_animation;
     fezui_animation_base_t start_animation;
     float targetoffset;
     float offset;
     bool show_scrollbar;
-    void (*listbox_cb)(void *listbox);
 } fezui_animated_listbox_t;
 void fezui_animated_listbox_init(fezui_animated_listbox_t *listbox, const char **items, uint8_t len, void (*cb)(void *listbox));
 void fezui_animated_listbox_index_increase(fezui_animated_listbox_t *listbox, int8_t delta);

@@ -39,19 +39,19 @@ static bool mode_switching = false;
 static float* target_property;
 static float advancedconfigpage_interval;
 
-lefl_menu_t keyconfig_digital_mode_menu;
+fezui_list_base_t keyconfig_digital_mode_menu;
 const char* keyconfig_digital_mode_menu_items[] = {"Mode"};
 
-lefl_menu_t keyconfig_analog_normal_mode_menu;
+fezui_list_base_t keyconfig_analog_normal_mode_menu;
 const char* keyconfig_analog_normal_mode_menu_items[] = {"Mode","Upper bound","Lower bound","Trigger distance","Schmitt parameter"};
 
-lefl_menu_t keyconfig_analog_rapid_mode_menu;
+fezui_list_base_t keyconfig_analog_rapid_mode_menu;
 const char* keyconfig_analog_rapid_mode_menu_items[] = {"Mode","Upper bound","Lower bound","Trigger distance","Release distance","Upper deadzone","Lower deadzone"};
 
-lefl_menu_t keyconfig_analog_speed_mode_menu;
+fezui_list_base_t keyconfig_analog_speed_mode_menu;
 const char* keyconfig_analog_speed_mode_menu_items[] = {"Mode","Upper bound","Lower bound","Trigger speed","Release speed","Upper deadzone","Lower deadzone"};
 
-lefl_menu_t *current_menu=&keyconfig_digital_mode_menu;
+fezui_list_base_t *current_menu=&keyconfig_digital_mode_menu;
 
 AdvancedKey* current_config_advanced_key;
 
@@ -62,7 +62,7 @@ static char binding_text[256];
 
 void keyconfig_digital_mode_menu_cb(void* m)
 {
-    switch (((lefl_menu_t*)m)->selected_index)
+    switch (((fezui_list_base_t*)m)->selected_index)
     {
         case 0:
             mode_switching=true;
@@ -78,7 +78,7 @@ void keyconfig_digital_mode_menu_cb(void* m)
 
 void keyconfig_analog_normal_mode_menu_cb(void* m)
 {
-    switch (((lefl_menu_t*)m)->selected_index)
+    switch (((fezui_list_base_t*)m)->selected_index)
     {
         case 0:
             mode_switching=true;
@@ -115,7 +115,7 @@ void keyconfig_analog_normal_mode_menu_cb(void* m)
 void keyconfig_analog_rapid_mode_menu_cb(void* m)
 {
 
-    switch (((lefl_menu_t*)m)->selected_index)
+    switch (((fezui_list_base_t*)m)->selected_index)
     {
         case 0:
             mode_switching=true;
@@ -162,7 +162,7 @@ void keyconfig_analog_rapid_mode_menu_cb(void* m)
 void keyconfig_analog_speed_mode_menu_cb(void* m)
 {
 
-    switch (((lefl_menu_t*)m)->selected_index)
+    switch (((fezui_list_base_t*)m)->selected_index)
     {
         case 0:
             mode_switching=true;
@@ -208,14 +208,14 @@ void keyconfig_analog_speed_mode_menu_cb(void* m)
 
 void advancedconfigpage_init()
 {
-    lefl_menu_init(&keyconfig_digital_mode_menu, keyconfig_digital_mode_menu_items, sizeof(keyconfig_digital_mode_menu_items)/sizeof(const char*), keyconfig_digital_mode_menu_cb);
-    lefl_menu_init(&keyconfig_analog_normal_mode_menu, keyconfig_analog_normal_mode_menu_items, sizeof(keyconfig_analog_normal_mode_menu_items)/sizeof(const char*), keyconfig_analog_normal_mode_menu_cb);
-    lefl_menu_init(&keyconfig_analog_rapid_mode_menu, keyconfig_analog_rapid_mode_menu_items, sizeof(keyconfig_analog_rapid_mode_menu_items)/sizeof(const char*), keyconfig_analog_rapid_mode_menu_cb);
-    lefl_menu_init(&keyconfig_analog_speed_mode_menu, keyconfig_analog_speed_mode_menu_items, sizeof(keyconfig_analog_speed_mode_menu_items)/sizeof(const char*), keyconfig_analog_speed_mode_menu_cb);
+    fezui_list_base_init(&keyconfig_digital_mode_menu, keyconfig_digital_mode_menu_items, sizeof(keyconfig_digital_mode_menu_items)/sizeof(const char*), keyconfig_digital_mode_menu_cb);
+    fezui_list_base_init(&keyconfig_analog_normal_mode_menu, keyconfig_analog_normal_mode_menu_items, sizeof(keyconfig_analog_normal_mode_menu_items)/sizeof(const char*), keyconfig_analog_normal_mode_menu_cb);
+    fezui_list_base_init(&keyconfig_analog_rapid_mode_menu, keyconfig_analog_rapid_mode_menu_items, sizeof(keyconfig_analog_rapid_mode_menu_items)/sizeof(const char*), keyconfig_analog_rapid_mode_menu_cb);
+    fezui_list_base_init(&keyconfig_analog_speed_mode_menu, keyconfig_analog_speed_mode_menu_items, sizeof(keyconfig_analog_speed_mode_menu_items)/sizeof(const char*), keyconfig_analog_speed_mode_menu_cb);
 
 }
 
-void advancedconfigpage_logic(void *page)
+static void advancedconfigpage_logic(void *page)
 {
     if(configing)
     {
@@ -249,16 +249,16 @@ void advancedconfigpage_logic(void *page)
     }
     switch (current_config_advanced_key->mode)
     {
-        case LEFL_KEY_DIGITAL_MODE:
+        case KEY_DIGITAL_MODE:
             current_menu = &keyconfig_digital_mode_menu;
             break;
-        case LEFL_KEY_ANALOG_NORMAL_MODE:
+        case KEY_ANALOG_NORMAL_MODE:
             current_menu = &keyconfig_analog_normal_mode_menu;
             break;
-        case LEFL_KEY_ANALOG_RAPID_MODE:
+        case KEY_ANALOG_RAPID_MODE:
             current_menu = &keyconfig_analog_rapid_mode_menu;
             break;
-        case LEFL_KEY_ANALOG_SPEED_MODE:
+        case KEY_ANALOG_SPEED_MODE:
             current_menu = &keyconfig_analog_speed_mode_menu;
             break;
         default:
@@ -273,7 +273,7 @@ void advancedconfigpage_logic(void *page)
     {
         target_ordinate = (current_menu->selected_index)*ROW_HEIGHT;
     }
-    if(current_config_advanced_key->mode==LEFL_KEY_DIGITAL_MODE)
+    if(current_config_advanced_key->mode==KEY_DIGITAL_MODE)
     {
         target_ordinate = 0;
     }
@@ -281,7 +281,7 @@ void advancedconfigpage_logic(void *page)
     CONVERGE_TO_ROUNDED(scrollview.ordinate, target_ordinate, fezui.speed);
 }
 
-void advancedconfigpage_draw(void *page)
+static void advancedconfigpage_draw(void *page)
 {
     uint8_t color = u8g2_GetDrawColor(&(fezui.u8g2));
 
@@ -309,10 +309,10 @@ void advancedconfigpage_draw(void *page)
     u8g2_SetFont(&(fezui.u8g2), u8g2_font_4x6_mr);
     switch (current_config_advanced_key->mode)
     {
-        case LEFL_KEY_DIGITAL_MODE:
+        case KEY_DIGITAL_MODE:
             u8g2_DrawStr(&(fezui.u8g2), SPERATOR_X-4*7, ROW_HEIGHT*1-2 - (u8g2_int_t)scrollview.ordinate, "Digital");
             break;
-        case LEFL_KEY_ANALOG_NORMAL_MODE:
+        case KEY_ANALOG_NORMAL_MODE:
             u8g2_DrawStr(&(fezui.u8g2), SPERATOR_X-4*13, ROW_HEIGHT*1-2 - (u8g2_int_t)scrollview.ordinate, "Analog Normal");
 
             sprintf(fezui_buffer,"%6.1f",current_config_advanced_key->upper_bound);
@@ -327,7 +327,7 @@ void advancedconfigpage_draw(void *page)
             sprintf(fezui_buffer,"%6.1f%%",(current_config_advanced_key->schmitt_parameter)*100);
             u8g2_DrawStr(&(fezui.u8g2), SPERATOR_X-4*7, ROW_HEIGHT*5-2 - (u8g2_int_t)scrollview.ordinate, fezui_buffer);
             break;
-        case LEFL_KEY_ANALOG_RAPID_MODE:
+        case KEY_ANALOG_RAPID_MODE:
             u8g2_DrawStr(&(fezui.u8g2), SPERATOR_X-4*12, ROW_HEIGHT*1-2 - (u8g2_int_t)scrollview.ordinate, "Analog Rapid");
 
             sprintf(fezui_buffer,"%6.1f",current_config_advanced_key->upper_bound);
@@ -348,7 +348,7 @@ void advancedconfigpage_draw(void *page)
             sprintf(fezui_buffer,"%6.1f%%",(current_config_advanced_key->lower_deadzone)*100);
             u8g2_DrawStr(&(fezui.u8g2), SPERATOR_X-4*7, ROW_HEIGHT*7-2 - (u8g2_int_t)scrollview.ordinate, fezui_buffer);
             break;
-        case LEFL_KEY_ANALOG_SPEED_MODE:
+        case KEY_ANALOG_SPEED_MODE:
             u8g2_DrawStr(&(fezui.u8g2), SPERATOR_X-4*12, ROW_HEIGHT*1-2 - (u8g2_int_t)scrollview.ordinate, "Analog Speed");
 
             sprintf(fezui_buffer,"%6.1f",current_config_advanced_key->upper_bound);
@@ -401,17 +401,17 @@ void advancedconfigpage_draw(void *page)
 static void mode_update(int8_t x)
 {
     current_config_advanced_key->mode += x;
-    if(current_config_advanced_key->mode>LEFL_KEY_ANALOG_SPEED_MODE)
+    if(current_config_advanced_key->mode>KEY_ANALOG_SPEED_MODE)
     {
-        current_config_advanced_key->mode=LEFL_KEY_DIGITAL_MODE;
+        current_config_advanced_key->mode=KEY_DIGITAL_MODE;
     }
-    if(current_config_advanced_key->mode<LEFL_KEY_DIGITAL_MODE)
+    if(current_config_advanced_key->mode<KEY_DIGITAL_MODE)
     {
-        current_config_advanced_key->mode=LEFL_KEY_ANALOG_SPEED_MODE;
+        current_config_advanced_key->mode=KEY_ANALOG_SPEED_MODE;
     }
 }
 
-void advancedconfigpage_load(void *page)
+static void advancedconfigpage_load(void *page)
 {
     //keyid_prase(current_config_advanced_key->key.id, binding_text, 256);
     fezui_scrolling_text_init(&fezui,&scrolling_text, 78, 0.2, u8g2_font_4x6_mr, binding_text);
@@ -440,7 +440,7 @@ void advancedconfigpage_load(void *page)
         }
         else
         {
-            lefl_menu_click(current_menu);
+            fezui_list_base_click(current_menu);
         }
     }));
     key_attach(&KEY_KNOB, KEY_EVENT_DOWN, LAMBDA(void,(void*k)
@@ -455,7 +455,7 @@ void advancedconfigpage_load(void *page)
         }
         else
         {
-            lefl_menu_click(current_menu);
+            fezui_list_base_click(current_menu);
         }
     }));
     key_attach(&KEY_KNOB_CLOCKWISE, KEY_EVENT_DOWN, LAMBDA(void,(void*k)
@@ -470,7 +470,7 @@ void advancedconfigpage_load(void *page)
         }
         else
         {
-            lefl_menu_index_increase(current_menu, 1);
+            fezui_list_base_index_increase(current_menu, 1);
         }
     }));
     key_attach(&KEY_KNOB_ANTICLOCKWISE, KEY_EVENT_DOWN, LAMBDA(void,(void*k)
@@ -485,7 +485,7 @@ void advancedconfigpage_load(void *page)
         }
         else
         {
-            lefl_menu_index_increase(current_menu, -1);
+            fezui_list_base_index_increase(current_menu, -1);
         }
     }));
 }

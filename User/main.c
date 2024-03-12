@@ -29,6 +29,7 @@
 #include "lfs.h"
 #include "rgb.h"
 #include "fram.h"
+#include "record.h"
 
 /* Global typedef */
 
@@ -635,6 +636,7 @@ int main(void)
     sfud_device_init(&sfud_norflash0);
     fezui_init();
     keyboard_init();
+    record_init();
     rgb_init();
     rgb_recovery();
     EXTI_INT_INIT();
@@ -666,13 +668,9 @@ int main(void)
         }
         ADC_Averages[i]/=ANALOG_BUFFER_LENGTH;
         advanced_key_set_range(Keyboard_AdvancedKeys + i, ADC_Averages[i], 200);
-        //advanced_key_set_deadzone(Keyboard_AdvancedKeys + i, 0.04, 0.1);
-        //Keyboard_AdvancedKeys[i].mode = LEFL_KEY_ANALOG_RAPID_MODE;
-        //Keyboard_AdvancedKeys[i].trigger_distance = 0.05;
-        //Keyboard_AdvancedKeys[i].release_distance = 0.05;
     }
-    fram_read_bytes(0x400,fezui_keytotalcounts,sizeof(fezui_keytotalcounts));
-    memcpy(fezui_keyinitcounts,fezui_keytotalcounts,sizeof(fezui_keytotalcounts));
+    fram_read_bytes(0x400,g_key_counts,sizeof(g_key_counts));
+    memcpy(g_key_init_counts,g_key_counts,sizeof(g_key_counts));
 
     TIM6_INT_Init(14400 / 144 - 1, 10000 - 1);
     TIM7_INT_Init(14400 / 8 - 1, 10 - 1);
@@ -682,7 +680,7 @@ int main(void)
         // hid_keyboard_test();
         fezui_render_handler();
         
-        fram_write_bytes(0x400,fezui_keytotalcounts,sizeof(fezui_keytotalcounts));
+        fram_write_bytes(0x400,g_key_counts,sizeof(g_key_counts));
         GPIO_WriteBit(LED_GPIO_Port, LED_Pin, !GPIO_ReadInputDataBit(LED_GPIO_Port, LED_Pin));
         //if(usb_state!=usb_device_is_configured())
         //{
@@ -708,13 +706,15 @@ void TIM6_IRQHandler(void)
             count = 0;
             if (fezui.screensaver_countdown)
                 fezui.screensaver_countdown--;
-            lefl_loop_array_push_back(&KPS_history, UI_KPSMaximumPerSecond);
+            loop_array_push_back(&g_kps_history,UI_KPSMaximumPerSecond);
             UI_KPSMaximumPerSecond = 0;
             fezui_report_count1=fezui_report_count;
             fezui_report_count=0;
             fezui_run_time++;
         }
         fezui_timer_handler();
+        record_bit_stream_timer();
+        record_kps_timer();
     }
 }
 
