@@ -149,14 +149,28 @@ static void calibrationpage_draw(void *page)
     }
 }
 
+static void calibrationpage_event_handler(void *e)
+{
+    switch (*(uint16_t*)e)
+    {
+    case KEY_UP_ARROW:
+        fezui_list_base_index_increase(&calibrationmenu, -1);
+        break;
+    case KEY_DOWN_ARROW:
+        fezui_list_base_index_increase(&calibrationmenu, 1);
+        break;
+    case KEY_ENTER:
+        break;
+    case KEY_ESC:
+        fezui_link_frame_go_back(&mainframe);
+        break;
+    default:
+        break;
+    }
+}
 static void calibrationpage_load(void *page)
 {
     calibrationstate=0;
-    key_attach(&KEY_FN_K6, KEY_EVENT_DOWN, LAMBDA(void,(void*k){fezui_link_frame_go_back(&mainframe);}));
-    key_attach(&KEY_FN_K5, KEY_EVENT_DOWN, LAMBDA(void,(void*k){;}));
-    key_attach(&KEY_KNOB, KEY_EVENT_DOWN, LAMBDA(void,(void*k){;}));
-    key_attach(&KEY_KNOB_CLOCKWISE, KEY_EVENT_DOWN, LAMBDA(void,(void*k){fezui_list_base_index_increase(&calibrationmenu, 1);}));
-    key_attach(&KEY_KNOB_ANTICLOCKWISE, KEY_EVENT_DOWN, LAMBDA(void,(void*k){fezui_list_base_index_increase(&calibrationmenu, -1);}));\
 }
 
-fezui_link_page_t calibrationpage={calibrationpage_logic,calibrationpage_draw,calibrationpage_load};
+fezui_link_page_t calibrationpage={calibrationpage_logic,calibrationpage_draw,calibrationpage_load,calibrationpage_event_handler};

@@ -8,8 +8,8 @@
 #include "fezui_var.h"
 #include "main.h"
 
-//static float target_ordinate = 0;
-//static float target_abscissa = 0;
+// static float target_ordinate = 0;
+// static float target_abscissa = 0;
 
 static float targetnum = 50;
 
@@ -53,7 +53,7 @@ static void debugpage_draw(void *page)
     // fezui_animated_listbox_get_cursor(&fezui, 0, 0, WIDTH, HEIGHT, &listbox, 8, &target_cursor);
     extern uint8_t read_buffer[64];
     sprintf(fezui_buffer, "%d", read_buffer[0]);
-    u8g2_DrawStr(&(fezui.u8g2), 0, 64, (char*)read_buffer+1);
+    u8g2_DrawStr(&(fezui.u8g2), 0, 64, (char *)read_buffer + 1);
 
     fezui_draw_flyout_numberic_dialog(&fezui, &dialog);
     fezui_draw_cursor(&fezui, &cursor);
@@ -63,16 +63,29 @@ static void debugpage_load(void *page)
 {
     fezui_flyout_numberic_dialog_init(&dialog, &targetnum, FEZUI_TYPE_FLOAT, 0, 100, 0.1, "NUMBER");
     fezui_flyout_numberic_dialog_show(&dialog);
-    key_attach(&KEY_FN_K5, KEY_EVENT_DOWN, LAMBDA(
-                                                    void, (void *k) {fezui_link_frame_go_back(&mainframe);fezui_cursor_set(&cursor ,0 ,0 ,WIDTH ,HEIGHT); }));
-    key_attach(&KEY_FN_K6, KEY_EVENT_DOWN, LAMBDA(
-                                                    void, (void *k) {fezui_link_frame_go_back(&mainframe);fezui_cursor_set(&cursor ,0 ,0 ,WIDTH ,HEIGHT); }));
-    key_attach(&KEY_KNOB, KEY_EVENT_DOWN, LAMBDA(
-                                                   void, (void *k) {fezui_link_frame_go_back(&mainframe);fezui_cursor_set(&cursor ,0 ,0 ,WIDTH ,HEIGHT); }));
-    key_attach(&KEY_KNOB_CLOCKWISE, KEY_EVENT_DOWN, LAMBDA(
-                                                             void, (void *k) { fezui_numberic_dialog_increase(&dialog.dialog, 1); }));
-    key_attach(&KEY_KNOB_ANTICLOCKWISE, KEY_EVENT_DOWN, LAMBDA(
-                                                                 void, (void *k) { fezui_numberic_dialog_increase(&dialog.dialog, -1); }));
+
 }
 
-fezui_link_page_t debugpage = {debugpage_logic, debugpage_draw, debugpage_load};
+static void debugpage_event_handler(void *e)
+{
+    switch (*(uint16_t *)e)
+    {
+    case KEY_UP_ARROW:
+        fezui_numberic_dialog_increase(&dialog.dialog, 1);
+        break;
+    case KEY_DOWN_ARROW:
+        fezui_numberic_dialog_increase(&dialog.dialog, -1);
+        break;
+    case KEY_ENTER:
+        fezui_link_frame_go_back(&mainframe);
+        break;
+    case KEY_ESC:
+        fezui_link_frame_go_back(&mainframe);
+        fezui_cursor_set(&cursor, 0, 0, WIDTH, HEIGHT);
+        break;
+    default:
+        break;
+    }
+}
+
+fezui_link_page_t debugpage = {debugpage_logic, debugpage_draw, debugpage_load, debugpage_event_handler};

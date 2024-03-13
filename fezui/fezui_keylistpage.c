@@ -71,11 +71,26 @@ static void keylistpage_load(void *page)
 {
     //lefl_bit_array_init(&head_key_usage, (size_t*)&(current_target_key_binding->modifier), 8);
     fezui_animated_listbox_begin(&keylist);
-    key_attach(&KEY_KNOB, KEY_EVENT_DOWN, LAMBDA(void,(void*k){fezui_animated_listbox_click(&keylist);}));
-    key_attach(&KEY_FN_K5, KEY_EVENT_DOWN, LAMBDA(void,(void*k){fezui_animated_listbox_click(&keylist);}));
-    key_attach(&KEY_FN_K6, KEY_EVENT_DOWN, LAMBDA(void,(void*k){fezui_link_frame_go_back(&mainframe);}));
-    key_attach(&KEY_KNOB_CLOCKWISE, KEY_EVENT_DOWN, LAMBDA(void,(void*k){fezui_animated_listbox_index_increase(&keylist, 1);}));
-    key_attach(&KEY_KNOB_ANTICLOCKWISE, KEY_EVENT_DOWN, LAMBDA(void,(void*k){fezui_animated_listbox_index_increase(&keylist, -1);}));
+}
+static void keylistpage_event_handler(void *e)
+{
+    switch (*(uint16_t *)e)
+    {
+    case KEY_UP_ARROW:
+        fezui_animated_listbox_index_increase(&keylist, -1);
+        break;
+    case KEY_DOWN_ARROW:
+        fezui_animated_listbox_index_increase(&keylist, 1);
+        break;
+    case KEY_ENTER:
+        fezui_animated_listbox_click(&keylist);
+        break;
+    case KEY_ESC:
+        fezui_link_frame_go_back(&mainframe);
+        break;
+    default:
+        break;
+    }
 }
 
-fezui_link_page_t keylistpage = {keylistpage_logic, keylistpage_draw, keylistpage_load};
+fezui_link_page_t keylistpage = {keylistpage_logic, keylistpage_draw, keylistpage_load, keylistpage_event_handler};

@@ -411,70 +411,12 @@ static void mode_update(int8_t x)
     }
 }
 
-static void advancedconfigpage_load(void *page)
+static void advancedconfigpage_event_handler(void *e)
 {
-    //keyid_prase(current_config_advanced_key->key.id, binding_text, 256);
-    fezui_scrolling_text_init(&fezui,&scrolling_text, 78, 0.2, u8g2_font_4x6_mr, binding_text);
-    key_attach(&KEY_FN_K6, KEY_EVENT_DOWN, LAMBDA(void,(void*k)
+    switch (*(uint16_t*)e)
     {
-        if(configing||mode_switching)
-        {
-            configing=false;
-            mode_switching=false;
-        }
-        else
-        {
-            analog_save();
-            fezui_link_frame_go_back(&mainframe);
-        }
-    }));
-    key_attach(&KEY_FN_K5, KEY_EVENT_DOWN, LAMBDA(void,(void*k)
-    {
-        if(configing)
-        {
-            configing = false;
-        }
-        if(mode_switching)
-        {
-            mode_switching = false;
-        }
-        else
-        {
-            fezui_list_base_click(current_menu);
-        }
-    }));
-    key_attach(&KEY_KNOB, KEY_EVENT_DOWN, LAMBDA(void,(void*k)
-    {
-        if(configing)
-        {
-            configing = false;
-        }
-        if(mode_switching)
-        {
-            mode_switching = false;
-        }
-        else
-        {
-            fezui_list_base_click(current_menu);
-        }
-    }));
-    key_attach(&KEY_KNOB_CLOCKWISE, KEY_EVENT_DOWN, LAMBDA(void,(void*k)
-    {
-        if(configing)
-        {
-            *target_property += advancedconfigpage_interval;
-        }
-        else if(mode_switching)
-        {
-            mode_update(1);
-        }
-        else
-        {
-            fezui_list_base_index_increase(current_menu, 1);
-        }
-    }));
-    key_attach(&KEY_KNOB_ANTICLOCKWISE, KEY_EVENT_DOWN, LAMBDA(void,(void*k)
-    {
+    case KEY_UP_ARROW:
+
         if(configing)
         {
             *target_property -= advancedconfigpage_interval;
@@ -487,8 +429,55 @@ static void advancedconfigpage_load(void *page)
         {
             fezui_list_base_index_increase(current_menu, -1);
         }
-    }));
+        break;
+    case KEY_DOWN_ARROW:
+        if(configing)
+        {
+            *target_property += advancedconfigpage_interval;
+        }
+        else if(mode_switching)
+        {
+            mode_update(1);
+        }
+        else
+        {
+            fezui_list_base_index_increase(current_menu, 1);
+        }
+        break;
+    case KEY_ENTER:
+        if(configing)
+        {
+            configing = false;
+        }
+        if(mode_switching)
+        {
+            mode_switching = false;
+        }
+        else
+        {
+            fezui_list_base_click(current_menu);
+        }
+        break;
+    case KEY_ESC:
+        if(configing||mode_switching)
+        {
+            configing=false;
+            mode_switching=false;
+        }
+        else
+        {
+            fezui_link_frame_go_back(&mainframe);
+        }
+        break;
+    default:
+        break;
+    }
+}
+static void advancedconfigpage_load(void *page)
+{
+    //keyid_prase(current_config_advanced_key->key.id, binding_text, 256);
+    fezui_scrolling_text_init(&fezui,&scrolling_text, 78, 0.2, u8g2_font_4x6_mr, binding_text);
 }
 
-fezui_link_page_t advancedconfigpage={advancedconfigpage_logic,advancedconfigpage_draw,advancedconfigpage_load};
+fezui_link_page_t advancedconfigpage={advancedconfigpage_logic,advancedconfigpage_draw,advancedconfigpage_load,advancedconfigpage_event_handler};
 

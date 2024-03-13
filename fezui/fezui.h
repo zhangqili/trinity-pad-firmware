@@ -17,6 +17,7 @@
 #include "fezui_util.h"
 #include "fezui_config.h"
 #include "fezui_interface.h"
+#include "usb_hid_keys.h"
 
 #ifndef DEFAULT_ANIMATION_EASE_FUNCTION
 #define DEFAULT_ANIMATION_EASE_FUNCTION fezui_animation_cubic_ease
@@ -440,6 +441,7 @@ typedef struct __fezui_link_page_t
     void (*page_logic_cb)(void *page);
     void (*page_draw_cb)(void *page);
     void (*page_load_cb)(void *page);
+    void (*event_handler)(void *e);
     struct __fezui_link_page_t *forward;
     struct __fezui_link_page_t *back;
 } fezui_link_page_t;
@@ -458,10 +460,12 @@ void fezui_link_frame_go_back(fezui_link_frame_t *frame);
 void fezui_link_frame_navigate(fezui_link_frame_t *frame, fezui_link_page_t *page);
 void fezui_link_frame_logic(fezui_link_frame_t *frame);
 void fezui_link_frame_draw(fezui_link_frame_t *frame);
+void fezui_link_frame_input(fezui_link_frame_t* frame, void* sender);
 
 /*
  * fezui_util.c
  */
 float fezui_generics_convert_to_float(void *p, fezui_numberic_type_t t);
 void fezui_generics_convertback(void *p, fezui_numberic_type_t t, float x);
+
 #endif /* FEZUI_H_ */

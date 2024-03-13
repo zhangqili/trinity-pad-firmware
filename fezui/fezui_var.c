@@ -15,8 +15,6 @@ uint8_t u8log_buf[1024];
 
 uint8_t KPS_history_max=0;
 uint32_t fezui_fps = 0;
-uint8_t fezui_kps = 0;
-uint8_t UI_KPSMaximumPerSecond = 0;
 uint32_t fezui_debug;
 uint8_t fezui_adc_conversion_count;
 float fezui_debug_float;

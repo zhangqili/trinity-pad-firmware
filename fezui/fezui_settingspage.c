@@ -70,16 +70,26 @@ static void settings_menu_cb(void *menu)
 static void settingspage_load(void *page)
 {
     fezui_animated_listbox_begin(&settingsmenu);
-    key_attach(&KEY_FN_K5, KEY_EVENT_DOWN, LAMBDA(
-                                                    void, (void *k) { fezui_animated_listbox_click(&settingsmenu); }));
-    key_attach(&KEY_KNOB, KEY_EVENT_DOWN, LAMBDA(
-                                                   void, (void *k) { fezui_animated_listbox_click(&settingsmenu); }));
-    key_attach(&KEY_FN_K6, KEY_EVENT_DOWN, LAMBDA(
-                                                    void, (void *k) { fezui_link_frame_go_back(&mainframe); }));
-    key_attach(&KEY_KNOB_CLOCKWISE, KEY_EVENT_DOWN, LAMBDA(
-                                                             void, (void *k) { fezui_animated_listbox_index_increase(&settingsmenu, 1); }));
-    key_attach(&KEY_KNOB_ANTICLOCKWISE, KEY_EVENT_DOWN, LAMBDA(
-                                                                 void, (void *k) { fezui_animated_listbox_index_increase(&settingsmenu, -1); }));
+}
+static void settingspage_event_handler(void *e)
+{
+    switch (*(uint16_t *)e)
+    {
+    case KEY_UP_ARROW:
+        fezui_animated_listbox_index_increase(&settingsmenu, -1);
+        break;
+    case KEY_DOWN_ARROW:
+        fezui_animated_listbox_index_increase(&settingsmenu, 1);
+        break;
+    case KEY_ENTER:
+        fezui_animated_listbox_click(&settingsmenu);
+        break;
+    case KEY_ESC:
+        fezui_link_frame_go_back(&mainframe);
+        break;
+    default:
+        break;
+    }
 }
 
-fezui_link_page_t settingspage = {settingspage_logic, settingspage_draw, settingspage_load};
+fezui_link_page_t settingspage = {settingspage_logic, settingspage_draw, settingspage_load, settingspage_event_handler};

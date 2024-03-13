@@ -74,7 +74,7 @@ static void homepage_logic(void *page)
     fezui_rolling_number_set(&key2_num,g_key_counts[1]-g_key_init_counts[1]);
     fezui_rolling_number_set(&key3_num,g_key_counts[2]-g_key_init_counts[2]);
     fezui_rolling_number_set(&key4_num,g_key_counts[3]-g_key_init_counts[3]);
-    fezui_rolling_number_set(&kps_num,fezui_kps);
+    fezui_rolling_number_set(&kps_num,g_kps);
     fezui_rolling_number_set(&max_kps_num,KPS_history_max);
 
     //sprintf(fezui_buffer,"%2d",KPS_history_max);
@@ -193,11 +193,6 @@ static void homepage_load(void *page)
     Keybaord_SendReport_Enable=true;
     Keybaord_Shift_Flag=false;
     Keybaord_Alpha_Flag=false;
-    key_attach(&KEY_FN_K5, KEY_EVENT_DOWN, NULL);
-    key_attach(&KEY_FN_K6, KEY_EVENT_DOWN, NULL);
-    key_attach(&KEY_KNOB, KEY_EVENT_DOWN, NULL);
-    key_attach(&KEY_KNOB_CLOCKWISE, KEY_EVENT_DOWN, NULL);
-    key_attach(&KEY_KNOB_ANTICLOCKWISE, KEY_EVENT_DOWN, NULL);
 }
 
 fezui_link_page_t homepage={homepage_logic,homepage_draw,homepage_load};

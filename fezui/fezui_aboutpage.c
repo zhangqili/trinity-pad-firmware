@@ -174,6 +174,37 @@ static void aboutpage_draw(void *page)
     u8g2_SetMaxClipWindow(&(fezui.u8g2));
 }
 
+static void aboutpage_event_handler(void *e)
+{
+    switch (*(uint16_t*)e)
+    {
+    case KEY_UP_ARROW:
+        target_ordinate+=10;
+        if(ordinate>text_box_height)
+        {
+            ordinate=-text_box_height;
+            target_ordinate=-text_box_height;
+        }
+        break;
+    case KEY_DOWN_ARROW:
+        target_ordinate-=10;
+        if(ordinate<-text_box_height)
+        {
+            ordinate=+text_box_height;
+            target_ordinate=+text_box_height;
+        }
+        break;
+    case KEY_ENTER:
+        break;
+    case KEY_ESC:
+        fezui_link_frame_go_back(&mainframe);
+        fezui_cursor_set(&cursor ,0 ,0 ,WIDTH ,HEIGHT);
+        break;
+    default:
+        break;
+    }
+}
+
 static void aboutpage_load(void *page)
 {
     ordinate=-text_box_height;
@@ -188,27 +219,8 @@ static void aboutpage_load(void *page)
     {
         device_version_offsets[i]=WIDTH;
     }
-    key_attach(&KEY_KNOB, KEY_EVENT_DOWN, LAMBDA(void,(void*k){fezui_link_frame_go_back(&mainframe);fezui_cursor_set(&cursor ,0 ,0 ,WIDTH ,HEIGHT);}));
-    key_attach(&KEY_KNOB_CLOCKWISE, KEY_EVENT_DOWN, LAMBDA(void,(void*k)
-    {
-        target_ordinate+=10;
-        if(ordinate>text_box_height)
-        {
-            ordinate=-text_box_height;
-            target_ordinate=-text_box_height;
-        }
-    }));
-    key_attach(&KEY_KNOB_ANTICLOCKWISE, KEY_EVENT_DOWN, LAMBDA(void,(void*k)
-    {
-        target_ordinate-=10;
-        if(ordinate<-text_box_height)
-        {
-            ordinate=+text_box_height;
-            target_ordinate=+text_box_height;
-        }
-    }));
 
 }
 
-fezui_link_page_t aboutpage={aboutpage_logic,aboutpage_draw,aboutpage_load};
+fezui_link_page_t aboutpage={aboutpage_logic,aboutpage_draw,aboutpage_load,aboutpage_event_handler};
 

@@ -16,11 +16,9 @@ extern u8log_t u8log;
 extern uint8_t u8log_buf[1024];
 
 extern uint32_t fezui_fps;
-extern uint8_t fezui_kps;
 extern uint8_t KPS_history_max;
 extern char fpsstr[8];
 extern char comstr[8];
-extern uint8_t UI_KPSMaximumPerSecond;
 extern uint32_t fezui_debug;
 extern float fezui_debug_float;
 extern uint8_t cmd_buffer;
@@ -61,13 +59,6 @@ extern uint16_t* current_target_id;
 extern fezui_link_page_t keyconfigpage;
 void keyconfigpage_init();
 extern char current_key_name[32];
-
-extern fezui_link_page_t knobconfigpage;
-void knobconfigpage_init();
-extern char current_knob_name[16];
-extern uint16_t* current_target_knob_press_id;
-extern uint16_t* current_target_knob_clockwise_id;
-extern uint16_t* current_target_knob_anticlockwise_id;
 
 extern fezui_link_page_t advancedconfigpage;
 void advancedconfigpage_init();

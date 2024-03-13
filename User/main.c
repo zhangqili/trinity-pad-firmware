@@ -706,8 +706,7 @@ void TIM6_IRQHandler(void)
             count = 0;
             if (fezui.screensaver_countdown)
                 fezui.screensaver_countdown--;
-            loop_array_push_back(&g_kps_history,UI_KPSMaximumPerSecond);
-            UI_KPSMaximumPerSecond = 0;
+            record_kps_history_timer();
             fezui_report_count1=fezui_report_count;
             fezui_report_count=0;
             fezui_run_time++;

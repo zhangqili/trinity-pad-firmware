@@ -26,6 +26,7 @@ extern uint32_t g_key_counts[ADVANCED_KEY_NUM];
 #endif
 
 #ifdef ENABLE_KPS
+extern uint16_t g_kps;
 extern LoopArray g_kps_data;
 #endif
 

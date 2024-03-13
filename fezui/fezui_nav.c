@@ -86,3 +86,10 @@ void fezui_link_frame_draw(fezui_link_frame_t* frame)
         frame->current_page->page_draw_cb(frame->current_page);
     }
 }
+
+
+void fezui_link_frame_input(fezui_link_frame_t* frame, void* sender)
+{
+    if(frame->current_page->event_handler)
+        frame->current_page->event_handler(sender);
+}

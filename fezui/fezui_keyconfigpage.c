@@ -60,23 +60,26 @@ static void keyconfigpage_load(void *page)
 {
     //keyid_prase(*current_target_id, binding_text, 128);
     fezui_scrolling_text_init(&fezui,&scrolling_text, 78, 0.2, u8g2_font_4x6_mr, binding_text);
-
-    key_attach(&KEY_FN_K5, KEY_EVENT_DOWN, LAMBDA(void,(void*k)
-    {
-        fezui_list_base_click(&keyconfig_menu);
-    }));
-    key_attach(&KEY_FN_K6, KEY_EVENT_DOWN, LAMBDA(void,(void*k)
-    {
-        //Keyboard_ID_Save();
-        fezui_link_frame_go_back(&mainframe);
-    }));
-    key_attach(&KEY_KNOB, KEY_EVENT_DOWN, LAMBDA(void,(void*k)
-    {
-        //Keyboard_ID_Save();
-        fezui_link_frame_go_back(&mainframe);
-    }));
-    key_attach(&KEY_KNOB_CLOCKWISE, KEY_EVENT_DOWN, NULL);
-    key_attach(&KEY_KNOB_ANTICLOCKWISE, KEY_EVENT_DOWN, NULL);
 }
 
-fezui_link_page_t keyconfigpage={keyconfigpage_logic,keyconfigpage_draw,keyconfigpage_load};
+static void keyconfigpage_event_handler(void *e)
+{
+    //keyid_prase(*current_target_id, binding_text, 128);
+    switch (*(uint16_t *)e)
+    {
+    case KEY_UP_ARROW:
+        break;
+    case KEY_DOWN_ARROW:
+        break;
+    case KEY_ENTER:
+        fezui_list_base_click(&keyconfig_menu);
+        break;
+    case KEY_ESC:
+        fezui_link_frame_go_back(&mainframe);
+        break;
+    default:
+        break;
+    }
+
+}
+fezui_link_page_t keyconfigpage={keyconfigpage_logic,keyconfigpage_draw,keyconfigpage_load,keyconfigpage_event_handler};

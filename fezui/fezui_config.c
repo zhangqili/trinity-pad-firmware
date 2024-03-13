@@ -13,12 +13,35 @@
 #include "lfs.h"
 #include "record.h"
 
-
-uint8_t tempuint;
-
 #define U8LOG_WIDTH 32
 #define U8LOG_HEIGHT 10
 uint8_t u8log_buffer[U8LOG_WIDTH*U8LOG_HEIGHT];
+
+void fezui_input(uint16_t in)
+{
+    fezui_link_frame_input(&mainframe,(void*)&in);
+}
+
+static void key_up_cb()
+{
+    fezui_input(KEY_UP_ARROW);
+}
+
+static void key_down_cb()
+{
+    fezui_input(KEY_DOWN_ARROW);
+}
+
+static void key_enter_cb()
+{
+    fezui_input(KEY_ENTER);
+}
+
+static void key_esc_cb()
+{
+    fezui_input(KEY_ESC);
+}
+
 void fezui_init()
 {
     MD_OLED_RST_Set();
@@ -42,13 +65,17 @@ void fezui_init()
     advancedconfigpage_init();
     keymappage_init();
     keylistpage_init();
-    knobconfigpage_init();
     rgbconfigpage_init();
     displayconfigpage_init();
     panelpage_init();
     advancedsettingspage_init();
 
     fezui_link_frame_navigate(&mainframe, &homepage);
+    key_attach(&KEY_KNOB, KEY_EVENT_DOWN, key_enter_cb);
+    key_attach(&KEY_KNOB_CLOCKWISE, KEY_EVENT_DOWN, key_up_cb);
+    key_attach(&KEY_KNOB_ANTICLOCKWISE, KEY_EVENT_DOWN, key_down_cb);
+    key_attach(&KEY_FN_K5, KEY_EVENT_DOWN, key_enter_cb);
+    key_attach(&KEY_FN_K6, KEY_EVENT_DOWN, key_esc_cb);
     //Keybaord_SendReport_Enable=false;
     //fezui_link_frame_navigate(&mainframe, &debugpage);
     //fezui_link_frame_navigate(&mainframe, &oscilloscopepage);
@@ -61,11 +88,6 @@ void fezui_timer_handler()
     fezui_notification_update(&fezui,&fezui_notification);
     fezui_cursor_move(&fezui ,&cursor, &target_cursor);
     //fezui_animated_cursor_update(&animated_cursor);
-    fezui_kps = record_get_kps();
-    if (fezui_kps > UI_KPSMaximumPerSecond)
-    {
-        UI_KPSMaximumPerSecond = fezui_kps;
-    }
     KPS_history_max=loop_array_max(&g_kps_history);
     //fezui_save_counts();
 

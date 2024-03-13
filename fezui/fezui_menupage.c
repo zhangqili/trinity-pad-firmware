@@ -55,11 +55,27 @@ static void menupage_load(void *page)
 {
     Keybaord_SendReport_Enable=false;
     fezui_animated_listbox_begin(&mainmenu);
-    key_attach(&KEY_FN_K6, KEY_EVENT_DOWN, LAMBDA(void,(void*k){fezui_link_frame_go_back(&mainframe);}));
-    key_attach(&KEY_FN_K5, KEY_EVENT_DOWN, LAMBDA(void,(void*k){fezui_animated_listbox_click(&mainmenu);}));
-    key_attach(&KEY_KNOB, KEY_EVENT_DOWN, LAMBDA(void,(void*k){fezui_animated_listbox_click(&mainmenu);}));
-    key_attach(&KEY_KNOB_CLOCKWISE, KEY_EVENT_DOWN, LAMBDA(void,(void*k){fezui_animated_listbox_index_increase(&mainmenu, 1);}));
-    key_attach(&KEY_KNOB_ANTICLOCKWISE, KEY_EVENT_DOWN, LAMBDA(void,(void*k){fezui_animated_listbox_index_increase(&mainmenu, -1);}));
 }
 
-fezui_link_page_t menupage={menupage_logic,menupage_draw,menupage_load};
+static void menupage_event_handler(void *e)
+{
+    switch (*(uint16_t *)e)
+    {
+    case KEY_UP_ARROW:
+        fezui_animated_listbox_index_increase(&mainmenu, -1);
+        break;
+    case KEY_DOWN_ARROW:
+        fezui_animated_listbox_index_increase(&mainmenu, 1);
+        break;
+    case KEY_ENTER:
+        fezui_animated_listbox_click(&mainmenu);
+        break;
+    case KEY_ESC:
+        fezui_link_frame_go_back(&mainframe);
+        break;
+    default:
+        break;
+    }
+}
+
+fezui_link_page_t menupage={menupage_logic,menupage_draw,menupage_load,menupage_event_handler};

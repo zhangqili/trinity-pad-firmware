@@ -8,13 +8,14 @@ static LoopArrayElement analog_datas[ADVANCED_KEY_NUM][ANALOG_HISTORY_LENGTH];
 
 #ifdef ENABLE_KPS
 LoopArray g_kps_data;
+uint16_t g_kps;
 static LoopArrayElement kps_buf;
 static LoopArrayElement kps_data[KPS_REFRESH_RATE];
 #endif
 
 #ifdef ENABLE_KPS_HISTORY
 LoopArray g_kps_history;
-uint16_t g_kps_max_since_last_timer;
+uint16_t g_kps_max;
 static LoopArrayElement kps_history_data[KPS_HISTORY_LENGTH];
 #endif
 
@@ -150,12 +151,18 @@ void record_analog_timer()
 
 void record_kps_history_timer()
 {
-    loop_array_push_back(&g_kps_history,g_kps_data.data[g_kps_data.index]);
+    loop_array_push_back(&g_kps_history,g_kps_max);
+    g_kps_max=0;
 }
 
 void record_kps_timer()
 {
     loop_array_push_back(&g_kps_data,kps_buf);
+    g_kps = record_get_kps();
+    if(g_kps_max < g_kps)
+    {
+        g_kps_max = g_kps;
+    }
     kps_buf=0;
 }
 
