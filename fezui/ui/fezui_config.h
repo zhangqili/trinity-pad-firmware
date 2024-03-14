@@ -10,10 +10,10 @@
 #include "keyboard.h"
 #define WIDTH                 128
 #define HEIGHT                64
-#define BUFFER_LENGTH         64
+#define PRINTF_BUFFER_LENGTH 64
 #define REFRESH_RATE          144
 
-//#define _FPS_ON
+#define SHOW_FPS
 
 #define roll()                rand()%2;
 

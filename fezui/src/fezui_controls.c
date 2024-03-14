@@ -541,7 +541,6 @@ void fezui_animated_menu_begin(fezui_animated_menu_t *menu)
 }
 void fezui_draw_animated_menu(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g2_uint_t w, u8g2_uint_t h, fezui_animated_menu_t *menu, u8g2_uint_t item_height, u8g2_uint_t adjust)
 {
-    uint8_t strWidth = 0;
     if ((menu->selected_index + 1) * item_height - menu->targetoffset > h)
     {
         menu->targetoffset = (menu->selected_index + 1) * item_height - h;
@@ -562,8 +561,8 @@ void fezui_draw_animated_menu(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, 
         char _FormatStr[16];
         if(_Format)
         {
-            memcpy(fezui_buffer,menu->items[i].header+1,_Format-menu->items[i].header-1);
-            u8g2_DrawStr(&(fezui_ptr->u8g2), x + 1, (u8g2_int_t)floorf(y+(item_height * (i + 1) - (u8g2_int_t)menu->offset - adjust) * menu->animation + 0.5), fezui_buffer);
+            memcpy(g_fezui_printf_buffer,menu->items[i].header+1,_Format-menu->items[i].header-1);
+            u8g2_DrawStr(&(fezui_ptr->u8g2), x + 1, (u8g2_int_t)floorf(y+(item_height * (i + 1) - (u8g2_int_t)menu->offset - adjust) * menu->animation + 0.5), g_fezui_printf_buffer);
             sprintf(_FormatStr,"[%s]",_Format);
         }
         else
@@ -573,37 +572,34 @@ void fezui_draw_animated_menu(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, 
         switch (*(menu->items[i].header))
         {
         case FEZUI_TYPE_FLOAT:
-            sprintf(fezui_buffer, _Format ? _FormatStr :  "[%f]", *(float *)menu->items[i].target);
+            sprintf(g_fezui_printf_buffer, _Format ? _FormatStr :  "[%f]", *(float *)menu->items[i].target);
             break;
         case FEZUI_TYPE_DOUBLE:
-            sprintf(fezui_buffer,  _Format ? _FormatStr : "[%lf]", *(double *)menu->items[i].target);
+            sprintf(g_fezui_printf_buffer,  _Format ? _FormatStr : "[%lf]", *(double *)menu->items[i].target);
             break;
         case FEZUI_TYPE_INT16:
-            sprintf(fezui_buffer,  _Format ? _FormatStr : "[%d]", *(int16_t*)menu->items[i].target);
+            sprintf(g_fezui_printf_buffer,  _Format ? _FormatStr : "[%d]", *(int16_t*)menu->items[i].target);
             break;
         case FEZUI_TYPE_INT32:
-            sprintf(fezui_buffer,  _Format ? _FormatStr :  "[%ld]", *(int32_t*)menu->items[i].target);
+            sprintf(g_fezui_printf_buffer,  _Format ? _FormatStr :  "[%ld]", *(int32_t*)menu->items[i].target);
             break;
         case FEZUI_TYPE_UINT16:
-            sprintf(fezui_buffer,  _Format ? _FormatStr :  "[%u]", *(uint16_t*)menu->items[i].target);
+            sprintf(g_fezui_printf_buffer,  _Format ? _FormatStr :  "[%u]", *(uint16_t*)menu->items[i].target);
             break;
         case FEZUI_TYPE_UINT32:
-            sprintf(fezui_buffer,  _Format ? _FormatStr :  "[%lu]", *(uint32_t*)menu->items[i].target);
+            sprintf(g_fezui_printf_buffer,  _Format ? _FormatStr :  "[%lu]", *(uint32_t*)menu->items[i].target);
             break;
         case FEZUI_TYPE_UINT8:
-            sprintf(fezui_buffer,  _Format ? _FormatStr :  "[%d]", *(uint8_t *)menu->items[i].target);
+            sprintf(g_fezui_printf_buffer,  _Format ? _FormatStr :  "[%d]", *(uint8_t *)menu->items[i].target);
             break;
         case FEZUI_TYPE_BOOL:
         case 'B':
-            sprintf(fezui_buffer, "[%s]", *(bool*)menu->items[i].target?"ON":"OFF");
+            sprintf(g_fezui_printf_buffer, "[%s]", *(bool*)menu->items[i].target?"ON":"OFF");
             break;
         default:
             break;
         }
-        strWidth = u8g2_GetStrWidth(&fezui_ptr->u8g2, fezui_buffer);
-        u8g2_DrawStr(&(fezui_ptr->u8g2), x + w-strWidth, (u8g2_int_t)floorf(y+(item_height * (i + 1) - (u8g2_int_t)menu->offset - adjust) * menu->animation + 0.5), fezui_buffer);
-
+        fezui_printf_right_aligned(fezui_ptr, x + w, (u8g2_int_t)floorf(y+(item_height * (i + 1) - (u8g2_int_t)menu->offset - adjust) * menu->animation + 0.5), g_fezui_printf_buffer);
     }
-
     u8g2_SetMaxClipWindow(&(fezui_ptr->u8g2));
 }

@@ -4,7 +4,7 @@ set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")
 cmake_minimum_required(VERSION 3.18)
 
 # 工具链设置
-set(TOOLPATH  "C:/MounRiver/MounRiver_Studio/toolchain/RISC-V Embedded GCC/bin/riscv-none-embed-")
+set(TOOLPATH  "C:/MounRiver/MounRiver_Studio/toolchain/RISC-V Embedded GCC12/bin/riscv-none-elf-")
 
 if (WIN32)
 	MESSAGE(STATUS "Now is windows!")
@@ -34,7 +34,7 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_C_STANDARD 11)
 
 # 编译参数 一般不用改
-add_compile_options(-march=rv32imafcxw -mabi=ilp32f -mcmodel=medany -msmall-data-limit=8 -mno-save-restore)
+add_compile_options(-march=rv32imafcxw -mabi=ilp32f -mcmodel=medany -msmall-data-limit=8 -mno-save-restore -u _printf_float)
 add_compile_options(-fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -fno-common -fsingle-precision-constant)
 
 # 编译等级
@@ -49,8 +49,8 @@ include_directories(User
                     Core
                     Debug 
                     Peripheral/inc
-                    Display
-                    fezui
+                    fezui/ui
+                    fezui/src
                     KeyboardKit
                     lefl
                     usb
@@ -68,10 +68,10 @@ file(GLOB_RECURSE SOURCES
                 "User/*.c"
                 "Core/core_riscv.c" 
                 "Debug/debug.c"
-                "Display/*.c" 
-                "fezui/*.c" 
                 "KeyboardKit/*.c" 
                 "lefl/*.c" 
+                "fezui/ui/*.c" 
+                "fezui/src/*.c" 
                 "Peripheral/src/*.c" 
                 "usb/*.c" 
                 "littlefs/*.c" 
@@ -94,22 +94,21 @@ add_link_options(
                 -Wl,-Map,${PROJECT_NAME}.map 
                 --specs=nano.specs 
                 --specs=nosys.specs
+                -u _printf_float
                 )
 add_link_options(-T ${LINKER_SCRIPT})
 #link_libraries(m) 
 #add_link_options(-lprintfloat)
 
 # 编译可执行文件
-add_subdirectory(u8g2)
-#add_subdirectory(u8g2-extension)
 add_subdirectory(cherryusb)
+add_subdirectory(u8g2)
 add_subdirectory(sfud)
 add_executable(${PROJECT_NAME}.elf ${SOURCES} ${LINKER_SCRIPT})
 
 # 链接静态库
-target_link_libraries(${PROJECT_NAME}.elf printfloat)
 target_link_libraries(${PROJECT_NAME}.elf u8g2)
-#target_link_libraries(${PROJECT_NAME}.elf u8g2-extension)
+#target_link_libraries(${PROJECT_NAME}.elf fezui)
 target_link_libraries(${PROJECT_NAME}.elf cherryusb)
 target_link_libraries(${PROJECT_NAME}.elf sfud)
 target_link_libraries(${PROJECT_NAME}.elf m)

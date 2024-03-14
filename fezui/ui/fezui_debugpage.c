@@ -40,19 +40,15 @@ static void debugpage_logic(void *page)
 }
 static void debugpage_draw(void *page)
 {
-
-    sprintf(fezui_buffer, "%#lx", fezui_debug);
-    u8g2_DrawStr(&(fezui.u8g2), 64, 16, fezui_buffer);
+    fezui_printf(&fezui, 64, 16, "%#lx", fezui_debug);
 
     // u8g2_SetFont(&fezui.u8g2, u8g2_font_8x13B_mf);
-    sprintf(fezui_buffer, "%d", (short)TIM8->CNT);
-    u8g2_DrawStr(&(fezui.u8g2), 90, 60, fezui_buffer);
+    fezui_printf(&fezui, 90, 60, "%d", (short)TIM8->CNT);
 
     u8g2_SetFont(&(fezui.u8g2), u8g2_font_5x8_mr);
     // fezui_draw_animated_listbox(&fezui, 0, 0, WIDTH, HEIGHT, &listbox, 8, 1);
     // fezui_animated_listbox_get_cursor(&fezui, 0, 0, WIDTH, HEIGHT, &listbox, 8, &target_cursor);
     extern uint8_t read_buffer[64];
-    sprintf(fezui_buffer, "%d", read_buffer[0]);
     u8g2_DrawStr(&(fezui.u8g2), 0, 64, (char *)read_buffer + 1);
 
     fezui_draw_flyout_numberic_dialog(&fezui, &dialog);

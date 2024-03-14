@@ -45,8 +45,7 @@ void fezui_draw_wave(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g2_uint
     u8g2_SetFont(&(fezui_ptr->u8g2), u8g2_font_micro_tr);
     u8g2_DrawBox(&(fezui_ptr->u8g2), x, y, 17, 7);
     u8g2_SetDrawColor(&(fezui_ptr->u8g2), 2);
-    sprintf(fezui_buffer, "%04d", loop_array_get(arr, 0));
-    u8g2_DrawStr(&(fezui_ptr->u8g2), x + 1, y + 6, fezui_buffer);
+    fezui_printf(fezui_ptr, x + 1, y + 6, "%04d", loop_array_get(arr, 0));
     u8g2_SetDrawColor(&(fezui_ptr->u8g2), color_backup);
     // u8g2_SetDrawColor(&(fezui_ptr->u8g2), !fezui_ptr->invert);
 }
@@ -86,8 +85,7 @@ void fezui_draw_detailed_wave(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, 
     u8g2_SetFont(&(fezui_ptr->u8g2), u8g2_font_micro_tr);
     u8g2_DrawBox(&(fezui_ptr->u8g2), x, y, 17, 7);
     u8g2_SetDrawColor(&(fezui_ptr->u8g2), 2);
-    sprintf(fezui_buffer, "%04d", loop_array_get(arr, 0));
-    u8g2_DrawStr(&(fezui_ptr->u8g2), x + 1, y + 6, fezui_buffer);
+    fezui_printf(fezui_ptr, x + 1, y + 6, "%04d", loop_array_get(arr, 0));
     u8g2_SetDrawColor(&(fezui_ptr->u8g2), color_backup);
     // u8g2_SetDrawColor(&(fezui_ptr->u8g2), !fezui_ptr->invert);
 }
@@ -119,17 +117,17 @@ static void oscilloscopepage_event_handler(void *e)
     switch (*(uint16_t *)e)
     {
     case KEY_UP_ARROW:
-        target_offset_x -= 128;
-        if (target_offset_x < 0)
-        {
-            target_offset_x = 128 * 4;
-        }
-        break;
-    case KEY_DOWN_ARROW:
         target_offset_x += 128;
         if (target_offset_x > 128 * 4)
         {
             target_offset_x = 0;
+        }
+        break;
+    case KEY_DOWN_ARROW:
+        target_offset_x -= 128;
+        if (target_offset_x < 0)
+        {
+            target_offset_x = 128 * 4;
         }
         break;
     case KEY_ENTER:

@@ -142,3 +142,16 @@ void analog_save()
 {
 }
 
+void analog_reset_range()
+{
+    for (uint8_t i = 0; i < ADVANCED_KEY_NUM; i++)
+    {
+        ADC_Averages[i]=0;
+        for (uint8_t j = 0; j < ANALOG_BUFFER_LENGTH; j++)
+        {
+            ADC_Averages[i]+=ADC_Buffer[i+j*ADVANCED_KEY_NUM];
+        }
+        ADC_Averages[i]/=ANALOG_BUFFER_LENGTH;
+        advanced_key_set_range(Keyboard_AdvancedKeys + i, ADC_Averages[i], 200);
+    }
+}

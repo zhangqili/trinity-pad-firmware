@@ -547,6 +547,84 @@ void EXTI_INT_INIT(void)
 }
 
 /*********************************************************************
+ * @fn      TIM1_Init
+ *
+ * @brief   Initialize TIM1
+ *
+ * @return  none
+ */
+void TIM1_Init(void)
+{
+    GPIO_InitTypeDef GPIO_InitStructure = {0};
+    TIM_OCInitTypeDef TIM_OCInitStructure = {0};
+    TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStructure = {0};
+
+    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_TIM1, ENABLE);
+
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
+    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+    GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+    TIM_TimeBaseInitStructure.TIM_Period = 10 - 1;
+    TIM_TimeBaseInitStructure.TIM_Prescaler = SystemCoreClock / 8000000 - 1;
+    TIM_TimeBaseInitStructure.TIM_ClockDivision = TIM_CKD_DIV1;
+    TIM_TimeBaseInitStructure.TIM_CounterMode = TIM_CounterMode_Up;
+    TIM_TimeBaseInit(TIM1, &TIM_TimeBaseInitStructure);
+
+    TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
+    TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
+    TIM_OCInitStructure.TIM_Pulse = 0;
+    TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
+    TIM_OC1Init(TIM1, &TIM_OCInitStructure);
+
+    TIM_OC1PreloadConfig(TIM1, TIM_OCPreload_Enable);
+    TIM_ARRPreloadConfig(TIM1, ENABLE);
+    TIM_CtrlPWMOutputs(TIM1, ENABLE);
+    TIM_DMACmd(TIM1, TIM_DMA_Update, ENABLE);
+    TIM_Cmd(TIM1, ENABLE);
+}
+
+/*********************************************************************
+ * @fn      DMA1_Init
+ *
+ * @brief   Initialize DMA for TIM1 ch1
+ *
+ * @return  none
+ */
+void DMA_TIM1_Init(void)
+{
+    DMA_InitTypeDef DMA_InitStructure = {0};
+    //NVIC_InitTypeDef NVIC_InitStructure = {0};
+
+    RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
+
+    DMA_DeInit(TIM_DMA_CH1_CH);
+    DMA_Cmd(TIM_DMA_CH1_CH, DISABLE);
+    DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&TIM1->CH1CVR;
+    DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)RGB_Buffer;
+    DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralDST;
+    DMA_InitStructure.DMA_BufferSize = RGB_BUFFER_LENGTH;
+    DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
+    DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
+    DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
+    DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte;
+    DMA_InitStructure.DMA_Mode = DMA_Mode_Circular;
+    DMA_InitStructure.DMA_Priority = DMA_Priority_VeryHigh;
+    DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
+    DMA_Init(TIM_DMA_CH1_CH, &DMA_InitStructure);
+
+    DMA_Cmd(TIM_DMA_CH1_CH, DISABLE);
+
+    DMA_ITConfig(DMA1_Channel5, DMA_IT_TC, ENABLE);
+
+    // NVIC_InitStructure.NVIC_IRQChannel = DMA1_Channel5_IRQn;
+    // NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+    // NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+    // NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+    // NVIC_Init(&NVIC_InitStructure);
+}
+/*********************************************************************
  * @fn      SYSTICK_Init_Config
  *
  * @brief   SYSTICK_Init_Config.
@@ -637,7 +715,9 @@ int main(void)
     fezui_init();
     keyboard_init();
     record_init();
-    rgb_init();
+    rgb_init();\
+    TIM1_Init();
+    DMA_TIM1_Init();
     rgb_recovery();
     EXTI_INT_INIT();
     DMA_Cmd(DMA1_Channel5, ENABLE);
@@ -659,16 +739,7 @@ int main(void)
     */
     keyboard_recovery();
     Delay_Ms(100);
-    for (uint8_t i = 0; i < ADVANCED_KEY_NUM; i++)
-    {
-        ADC_Averages[i]=0;
-        for (uint8_t j = 0; j < ANALOG_BUFFER_LENGTH; j++)
-        {
-            ADC_Averages[i]+=ADC_Buffer[i+j*ADVANCED_KEY_NUM];
-        }
-        ADC_Averages[i]/=ANALOG_BUFFER_LENGTH;
-        advanced_key_set_range(Keyboard_AdvancedKeys + i, ADC_Averages[i], 200);
-    }
+    analog_reset_range();
     fram_read_bytes(0x400,g_key_counts,sizeof(g_key_counts));
     memcpy(g_key_init_counts,g_key_counts,sizeof(g_key_counts));
 

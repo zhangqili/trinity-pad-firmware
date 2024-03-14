@@ -147,42 +147,31 @@ static void rgbconfigpage_draw(void *page)
     {
         u8g2_DrawStr(&(fezui.u8g2), WIDTH - strlen(rgb_mode_items[RGB_Configs[rgb_key_select_menu.selected_index - 1].mode]) * font_width, ROW_HEIGHT * 1 - 1, rgb_mode_items[RGB_Configs[rgb_key_select_menu.selected_index - 1].mode]);
 
-        sprintf(fezui_buffer, "%d", RGB_Configs[rgb_key_select_menu.selected_index - 1].rgb.r);
-        u8g2_DrawStr(&(fezui.u8g2), WIDTH - strlen(fezui_buffer) * font_width, ROW_HEIGHT * 2 - 1, fezui_buffer);
+        fezui_printf_right_aligned(&fezui, WIDTH, ROW_HEIGHT * 2 - 1, "%d", RGB_Configs[rgb_key_select_menu.selected_index - 1].rgb.r);
 
-        sprintf(fezui_buffer, "%d", RGB_Configs[rgb_key_select_menu.selected_index - 1].rgb.g);
-        u8g2_DrawStr(&(fezui.u8g2), WIDTH - strlen(fezui_buffer) * font_width, ROW_HEIGHT * 3 - 1, fezui_buffer);
+        fezui_printf_right_aligned(&fezui, WIDTH, ROW_HEIGHT * 3 - 1, "%d", RGB_Configs[rgb_key_select_menu.selected_index - 1].rgb.g);
 
-        sprintf(fezui_buffer, "%d", RGB_Configs[rgb_key_select_menu.selected_index - 1].rgb.b);
-        u8g2_DrawStr(&(fezui.u8g2), WIDTH - strlen(fezui_buffer) * font_width, ROW_HEIGHT * 4 - 1, fezui_buffer);
+        fezui_printf_right_aligned(&fezui, WIDTH, ROW_HEIGHT * 4 - 1, "%d", RGB_Configs[rgb_key_select_menu.selected_index - 1].rgb.b);
 
-        sprintf(fezui_buffer, "%0.0f", RGB_Configs[rgb_key_select_menu.selected_index - 1].speed * 1000);
-        u8g2_DrawStr(&(fezui.u8g2), WIDTH - strlen(fezui_buffer) * font_width, ROW_HEIGHT * 8 - 1, fezui_buffer);
+        fezui_printf_right_aligned(&fezui, WIDTH, ROW_HEIGHT * 8 - 1, "%0.0f", RGB_Configs[rgb_key_select_menu.selected_index - 1].speed * 1000);
     }
     else
     {
         u8g2_DrawStr(&(fezui.u8g2), WIDTH - strlen(rgb_global_mode_items[RGB_GlobalConfig.mode]) * font_width, ROW_HEIGHT * 1 - 1, rgb_global_mode_items[RGB_GlobalConfig.mode]);
 
-        sprintf(fezui_buffer, "%0.0f", RGB_GlobalConfig.speed * 1000);
-        u8g2_DrawStr(&(fezui.u8g2), WIDTH - strlen(fezui_buffer) * font_width, ROW_HEIGHT * 8 - 1, fezui_buffer);
+        fezui_printf_right_aligned(&fezui, WIDTH, ROW_HEIGHT * 8 - 1, "%0.0f", RGB_GlobalConfig.speed * 1000);
     }
-    sprintf(fezui_buffer, "%d", target_rgb->r);
-    u8g2_DrawStr(&(fezui.u8g2), WIDTH - strlen(fezui_buffer) * font_width, ROW_HEIGHT * 2 - 1, fezui_buffer);
+    fezui_printf_right_aligned(&fezui, WIDTH, ROW_HEIGHT * 2 - 1, "%d", target_rgb->r);
 
-    sprintf(fezui_buffer, "%d", target_rgb->g);
-    u8g2_DrawStr(&(fezui.u8g2), WIDTH - strlen(fezui_buffer) * font_width, ROW_HEIGHT * 3 - 1, fezui_buffer);
+    fezui_printf_right_aligned(&fezui, WIDTH, ROW_HEIGHT * 3 - 1, "%d", target_rgb->g);
 
-    sprintf(fezui_buffer, "%d", target_rgb->b);
-    u8g2_DrawStr(&(fezui.u8g2), WIDTH - strlen(fezui_buffer) * font_width, ROW_HEIGHT * 4 - 1, fezui_buffer);
+    fezui_printf_right_aligned(&fezui, WIDTH, ROW_HEIGHT * 4 - 1, "%d", target_rgb->b);
 
-    sprintf(fezui_buffer, "%d", target_hsv->h);
-    u8g2_DrawStr(&(fezui.u8g2), WIDTH - strlen(fezui_buffer) * font_width, ROW_HEIGHT * 5 - 1, fezui_buffer);
+    fezui_printf_right_aligned(&fezui, WIDTH, ROW_HEIGHT * 5 - 1, "%d", target_hsv->h);
 
-    sprintf(fezui_buffer, "%d", target_hsv->s);
-    u8g2_DrawStr(&(fezui.u8g2), WIDTH - strlen(fezui_buffer) * font_width, ROW_HEIGHT * 6 - 1, fezui_buffer);
+    fezui_printf_right_aligned(&fezui, WIDTH, ROW_HEIGHT * 6 - 1, "%d", target_hsv->s);
 
-    sprintf(fezui_buffer, "%d", target_hsv->v);
-    u8g2_DrawStr(&(fezui.u8g2), WIDTH - strlen(fezui_buffer) * font_width, ROW_HEIGHT * 7 - 1, fezui_buffer);
+    fezui_printf_right_aligned(&fezui, WIDTH, ROW_HEIGHT * 7 - 1, "%d", target_hsv->v);
 
     u8g2_SetFont(&(fezui.u8g2), u8g2_font_5x8_mr);
     u8g2_DrawStr(&(fezui.u8g2), SPERATOR_X + 2, 8 - 1, current_key_name);
@@ -193,19 +182,11 @@ static void rgbconfigpage_draw(void *page)
     u8g2_DrawStr(&(fezui.u8g2), +1, ROW_HEIGHT * 7, "#");
     if (rgb_key_select_menu.selected_index)
     {
-        sprintf(fezui_buffer, "%02x", RGB_Configs[rgb_key_select_menu.selected_index - 1].rgb.r);
-        sprintf(fezui_buffer + 2, "%02x", RGB_Configs[rgb_key_select_menu.selected_index - 1].rgb.g);
-        sprintf(fezui_buffer + 4, "%02x", RGB_Configs[rgb_key_select_menu.selected_index - 1].rgb.b);
-        strupr(fezui_buffer);
-        u8g2_DrawStr(&(fezui.u8g2), 1, ROW_HEIGHT * 8, fezui_buffer);
+        fezui_printf(&fezui, 1, ROW_HEIGHT * 8 - 1, "%02X%02X%02X", RGB_Configs[rgb_key_select_menu.selected_index - 1].rgb.r, RGB_Configs[rgb_key_select_menu.selected_index - 1].rgb.g, RGB_Configs[rgb_key_select_menu.selected_index - 1].rgb.b);
     }
     else
     {
-        sprintf(fezui_buffer, "%02x", RGB_GlobalConfig.rgb.r);
-        sprintf(fezui_buffer + 2, "%02x", RGB_GlobalConfig.rgb.g);
-        sprintf(fezui_buffer + 4, "%02x", RGB_GlobalConfig.rgb.b);
-        strupr(fezui_buffer);
-        u8g2_DrawStr(&(fezui.u8g2), 1, ROW_HEIGHT * 8, fezui_buffer);
+        fezui_printf(&fezui, 1, ROW_HEIGHT * 8 - 1, "%02X%02X%02X", RGB_GlobalConfig.rgb.r, RGB_GlobalConfig.rgb.g, RGB_GlobalConfig.rgb.b);
     }
     u8g2_SetDrawColor(&(fezui.u8g2), color);
 

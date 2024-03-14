@@ -83,12 +83,12 @@ static const char* device_information[]={
         "Copyright (c) 2023 Lzq12345",
         "",
         "MCU: CH32V307WCU6",
-        "",
+        "Date:" __DATE__ " " __TIME__,
 };
 
 static const char* device_project_url[]={
-        "For more information, view",
-        PROJECT_URL
+        "For more information, view"
+        
 };
 
 #define target_icon_x 0
@@ -101,6 +101,8 @@ static float text_box_height=(HEIGHT-18-12);
 //static float text_height=(ROW_HEIGHT*sizeof(device_project_url)/sizeof(char*));
 static float ordinate=0;
 static float target_ordinate=0;
+
+static fezui_scrolling_text_t url_text;
 
 void draw_gemini()
 {
@@ -143,6 +145,7 @@ static void aboutpage_logic(void *page)
         ordinate=-text_box_height;
         target_ordinate=-text_box_height;
     }
+    fezui_scrolling_text_update(&url_text);
 }
 static void aboutpage_draw(void *page)
 {
@@ -161,10 +164,9 @@ static void aboutpage_draw(void *page)
 
     for (uint8_t i = 0; i < sizeof(device_project_url)/sizeof(char*); i++)
     {
-        single_char[0]=device_version[i];
         u8g2_DrawStr(&(fezui.u8g2), 0, url_y+6*(i+1), device_project_url[i]);
     }
-
+    fezui_draw_scrolling_text(&fezui,0,url_y+6*2,&url_text);
     draw_gemini();
     u8g2_SetClipWindow(&(fezui.u8g2),19,19,WIDTH,50);
     for (uint8_t i = 0; i < sizeof(device_information)/sizeof(char*); i++)
@@ -207,6 +209,8 @@ static void aboutpage_event_handler(void *e)
 
 static void aboutpage_load(void *page)
 {
+    fezui_scrolling_text_init(&fezui, &url_text, 128, 0.2, u8g2_font_4x6_mr, PROJECT_URL);
+    fezui_scrolling_text_begin(&url_text);
     ordinate=-text_box_height;
     target_ordinate=-text_box_height;
     icon_x=WIDTH;

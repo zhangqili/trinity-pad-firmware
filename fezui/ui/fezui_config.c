@@ -7,11 +7,71 @@
 #include "fezui.h"
 #include "fezui_var.h"
 #include "lefl.h"
-#include "display.h"
 #include "sfud.h"
 #include "fram.h"
 #include "lfs.h"
 #include "record.h"
+#include "main.h"
+
+#define MD_OLED_RST_Clr()     GPIO_WriteBit(DISP_RES_GPIO_Port,DISP_RES_Pin,0)
+#define MD_OLED_RST_Set()     GPIO_WriteBit(DISP_RES_GPIO_Port,DISP_RES_Pin,1)
+
+uint8_t u8x8_byte_4wire_hw_spi(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int,void *arg_ptr);
+uint8_t u8x8_riscv_gpio_and_delay(U8X8_UNUSED u8x8_t *u8x8, U8X8_UNUSED uint8_t msg, U8X8_UNUSED uint8_t arg_int, U8X8_UNUSED void *arg_ptr);
+
+uint8_t u8x8_byte_4wire_hw_spi(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int,void *arg_ptr)
+{
+  switch (msg)
+  {
+    case U8X8_MSG_BYTE_SEND:
+        //GPIO_WriteBit(DISP_CS_GPIO_Port, DISP_CS_Pin, Bit_RESET);
+
+        for (uint16_t i = 0; i < arg_int; i++) {             // 写数据
+            while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_BSY) == SET)
+                ;
+            while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_TXE) == RESET)
+                ;
+            SPI_I2S_SendData(SPI1, ((uint8_t*)arg_ptr)[i]);
+
+        }
+        //GPIO_WriteBit(DISP_CS_GPIO_Port, DISP_CS_Pin, Bit_SET);
+      break;
+    case U8X8_MSG_BYTE_INIT:
+      break;
+    case U8X8_MSG_BYTE_SET_DC:
+      GPIO_WriteBit(DISP_DC_GPIO_Port, DISP_DC_Pin, arg_int);
+      break;
+    case U8X8_MSG_BYTE_START_TRANSFER:
+      break;
+    case U8X8_MSG_BYTE_END_TRANSFER:
+      break;
+    default:
+      return 0;
+  }
+  return 1;
+}
+
+uint8_t u8x8_riscv_gpio_and_delay(U8X8_UNUSED u8x8_t *u8x8,
+    U8X8_UNUSED uint8_t msg, U8X8_UNUSED uint8_t arg_int,
+    U8X8_UNUSED void *arg_ptr)
+{
+  switch (msg)
+  {
+    case U8X8_MSG_GPIO_AND_DELAY_INIT:
+      break;
+    case U8X8_MSG_DELAY_MILLI:
+      Delay_Ms(arg_int);
+      break;
+    case U8X8_MSG_GPIO_CS:
+      break;
+    case U8X8_MSG_GPIO_DC:
+     GPIO_WriteBit(DISP_DC_GPIO_Port, DISP_DC_Pin, arg_int);
+      break;
+    case U8X8_MSG_GPIO_RESET:
+      break;
+  }
+  return 1;
+}
 
 #define U8LOG_WIDTH 32
 #define U8LOG_HEIGHT 10
@@ -119,7 +179,9 @@ void fezui_render_handler()
         fezui_veil_full_screen(&(fezui),(7-fezui.screensaver_countdown)>256?0:7-fezui.screensaver_countdown);
         u8g2_SetPowerSave(&(fezui.u8g2),!fezui.screensaver_countdown);
     }
-#ifdef _FPS_ON
+#ifdef SHOW_FPS
+    u8g2_SetDrawColor(&(fezui.u8g2), 1);
+    u8g2_DrawBox(&fezui.u8g2,95+14,0,WIDTH-95-14,11);
     u8g2_SetDrawColor(&(fezui.u8g2), 2);
     u8g2_SetFont(&(fezui.u8g2), fez_font_6x10_m);
     u8g2_DrawStr(&(fezui.u8g2),95+15,10,fpsstr);

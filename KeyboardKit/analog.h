@@ -28,5 +28,6 @@ void analog_average();
 void analog_check();
 void analog_recovery();
 void analog_save();
+void analog_reset_range();
 
 #endif /* ANALOG_H_ */

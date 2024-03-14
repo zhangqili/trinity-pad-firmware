@@ -34,7 +34,8 @@
 typedef u8g2_uint_t fezui_uint_t;
 typedef u8g2_int_t fezui_int_t;
 
-extern char fezui_buffer[BUFFER_LENGTH];
+extern char g_fezui_printf_buffer[PRINTF_BUFFER_LENGTH];
+//#define g_fezui_printf_buffer (fezui_get_buffer())
 
 typedef struct __fezui_t
 {
@@ -49,6 +50,9 @@ typedef struct __fezui_t
 // #define FEZUI_CREATE(name) fezui_t name;
 // #define FEZUI_DECLARE(name) fezui_t name;
 
+u8g2_uint_t fezui_printf(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, const char *fmt,...);
+u8g2_uint_t fezui_printf_right_aligned(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, const char *fmt,...);
+char* fezui_get_buffer();
 void fezui_apply(fezui_t *fezui_ptr);
 void fezui_timer_handler();
 void fezui_render_handler();

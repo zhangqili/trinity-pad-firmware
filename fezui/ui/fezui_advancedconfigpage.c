@@ -310,64 +310,48 @@ static void advancedconfigpage_draw(void *page)
     switch (current_config_advanced_key->mode)
     {
         case KEY_DIGITAL_MODE:
-            u8g2_DrawStr(&(fezui.u8g2), SPERATOR_X-4*7, ROW_HEIGHT*1-2 - (u8g2_int_t)scrollview.ordinate, "Digital");
+            fezui_printf(&fezui, SPERATOR_X-4*7, ROW_HEIGHT*1-2 - (u8g2_int_t)scrollview.ordinate, "Digital");
             break;
         case KEY_ANALOG_NORMAL_MODE:
-            u8g2_DrawStr(&(fezui.u8g2), SPERATOR_X-4*13, ROW_HEIGHT*1-2 - (u8g2_int_t)scrollview.ordinate, "Analog Normal");
+            fezui_printf(&fezui, SPERATOR_X-4*13, ROW_HEIGHT*1-2 - (u8g2_int_t)scrollview.ordinate, "Analog Normal");
 
-            sprintf(fezui_buffer,"%6.1f",current_config_advanced_key->upper_bound);
-            u8g2_DrawStr(&(fezui.u8g2), SPERATOR_X-4*6, ROW_HEIGHT*2-2 - (u8g2_int_t)scrollview.ordinate, fezui_buffer);
+            fezui_printf(&fezui, SPERATOR_X-4*6, ROW_HEIGHT*2-2 - (u8g2_int_t)scrollview.ordinate, "%6.1f",current_config_advanced_key->upper_bound);
 
-            sprintf(fezui_buffer,"%6.1f",current_config_advanced_key->lower_bound);
-            u8g2_DrawStr(&(fezui.u8g2), SPERATOR_X-4*6, ROW_HEIGHT*3-2 - (u8g2_int_t)scrollview.ordinate, fezui_buffer);
+            fezui_printf(&fezui, SPERATOR_X-4*6, ROW_HEIGHT*3-2 - (u8g2_int_t)scrollview.ordinate, "%6.1f",current_config_advanced_key->lower_bound);
 
-            sprintf(fezui_buffer,"%6.1f%%",(current_config_advanced_key->trigger_distance)*100);
-            u8g2_DrawStr(&(fezui.u8g2), SPERATOR_X-4*7, ROW_HEIGHT*4-2 - (u8g2_int_t)scrollview.ordinate, fezui_buffer);
+            fezui_printf(&fezui, SPERATOR_X-4*7, ROW_HEIGHT*4-2 - (u8g2_int_t)scrollview.ordinate, "%6.1f%%",(current_config_advanced_key->trigger_distance)*100);
 
-            sprintf(fezui_buffer,"%6.1f%%",(current_config_advanced_key->schmitt_parameter)*100);
-            u8g2_DrawStr(&(fezui.u8g2), SPERATOR_X-4*7, ROW_HEIGHT*5-2 - (u8g2_int_t)scrollview.ordinate, fezui_buffer);
+            fezui_printf(&fezui, SPERATOR_X-4*7, ROW_HEIGHT*5-2 - (u8g2_int_t)scrollview.ordinate, "%6.1f%%",(current_config_advanced_key->schmitt_parameter)*100);
             break;
         case KEY_ANALOG_RAPID_MODE:
-            u8g2_DrawStr(&(fezui.u8g2), SPERATOR_X-4*12, ROW_HEIGHT*1-2 - (u8g2_int_t)scrollview.ordinate, "Analog Rapid");
+            fezui_printf(&fezui, SPERATOR_X-4*12, ROW_HEIGHT*1-2 - (u8g2_int_t)scrollview.ordinate, "Analog Rapid");
 
-            sprintf(fezui_buffer,"%6.1f",current_config_advanced_key->upper_bound);
-            u8g2_DrawStr(&(fezui.u8g2), SPERATOR_X-4*6, ROW_HEIGHT*2-2 - (u8g2_int_t)scrollview.ordinate, fezui_buffer);
+            fezui_printf(&fezui, SPERATOR_X-4*6, ROW_HEIGHT*2-2 - (u8g2_int_t)scrollview.ordinate, "%6.1f",current_config_advanced_key->upper_bound);
 
-            sprintf(fezui_buffer,"%6.1f",current_config_advanced_key->lower_bound);
-            u8g2_DrawStr(&(fezui.u8g2), SPERATOR_X-4*6, ROW_HEIGHT*3-2 - (u8g2_int_t)scrollview.ordinate, fezui_buffer);
+            fezui_printf(&fezui, SPERATOR_X-4*6, ROW_HEIGHT*3-2 - (u8g2_int_t)scrollview.ordinate, "%6.1f",current_config_advanced_key->lower_bound);
 
-            sprintf(fezui_buffer,"%6.1f%%",(current_config_advanced_key->trigger_distance)*100);
-            u8g2_DrawStr(&(fezui.u8g2), SPERATOR_X-4*7, ROW_HEIGHT*4-2 - (u8g2_int_t)scrollview.ordinate, fezui_buffer);
+            fezui_printf(&fezui, SPERATOR_X-4*7, ROW_HEIGHT*4-2 - (u8g2_int_t)scrollview.ordinate, "%6.1f%%",(current_config_advanced_key->trigger_distance)*100);
 
-            sprintf(fezui_buffer,"%6.1f%%",(current_config_advanced_key->release_distance)*100);
-            u8g2_DrawStr(&(fezui.u8g2), SPERATOR_X-4*7, ROW_HEIGHT*5-2 - (u8g2_int_t)scrollview.ordinate, fezui_buffer);
+            fezui_printf(&fezui, SPERATOR_X-4*7, ROW_HEIGHT*5-2 - (u8g2_int_t)scrollview.ordinate, "%6.1f%%",(current_config_advanced_key->release_distance)*100);
 
-            sprintf(fezui_buffer,"%6.1f%%",(current_config_advanced_key->upper_deadzone)*100);
-            u8g2_DrawStr(&(fezui.u8g2), SPERATOR_X-4*7, ROW_HEIGHT*6-2 - (u8g2_int_t)scrollview.ordinate, fezui_buffer);
+            fezui_printf(&fezui, SPERATOR_X-4*7, ROW_HEIGHT*6-2 - (u8g2_int_t)scrollview.ordinate, "%6.1f%%",(current_config_advanced_key->upper_deadzone)*100);
 
-            sprintf(fezui_buffer,"%6.1f%%",(current_config_advanced_key->lower_deadzone)*100);
-            u8g2_DrawStr(&(fezui.u8g2), SPERATOR_X-4*7, ROW_HEIGHT*7-2 - (u8g2_int_t)scrollview.ordinate, fezui_buffer);
+            fezui_printf(&fezui, SPERATOR_X-4*7, ROW_HEIGHT*7-2 - (u8g2_int_t)scrollview.ordinate, "%6.1f%%",(current_config_advanced_key->lower_deadzone)*100);
             break;
         case KEY_ANALOG_SPEED_MODE:
-            u8g2_DrawStr(&(fezui.u8g2), SPERATOR_X-4*12, ROW_HEIGHT*1-2 - (u8g2_int_t)scrollview.ordinate, "Analog Speed");
+            fezui_printf(&fezui, SPERATOR_X-4*12, ROW_HEIGHT*1-2 - (u8g2_int_t)scrollview.ordinate, "Analog Speed");
 
-            sprintf(fezui_buffer,"%6.1f",current_config_advanced_key->upper_bound);
-            u8g2_DrawStr(&(fezui.u8g2), SPERATOR_X-4*6, ROW_HEIGHT*2-2 - (u8g2_int_t)scrollview.ordinate, fezui_buffer);
+            fezui_printf(&fezui, SPERATOR_X-4*6, ROW_HEIGHT*2-2 - (u8g2_int_t)scrollview.ordinate, "%6.1f",current_config_advanced_key->upper_bound);
 
-            sprintf(fezui_buffer,"%6.1f",current_config_advanced_key->lower_bound);
-            u8g2_DrawStr(&(fezui.u8g2), SPERATOR_X-4*6, ROW_HEIGHT*3-2 - (u8g2_int_t)scrollview.ordinate, fezui_buffer);
+            fezui_printf(&fezui, SPERATOR_X-4*6, ROW_HEIGHT*3-2 - (u8g2_int_t)scrollview.ordinate, "%6.1f",current_config_advanced_key->lower_bound);
 
-            sprintf(fezui_buffer,"%6.1f%%",(current_config_advanced_key->trigger_speed)*100);
-            u8g2_DrawStr(&(fezui.u8g2), SPERATOR_X-4*7, ROW_HEIGHT*4-2 - (u8g2_int_t)scrollview.ordinate, fezui_buffer);
+            fezui_printf(&fezui, SPERATOR_X-4*7, ROW_HEIGHT*4-2 - (u8g2_int_t)scrollview.ordinate, "%6.1f%%",(current_config_advanced_key->trigger_speed)*100);
 
-            sprintf(fezui_buffer,"%6.1f%%",(current_config_advanced_key->release_speed)*100);
-            u8g2_DrawStr(&(fezui.u8g2), SPERATOR_X-4*7, ROW_HEIGHT*5-2 - (u8g2_int_t)scrollview.ordinate, fezui_buffer);
+            fezui_printf(&fezui, SPERATOR_X-4*7, ROW_HEIGHT*5-2 - (u8g2_int_t)scrollview.ordinate, "%6.1f%%",(current_config_advanced_key->release_speed)*100);
 
-            sprintf(fezui_buffer,"%6.1f%%",(current_config_advanced_key->upper_deadzone)*100);
-            u8g2_DrawStr(&(fezui.u8g2), SPERATOR_X-4*7, ROW_HEIGHT*6-2 - (u8g2_int_t)scrollview.ordinate, fezui_buffer);
+            fezui_printf(&fezui, SPERATOR_X-4*7, ROW_HEIGHT*6-2 - (u8g2_int_t)scrollview.ordinate, "%6.1f%%",(current_config_advanced_key->upper_deadzone)*100);
 
-            sprintf(fezui_buffer,"%6.1f%%",(current_config_advanced_key->lower_deadzone)*100);
-            u8g2_DrawStr(&(fezui.u8g2), SPERATOR_X-4*7, ROW_HEIGHT*7-2 - (u8g2_int_t)scrollview.ordinate, fezui_buffer);
+            fezui_printf(&fezui, SPERATOR_X-4*7, ROW_HEIGHT*7-2 - (u8g2_int_t)scrollview.ordinate, "%6.1f%%",(current_config_advanced_key->lower_deadzone)*100);
             break;
         default:
             break;
@@ -377,23 +361,13 @@ static void advancedconfigpage_draw(void *page)
 
     u8g2_SetDrawColor(&(fezui.u8g2), 2);
     u8g2_SetFont(&(fezui.u8g2), u8g2_font_5x8_mr);
-    sprintf(fezui_buffer,"KEY%d",current_config_advanced_key-Keyboard_AdvancedKeys+1);
-    u8g2_DrawStr(&(fezui.u8g2), SPERATOR_X+2, 8 - 1, fezui_buffer);
+    fezui_printf(&fezui, SPERATOR_X+2, 8 - 1, "KEY%d",current_config_advanced_key-Keyboard_AdvancedKeys+1);
 
     u8g2_SetFont(&(fezui.u8g2), u8g2_font_4x6_mr);
-    if(current_config_advanced_key->key.state)
-    {
-        u8g2_DrawStr(&(fezui.u8g2), SPERATOR_X+2, ROW_HEIGHT - 1, "TRUE");
-    }
-    else
-    {
-        u8g2_DrawStr(&(fezui.u8g2), SPERATOR_X+2, ROW_HEIGHT - 1, "FALSE");
-    }
-    sprintf(fezui_buffer,"%6.1f%%",current_config_advanced_key->value*100);
-    u8g2_DrawStr(&(fezui.u8g2), WIDTH-4*7, 8 - 1, fezui_buffer);
+    fezui_printf(&fezui, SPERATOR_X+2, ROW_HEIGHT - 1, current_config_advanced_key->key.state?"TRUE":"FALSE");
+    fezui_printf(&fezui, WIDTH-4*7, 8 - 1, "%6.1f%%",current_config_advanced_key->value*100);
 
-    sprintf(fezui_buffer,"%6.1f",current_config_advanced_key->raw);
-    u8g2_DrawStr(&(fezui.u8g2), WIDTH-4*6, 16 - 1, fezui_buffer);
+    fezui_printf(&fezui, WIDTH-4*6, 16 - 1, "%6.1f",current_config_advanced_key->raw);
     u8g2_SetDrawColor(&(fezui.u8g2), color);
     fezui_draw_cursor(&fezui, &cursor);
 }

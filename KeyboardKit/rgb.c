@@ -23,84 +23,6 @@ const uint8_t RGB_Mapping[ADVANCED_KEY_NUM] = {0, 1, 2, 3};
 const RGBLocation RGB_Locations[RGB_NUM] = {{0, 0}, {0, 1}, {0, 2}, {0, 3}};
 
 static RGBLoopQueueElm RGB_Argument_Buffer[ARGUMENT_BUFFER_LENGTH];
-/*********************************************************************
- * @fn      TIM1_Init
- *
- * @brief   Initialize TIM1
- *
- * @return  none
- */
-void TIM1_Init(void)
-{
-    GPIO_InitTypeDef GPIO_InitStructure = {0};
-    TIM_OCInitTypeDef TIM_OCInitStructure = {0};
-    TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStructure = {0};
-
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_TIM1, ENABLE);
-
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-    GPIO_Init(GPIOA, &GPIO_InitStructure);
-
-    TIM_TimeBaseInitStructure.TIM_Period = 10 - 1;
-    TIM_TimeBaseInitStructure.TIM_Prescaler = SystemCoreClock / 8000000 - 1;
-    TIM_TimeBaseInitStructure.TIM_ClockDivision = TIM_CKD_DIV1;
-    TIM_TimeBaseInitStructure.TIM_CounterMode = TIM_CounterMode_Up;
-    TIM_TimeBaseInit(TIM1, &TIM_TimeBaseInitStructure);
-
-    TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
-    TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
-    TIM_OCInitStructure.TIM_Pulse = 0;
-    TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
-    TIM_OC1Init(TIM1, &TIM_OCInitStructure);
-
-    TIM_OC1PreloadConfig(TIM1, TIM_OCPreload_Enable);
-    TIM_ARRPreloadConfig(TIM1, ENABLE);
-    TIM_CtrlPWMOutputs(TIM1, ENABLE);
-    TIM_DMACmd(TIM1, TIM_DMA_Update, ENABLE);
-    TIM_Cmd(TIM1, ENABLE);
-}
-
-/*********************************************************************
- * @fn      DMA1_Init
- *
- * @brief   Initialize DMA for TIM1 ch1
- *
- * @return  none
- */
-void DMA_TIM1_Init(void)
-{
-    DMA_InitTypeDef DMA_InitStructure = {0};
-    //NVIC_InitTypeDef NVIC_InitStructure = {0};
-
-    RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
-
-    DMA_DeInit(TIM_DMA_CH1_CH);
-    DMA_Cmd(TIM_DMA_CH1_CH, DISABLE);
-    DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&TIM1->CH1CVR;
-    DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)RGB_Buffer;
-    DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralDST;
-    DMA_InitStructure.DMA_BufferSize = RGB_BUFFER_LENGTH;
-    DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
-    DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
-    DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
-    DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte;
-    DMA_InitStructure.DMA_Mode = DMA_Mode_Circular;
-    DMA_InitStructure.DMA_Priority = DMA_Priority_VeryHigh;
-    DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
-    DMA_Init(TIM_DMA_CH1_CH, &DMA_InitStructure);
-
-    DMA_Cmd(TIM_DMA_CH1_CH, DISABLE);
-
-    DMA_ITConfig(DMA1_Channel5, DMA_IT_TC, ENABLE);
-
-    // NVIC_InitStructure.NVIC_IRQChannel = DMA1_Channel5_IRQn;
-    // NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-    // NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-    // NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-    // NVIC_Init(&NVIC_InitStructure);
-}
 #ifdef USE_RGB
 void rgb_init()
 {
@@ -109,8 +31,6 @@ void rgb_init()
     {
         RGB_Buffer[i] = NONE_PULSE;
     }
-    TIM1_Init();
-    DMA_TIM1_Init();
 }
 
 #define COLOR_INTERVAL(key, low, up) (uint8_t)((key) < 0 ? (low) : ((key) > 1.0 ? (up) : (key) * (up)))

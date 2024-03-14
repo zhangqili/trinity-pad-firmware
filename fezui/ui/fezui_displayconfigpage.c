@@ -66,14 +66,6 @@ static void displayconfigpage_draw(void *page)
     fezui_apply(&fezui);
 }
 
-static void key_up_cb(void *k)
-{
-}
-
-static void key_down_cb(void *k)
-{
-}
-
 static void displayconfigpage_load(void *page)
 {
     fezui_animated_menu_begin(&displayconfig_menu);
@@ -162,8 +154,6 @@ static void displayconfigpage_event_handler(void *e)
     default:
         break;
     }
-    key_attach(&KEY_KNOB_CLOCKWISE, KEY_EVENT_DOWN, key_up_cb);
-    key_attach(&KEY_KNOB_ANTICLOCKWISE, KEY_EVENT_DOWN, key_down_cb);
 }
 
 fezui_link_page_t displayconfigpage = {displayconfigpage_logic, displayconfigpage_draw, displayconfigpage_load,displayconfigpage_event_handler};

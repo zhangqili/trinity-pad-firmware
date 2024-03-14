@@ -86,17 +86,17 @@ void fezui_draw_numberic_dialog(fezui_t *fezui_ptr, u8g2_int_t x, u8g2_int_t y, 
     {
         case FEZUI_TYPE_FLOAT:
         case FEZUI_TYPE_DOUBLE:
-            sprintf(fezui_buffer,"%.1f",temp);
+            sprintf(g_fezui_printf_buffer,"%.1f",temp);
             break;
         case FEZUI_TYPE_BOOL:
-            sprintf(fezui_buffer,"%s",temp?"ON":"OFF");
+            sprintf(g_fezui_printf_buffer,"%s",temp?"ON":"OFF");
             break;
         default:
-            sprintf(fezui_buffer,"%.0f",temp);
+            sprintf(g_fezui_printf_buffer,"%.0f",temp);
             break;
     }
-    uint8_t width = u8g2_GetStrWidth(&fezui_ptr->u8g2,fezui_buffer);
-    u8g2_DrawStr(&fezui_ptr->u8g2,x+w-2-width,y+char_height,fezui_buffer);
+    uint8_t width = u8g2_GetStrWidth(&fezui_ptr->u8g2,g_fezui_printf_buffer);
+    u8g2_DrawStr(&fezui_ptr->u8g2,x+w-2-width,y+char_height,g_fezui_printf_buffer);
 
     fezui_draw_slider(fezui_ptr, x + 2, y + h - 7, w - 4, 5, &dialog->rangebase, ORIENTATION_HORIZAIONTAL);
 
