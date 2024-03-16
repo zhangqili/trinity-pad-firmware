@@ -42,15 +42,15 @@ static void statisticpage_draw(void *page)
 
     fezui_printf(&fezui, 0, ROW_HEIGHT * 7 - (u8g2_int_t)(scrollview.ordinate), "  Run time");
 
-    fezui_printf_right_aligned(&fezui, WIDTH, ROW_HEIGHT * 7 - (u8g2_int_t)(scrollview.ordinate),  "%02ldh%02ldm%02lds", fezui_run_time / 3600, fezui_run_time / 60 % 60, fezui_run_time % 60);
+    fezui_printf_right_aligned(&fezui, WIDTH - 6, ROW_HEIGHT * 7 - (u8g2_int_t)(scrollview.ordinate),  "%02ldh%02ldm%02lds", fezui_run_time / 3600, fezui_run_time / 60 % 60, fezui_run_time % 60);
 
-    fezui_printf_right_aligned(&fezui, WIDTH, ROW_HEIGHT * 2 - (u8g2_int_t)(scrollview.ordinate), "%8ld", g_key_counts[0]);
+    fezui_printf_right_aligned(&fezui, WIDTH - 6, ROW_HEIGHT * 2 - (u8g2_int_t)(scrollview.ordinate), "%8ld", g_key_counts[0]);
 
-    fezui_printf_right_aligned(&fezui, WIDTH, ROW_HEIGHT * 3 - (u8g2_int_t)(scrollview.ordinate),  "%8ld", g_key_counts[1]);
+    fezui_printf_right_aligned(&fezui, WIDTH - 6, ROW_HEIGHT * 3 - (u8g2_int_t)(scrollview.ordinate),  "%8ld", g_key_counts[1]);
 
-    fezui_printf_right_aligned(&fezui, WIDTH, ROW_HEIGHT * 4 - (u8g2_int_t)(scrollview.ordinate),  "%8ld", g_key_counts[2]);
+    fezui_printf_right_aligned(&fezui, WIDTH - 6, ROW_HEIGHT * 4 - (u8g2_int_t)(scrollview.ordinate),  "%8ld", g_key_counts[2]);
 
-    fezui_printf_right_aligned(&fezui, WIDTH, ROW_HEIGHT * 5 - (u8g2_int_t)(scrollview.ordinate),  "%8ld", g_key_counts[3]);
+    fezui_printf_right_aligned(&fezui, WIDTH - 6, ROW_HEIGHT * 5 - (u8g2_int_t)(scrollview.ordinate),  "%8ld", g_key_counts[3]);
 
     fezui_draw_scrollview(&fezui, 0, 0, 128, 64, &scrollview);
 }

@@ -112,14 +112,6 @@ static void show_binding_text()
     }
 }
 
-static void key_up_cb(void *k)
-{
-}
-
-static void key_down_cb(void *k)
-{
-}
-
 static void keymappage_load(void *page)
 {
     show_binding_text();
@@ -183,4 +175,4 @@ static void keymappage_event_handler(void *e)
     }
 }
 
-fezui_link_page_t keymappage = {keymappage_logic, keymappage_draw, keymappage_load, keymappage_event_handler,keymappage_event_handler};
+fezui_link_page_t keymappage = {keymappage_logic, keymappage_draw, keymappage_load, keymappage_event_handler};

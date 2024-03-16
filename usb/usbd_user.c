@@ -351,6 +351,7 @@ void usbd_event_handler(uint8_t event)
         case USBD_EVENT_RESET:
             custom_state=HID_STATE_IDLE;
             hid_state=HID_STATE_IDLE;
+            //fezui_notification_begin(&fezui,&fezui_notification,"USBD_EVENT_RESET",500,0.1);
             break;
         case USBD_EVENT_CONNECTED:
             //fezui_notification_begin(&fezui,&fezui_notification,"USBD_EVENT_CONNECTED",500,0.1);
@@ -367,6 +368,7 @@ void usbd_event_handler(uint8_t event)
         case USBD_EVENT_CONFIGURED:
             /* setup first out ep read transfer */
             usbd_ep_start_read(HIDRAW_OUT_EP, read_buffer, HIDRAW_OUT_EP_SIZE);
+            //fezui_notification_begin(&fezui,&fezui_notification,"USBD_EVENT_CONFIGURED",500,0.1);
             break;
         case USBD_EVENT_SET_REMOTE_WAKEUP:
             //fezui_notification_begin(&fezui,&fezui_notification,"USBD_EVENT_SET_REMOTE_WAKEUP",500,0.1);
@@ -374,7 +376,6 @@ void usbd_event_handler(uint8_t event)
         case USBD_EVENT_CLR_REMOTE_WAKEUP:
             //fezui_notification_begin(&fezui,&fezui_notification,"USBD_EVENT_CLR_REMOTE_WAKEUP",500,0.1);
             break;
-
         default:
             break;
     }

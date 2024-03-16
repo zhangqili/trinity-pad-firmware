@@ -715,7 +715,7 @@ int main(void)
     fezui_init();
     keyboard_init();
     record_init();
-    rgb_init();\
+    rgb_init();
     TIM1_Init();
     DMA_TIM1_Init();
     rgb_recovery();
@@ -726,7 +726,6 @@ int main(void)
     DMA_Cmd(DMA1_Channel1, ENABLE);
     ADC_SoftwareStartConvCmd(ADC1, ENABLE);
     hid_init();
-    uint8_t usb_state=usb_device_is_configured();
     rgb_flash();
     /*
     while (1)

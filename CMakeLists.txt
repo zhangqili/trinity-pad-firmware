@@ -108,7 +108,6 @@ add_executable(${PROJECT_NAME}.elf ${SOURCES} ${LINKER_SCRIPT})
 
 # 链接静态库
 target_link_libraries(${PROJECT_NAME}.elf u8g2)
-#target_link_libraries(${PROJECT_NAME}.elf fezui)
 target_link_libraries(${PROJECT_NAME}.elf cherryusb)
 target_link_libraries(${PROJECT_NAME}.elf sfud)
 target_link_libraries(${PROJECT_NAME}.elf m)
