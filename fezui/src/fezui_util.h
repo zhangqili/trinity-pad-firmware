@@ -3,4 +3,4 @@
 #define FEZUI_UTIL_H_
 #include "fezui.h"
 
-#endif /* FEZUI_DEF_H_ */
+#endif /* FEZUI_UTIL_H_ */

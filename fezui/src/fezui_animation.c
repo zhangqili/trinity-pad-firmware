@@ -30,7 +30,6 @@
  */
 
 #include "fezui.h"
-#include "stdarg.h"
 
 #define PI M_PI
 #define max(a, b) (a > b ? a : b)

@@ -57,4 +57,4 @@ void record_kps_tick();
 void record_kps_timer();
 void record_kps_history_timer();
 
-#endif /* ANALOG_H_ */
+#endif /* RECORD_H_ */

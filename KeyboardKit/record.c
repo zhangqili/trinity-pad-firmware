@@ -49,7 +49,7 @@ void loop_array_push_back(LoopArray *arr, LoopArrayElement t)
 
 LoopArrayElement loop_array_get(LoopArray *arr, LoopArrayElement j)
 {
-    if (j >= 0 && j < arr->len)
+    if (j < arr->len)
     {
         return arr->data[arr->index - j >= 0 ? arr->index - j : arr->index - j + arr->len];
     }

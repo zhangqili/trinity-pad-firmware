@@ -13,7 +13,7 @@ Set your compiler path in `CMakeLists.txt`
 set(TOOLPATH  "C:/MounRiver/MounRiver_Studio/toolchain/RISC-V Embedded GCC/bin/riscv-none-embed-")
 ```
 
-Complie.
+Compile.
 
 ```bash
 git submodule init

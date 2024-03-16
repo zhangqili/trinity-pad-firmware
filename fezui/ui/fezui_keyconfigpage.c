@@ -18,12 +18,14 @@ char current_key_name[32];
 
 static fezui_scrolling_text_t scrolling_text;
 
+void keyconfig_menu_cb(void*m)
+{
+    fezui_link_frame_navigate(&mainframe, &keylistpage);
+}
+
 void keyconfigpage_init()
 {
-    fezui_list_base_init(&keyconfig_menu, keyconfig_menu_items, sizeof(keyconfig_menu_items)/sizeof(const char*), LAMBDA(void,(void*k)
-    {
-        fezui_link_frame_navigate(&mainframe, &keylistpage);
-    }));
+    fezui_list_base_init(&keyconfig_menu, keyconfig_menu_items, sizeof(keyconfig_menu_items)/sizeof(const char*), keyconfig_menu_cb);
 }
 
 static void keyconfigpage_logic(void *page)
