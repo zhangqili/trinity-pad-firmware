@@ -361,7 +361,7 @@ static void advancedconfigpage_draw(void *page)
 
     u8g2_SetDrawColor(&(fezui.u8g2), 2);
     u8g2_SetFont(&(fezui.u8g2), u8g2_font_5x8_mr);
-    fezui_printf(&fezui, SPERATOR_X+2, 8 - 1, "KEY%d",current_config_advanced_key-Keyboard_AdvancedKeys+1);
+    fezui_printf(&fezui, SPERATOR_X+2, 8 - 1, "KEY%d",current_config_advanced_key-g_keyboard_advanced_keys+1);
 
     u8g2_SetFont(&(fezui.u8g2), u8g2_font_4x6_mr);
     fezui_printf(&fezui, SPERATOR_X+2, ROW_HEIGHT - 1, current_config_advanced_key->key.state?"TRUE":"FALSE");

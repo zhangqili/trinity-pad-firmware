@@ -28,8 +28,7 @@ u8g2_uint_t fezui_printf_right_aligned(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_u
 	va_start(ap, fmt);
 	vsprintf(g_fezui_printf_buffer, fmt, ap);
 	va_end(ap);
-    u8g2_uint_t w = u8g2_GetStrWidth(&(fezui_ptr->u8g2), g_fezui_printf_buffer);
-    return u8g2_DrawStr(&(fezui_ptr->u8g2), x-w, y, g_fezui_printf_buffer);
+    return u8g2_DrawStr(&(fezui_ptr->u8g2), x-u8g2_GetStrWidth(&(fezui_ptr->u8g2), g_fezui_printf_buffer), y, g_fezui_printf_buffer);
 }
 void fezui_apply(fezui_t* fezui_ptr)
 {

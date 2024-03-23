@@ -28,7 +28,7 @@
 #endif 
 
 #ifndef DEFAULT_ANIMATION_DURATION
-#define DEFAULT_ANIMATION_DURATION (500*8)
+#define DEFAULT_ANIMATION_DURATION (500)
 #endif 
 
 typedef u8g2_uint_t fezui_uint_t;

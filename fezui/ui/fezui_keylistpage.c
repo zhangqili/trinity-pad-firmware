@@ -20,20 +20,21 @@
 
 fezui_animated_listbox_t keylist;
 uint16_t* current_target_id;
-KeyBinding* current_target_key_binding;
-
+uint16_t* current_target_key_binding;
+#define KEY_MODIFIER_PART *(((uint8_t*)current_target_key_binding)+1)
+#define KEY_KEYCODE_PART *(((uint8_t*)current_target_key_binding))
 
 void keylist_cb(void *m)
 {
     if(((fezui_list_base_t*)m)->selected_index<8)
     {
-        bool b = !(current_target_key_binding->modifier&BIT(((fezui_list_base_t*)m)->selected_index));
-        current_target_key_binding->modifier&=(~(1<<((fezui_list_base_t*)m)->selected_index));
-        current_target_key_binding->modifier|=(b<<((fezui_list_base_t*)m)->selected_index);
+        bool b = !(KEY_MODIFIER_PART&BIT(((fezui_list_base_t*)m)->selected_index));
+        KEY_MODIFIER_PART&=(~(1<<((fezui_list_base_t*)m)->selected_index));
+        KEY_MODIFIER_PART|=(b<<((fezui_list_base_t*)m)->selected_index);
     }
     else
     {
-        current_target_key_binding->keycode = ((fezui_list_base_t*)m)->selected_index-8;
+        KEY_KEYCODE_PART = ((fezui_list_base_t*)m)->selected_index-8;
     }
 }
 
@@ -58,12 +59,12 @@ static void keylistpage_draw(void *page)
     }
     for(uint8_t i=0;i<8;i++)
     {
-        if(current_target_key_binding->modifier&BIT(i))
+        if(KEY_MODIFIER_PART&BIT(i))
         {
             u8g2_DrawBox(&(fezui.u8g2),116,(u8g2_int_t)floorf((ROW_HEIGHT*i + 1 - FEZUI_ANIMATION_GET_VALUE(&keylist.scroll_animation, keylist.offset,keylist.targetoffset)) * keylist.start_animation.value + 0.5),6,6);
         }
     }
-    u8g2_DrawBox(&(fezui.u8g2),116,(u8g2_int_t)floorf((ROW_HEIGHT*((current_target_key_binding->keycode)+8) + 1 -  FEZUI_ANIMATION_GET_VALUE(&keylist.scroll_animation, keylist.offset,keylist.targetoffset)) * keylist.start_animation.value + 0.5),6,6);
+    u8g2_DrawBox(&(fezui.u8g2),116,(u8g2_int_t)floorf((ROW_HEIGHT*((KEY_KEYCODE_PART)+8) + 1 -  FEZUI_ANIMATION_GET_VALUE(&keylist.scroll_animation, keylist.offset,keylist.targetoffset)) * keylist.start_animation.value + 0.5),6,6);
     fezui_draw_cursor(&fezui, &cursor);
 }
 

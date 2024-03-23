@@ -17,7 +17,7 @@
 
 #define roll()                rand()%2;
 
-void keyid_prase(KeyBinding id,char* str,uint16_t str_len);
+void keyid_prase(uint16_t id,char* str,uint16_t str_len);
 void fezui_read_counts();
 void fezui_save_counts();
 void fezui_read();

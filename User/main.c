@@ -599,10 +599,10 @@ void DMA_TIM1_Init(void)
 
     RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
 
-    DMA_DeInit(TIM_DMA_CH1_CH);
-    DMA_Cmd(TIM_DMA_CH1_CH, DISABLE);
+    DMA_DeInit(DMA1_Channel5);
+    DMA_Cmd(DMA1_Channel5, DISABLE);
     DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&TIM1->CH1CVR;
-    DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)RGB_Buffer;
+    DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)g_rgb_buffer;
     DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralDST;
     DMA_InitStructure.DMA_BufferSize = RGB_BUFFER_LENGTH;
     DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
@@ -612,9 +612,9 @@ void DMA_TIM1_Init(void)
     DMA_InitStructure.DMA_Mode = DMA_Mode_Circular;
     DMA_InitStructure.DMA_Priority = DMA_Priority_VeryHigh;
     DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
-    DMA_Init(TIM_DMA_CH1_CH, &DMA_InitStructure);
+    DMA_Init(DMA1_Channel5, &DMA_InitStructure);
 
-    DMA_Cmd(TIM_DMA_CH1_CH, DISABLE);
+    DMA_Cmd(DMA1_Channel5, DISABLE);
 
     DMA_ITConfig(DMA1_Channel5, DMA_IT_TC, ENABLE);
 
@@ -678,6 +678,8 @@ void JumpToBootloader(void) {
 
   /* 设置主堆栈指针 */
   //__set_MSP(*(uint32_t *)BootAddr);
+  //__asm("li  a6, 0x5z000");
+  //__asm("jr  a6");
 
   /* 跳转到系统BootLoader */
   SysMemBootJump();
@@ -701,10 +703,10 @@ int main(void)
     SystemCoreClockUpdate();
     Delay_Init();
     USART_Printf_Init(115200);
-    printf("SystemClk:%ld\r\n", SystemCoreClock);
-    printf("ChipID:%08lx\r\n", DBGMCU_GetCHIPID());
-    printf("This is printf example\r\n");
-    SYSTICK_Init_Config(SystemCoreClock-1);
+    //printf("SystemClk:%ld\r\n", SystemCoreClock);
+    //printf("ChipID:%08lx\r\n", DBGMCU_GetCHIPID());
+    //printf("This is printf example\r\n");
+    //SYSTICK_Init_Config(SystemCoreClock-1);
     User_GPIO_Init();
     SPI1_Init();
     SPI2_Init();
@@ -722,7 +724,7 @@ int main(void)
     EXTI_INT_INIT();
     DMA_Cmd(DMA1_Channel5, ENABLE);
 
-    DMA1_Tx_Init(DMA1_Channel1, (u32)&ADC1->RDATAR, (u32)ADC_Buffer, ANALOG_BUFFER_LENGTH * ADVANCED_KEY_NUM);
+    DMA1_Tx_Init(DMA1_Channel1, (u32)&ADC1->RDATAR, (u32)g_ADC_Buffer, ANALOG_BUFFER_LENGTH * ADVANCED_KEY_NUM);
     DMA_Cmd(DMA1_Channel1, ENABLE);
     ADC_SoftwareStartConvCmd(ADC1, ENABLE);
     hid_init();
@@ -749,6 +751,7 @@ int main(void)
         // extern void hid_keyboard_test(void);
         // hid_keyboard_test();
         fezui_render_handler();
+        rgb_update();
         
         fram_write_bytes(0x400,g_key_counts,sizeof(g_key_counts));
         GPIO_WriteBit(LED_GPIO_Port, LED_Pin, !GPIO_ReadInputDataBit(LED_GPIO_Port, LED_Pin));
@@ -767,7 +770,6 @@ void TIM6_IRQHandler(void)
     if (TIM_GetITStatus(TIM6, TIM_IT_Update) != RESET) // 检查TIM1中断是否发生。
     {
         TIM_ClearITPendingBit(TIM6, TIM_IT_Update); // 清除TIM1的中断挂起位。
-        rgb_update();
         count++;
         if (count == REFRESH_RATE)
         {
@@ -790,18 +792,19 @@ void TIM6_IRQHandler(void)
 void TIM7_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 void TIM7_IRQHandler(void)
 {
-
+    static uint8_t count = 0;
     if (TIM_GetITStatus(TIM7, TIM_IT_Update) != RESET)
     {
+        count++;
+        if (count == 8)
+        {
+            count=0;
+            fezui_tick++;
+            RGB_Tick++;
+        }
         TIM_ClearITPendingBit(TIM7, TIM_IT_Update);
-        keyboard_scan();
-        analog_average();
-        analog_check();
-        //if(mainframe.current_page==&homepage)
-        keyboard_send_report();
-        fezui_tick++;
         // if(!HAL_GPIO_ReadPin(MENU_GPIO_Port, MENU_Pin))
-        // keyboard_send_report();
+        keyboard_timer();
     }
 }
 
@@ -813,7 +816,7 @@ void EXTI9_5_IRQHandler(void)
 {
     if(EXTI_GetITStatus(EXTI_Line6)!=RESET)//产生中断
     {
-        Keyboard_KNOB_Flag=6;
+        g_keyboard_knob_flag=6;
         if(GPIO_ReadInputDataBit(EC11_B_GPIO_Port,EC11_B_Pin))
         {
             key_update(&KEY_KNOB_CLOCKWISE, false);

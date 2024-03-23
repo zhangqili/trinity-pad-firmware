@@ -37,13 +37,13 @@ void set_target_color()
 
     if (rgb_key_select_menu.selected_index)
     {
-        target_rgb = &(RGB_Configs[rgb_key_select_menu.selected_index - 1].rgb);
-        target_hsv = &(RGB_Configs[rgb_key_select_menu.selected_index - 1].hsv);
+        target_rgb = &(g_rgb_configs[rgb_key_select_menu.selected_index - 1].rgb);
+        target_hsv = &(g_rgb_configs[rgb_key_select_menu.selected_index - 1].hsv);
     }
     else
     {
-        target_rgb = &(RGB_GlobalConfig.rgb);
-        target_hsv = &(RGB_GlobalConfig.hsv);
+        target_rgb = &(g_rgb_global_config.rgb);
+        target_hsv = &(g_rgb_global_config.hsv);
     }
 }
 
@@ -91,18 +91,18 @@ static void rgbconfigpage_logic(void *page)
                 {
                     fezui_cursor_set(
                         &target_config_cursor,
-                        WIDTH - 1 - strlen(rgb_mode_items[RGB_Configs[rgb_key_select_menu.selected_index - 1].mode]) * 5,
+                        WIDTH - 1 - strlen(rgb_mode_items[g_rgb_configs[rgb_key_select_menu.selected_index - 1].mode]) * 5,
                         rgb_config_menu.selected_index * ROW_HEIGHT,
-                        1 + strlen(rgb_mode_items[RGB_Configs[rgb_key_select_menu.selected_index - 1].mode]) * 5,
+                        1 + strlen(rgb_mode_items[g_rgb_configs[rgb_key_select_menu.selected_index - 1].mode]) * 5,
                         ROW_HEIGHT);
                 }
                 else
                 {
                     fezui_cursor_set(
                         &target_config_cursor,
-                        WIDTH - 1 - strlen(rgb_global_mode_items[RGB_GlobalConfig.mode]) * 5,
+                        WIDTH - 1 - strlen(rgb_global_mode_items[g_rgb_global_config.mode]) * 5,
                         rgb_config_menu.selected_index * ROW_HEIGHT,
-                        1 + strlen(rgb_global_mode_items[RGB_GlobalConfig.mode]) * 5,
+                        1 + strlen(rgb_global_mode_items[g_rgb_global_config.mode]) * 5,
                         ROW_HEIGHT);
                 }
             }
@@ -145,21 +145,21 @@ static void rgbconfigpage_draw(void *page)
     uint8_t font_width = u8g2_GetMaxCharWidth(&(fezui.u8g2));
     if (rgb_key_select_menu.selected_index)
     {
-        u8g2_DrawStr(&(fezui.u8g2), WIDTH - strlen(rgb_mode_items[RGB_Configs[rgb_key_select_menu.selected_index - 1].mode]) * font_width, ROW_HEIGHT * 1 - 1, rgb_mode_items[RGB_Configs[rgb_key_select_menu.selected_index - 1].mode]);
+        u8g2_DrawStr(&(fezui.u8g2), WIDTH - strlen(rgb_mode_items[g_rgb_configs[rgb_key_select_menu.selected_index - 1].mode]) * font_width, ROW_HEIGHT * 1 - 1, rgb_mode_items[g_rgb_configs[rgb_key_select_menu.selected_index - 1].mode]);
 
-        fezui_printf_right_aligned(&fezui, WIDTH, ROW_HEIGHT * 2 - 1, "%d", RGB_Configs[rgb_key_select_menu.selected_index - 1].rgb.r);
+        fezui_printf_right_aligned(&fezui, WIDTH, ROW_HEIGHT * 2 - 1, "%d", g_rgb_configs[rgb_key_select_menu.selected_index - 1].rgb.r);
 
-        fezui_printf_right_aligned(&fezui, WIDTH, ROW_HEIGHT * 3 - 1, "%d", RGB_Configs[rgb_key_select_menu.selected_index - 1].rgb.g);
+        fezui_printf_right_aligned(&fezui, WIDTH, ROW_HEIGHT * 3 - 1, "%d", g_rgb_configs[rgb_key_select_menu.selected_index - 1].rgb.g);
 
-        fezui_printf_right_aligned(&fezui, WIDTH, ROW_HEIGHT * 4 - 1, "%d", RGB_Configs[rgb_key_select_menu.selected_index - 1].rgb.b);
+        fezui_printf_right_aligned(&fezui, WIDTH, ROW_HEIGHT * 4 - 1, "%d", g_rgb_configs[rgb_key_select_menu.selected_index - 1].rgb.b);
 
-        fezui_printf_right_aligned(&fezui, WIDTH, ROW_HEIGHT * 8 - 1, "%0.0f", RGB_Configs[rgb_key_select_menu.selected_index - 1].speed * 1000);
+        fezui_printf_right_aligned(&fezui, WIDTH, ROW_HEIGHT * 8 - 1, "%0.0f", g_rgb_configs[rgb_key_select_menu.selected_index - 1].speed * 1000);
     }
     else
     {
-        u8g2_DrawStr(&(fezui.u8g2), WIDTH - strlen(rgb_global_mode_items[RGB_GlobalConfig.mode]) * font_width, ROW_HEIGHT * 1 - 1, rgb_global_mode_items[RGB_GlobalConfig.mode]);
+        u8g2_DrawStr(&(fezui.u8g2), WIDTH - strlen(rgb_global_mode_items[g_rgb_global_config.mode]) * font_width, ROW_HEIGHT * 1 - 1, rgb_global_mode_items[g_rgb_global_config.mode]);
 
-        fezui_printf_right_aligned(&fezui, WIDTH, ROW_HEIGHT * 8 - 1, "%0.0f", RGB_GlobalConfig.speed * 1000);
+        fezui_printf_right_aligned(&fezui, WIDTH, ROW_HEIGHT * 8 - 1, "%0.0f", g_rgb_global_config.speed * 1000);
     }
     fezui_printf_right_aligned(&fezui, WIDTH, ROW_HEIGHT * 2 - 1, "%d", target_rgb->r);
 
@@ -182,11 +182,11 @@ static void rgbconfigpage_draw(void *page)
     u8g2_DrawStr(&(fezui.u8g2), +1, ROW_HEIGHT * 7, "#");
     if (rgb_key_select_menu.selected_index)
     {
-        fezui_printf(&fezui, 1, ROW_HEIGHT * 8 - 1, "%02X%02X%02X", RGB_Configs[rgb_key_select_menu.selected_index - 1].rgb.r, RGB_Configs[rgb_key_select_menu.selected_index - 1].rgb.g, RGB_Configs[rgb_key_select_menu.selected_index - 1].rgb.b);
+        fezui_printf(&fezui, 1, ROW_HEIGHT * 8 - 1, "%02X%02X%02X", g_rgb_configs[rgb_key_select_menu.selected_index - 1].rgb.r, g_rgb_configs[rgb_key_select_menu.selected_index - 1].rgb.g, g_rgb_configs[rgb_key_select_menu.selected_index - 1].rgb.b);
     }
     else
     {
-        fezui_printf(&fezui, 1, ROW_HEIGHT * 8 - 1, "%02X%02X%02X", RGB_GlobalConfig.rgb.r, RGB_GlobalConfig.rgb.g, RGB_GlobalConfig.rgb.b);
+        fezui_printf(&fezui, 1, ROW_HEIGHT * 8 - 1, "%02X%02X%02X", g_rgb_global_config.rgb.r, g_rgb_global_config.rgb.g, g_rgb_global_config.rgb.b);
     }
     u8g2_SetDrawColor(&(fezui.u8g2), color);
 
@@ -221,23 +221,23 @@ static void rgbconfigpage_event_handler(void *e)
                 case 0:
                     if (rgb_key_select_menu.selected_index)
                     {
-                        VAR_LOOP_INCREMENT(RGB_Configs[rgb_key_select_menu.selected_index - 1].mode, RGB_MODE_STATIC, RGB_MODE_REACT_TRIGGER, 1)
+                        VAR_LOOP_INCREMENT(g_rgb_configs[rgb_key_select_menu.selected_index - 1].mode, RGB_MODE_STATIC, RGB_MODE_REACT_TRIGGER, 1)
                     }
                     else
                     {
-                        VAR_LOOP_INCREMENT(RGB_GlobalConfig.mode, RGB_GLOBAL_MODE_OFF, RGB_GLOBAL_MODE_JELLY, 1)
+                        VAR_LOOP_INCREMENT(g_rgb_global_config.mode, RGB_GLOBAL_MODE_OFF, RGB_GLOBAL_MODE_JELLY, 1)
                     }
                     break;
                 case 1:
-                    VAR_LOOP_INCREMENT(RGB_Configs[rgb_key_select_menu.selected_index - 1].rgb.r, 0, 255, 1)
+                    VAR_LOOP_INCREMENT(g_rgb_configs[rgb_key_select_menu.selected_index - 1].rgb.r, 0, 255, 1)
                     rgb_to_hsv(target_hsv, target_rgb);
                     break;
                 case 2:
-                    VAR_LOOP_INCREMENT(RGB_Configs[rgb_key_select_menu.selected_index - 1].rgb.g, 0, 255, 1)
+                    VAR_LOOP_INCREMENT(g_rgb_configs[rgb_key_select_menu.selected_index - 1].rgb.g, 0, 255, 1)
                     rgb_to_hsv(target_hsv, target_rgb);
                     break;
                 case 3:
-                    VAR_LOOP_INCREMENT(RGB_Configs[rgb_key_select_menu.selected_index - 1].rgb.b, 0, 255, 1)
+                    VAR_LOOP_INCREMENT(g_rgb_configs[rgb_key_select_menu.selected_index - 1].rgb.b, 0, 255, 1)
                     rgb_to_hsv(target_hsv, target_rgb);
                     break;
                 case 4:
@@ -255,11 +255,11 @@ static void rgbconfigpage_event_handler(void *e)
                 case 7:
                     if (rgb_key_select_menu.selected_index)
                     {
-                        RGB_Configs[rgb_key_select_menu.selected_index - 1].speed += 0.001;
+                        g_rgb_configs[rgb_key_select_menu.selected_index - 1].speed += 0.001;
                     }
                     else
                     {
-                        RGB_GlobalConfig.speed += 0.001;
+                        g_rgb_global_config.speed += 0.001;
                     }
                     break;
                 default:
@@ -287,23 +287,23 @@ static void rgbconfigpage_event_handler(void *e)
                 case 0:
                     if (rgb_key_select_menu.selected_index)
                     {
-                        VAR_LOOP_DECREMENT(RGB_Configs[rgb_key_select_menu.selected_index - 1].mode, RGB_MODE_STATIC, RGB_MODE_REACT_TRIGGER, 1)
+                        VAR_LOOP_DECREMENT(g_rgb_configs[rgb_key_select_menu.selected_index - 1].mode, RGB_MODE_STATIC, RGB_MODE_REACT_TRIGGER, 1)
                     }
                     else
                     {
-                        VAR_LOOP_INCREMENT(RGB_GlobalConfig.mode, RGB_GLOBAL_MODE_OFF, RGB_GLOBAL_MODE_JELLY, 1)
+                        VAR_LOOP_INCREMENT(g_rgb_global_config.mode, RGB_GLOBAL_MODE_OFF, RGB_GLOBAL_MODE_JELLY, 1)
                     }
                     break;
                 case 1:
-                    VAR_LOOP_DECREMENT(RGB_Configs[rgb_key_select_menu.selected_index - 1].rgb.r, 0, 255, 1)
+                    VAR_LOOP_DECREMENT(g_rgb_configs[rgb_key_select_menu.selected_index - 1].rgb.r, 0, 255, 1)
                     rgb_to_hsv(target_hsv, target_rgb);
                     break;
                 case 2:
-                    VAR_LOOP_DECREMENT(RGB_Configs[rgb_key_select_menu.selected_index - 1].rgb.g, 0, 255, 1)
+                    VAR_LOOP_DECREMENT(g_rgb_configs[rgb_key_select_menu.selected_index - 1].rgb.g, 0, 255, 1)
                     rgb_to_hsv(target_hsv, target_rgb);
                     break;
                 case 3:
-                    VAR_LOOP_DECREMENT(RGB_Configs[rgb_key_select_menu.selected_index - 1].rgb.b, 0, 255, 1)
+                    VAR_LOOP_DECREMENT(g_rgb_configs[rgb_key_select_menu.selected_index - 1].rgb.b, 0, 255, 1)
                     rgb_to_hsv(target_hsv, target_rgb);
                     break;
                 case 4:
@@ -321,11 +321,11 @@ static void rgbconfigpage_event_handler(void *e)
                 case 7:
                     if (rgb_key_select_menu.selected_index)
                     {
-                        RGB_Configs[rgb_key_select_menu.selected_index - 1].speed -= 0.001;
+                        g_rgb_configs[rgb_key_select_menu.selected_index - 1].speed -= 0.001;
                     }
                     else
                     {
-                        RGB_GlobalConfig.speed -= 0.001;
+                        g_rgb_global_config.speed -= 0.001;
                     }
                     break;
                 default:

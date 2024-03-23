@@ -53,7 +53,7 @@ static void main_menu_cb(void *menu)
 
 static void menupage_load(void *page)
 {
-    Keybaord_SendReport_Enable=false;
+    g_keybaord_send_report_enable=false;
     fezui_animated_listbox_begin(&mainmenu);
 }
 

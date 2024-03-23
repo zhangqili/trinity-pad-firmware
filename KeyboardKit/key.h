@@ -35,6 +35,10 @@ typedef struct __AdvancedKey
     KeyMode mode;
     float value;
     float raw;
+
+    float activation_value;
+    float phantom_lower_deadzone;
+
     float trigger_distance;
     float release_distance;
     float schmitt_parameter;

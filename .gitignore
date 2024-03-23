@@ -218,3 +218,5 @@ fabric.properties
 obj/*
 ~$*
 /build
+/.cmake
+/.idea

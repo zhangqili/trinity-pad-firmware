@@ -9,6 +9,7 @@
 #include "record.h"
 #include "fezui.h"
 #include "fezui_var.h"
+#include "rgb.h"
 
 #define MARGIN_LEFT           65
 #define PADDING_UP            0
@@ -142,14 +143,15 @@ static void homepage_draw(void *page)
     u8g2_DrawVLine(&(fezui.u8g2),96,HEIGHT-MARGIN_DOWN,MARGIN_DOWN);
 
     u8g2_SetFont(&(fezui.u8g2), u8g2_font_micro_tr);
-    if(Keybaord_Shift_Flag)
+    fezui_printf(&fezui,64,MARGIN_UP-2,"%ld",RGB_Tick);
+    if(g_keybaord_shift_flag)
     {
         u8g2_DrawBox(&(fezui.u8g2), 65 , 1 ,MARGIN_UP-2, MARGIN_UP-2);
         u8g2_SetDrawColor(&(fezui.u8g2), 2);
         u8g2_DrawStr(&(fezui.u8g2), 68 ,MARGIN_UP-2,"S");
 
     }
-    if(Keybaord_Alpha_Flag)
+    if(g_keybaord_alpha_flag)
     {
         u8g2_DrawBox(&(fezui.u8g2), 65 + MARGIN_UP - 2, 1 ,MARGIN_UP-2, MARGIN_UP-2);
         u8g2_SetDrawColor(&(fezui.u8g2), 2);
@@ -163,9 +165,9 @@ static void homepage_load(void *page)
 {
     //fezui_scrolling_text_init(&fezui,&scrolling_text,15,0.1,u8g2_font_4x6_mr,"HELLO!");
     //fezui_scrolling_text_begin_once(&scrolling_text);
-    Keybaord_SendReport_Enable=true;
-    Keybaord_Shift_Flag=false;
-    Keybaord_Alpha_Flag=false;
+    g_keybaord_send_report_enable=true;
+    g_keybaord_shift_flag=false;
+    g_keybaord_alpha_flag=false;
 }
 
 fezui_link_page_t homepage={homepage_logic,homepage_draw,homepage_load};

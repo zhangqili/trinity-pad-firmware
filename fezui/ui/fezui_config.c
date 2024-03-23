@@ -154,7 +154,7 @@ void fezui_timer_handler()
     uint8_t key_pressed_num=0;
     for (uint8_t i = 0; i < KEY_NUM; i++)
     {
-        key_pressed_num += Keyboard_Keys[i].state;
+        key_pressed_num += g_keyboard_keys[i].state;
     }
     
     if (KPS_history_max || key_pressed_num)
@@ -243,13 +243,13 @@ void fezui_POST()
 }
 
 
-void keyid_prase(KeyBinding id,char* str,uint16_t str_len)
+void keyid_prase(uint16_t id,char* str,uint16_t str_len)
 {
     bool key_found = false;
     memset(str,0,str_len);
     for (uint8_t i = 0; i < 8;i++)
     {
-        if(id.modifier&BIT(i))
+        if((id>>8)&BIT(i))
         {
             if(key_found)
             {
@@ -264,16 +264,16 @@ void keyid_prase(KeyBinding id,char* str,uint16_t str_len)
         }
     }
 
-    if(id.keycode)
+    if(id&0xFF)
     {
         if(key_found)
         {
             strcat(str, " + ");
-            strcat(str, hid_usage_names[(id.keycode)+8]);
+            strcat(str, hid_usage_names[(id&0xFF)+8]);
         }
         else
         {
-            strcat(str, hid_usage_names[(id.keycode)+8]);
+            strcat(str, hid_usage_names[(id&0xFF)+8]);
             key_found=true;
         }
     }

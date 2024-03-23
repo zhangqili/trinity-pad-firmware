@@ -17,12 +17,7 @@
 #define NONE_PULSE              (0)
 #define RGB_RESET_LENGTH        (60)
 #define RGB_BUFFER_LENGTH       (((RGB_NUM)*(3*8))+RGB_RESET_LENGTH)
-#define TIM_DMA_CH1_CH   DMA1_Channel5
 
-#define RGB_Start() HAL_TIM_PWM_Start_DMA(&htim2,TIM_CHANNEL_2,(uint32_t*)RGB_Buffer,RGB_BUFFER_LENGTH);
-
-#define USE_RGB
-//#define RGB_Start() HAL_TIMEx_PWMN_Start_DMA(&htim8,TIM_CHANNEL_3,RGB_buffer,RGB_BUFFER_LENGTH);
 
 typedef enum __RGBMode
 {
@@ -32,7 +27,7 @@ typedef enum __RGBMode
     RGB_MODE_REACT_TRIGGER,
 } RGBMode;
 
-typedef enum _RGBGlobalMode
+typedef enum __RGBGlobalMode
 {
     RGB_GLOBAL_MODE_OFF,
     RGB_GLOBAL_MODE_INDIVIDUAL,
@@ -51,7 +46,7 @@ typedef struct __RGBIndividualConfig
     ColorRGB rgb;
     ColorHSV hsv;
     float speed;
-    float argument;
+    uint32_t begin_time;
 } RGBIndividualConfig;
 
 typedef struct __RGBGlobalConfig
@@ -60,7 +55,7 @@ typedef struct __RGBGlobalConfig
     ColorRGB rgb;
     ColorHSV hsv;
     float speed;
-    float argument;
+    uint32_t begin_time;
 } RGBGlobalConfig;
 
 typedef struct __RGBLocation
@@ -72,7 +67,7 @@ typedef struct __RGBLocation
 typedef struct __RGBArgument
 {
     uint8_t rgb_ptr;
-    float argument;
+    uint32_t begin_time;
 }RGBArgument;
 
 
@@ -90,26 +85,23 @@ typedef struct __RGBLoopQueue
 void rgb_loop_queue_init(RGBLoopQueue* q, RGBLoopQueueElm*data, uint16_t len);
 RGBLoopQueueElm rgb_loop_queue_dequeue(RGBLoopQueue* q);
 void rgb_loop_queue_enqueue(RGBLoopQueue* q, RGBLoopQueueElm t);
+extern uint32_t RGB_Tick;
 //#define loop_queue_foreach(q,i) for(uint16_t (i)=(q)->front;(i)!=(q)->rear;(i)=(i+1)%(q)->len)
 
 #define ARGUMENT_BUFFER_LENGTH 16
-#ifdef USE_RGB
-extern uint8_t RGB_Buffer[RGB_BUFFER_LENGTH];
-#endif
-extern ColorRGB RGB_Colors[RGB_NUM];
-extern RGBIndividualConfig RGB_Configs[RGB_NUM];
-extern RGBGlobalConfig RGB_GlobalConfig;
-extern uint8_t RGB_TargetConfig;
-extern RGBLoopQueue RGB_Argument_Queue;
-extern const uint8_t RGB_Mapping[ADVANCED_KEY_NUM];
+extern uint8_t g_rgb_buffer[RGB_BUFFER_LENGTH];
+extern ColorRGB g_rgb_colors[RGB_NUM];
+extern RGBIndividualConfig g_rgb_configs[RGB_NUM];
+extern RGBGlobalConfig g_rgb_global_config;
+extern RGBLoopQueue g_rgb_argument_queue;
+extern const uint8_t g_rgb_mapping[ADVANCED_KEY_NUM];
+extern const RGBLocation g_rgb_locations[RGB_NUM];
 
-#ifdef USE_RGB
 void rgb_init();
 void rgb_update();
 void rgb_set(uint8_t r,uint8_t g,uint8_t b,uint16_t index);
 void rgb_flash();
 void rgb_turn_off();
-#endif
 void rgb_recovery();
 void rgb_save();
 

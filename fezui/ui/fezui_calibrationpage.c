@@ -18,23 +18,23 @@ void drawrawdata(uint8_t x, uint8_t y, uint8_t n)
 {
     u8g2_SetFont(&(fezui.u8g2), u8g2_font_4x6_mr);
 
-    fezui_printf(&fezui, x, y + 7 * 1, "state:%d", Keyboard_AdvancedKeys[n].key.state);
+    fezui_printf(&fezui, x, y + 7 * 1, "state:%d", g_keyboard_advanced_keys[n].key.state);
 
-    fezui_printf(&fezui, x, y + 7 * 2, "raw:%4.1f", Keyboard_AdvancedKeys[n].raw);
+    fezui_printf(&fezui, x, y + 7 * 2, "raw:%4.1f", g_keyboard_advanced_keys[n].raw);
 
-    fezui_printf(&fezui, x + 64, y + 7 * 2, "value:%.3f", Keyboard_AdvancedKeys[n].value);
+    fezui_printf(&fezui, x + 64, y + 7 * 2, "value:%.3f", g_keyboard_advanced_keys[n].value);
 
-    fezui_printf(&fezui, x, y + 7 * 3, "mode:%d", Keyboard_AdvancedKeys[n].mode);
+    fezui_printf(&fezui, x, y + 7 * 3, "mode:%d", g_keyboard_advanced_keys[n].mode);
 
-    fezui_printf(&fezui, x, y + 7 * 4, "distance:(%.3f, %.3f)", Keyboard_AdvancedKeys[n].trigger_distance, Keyboard_AdvancedKeys[n].release_distance);
+    fezui_printf(&fezui, x, y + 7 * 4, "distance:(%.3f, %.3f)", g_keyboard_advanced_keys[n].trigger_distance, g_keyboard_advanced_keys[n].release_distance);
 
-    fezui_printf(&fezui, x, y + 7 * 5, "speed:(%.3f, %.3f)", Keyboard_AdvancedKeys[n].trigger_speed, Keyboard_AdvancedKeys[n].release_speed);
+    fezui_printf(&fezui, x, y + 7 * 5, "speed:(%.3f, %.3f)", g_keyboard_advanced_keys[n].trigger_speed, g_keyboard_advanced_keys[n].release_speed);
 
-    fezui_printf(&fezui, x, y + 7 * 6, "deadzone:(%.3f, %.3f)", Keyboard_AdvancedKeys[n].upper_deadzone, Keyboard_AdvancedKeys[n].lower_deadzone);
+    fezui_printf(&fezui, x, y + 7 * 6, "deadzone:(%.3f, %.3f)", g_keyboard_advanced_keys[n].upper_deadzone, g_keyboard_advanced_keys[n].lower_deadzone);
 
-    fezui_printf(&fezui, x, y + 7 * 7, "bound:(%.3f, %.3f)", Keyboard_AdvancedKeys[n].upper_bound, Keyboard_AdvancedKeys[n].lower_bound);
+    fezui_printf(&fezui, x, y + 7 * 7, "bound:(%.3f, %.3f)", g_keyboard_advanced_keys[n].upper_bound, g_keyboard_advanced_keys[n].lower_bound);
 
-    fezui_printf(&fezui, x, y + 7 * 8, "range:%.3f", Keyboard_AdvancedKeys[n].range);
+    fezui_printf(&fezui, x, y + 7 * 8, "range:%.3f", g_keyboard_advanced_keys[n].range);
 }
 
 void calibrationpage_init()

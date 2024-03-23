@@ -39,4 +39,45 @@
 #define PULSE 1000
 #define PULSE_LEN_MS 40
 
+#define LAYER_NUM             3
+#define ADVANCED_KEY_NUM      4
+#define KEY_NUM               (6+3)
+
+#define HID_BUFFER_LENGTH       64
+
+#define GPIO_READ(x)          GPIO_ReadInputDataBit(x##_GPIO_Port,x##_Pin)
+#define K1_READ               !GPIO_READ(K1)
+#define K2_READ               !GPIO_READ(K2)
+#define K3_READ               !GPIO_READ(K3)
+#define K4_READ               !GPIO_READ(K4)
+#define FN_K1_READ            !GPIO_READ(FN_K1)
+#define FN_K2_READ            !GPIO_READ(FN_K2)
+#define FN_K3_READ            !GPIO_READ(FN_K3)
+#define FN_K4_READ            !GPIO_READ(FN_K4)
+#define FN_K5_READ            !GPIO_READ(FN_K5)
+#define FN_K6_READ            GPIO_READ(FN_K6)
+#define KNOB_READ             GPIO_READ(KNOB)
+
+
+#define KEY_FN_K1               g_keyboard_keys[0]
+#define KEY_FN_K2               g_keyboard_keys[1]
+#define KEY_FN_K3               g_keyboard_keys[2]
+#define KEY_FN_K4               g_keyboard_keys[3]
+#define KEY_FN_K5               g_keyboard_keys[4]
+#define KEY_FN_K6               g_keyboard_keys[5]
+#define KEY_KNOB                g_keyboard_keys[6]
+#define KEY_KNOB_CLOCKWISE      g_keyboard_keys[7]
+#define KEY_KNOB_ANTICLOCKWISE  g_keyboard_keys[8]
+
+#define KEY_FN_K1_INDEX               0
+#define KEY_FN_K2_INDEX               1
+#define KEY_FN_K3_INDEX               2
+#define KEY_FN_K4_INDEX               3
+#define KEY_FN_K5_INDEX               4
+#define KEY_FN_K6_INDEX               5
+#define KEY_KNOB_INDEX                6
+#define KEY_KNOB_CLOCKWISE_INDEX      7
+#define KEY_KNOB_ANTICLOCKWISE_INDEX  8
+
+
 #endif /* KEYBOARD_CONF_H_ */

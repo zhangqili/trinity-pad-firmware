@@ -10,24 +10,35 @@
 #include "keyboard.h"
 
 #define Analog_Clean() (ADC_Conversion_Count=0)
+#define ADDRESS BCD_TO_GRAY(Analog_ActiveChannel)
+#define BCD_TO_GRAY(x) (x^(x>>1))
 
-#define ANALOG_INIT_SCAN_COUNT 32768
 #define ANALOG_BUFFER_LENGTH 16
 
-extern uint8_t ADC_Conversion_Count;
-extern int16_t ADC_Values[ADVANCED_KEY_NUM][64];
-extern int16_t ADC_Value_List[ADVANCED_KEY_NUM];
-extern uint16_t ADC_Buffer[ADVANCED_KEY_NUM*ANALOG_BUFFER_LENGTH];
-extern float ADC_Sums[ADVANCED_KEY_NUM];
-extern uint32_t ADC_Averages[ADVANCED_KEY_NUM];
-extern float Analog_Values[ADVANCED_KEY_NUM];
+#define TOLERANCE 3
+#define RING_BUF_LEN 8
+#define DMA_BUF_LEN 10
 
-void analog_scan();
+typedef struct
+{
+    uint32_t datas[RING_BUF_LEN];
+    uint32_t pointer;
+    uint32_t state;
+}RingBuf;
+
+
+extern uint8_t g_ADC_Conversion_Count;
+extern uint16_t g_ADC_Buffer[ADVANCED_KEY_NUM*ANALOG_BUFFER_LENGTH];
+extern uint32_t g_ADC_Averages[ADVANCED_KEY_NUM];
+
 void analog_init();
+void analog_channel_select(uint8_t x);
+void analog_scan();
 void analog_average();
 void analog_check();
-void analog_recovery();
-void analog_save();
 void analog_reset_range();
+
+void ringbuf_push(RingBuf *ringbuf, uint32_t data);
+float ringbuf_avg(RingBuf *ringbuf);
 
 #endif /* ANALOG_H_ */
