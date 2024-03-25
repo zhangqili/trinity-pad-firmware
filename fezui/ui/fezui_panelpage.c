@@ -28,7 +28,7 @@ void panelpage_init()
 static void panelpage_logic(void *page)
 {
     fezui_cursor_set(
-        &target_cursor,
+        &g_target_cursor,
         WIDTH / 4 * panelmenu.selected_index,
         0,
         // strlen(current_menu->items[current_menu->selected_index])*5+3,
@@ -46,7 +46,7 @@ static void panelpage_draw(void *page)
         bars[i].value = g_keyboard_advanced_keys[i].value;
         fezui_draw_progressbar(&fezui, i * WIDTH / 4 + 2, 20, WIDTH / 4 - 2 * 2, 36, bars + i);
     }
-    fezui_draw_cursor(&fezui, &cursor);
+    fezui_draw_cursor(&fezui, &g_fezui_cursor);
 }
 
 static void panelpage_load(void *page)

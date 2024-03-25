@@ -63,11 +63,11 @@ void rgbconfigpage_init()
     fezui_list_base_init(&rgb_global_config_menu, rgb_global_config_menu_items, sizeof(rgb_global_config_menu_items) / sizeof(const char *), NULL);
 }
 
-static void rgbconfigpage_logic(void *page)
+static void rgbconfigpage_tick(void *page)
 {
 
     fezui_cursor_set(
-        &target_cursor,
+        &g_target_cursor,
         0,
         rgb_key_select_menu.selected_index * ROW_HEIGHT,
         SPERATOR_X,
@@ -190,7 +190,7 @@ static void rgbconfigpage_draw(void *page)
     }
     u8g2_SetDrawColor(&(fezui.u8g2), color);
 
-    fezui_draw_cursor(&fezui, &cursor);
+    fezui_draw_cursor(&fezui, &g_fezui_cursor);
     fezui_draw_cursor(&fezui, &config_cursor);
 
     u8g2_DrawVLine(&(fezui.u8g2), SPERATOR_X, 0, 64);
@@ -375,4 +375,4 @@ static void rgbconfigpage_event_handler(void *e)
         break;
     }
 }
-fezui_link_page_t rgbconfigpage = {rgbconfigpage_logic, rgbconfigpage_draw, rgbconfigpage_load, rgbconfigpage_event_handler};
+fezui_link_page_t rgbconfigpage = {rgbconfigpage_tick, rgbconfigpage_draw, rgbconfigpage_load, rgbconfigpage_event_handler};

@@ -68,7 +68,7 @@ fezui_rolling_number_t max_kps_num=
 };
 
 
-static void homepage_logic(void *page)
+static void homepage_tick(void *page)
 {
     fezui_rolling_number_set(&key1_num,g_key_counts[0]-g_key_init_counts[0]);
     fezui_rolling_number_set(&key2_num,g_key_counts[1]-g_key_init_counts[1]);
@@ -127,7 +127,7 @@ static void homepage_draw(void *page)
     fezui_draw_rolling_number(&fezui, 98, 63, &key4_num);
 
 #ifndef SHOW_FPS
-    u8g2_DrawStr(&(fezui.u8g2),95+15,MARGIN_UP-1,fpsstr);
+    u8g2_DrawStr(&(fezui.u8g2),95+15,MARGIN_UP-1,g_fpsstr);
 #endif
 
     fezui_draw_rolling_number(&fezui, 15, MARGIN_UP-1, &kps_num);
@@ -143,7 +143,7 @@ static void homepage_draw(void *page)
     u8g2_DrawVLine(&(fezui.u8g2),96,HEIGHT-MARGIN_DOWN,MARGIN_DOWN);
 
     u8g2_SetFont(&(fezui.u8g2), u8g2_font_micro_tr);
-    fezui_printf(&fezui,64,MARGIN_UP-2,"%ld",RGB_Tick);
+    //fezui_printf(&fezui,64,MARGIN_UP-2,"%ld",RGB_Tick);
     if(g_keybaord_shift_flag)
     {
         u8g2_DrawBox(&(fezui.u8g2), 65 , 1 ,MARGIN_UP-2, MARGIN_UP-2);
@@ -170,4 +170,4 @@ static void homepage_load(void *page)
     g_keybaord_alpha_flag=false;
 }
 
-fezui_link_page_t homepage={homepage_logic,homepage_draw,homepage_load};
+fezui_link_page_t homepage={homepage_tick,homepage_draw,homepage_load};

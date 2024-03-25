@@ -212,15 +212,14 @@ void advancedconfigpage_init()
     fezui_list_base_init(&keyconfig_analog_normal_mode_menu, keyconfig_analog_normal_mode_menu_items, sizeof(keyconfig_analog_normal_mode_menu_items)/sizeof(const char*), keyconfig_analog_normal_mode_menu_cb);
     fezui_list_base_init(&keyconfig_analog_rapid_mode_menu, keyconfig_analog_rapid_mode_menu_items, sizeof(keyconfig_analog_rapid_mode_menu_items)/sizeof(const char*), keyconfig_analog_rapid_mode_menu_cb);
     fezui_list_base_init(&keyconfig_analog_speed_mode_menu, keyconfig_analog_speed_mode_menu_items, sizeof(keyconfig_analog_speed_mode_menu_items)/sizeof(const char*), keyconfig_analog_speed_mode_menu_cb);
-
 }
 
-static void advancedconfigpage_logic(void *page)
+static void advancedconfigpage_tick(void *page)
 {
     if(configing)
     {
         fezui_cursor_set(
-                &target_cursor ,
+                &g_target_cursor ,
                 SPERATOR_X-4*6,
                 current_menu->selected_index*ROW_HEIGHT + ROW_HEIGHT/2 - (u8g2_int_t)scrollview.ordinate,
                 //strlen(current_menu->items[current_menu->selected_index])*5+3,
@@ -230,9 +229,9 @@ static void advancedconfigpage_logic(void *page)
     else if(mode_switching)
     {
         fezui_cursor_set(
-                &target_cursor ,
+                &g_target_cursor ,
                 SPERATOR_X-4*13,
-                current_menu->selected_index*ROW_HEIGHT - ROW_HEIGHT/2 - (u8g2_int_t)scrollview.ordinate,
+                current_menu->selected_index*ROW_HEIGHT + ROW_HEIGHT/2 - (u8g2_int_t)scrollview.ordinate,
                 //strlen(current_menu->items[current_menu->selected_index])*5+3,
                 4*13,
                 ROW_HEIGHT/2);
@@ -240,7 +239,7 @@ static void advancedconfigpage_logic(void *page)
     else
     {
         fezui_cursor_set(
-                &target_cursor ,
+                &g_target_cursor ,
                 0,
                 current_menu->selected_index*ROW_HEIGHT - (u8g2_int_t)scrollview.ordinate,
                 //strlen(current_menu->items[current_menu->selected_index])*5+3,
@@ -369,7 +368,7 @@ static void advancedconfigpage_draw(void *page)
 
     fezui_printf(&fezui, WIDTH-4*6, 16 - 1, "%6.1f",current_config_advanced_key->raw);
     u8g2_SetDrawColor(&(fezui.u8g2), color);
-    fezui_draw_cursor(&fezui, &cursor);
+    fezui_draw_cursor(&fezui, &g_fezui_cursor);
 }
 
 static void mode_update(int8_t x)
@@ -453,5 +452,5 @@ static void advancedconfigpage_load(void *page)
     fezui_scrolling_text_init(&fezui,&scrolling_text, 78, 0.2, u8g2_font_4x6_mr, binding_text);
 }
 
-fezui_link_page_t advancedconfigpage={advancedconfigpage_logic,advancedconfigpage_draw,advancedconfigpage_load,advancedconfigpage_event_handler};
+fezui_link_page_t advancedconfigpage={advancedconfigpage_tick,advancedconfigpage_draw,advancedconfigpage_load,advancedconfigpage_event_handler};
 

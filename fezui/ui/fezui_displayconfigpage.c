@@ -48,7 +48,7 @@ void displayconfigpage_init()
     fezui_animated_menu_init(&displayconfig_menu, displayconfig_menu_items, sizeof(displayconfig_menu_items) / sizeof(fezui_menuitem_t), displayconfig_menu_cb);
 }
 
-static void displayconfigpage_logic(void *page)
+static void displayconfigpage_tick(void *page)
 {
     fezui_animated_menu_update(&fezui, &displayconfig_menu);
     fezui_flyout_numberic_dialog_update(&fezui, &dialog);
@@ -58,8 +58,8 @@ static void displayconfigpage_draw(void *page)
 {
     u8g2_SetFont(&(fezui.u8g2), u8g2_font_6x13_mr);
     fezui_draw_animated_menu(&fezui, 0, 0, WIDTH, HEIGHT, &displayconfig_menu, 16, 3);
-    fezui_animated_menu_get_cursor(&fezui, 0, 0, WIDTH, HEIGHT, &displayconfig_menu, 16, &target_cursor);
-    fezui_draw_cursor(&fezui, &cursor);
+    fezui_animated_menu_get_cursor(&fezui, 0, 0, WIDTH, HEIGHT, &displayconfig_menu, 16, &g_target_cursor);
+    fezui_draw_cursor(&fezui, &g_fezui_cursor);
     fezui_veil(&fezui, 0, 0, WIDTH, HEIGHT, dialog.animation * 5, fezui.invert ? 1 : 0);
     fezui_draw_flyout_numberic_dialog(&fezui, &dialog);
     fezui.speed = ((float)speed) / 100;
@@ -156,4 +156,4 @@ static void displayconfigpage_event_handler(void *e)
     }
 }
 
-fezui_link_page_t displayconfigpage = {displayconfigpage_logic, displayconfigpage_draw, displayconfigpage_load,displayconfigpage_event_handler};
+fezui_link_page_t displayconfigpage = {displayconfigpage_tick, displayconfigpage_draw, displayconfigpage_load,displayconfigpage_event_handler};

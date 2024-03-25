@@ -51,16 +51,16 @@ void fezui_link_frame_logic(fezui_link_frame_t* frame)
         if(frame->animation->value <0.5)
         {
             //if(frame->old_page!=NULL)
-            //    frame->old_page->page_logic_cb(frame->old_page);
+            //    frame->old_page->page_tick_cb(frame->old_page);
         }
         else
         {
-            frame->current_page->page_logic_cb(frame->current_page);
+            frame->current_page->page_tick_cb(frame->current_page);
         }
     }
     else
     {
-        frame->current_page->page_logic_cb(frame->current_page);
+        frame->current_page->page_tick_cb(frame->current_page);
     }
 }
 
@@ -73,12 +73,12 @@ void fezui_link_frame_draw(fezui_link_frame_t* frame)
         {
             if(frame->old_page!=NULL)
                 frame->old_page->page_draw_cb(frame->old_page);
-            fezui_veil(&fezui,0,0,WIDTH,HEIGHT,frame->animation->value*14,fezui.invert?1:0);
+            fezui_veil_full_screen(&fezui,frame->animation->value*14);
         }
         else
         {
             frame->current_page->page_draw_cb(frame->current_page);
-            fezui_veil(&fezui,0,0,WIDTH,HEIGHT,(1-frame->animation->value)*14,fezui.invert?1:0);
+            fezui_veil_full_screen(&fezui,(1-frame->animation->value)*14);
         }
     }
     else

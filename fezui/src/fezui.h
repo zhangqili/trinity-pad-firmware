@@ -211,9 +211,9 @@ typedef struct __fezui_animated_cursor_t
     fezui_animation_PID_t PID_h;
 } fezui_animated_cursor_t;
 
-extern fezui_cursor_t cursor;
-//extern fezui_animated_cursor_t cursor;
-extern fezui_cursor_t target_cursor;
+extern fezui_cursor_t g_fezui_cursor;
+//extern fezui_animated_cursor_t g_fezui_cursor;
+extern fezui_cursor_t g_target_cursor;
 extern fezui_animated_cursor_t animated_cursor;
 
 void fezui_animated_cursor_update(fezui_animated_cursor_t* cursor);
@@ -298,7 +298,7 @@ typedef enum
 
 typedef struct __fezui_scrolling_text_t
 {
-    char *text;
+    const char *text;
     float offset;
     float speed;
     u8g2_int_t width;
@@ -349,7 +349,7 @@ typedef struct __fezui_menuitem_t
 
 typedef struct __fezui_animated_menu_t
 {
-    fezui_menuitem_t *items;
+    const fezui_menuitem_t *items;
     int16_t selected_index;
     uint16_t len;
     u8g2_int_t content_height;
@@ -442,7 +442,7 @@ void fezui_draw_flyout_numberic_dialog(fezui_t *fezui_ptr, fezui_flyout_numberic
 
 typedef struct __fezui_link_page_t
 {
-    void (*page_logic_cb)(void *page);
+    void (*page_tick_cb)(void *page);
     void (*page_draw_cb)(void *page);
     void (*page_load_cb)(void *page);
     void (*event_handler)(void *e);

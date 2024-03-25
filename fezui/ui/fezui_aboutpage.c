@@ -124,7 +124,7 @@ void draw_gemini()
     DRAW_LINE_BETWEEN(TAU,THETA);
 }
 
-static void aboutpage_logic(void *page)
+static void aboutpage_tick(void *page)
 {
     CONVERGE_TO(icon_x,target_icon_x,fezui.speed);
     CONVERGE_TO(url_y,target_url_y,fezui.speed);
@@ -200,7 +200,7 @@ static void aboutpage_event_handler(void *e)
         break;
     case KEY_ESC:
         fezui_link_frame_go_back(&mainframe);
-        fezui_cursor_set(&cursor ,0 ,0 ,WIDTH ,HEIGHT);
+        fezui_cursor_set(&g_fezui_cursor ,0 ,0 ,WIDTH ,HEIGHT);
         break;
     default:
         break;
@@ -226,5 +226,5 @@ static void aboutpage_load(void *page)
 
 }
 
-fezui_link_page_t aboutpage={aboutpage_logic,aboutpage_draw,aboutpage_load,aboutpage_event_handler};
+fezui_link_page_t aboutpage={aboutpage_tick,aboutpage_draw,aboutpage_load,aboutpage_event_handler};
 

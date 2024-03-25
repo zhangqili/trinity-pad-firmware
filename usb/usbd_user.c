@@ -210,6 +210,7 @@ static const uint8_t hid_descriptor[] = {
     0x00
 };
 
+#ifdef ENABLE_MOUSE
 /* USB HID device Configuration Descriptor */
 static uint8_t hid_desc[9] __ALIGN_END = {
     /* 18 */
@@ -223,6 +224,7 @@ static uint8_t hid_desc[9] __ALIGN_END = {
     HID_KEYBOARD_REPORT_DESC_SIZE, /* wItemLength: Total length of Report descriptor */
     0x00,
 };
+#endif
 
 static const uint8_t hid_keyboard_report_desc[HID_KEYBOARD_REPORT_DESC_SIZE] = {
     0x05, 0x01, // USAGE_PAGE (Generic Desktop)
@@ -259,6 +261,7 @@ static const uint8_t hid_keyboard_report_desc[HID_KEYBOARD_REPORT_DESC_SIZE] = {
     0xc0        // END_COLLECTION
 };
 
+#ifdef ENABLE_MOUSE
 /*!< hid mouse report descriptor */
 static const uint8_t hid_mouse_report_desc[HID_MOUSE_REPORT_DESC_SIZE] = {
 
@@ -309,7 +312,7 @@ static const uint8_t hid_mouse_report_desc[HID_MOUSE_REPORT_DESC_SIZE] = {
 
     0x01, 0xc0 //   END_COLLECTION
 };
-
+#endif
 /*!< custom hid report descriptor */
 static const uint8_t hid_raw_report_desc[HID_RAW_REPORT_DESC_SIZE] = {
     /* USER CODE BEGIN 0 */
@@ -411,12 +414,12 @@ static struct usbd_endpoint hid_keyboard_in_ep = {
     .ep_cb = usbd_hid_kayboard_int_callback,
     .ep_addr = HID_KEYBOARD_INT_EP
 };
-
+#ifdef ENABLE_MOUSE
 static struct usbd_endpoint hid_mouse_in_ep = {
     .ep_cb = usbd_hid_mouse_int_callback,
     .ep_addr = HID_MOUSE_INT_EP
 };
-
+#endif
 static struct usbd_endpoint custom_in_ep = {
     .ep_cb = usbd_hid_custom_in_callback,
     .ep_addr = HIDRAW_IN_EP
@@ -457,7 +460,7 @@ void hid_keyboard_send(uint8_t*buffer)
         return;
     }
     hid_state = HID_STATE_BUSY;
-    fezui_report_count++;
+    g_usb_report_count++;
 }
 
 void hid_mouse_send(uint8_t*buffer)

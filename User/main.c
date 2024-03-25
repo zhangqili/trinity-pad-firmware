@@ -1,14 +1,14 @@
 /********************************** (C) COPYRIGHT *******************************
- * File Name          : main.c
- * Author             : WCH
- * Version            : V1.0.0
- * Date               : 2021/06/06
- * Description        : Main program body.
- *********************************************************************************
- * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
- * Attention: This software (modified or not) and binary are used for
- * microcontroller manufactured by Nanjing Qinheng Microelectronics.
- *******************************************************************************/
+* File Name          : main.c
+* Author             : WCH
+* Version            : V1.0.0
+* Date               : 2021/06/06
+* Description        : Main program body.
+*********************************************************************************
+* Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
+* Attention: This software (modified or not) and binary are used for 
+* microcontroller manufactured by Nanjing Qinheng Microelectronics.
+*******************************************************************************/
 
 /*
  *@Note
@@ -773,14 +773,14 @@ void TIM6_IRQHandler(void)
         count++;
         if (count == REFRESH_RATE)
         {
-            sprintf(fpsstr, "%ld", fezui_fps);
+            sprintf(g_fpsstr, "%ld", fezui_fps);
             fezui_fps = 0;
             count = 0;
             if (fezui.screensaver_countdown)
                 fezui.screensaver_countdown--;
             record_kps_history_timer();
-            fezui_report_count1=fezui_report_count;
-            fezui_report_count=0;
+            g_usb_report_count1=g_usb_report_count;
+            g_usb_report_count=0;
             fezui_run_time++;
         }
         fezui_timer_handler();

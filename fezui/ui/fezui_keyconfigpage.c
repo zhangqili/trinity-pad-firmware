@@ -28,10 +28,10 @@ void keyconfigpage_init()
     fezui_list_base_init(&keyconfig_menu, keyconfig_menu_items, sizeof(keyconfig_menu_items)/sizeof(const char*), keyconfig_menu_cb);
 }
 
-static void keyconfigpage_logic(void *page)
+static void keyconfigpage_tick(void *page)
 {
     fezui_cursor_set(
-            &target_cursor ,
+            &g_target_cursor ,
             0,
             keyconfig_menu.selected_index*ROW_HEIGHT,
             SPERATOR_X,
@@ -55,7 +55,7 @@ static void keyconfigpage_draw(void *page)
 
 
     u8g2_SetDrawColor(&(fezui.u8g2), color);
-    fezui_draw_cursor(&fezui, &cursor);
+    fezui_draw_cursor(&fezui, &g_fezui_cursor);
 }
 
 static void keyconfigpage_load(void *page)
@@ -84,4 +84,4 @@ static void keyconfigpage_event_handler(void *e)
     }
 
 }
-fezui_link_page_t keyconfigpage={keyconfigpage_logic,keyconfigpage_draw,keyconfigpage_load,keyconfigpage_event_handler};
+fezui_link_page_t keyconfigpage={keyconfigpage_tick,keyconfigpage_draw,keyconfigpage_load,keyconfigpage_event_handler};

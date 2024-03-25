@@ -29,11 +29,11 @@ void listbox_cb(void *l)
 
 void debugpage_init()
 {
-    fezui_animated_listbox_init(&listbox, hid_usage_names, sizeof(hid_usage_names) / sizeof(const char *), listbox_cb);
+    fezui_animated_listbox_init(&listbox, g_hid_usage_names, sizeof(g_hid_usage_names) / sizeof(const char *), listbox_cb);
     listbox.show_scrollbar = true;
 }
 
-static void debugpage_logic(void *page)
+static void debugpage_tick(void *page)
 {
     fezui_rolling_number_update(&fezui, &rolling_number);
     fezui_flyout_numberic_dialog_update(&fezui, &dialog);
@@ -47,12 +47,12 @@ static void debugpage_draw(void *page)
 
     u8g2_SetFont(&(fezui.u8g2), u8g2_font_5x8_mr);
     // fezui_draw_animated_listbox(&fezui, 0, 0, WIDTH, HEIGHT, &listbox, 8, 1);
-    // fezui_animated_listbox_get_cursor(&fezui, 0, 0, WIDTH, HEIGHT, &listbox, 8, &target_cursor);
+    // fezui_animated_listbox_get_cursor(&fezui, 0, 0, WIDTH, HEIGHT, &listbox, 8, &g_target_cursor);
     extern uint8_t read_buffer[64];
     u8g2_DrawStr(&(fezui.u8g2), 0, 64, (char *)read_buffer + 1);
 
     fezui_draw_flyout_numberic_dialog(&fezui, &dialog);
-    fezui_draw_cursor(&fezui, &cursor);
+    fezui_draw_cursor(&fezui, &g_fezui_cursor);
 }
 
 static void debugpage_load(void *page)
@@ -77,11 +77,11 @@ static void debugpage_event_handler(void *e)
         break;
     case KEY_ESC:
         fezui_link_frame_go_back(&mainframe);
-        fezui_cursor_set(&cursor, 0, 0, WIDTH, HEIGHT);
+        fezui_cursor_set(&g_fezui_cursor, 0, 0, WIDTH, HEIGHT);
         break;
     default:
         break;
     }
 }
 
-fezui_link_page_t debugpage = {debugpage_logic, debugpage_draw, debugpage_load, debugpage_event_handler};
+fezui_link_page_t debugpage = {debugpage_tick, debugpage_draw, debugpage_load, debugpage_event_handler};

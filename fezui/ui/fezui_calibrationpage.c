@@ -42,10 +42,10 @@ void calibrationpage_init()
     fezui_list_base_init(&calibrationmenu, calibrationmenu_items, sizeof(calibrationmenu_items) / sizeof(const char *), NULL);
 }
 
-static void calibrationpage_logic(void *page)
+static void calibrationpage_tick(void *page)
 {
     fezui_cursor_set(
-        &target_cursor,
+        &g_target_cursor,
         100,
         0,
         28,
@@ -61,7 +61,7 @@ static void calibrationpage_draw(void *page)
     fezui_printf(&fezui, 0, 7, "Press OK to reset range");
     fezui_printf(&fezui, 102, 7, "<%s>", calibrationmenu.items[calibrationmenu.selected_index]);
     // u8g2_SetDrawColor(&(fezui.u8g2), 1);
-    fezui_draw_cursor(&fezui, &cursor);
+    fezui_draw_cursor(&fezui, &g_fezui_cursor);
 }
 
 static void calibrationpage_event_handler(void *e)
@@ -89,4 +89,4 @@ static void calibrationpage_load(void *page)
     calibrationstate = 0;
 }
 
-fezui_link_page_t calibrationpage = {calibrationpage_logic, calibrationpage_draw, calibrationpage_load, calibrationpage_event_handler};
+fezui_link_page_t calibrationpage = {calibrationpage_tick, calibrationpage_draw, calibrationpage_load, calibrationpage_event_handler};

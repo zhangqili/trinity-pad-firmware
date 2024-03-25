@@ -90,7 +90,7 @@ void fezui_draw_detailed_wave(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, 
     // u8g2_SetDrawColor(&(fezui_ptr->u8g2), !fezui_ptr->invert);
 }
 
-static void oscilloscopepage_logic(void *page)
+static void oscilloscopepage_tick(void *page)
 {
     record_analog_timer();
     CONVERGE_TO_ROUNDED(offset_x, target_offset_x, fezui.speed);
@@ -134,10 +134,10 @@ static void oscilloscopepage_event_handler(void *e)
         break;
     case KEY_ESC:
         fezui_link_frame_go_back(&mainframe);
-        fezui_cursor_set(&cursor, 0, 0, WIDTH, HEIGHT);
+        fezui_cursor_set(&g_fezui_cursor, 0, 0, WIDTH, HEIGHT);
         break;
     default:
         break;
     }
 }
-fezui_link_page_t oscilloscopepage = {oscilloscopepage_logic, oscilloscopepage_draw, oscilloscopepage_load, oscilloscopepage_event_handler};
+fezui_link_page_t oscilloscopepage = {oscilloscopepage_tick, oscilloscopepage_draw, oscilloscopepage_load, oscilloscopepage_event_handler};

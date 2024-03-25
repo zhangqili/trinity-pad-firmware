@@ -14,7 +14,12 @@
 
 #define ROUND(x) ((int)((x)+0.5f))
 
-#define BIT(x) (1<<x)
+#ifdef BIT
+#undef BIT
+#define BIT(n) (1UL << (n))
+#else
+#define BIT(n) (1UL << (n))
+#endif
 
 #define VAR_LOOP_INCREMENT(x,min,max,delta) if((x)<(max)) (x)+=(delta);else (x)=(min);
 

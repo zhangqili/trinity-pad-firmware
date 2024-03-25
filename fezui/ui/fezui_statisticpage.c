@@ -19,7 +19,7 @@ static fezui_scrollview_t scrollview =
 
 static float target_ordinate = 0;
 
-static void statisticpage_logic(void *page)
+static void statisticpage_tick(void *page)
 {
     CONVERGE_TO_ROUNDED(scrollview.ordinate, target_ordinate, fezui.speed);
 }
@@ -75,15 +75,15 @@ static void statisticpage_event_handler(void *e)
         break;
     case KEY_ENTER:
         fezui_link_frame_go_back(&mainframe);
-        fezui_cursor_set(&cursor, 0, 0, WIDTH, HEIGHT);
+        fezui_cursor_set(&g_fezui_cursor, 0, 0, WIDTH, HEIGHT);
         break;
     case KEY_ESC:
         fezui_link_frame_go_back(&mainframe);
-        fezui_cursor_set(&cursor, 0, 0, WIDTH, HEIGHT);
+        fezui_cursor_set(&g_fezui_cursor, 0, 0, WIDTH, HEIGHT);
         break;
     default:
         break;
     }
 }
 
-fezui_link_page_t statisticpage = {statisticpage_logic, statisticpage_draw, statisticpage_load, statisticpage_event_handler};
+fezui_link_page_t statisticpage = {statisticpage_tick, statisticpage_draw, statisticpage_load, statisticpage_event_handler};

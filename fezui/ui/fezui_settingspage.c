@@ -26,7 +26,7 @@ void settingspage_init()
     settingsmenu.show_scrollbar = true;
 }
 
-static void settingspage_logic(void *page)
+static void settingspage_tick(void *page)
 {
     fezui_animated_listbox_update(&fezui, &settingsmenu);
 }
@@ -34,8 +34,8 @@ static void settingspage_draw(void *page)
 {
     u8g2_SetFont(&(fezui.u8g2), u8g2_font_6x13_mr);
     fezui_draw_animated_listbox(&fezui, 0, 0, WIDTH, HEIGHT, &settingsmenu, ROW_HEIGHT, 3);
-    fezui_animated_listbox_get_cursor(&fezui, 0, 0, WIDTH, HEIGHT, &settingsmenu, ROW_HEIGHT, &target_cursor);
-    fezui_draw_cursor(&fezui, &cursor);
+    fezui_animated_listbox_get_cursor(&fezui, 0, 0, WIDTH, HEIGHT, &settingsmenu, ROW_HEIGHT, &g_target_cursor);
+    fezui_draw_cursor(&fezui, &g_fezui_cursor);
 }
 static void settings_menu_cb(void *menu)
 {
@@ -92,4 +92,4 @@ static void settingspage_event_handler(void *e)
     }
 }
 
-fezui_link_page_t settingspage = {settingspage_logic, settingspage_draw, settingspage_load, settingspage_event_handler};
+fezui_link_page_t settingspage = {settingspage_tick, settingspage_draw, settingspage_load, settingspage_event_handler};

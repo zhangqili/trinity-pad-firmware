@@ -17,23 +17,16 @@ extern uint8_t u8log_buf[1024];
 
 extern uint32_t fezui_fps;
 extern uint8_t KPS_history_max;
-extern char fpsstr[8];
-extern char comstr[8];
+extern char g_fpsstr[8];
 extern uint32_t fezui_debug;
-extern float fezui_debug_float;
-extern uint8_t cmd_buffer;
-extern uint8_t fezui_adc_conversion_count;
 
 extern uint32_t fezui_run_time;
-extern uint32_t fezui_temp_raw;
-extern uint32_t fezui_report_count;
-extern uint32_t fezui_report_count1;
+extern uint32_t g_usb_report_count;
+extern uint32_t g_usb_report_count1;
 
 extern fezui_notification_t fezui_notification;
 
-extern const char *hid_usage_names[138];
-
-
+extern const char *g_hid_usage_names[138];
 
 extern fezui_link_frame_t mainframe;
 
@@ -42,10 +35,8 @@ extern fezui_link_page_t homepage;
 extern fezui_link_page_t menupage;
 void menupage_init();
 
-
 extern fezui_link_page_t settingspage;
 void settingspage_init();
-
 
 extern fezui_link_page_t advancedsettingspage;
 void advancedsettingspage_init();
@@ -85,7 +76,6 @@ void rgbconfigpage_init();
 extern fezui_link_page_t statisticpage;
 
 extern fezui_link_page_t aboutpage;
-
 
 extern fezui_link_page_t calibrationpage;
 void calibrationpage_init();

@@ -6,8 +6,7 @@
  */
 #include "fezui_var.h"
 
-char fpsstr[8] = {0};
-char comstr[8] = {0};
+char g_fpsstr[8] = {0};
 
 fezui_t fezui={.speed=0.1};
 u8log_t u8log;
@@ -16,12 +15,9 @@ uint8_t u8log_buf[1024];
 uint8_t KPS_history_max;
 uint32_t fezui_fps;
 uint32_t fezui_debug;
-uint8_t fezui_adc_conversion_count;
-float fezui_debug_float;
 uint32_t fezui_run_time;
-uint32_t fezui_temp_raw;
-uint32_t fezui_report_count;
-uint32_t fezui_report_count1;
+uint32_t g_usb_report_count;
+uint32_t g_usb_report_count1;
 
 fezui_notification_t fezui_notification={.text.font=u8g2_font_5x8_mn};
 /*
@@ -43,8 +39,8 @@ const uint8_t fez_font_6x10_m[204] U8G2_FONT_SECTION("fez_font_6x10_m") =
 fezui_animation_base_t frame_animation={.duration=DEFAULT_ANIMATION_DURATION,.easing_func=fezui_animation_linear_ease,.mode=EASE_INOUT,.duration=DEFAULT_ANIMATION_DURATION/2};
 fezui_link_frame_t mainframe={.animation=&frame_animation};
 
-fezui_cursor_t cursor={0,0,128,64};
-fezui_cursor_t target_cursor={0,0,0,0};
+fezui_cursor_t g_fezui_cursor;
+fezui_cursor_t g_target_cursor;
 
 fezui_animated_cursor_t animated_cursor = 
 {
@@ -101,7 +97,7 @@ fezui_animated_cursor_t animated_cursor =
 //    };
 
 
-const char *hid_usage_names[138] =
+const char *g_hid_usage_names[138] =
 {
     "Left Control",
     "Left Shift",

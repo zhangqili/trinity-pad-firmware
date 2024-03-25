@@ -47,7 +47,7 @@ void keymappage_init()
     key_select_list.show_scrollbar = true;
 }
 
-static void keymappage_logic(void *page)
+static void keymappage_tick(void *page)
 {
     if (key_selected)
     {
@@ -90,13 +90,13 @@ static void keymappage_draw(void *page)
 {
     u8g2_SetFont(&(fezui.u8g2), u8g2_font_5x8_mr);
     fezui_draw_animated_listbox(&fezui, 0, 0, SPERATOR_X, HEIGHT, &key_select_list, ROW_HEIGHT, 1);
-    fezui_animated_listbox_get_cursor(&fezui, 0, 0, SPERATOR_X, HEIGHT, &key_select_list, ROW_HEIGHT, &target_cursor);
+    fezui_animated_listbox_get_cursor(&fezui, 0, 0, SPERATOR_X, HEIGHT, &key_select_list, ROW_HEIGHT, &g_target_cursor);
     for (uint8_t i = 0; i < LAYER_NUM; i++)
     {
         u8g2_DrawStr(&(fezui.u8g2), SPERATOR_X + 2, SUBROW_HEIGHT * (i + 1) - 8 - 1, layer_select_menu.items[i]);
         fezui_draw_scrolling_text(&fezui, SPERATOR_X + 2, SUBROW_HEIGHT * (i + 1) - 2, scrolling_text + i);
     }
-    fezui_draw_cursor(&fezui, &cursor);
+    fezui_draw_cursor(&fezui, &g_fezui_cursor);
     fezui_draw_cursor(&fezui, &config_cursor);
 
     u8g2_DrawVLine(&(fezui.u8g2), SPERATOR_X, 0, 64);
@@ -175,4 +175,4 @@ static void keymappage_event_handler(void *e)
     }
 }
 
-fezui_link_page_t keymappage = {keymappage_logic, keymappage_draw, keymappage_load, keymappage_event_handler};
+fezui_link_page_t keymappage = {keymappage_tick, keymappage_draw, keymappage_load, keymappage_event_handler};

@@ -18,7 +18,7 @@ void menupage_init()
     fezui_animated_listbox_init(&mainmenu, mainmenu_items, sizeof(mainmenu_items)/sizeof(const char*), main_menu_cb);
 }
 
-static void menupage_logic(void *page)
+static void menupage_tick(void *page)
 {
     fezui_animated_listbox_update(&fezui,&mainmenu);
 }
@@ -26,8 +26,8 @@ static void menupage_draw(void *page)
 {
     u8g2_SetFont(&(fezui.u8g2), u8g2_font_6x13_mr);
     fezui_draw_animated_listbox(&fezui,0,0,WIDTH,HEIGHT,&mainmenu,HEIGHT/4,3);
-    fezui_animated_listbox_get_cursor(&fezui,0,0,WIDTH,HEIGHT,&mainmenu,HEIGHT/4,&target_cursor);
-    fezui_draw_cursor(&fezui, &cursor);
+    fezui_animated_listbox_get_cursor(&fezui,0,0,WIDTH,HEIGHT,&mainmenu,HEIGHT/4,&g_target_cursor);
+    fezui_draw_cursor(&fezui, &g_fezui_cursor);
 }
 
 static void main_menu_cb(void *menu)
@@ -78,4 +78,4 @@ static void menupage_event_handler(void *e)
     }
 }
 
-fezui_link_page_t menupage={menupage_logic,menupage_draw,menupage_load,menupage_event_handler};
+fezui_link_page_t menupage={menupage_tick,menupage_draw,menupage_load,menupage_event_handler};

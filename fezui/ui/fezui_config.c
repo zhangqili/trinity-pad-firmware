@@ -146,7 +146,7 @@ void fezui_timer_handler()
 {
     fezui_link_frame_logic(&mainframe);
     fezui_notification_update(&fezui,&fezui_notification);
-    fezui_cursor_move(&fezui ,&cursor, &target_cursor);
+    fezui_cursor_move(&fezui ,&g_fezui_cursor, &g_target_cursor);
     //fezui_animated_cursor_update(&animated_cursor);
     KPS_history_max=loop_array_max(&g_kps_history);
     //fezui_save_counts();
@@ -184,7 +184,7 @@ void fezui_render_handler()
     u8g2_DrawBox(&fezui.u8g2,95+14,0,WIDTH-95-14,11);
     u8g2_SetDrawColor(&(fezui.u8g2), 2);
     u8g2_SetFont(&(fezui.u8g2), fez_font_6x10_m);
-    u8g2_DrawStr(&(fezui.u8g2),95+15,10,fpsstr);
+    u8g2_DrawStr(&(fezui.u8g2),95+15,10,g_fpsstr);
 #endif
     u8g2_SendBuffer(&(fezui.u8g2));
     fezui_fps++;
@@ -254,11 +254,11 @@ void keyid_prase(uint16_t id,char* str,uint16_t str_len)
             if(key_found)
             {
                 strcat(str, " + ");
-                strcat(str, hid_usage_names[i]);
+                strcat(str, g_hid_usage_names[i]);
             }
             else
             {
-                strcat(str, hid_usage_names[i]);
+                strcat(str, g_hid_usage_names[i]);
                 key_found=true;
             }
         }
@@ -269,11 +269,11 @@ void keyid_prase(uint16_t id,char* str,uint16_t str_len)
         if(key_found)
         {
             strcat(str, " + ");
-            strcat(str, hid_usage_names[(id&0xFF)+8]);
+            strcat(str, g_hid_usage_names[(id&0xFF)+8]);
         }
         else
         {
-            strcat(str, hid_usage_names[(id&0xFF)+8]);
+            strcat(str, g_hid_usage_names[(id&0xFF)+8]);
             key_found=true;
         }
     }

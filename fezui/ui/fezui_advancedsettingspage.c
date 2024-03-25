@@ -45,7 +45,7 @@ void advancedsettingspage_init()
     advancedsettingsmenu.show_scrollbar = true;
 }
 
-static void advancedsettingspage_logic(void* page)
+static void advancedsettingspage_tick(void* page)
 {
 }
 
@@ -53,8 +53,8 @@ static void advancedsettingspage_draw(void* page)
 {
     u8g2_SetFont(&(fezui.u8g2), u8g2_font_6x13_mr);
     fezui_draw_animated_listbox(&fezui, 0, 0, WIDTH, HEIGHT, &advancedsettingsmenu, ROW_HEIGHT, 3);
-    fezui_animated_listbox_get_cursor(&fezui, 0, 0, WIDTH, HEIGHT, &advancedsettingsmenu, ROW_HEIGHT, &target_cursor);
-    fezui_draw_cursor(&fezui, &cursor);
+    fezui_animated_listbox_get_cursor(&fezui, 0, 0, WIDTH, HEIGHT, &advancedsettingsmenu, ROW_HEIGHT, &g_target_cursor);
+    fezui_draw_cursor(&fezui, &g_fezui_cursor);
 }
 
 static void advancedsettingspage_load(void* page)
@@ -84,5 +84,5 @@ static void advancedsettingspage_event_handler(void* e)
 }
 
 fezui_link_page_t advancedsettingspage = {
-    advancedsettingspage_logic, advancedsettingspage_draw, advancedsettingspage_load, advancedsettingspage_event_handler
+    advancedsettingspage_tick, advancedsettingspage_draw, advancedsettingspage_load, advancedsettingspage_event_handler
 };
