@@ -12,10 +12,10 @@ fezui_t fezui={.speed=0.1};
 u8log_t u8log;
 uint8_t u8log_buf[1024];
 
-uint8_t KPS_history_max;
-uint32_t fezui_fps;
-uint32_t fezui_debug;
-uint32_t fezui_run_time;
+uint8_t g_kps_history_max;
+uint32_t g_fezui_fps;
+uint32_t g_fezui_debug;
+uint32_t g_fezui_run_time;
 uint32_t g_usb_report_count;
 uint32_t g_usb_report_count1;
 
@@ -36,12 +36,11 @@ const uint8_t fez_font_6x10_m[204] U8G2_FONT_SECTION("fez_font_6x10_m") =
   "\232\61\321\0\0\0\0\4\377\377\0";
 
 
-fezui_animation_base_t frame_animation={.duration=DEFAULT_ANIMATION_DURATION,.easing_func=fezui_animation_linear_ease,.mode=EASE_INOUT,.duration=DEFAULT_ANIMATION_DURATION/2};
-fezui_link_frame_t mainframe={.animation=&frame_animation};
+fezui_link_frame_t g_mainframe;
 
 fezui_cursor_t g_fezui_cursor;
 fezui_cursor_t g_target_cursor;
-
+/*
 fezui_animated_cursor_t animated_cursor = 
 {
     .PID_x=
@@ -89,6 +88,7 @@ fezui_animated_cursor_t animated_cursor =
         .T=0.01f
     },
 };
+*/
 //fezui_animated_cursor_t cursor=
 //{
 //    .animation.duration=DEFAULT_ANIMATION_DURATION,

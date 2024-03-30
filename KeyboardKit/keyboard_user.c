@@ -1121,7 +1121,7 @@ void keyboard_scan()
     }
     if (g_keybaord_shift_flag && g_keybaord_alpha_flag)
     {
-        fezui_link_frame_navigate(&mainframe, &menupage);
+        fezui_link_frame_navigate(&g_mainframe, &menupage);
         g_keybaord_shift_flag = false;
         g_keybaord_alpha_flag = false;
     }

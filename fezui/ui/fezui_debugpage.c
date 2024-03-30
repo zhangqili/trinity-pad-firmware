@@ -29,8 +29,8 @@ void listbox_cb(void *l)
 
 void debugpage_init()
 {
-    fezui_animated_listbox_init(&listbox, g_hid_usage_names, sizeof(g_hid_usage_names) / sizeof(const char *), listbox_cb);
-    listbox.show_scrollbar = true;
+    fezui_animated_string_listbox_init(&listbox, g_hid_usage_names, sizeof(g_hid_usage_names) / sizeof(const char *), listbox_cb);
+    listbox.listbox.show_scrollbar = true;
 }
 
 static void debugpage_tick(void *page)
@@ -40,7 +40,7 @@ static void debugpage_tick(void *page)
 }
 static void debugpage_draw(void *page)
 {
-    fezui_printf(&fezui, 64, 16, "%#lx", fezui_debug);
+    fezui_printf(&fezui, 64, 16, "%#lx", g_fezui_debug);
 
     // u8g2_SetFont(&fezui.u8g2, u8g2_font_8x13B_mf);
     fezui_printf(&fezui, 90, 60, "%d", (short)TIM8->CNT);
@@ -73,10 +73,10 @@ static void debugpage_event_handler(void *e)
         fezui_numberic_dialog_increase(&dialog.dialog, -1);
         break;
     case KEY_ENTER:
-        fezui_link_frame_go_back(&mainframe);
+        fezui_link_frame_go_back(&g_mainframe);
         break;
     case KEY_ESC:
-        fezui_link_frame_go_back(&mainframe);
+        fezui_link_frame_go_back(&g_mainframe);
         fezui_cursor_set(&g_fezui_cursor, 0, 0, WIDTH, HEIGHT);
         break;
     default:

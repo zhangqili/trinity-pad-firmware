@@ -78,7 +78,7 @@ static void calibrationpage_event_handler(void *e)
         analog_reset_range();
         break;
     case KEY_ESC:
-        fezui_link_frame_go_back(&mainframe);
+        fezui_link_frame_go_back(&g_mainframe);
         break;
     default:
         break;

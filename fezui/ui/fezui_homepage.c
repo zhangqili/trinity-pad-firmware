@@ -75,7 +75,7 @@ static void homepage_tick(void *page)
     fezui_rolling_number_set(&key3_num,g_key_counts[2]-g_key_init_counts[2]);
     fezui_rolling_number_set(&key4_num,g_key_counts[3]-g_key_init_counts[3]);
     fezui_rolling_number_set(&kps_num,g_kps);
-    fezui_rolling_number_set(&max_kps_num,KPS_history_max);
+    fezui_rolling_number_set(&max_kps_num,g_kps_history_max);
 
     fezui_rolling_number_update(&fezui, &key1_num);
     fezui_rolling_number_update(&fezui, &key2_num);
@@ -112,7 +112,7 @@ static void homepage_draw(void *page)
     fezui_draw_flowingwater(&(fezui),MARGIN_LEFT,TILE3+MARGIN_UP,HALF_WIDTH,TILE_WIDTH,(uint8_t*)g_bit_stream_datas[2]);
     fezui_draw_flowingwater(&(fezui),MARGIN_LEFT,TILE4+MARGIN_UP,HALF_WIDTH,TILE_WIDTH,(uint8_t*)g_bit_stream_datas[3]);
 
-    draw_chart(&(fezui), 0, MARGIN_UP, CHART_WIDTH, CHART_HEIGHT, &g_kps_history, KPS_history_max);
+    draw_chart(&(fezui), 0, MARGIN_UP, CHART_WIDTH, CHART_HEIGHT, &g_kps_history, g_kps_history_max);
     u8g2_SetFont(&(fezui.u8g2), u8g2_font_micro_tr);
     u8g2_DrawStr(&(fezui.u8g2),0,MARGIN_UP-1,"KPS:");
     u8g2_DrawStr(&(fezui.u8g2),32,MARGIN_UP-1,"MAX:");

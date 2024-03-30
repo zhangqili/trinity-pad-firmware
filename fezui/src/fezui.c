@@ -6,10 +6,11 @@
  */
 #include "fezui.h"
 #include "stdarg.h"
+#include "tgprintf.h"
 
 char g_fezui_printf_buffer[PRINTF_BUFFER_LENGTH];
 
-char* fezui_get_buffer()
+char* fezui_get_printf_buffer()
 {
     return g_fezui_printf_buffer;
 }
@@ -18,6 +19,14 @@ u8g2_uint_t fezui_printf(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, const
 	va_list ap;
 	va_start(ap, fmt);
 	vsprintf(g_fezui_printf_buffer, fmt, ap);
+	va_end(ap);
+    return u8g2_DrawStr(&(fezui_ptr->u8g2), x, y, g_fezui_printf_buffer);
+}
+u8g2_uint_t fezui_tgprintf(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, const char *fmt,...)
+{
+	va_list ap;
+	va_start(ap, fmt);
+	tgvsprintf(g_fezui_printf_buffer, fmt, ap);
 	va_end(ap);
     return u8g2_DrawStr(&(fezui_ptr->u8g2), x, y, g_fezui_printf_buffer);
 }

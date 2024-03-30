@@ -58,9 +58,9 @@ void rgb_config_menu_cb(void *m)
 
 void rgbconfigpage_init()
 {
-    fezui_list_base_init(&rgb_key_select_menu, rgb_key_select_menu_items, sizeof(rgb_key_select_menu_items) / sizeof(const char *), rgb_key_select_menu_cb);
-    fezui_list_base_init(&rgb_config_menu, rgb_config_menu_items, sizeof(rgb_config_menu_items) / sizeof(const char *), rgb_config_menu_cb);
-    fezui_list_base_init(&rgb_global_config_menu, rgb_global_config_menu_items, sizeof(rgb_global_config_menu_items) / sizeof(const char *), NULL);
+    fezui_list_base_init(&rgb_key_select_menu, (void**)rgb_key_select_menu_items, sizeof(rgb_key_select_menu_items) / sizeof(const char *), rgb_key_select_menu_cb);
+    fezui_list_base_init(&rgb_config_menu, (void**)rgb_config_menu_items, sizeof(rgb_config_menu_items) / sizeof(const char *), rgb_config_menu_cb);
+    fezui_list_base_init(&rgb_global_config_menu, (void**)rgb_global_config_menu_items, sizeof(rgb_global_config_menu_items) / sizeof(const char *), NULL);
 }
 
 static void rgbconfigpage_tick(void *page)
@@ -136,45 +136,45 @@ static void rgbconfigpage_draw(void *page)
     u8g2_SetFont(&(fezui.u8g2), u8g2_font_5x8_mr);
     for (uint8_t i = 0; i < rgb_key_select_menu.len; i++)
     {
-        u8g2_DrawStr(&(fezui.u8g2), 1, ROW_HEIGHT * (i + 1) - 1, rgb_key_select_menu.items[i]);
+        u8g2_DrawStr(&(fezui.u8g2), 1, ROW_HEIGHT * (i + 1), rgb_key_select_menu.items[i]);
     }
     for (uint8_t i = 0; i < rgb_config_menu.len; i++)
     {
-        u8g2_DrawStr(&(fezui.u8g2), SPERATOR_X + 2, ROW_HEIGHT * (i + 1) - 1, rgb_config_menu.items[i]);
+        u8g2_DrawStr(&(fezui.u8g2), SPERATOR_X + 2, ROW_HEIGHT * (i + 1), rgb_config_menu.items[i]);
     }
     uint8_t font_width = u8g2_GetMaxCharWidth(&(fezui.u8g2));
     if (rgb_key_select_menu.selected_index)
     {
         u8g2_DrawStr(&(fezui.u8g2), WIDTH - strlen(rgb_mode_items[g_rgb_configs[rgb_key_select_menu.selected_index - 1].mode]) * font_width, ROW_HEIGHT * 1 - 1, rgb_mode_items[g_rgb_configs[rgb_key_select_menu.selected_index - 1].mode]);
 
-        fezui_printf_right_aligned(&fezui, WIDTH, ROW_HEIGHT * 2 - 1, "%d", g_rgb_configs[rgb_key_select_menu.selected_index - 1].rgb.r);
+        fezui_printf_right_aligned(&fezui, WIDTH, ROW_HEIGHT * 2, "%d", g_rgb_configs[rgb_key_select_menu.selected_index - 1].rgb.r);
 
-        fezui_printf_right_aligned(&fezui, WIDTH, ROW_HEIGHT * 3 - 1, "%d", g_rgb_configs[rgb_key_select_menu.selected_index - 1].rgb.g);
+        fezui_printf_right_aligned(&fezui, WIDTH, ROW_HEIGHT * 3, "%d", g_rgb_configs[rgb_key_select_menu.selected_index - 1].rgb.g);
 
-        fezui_printf_right_aligned(&fezui, WIDTH, ROW_HEIGHT * 4 - 1, "%d", g_rgb_configs[rgb_key_select_menu.selected_index - 1].rgb.b);
+        fezui_printf_right_aligned(&fezui, WIDTH, ROW_HEIGHT * 4, "%d", g_rgb_configs[rgb_key_select_menu.selected_index - 1].rgb.b);
 
-        fezui_printf_right_aligned(&fezui, WIDTH, ROW_HEIGHT * 8 - 1, "%0.0f", g_rgb_configs[rgb_key_select_menu.selected_index - 1].speed * 1000);
+        fezui_printf_right_aligned(&fezui, WIDTH, ROW_HEIGHT * 8, "%0.0f", g_rgb_configs[rgb_key_select_menu.selected_index - 1].speed * 1000);
     }
     else
     {
         u8g2_DrawStr(&(fezui.u8g2), WIDTH - strlen(rgb_global_mode_items[g_rgb_global_config.mode]) * font_width, ROW_HEIGHT * 1 - 1, rgb_global_mode_items[g_rgb_global_config.mode]);
 
-        fezui_printf_right_aligned(&fezui, WIDTH, ROW_HEIGHT * 8 - 1, "%0.0f", g_rgb_global_config.speed * 1000);
+        fezui_printf_right_aligned(&fezui, WIDTH, ROW_HEIGHT * 8, "%0.0f", g_rgb_global_config.speed * 1000);
     }
-    fezui_printf_right_aligned(&fezui, WIDTH, ROW_HEIGHT * 2 - 1, "%d", target_rgb->r);
+    fezui_printf_right_aligned(&fezui, WIDTH, ROW_HEIGHT * 2, "%d", target_rgb->r);
 
-    fezui_printf_right_aligned(&fezui, WIDTH, ROW_HEIGHT * 3 - 1, "%d", target_rgb->g);
+    fezui_printf_right_aligned(&fezui, WIDTH, ROW_HEIGHT * 3, "%d", target_rgb->g);
 
-    fezui_printf_right_aligned(&fezui, WIDTH, ROW_HEIGHT * 4 - 1, "%d", target_rgb->b);
+    fezui_printf_right_aligned(&fezui, WIDTH, ROW_HEIGHT * 4, "%d", target_rgb->b);
 
-    fezui_printf_right_aligned(&fezui, WIDTH, ROW_HEIGHT * 5 - 1, "%d", target_hsv->h);
+    fezui_printf_right_aligned(&fezui, WIDTH, ROW_HEIGHT * 5, "%d", target_hsv->h);
 
-    fezui_printf_right_aligned(&fezui, WIDTH, ROW_HEIGHT * 6 - 1, "%d", target_hsv->s);
+    fezui_printf_right_aligned(&fezui, WIDTH, ROW_HEIGHT * 6, "%d", target_hsv->s);
 
-    fezui_printf_right_aligned(&fezui, WIDTH, ROW_HEIGHT * 7 - 1, "%d", target_hsv->v);
+    fezui_printf_right_aligned(&fezui, WIDTH, ROW_HEIGHT * 7, "%d", target_hsv->v);
 
     u8g2_SetFont(&(fezui.u8g2), u8g2_font_5x8_mr);
-    u8g2_DrawStr(&(fezui.u8g2), SPERATOR_X + 2, 8 - 1, current_key_name);
+    //u8g2_DrawStr(&(fezui.u8g2), SPERATOR_X + 2, 8 - 1, current_key_name);
 
     u8g2_DrawBox(&(fezui.u8g2), 0, ROW_HEIGHT * 6, SPERATOR_X, ROW_HEIGHT * 2);
     uint8_t color = u8g2_GetDrawColor(&(fezui.u8g2));
@@ -182,11 +182,11 @@ static void rgbconfigpage_draw(void *page)
     u8g2_DrawStr(&(fezui.u8g2), +1, ROW_HEIGHT * 7, "#");
     if (rgb_key_select_menu.selected_index)
     {
-        fezui_printf(&fezui, 1, ROW_HEIGHT * 8 - 1, "%02X%02X%02X", g_rgb_configs[rgb_key_select_menu.selected_index - 1].rgb.r, g_rgb_configs[rgb_key_select_menu.selected_index - 1].rgb.g, g_rgb_configs[rgb_key_select_menu.selected_index - 1].rgb.b);
+        fezui_printf(&fezui, 1, ROW_HEIGHT * 8, "%02X%02X%02X", g_rgb_configs[rgb_key_select_menu.selected_index - 1].rgb.r, g_rgb_configs[rgb_key_select_menu.selected_index - 1].rgb.g, g_rgb_configs[rgb_key_select_menu.selected_index - 1].rgb.b);
     }
     else
     {
-        fezui_printf(&fezui, 1, ROW_HEIGHT * 8 - 1, "%02X%02X%02X", g_rgb_global_config.rgb.r, g_rgb_global_config.rgb.g, g_rgb_global_config.rgb.b);
+        fezui_printf(&fezui, 1, ROW_HEIGHT * 8, "%02X%02X%02X", g_rgb_global_config.rgb.r, g_rgb_global_config.rgb.g, g_rgb_global_config.rgb.b);
     }
     u8g2_SetDrawColor(&(fezui.u8g2), color);
 
@@ -367,7 +367,7 @@ static void rgbconfigpage_event_handler(void *e)
             }
             else
             {
-                fezui_link_frame_go_back(&mainframe);
+                fezui_link_frame_go_back(&g_mainframe);
             }
         }
         break;

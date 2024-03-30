@@ -208,10 +208,10 @@ void keyconfig_analog_speed_mode_menu_cb(void* m)
 
 void advancedconfigpage_init()
 {
-    fezui_list_base_init(&keyconfig_digital_mode_menu, keyconfig_digital_mode_menu_items, sizeof(keyconfig_digital_mode_menu_items)/sizeof(const char*), keyconfig_digital_mode_menu_cb);
-    fezui_list_base_init(&keyconfig_analog_normal_mode_menu, keyconfig_analog_normal_mode_menu_items, sizeof(keyconfig_analog_normal_mode_menu_items)/sizeof(const char*), keyconfig_analog_normal_mode_menu_cb);
-    fezui_list_base_init(&keyconfig_analog_rapid_mode_menu, keyconfig_analog_rapid_mode_menu_items, sizeof(keyconfig_analog_rapid_mode_menu_items)/sizeof(const char*), keyconfig_analog_rapid_mode_menu_cb);
-    fezui_list_base_init(&keyconfig_analog_speed_mode_menu, keyconfig_analog_speed_mode_menu_items, sizeof(keyconfig_analog_speed_mode_menu_items)/sizeof(const char*), keyconfig_analog_speed_mode_menu_cb);
+    fezui_list_base_init(&keyconfig_digital_mode_menu, (void**)keyconfig_digital_mode_menu_items, sizeof(keyconfig_digital_mode_menu_items)/sizeof(const char*), keyconfig_digital_mode_menu_cb);
+    fezui_list_base_init(&keyconfig_analog_normal_mode_menu, (void**)keyconfig_analog_normal_mode_menu_items, sizeof(keyconfig_analog_normal_mode_menu_items)/sizeof(const char*), keyconfig_analog_normal_mode_menu_cb);
+    fezui_list_base_init(&keyconfig_analog_rapid_mode_menu, (void**)keyconfig_analog_rapid_mode_menu_items, sizeof(keyconfig_analog_rapid_mode_menu_items)/sizeof(const char*), keyconfig_analog_rapid_mode_menu_cb);
+    fezui_list_base_init(&keyconfig_analog_speed_mode_menu, (void**)keyconfig_analog_speed_mode_menu_items, sizeof(keyconfig_analog_speed_mode_menu_items)/sizeof(const char*), keyconfig_analog_speed_mode_menu_cb);
 }
 
 static void advancedconfigpage_tick(void *page)
@@ -439,7 +439,7 @@ static void advancedconfigpage_event_handler(void *e)
         }
         else
         {
-            fezui_link_frame_go_back(&mainframe);
+            fezui_link_frame_go_back(&g_mainframe);
         }
         break;
     default:

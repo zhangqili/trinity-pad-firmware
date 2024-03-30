@@ -40,31 +40,30 @@ void keylist_cb(void *m)
 
 void keylistpage_init()
 {
-    fezui_animated_listbox_init(&keylist, g_hid_usage_names, sizeof(g_hid_usage_names)/sizeof(const char*), keylist_cb);
-    keylist.show_scrollbar=true;
+    fezui_animated_string_listbox_init(&keylist, g_hid_usage_names, sizeof(g_hid_usage_names)/sizeof(const char*), keylist_cb);
+    keylist.listbox.show_scrollbar=true;
 }
 
 static void keylistpage_tick(void *page)
 {
-    fezui_animated_listbox_update(&fezui,&keylist);
 }
 static void keylistpage_draw(void *page)
 {
     u8g2_SetFont(&(fezui.u8g2), u8g2_font_5x8_mr);
-    fezui_draw_animated_listbox(&fezui,0,0,WIDTH,HEIGHT,&keylist,ROW_HEIGHT,1);
+    fezui_draw_animated_listbox(&fezui,0,0,WIDTH,HEIGHT,&keylist,ROW_HEIGHT);
     fezui_animated_listbox_get_cursor(&fezui,0,0,WIDTH,HEIGHT,&keylist,ROW_HEIGHT,&g_target_cursor);
-    for(uint8_t i=0;i<keylist.list.len;i++)
+    for(uint8_t i=0;i<keylist.listbox.list.len;i++)
     {
-        u8g2_DrawFrame(&(fezui.u8g2),116, (u8g2_int_t)floorf((ROW_HEIGHT * (i) -  FEZUI_ANIMATION_GET_VALUE(&keylist.scroll_animation, keylist.offset,keylist.targetoffset) + 1) * keylist.start_animation.value + 0.5),6,6);
+        u8g2_DrawFrame(&(fezui.u8g2),116, (u8g2_int_t)floorf((ROW_HEIGHT * (i) -  FEZUI_ANIMATION_GET_VALUE(&keylist.scroll_animation, keylist.listbox.offset,keylist.targetoffset) + 1) * keylist.start_animation.value + 0.5),6,6);
     }
     for(uint8_t i=0;i<8;i++)
     {
         if(KEY_MODIFIER_PART&BIT(i))
         {
-            u8g2_DrawBox(&(fezui.u8g2),116,(u8g2_int_t)floorf((ROW_HEIGHT*i + 1 - FEZUI_ANIMATION_GET_VALUE(&keylist.scroll_animation, keylist.offset,keylist.targetoffset)) * keylist.start_animation.value + 0.5),6,6);
+            u8g2_DrawBox(&(fezui.u8g2),116,(u8g2_int_t)floorf((ROW_HEIGHT*i + 1 - FEZUI_ANIMATION_GET_VALUE(&keylist.scroll_animation, keylist.listbox.offset,keylist.targetoffset)) * keylist.start_animation.value + 0.5),6,6);
         }
     }
-    u8g2_DrawBox(&(fezui.u8g2),116,(u8g2_int_t)floorf((ROW_HEIGHT*((KEY_KEYCODE_PART)+8) + 1 -  FEZUI_ANIMATION_GET_VALUE(&keylist.scroll_animation, keylist.offset,keylist.targetoffset)) * keylist.start_animation.value + 0.5),6,6);
+    u8g2_DrawBox(&(fezui.u8g2),116,(u8g2_int_t)floorf((ROW_HEIGHT*((KEY_KEYCODE_PART)+8) + 1 -  FEZUI_ANIMATION_GET_VALUE(&keylist.scroll_animation, keylist.listbox.offset,keylist.targetoffset)) * keylist.start_animation.value + 0.5),6,6);
     fezui_draw_cursor(&fezui, &g_fezui_cursor);
 }
 
@@ -87,7 +86,7 @@ static void keylistpage_event_handler(void *e)
         fezui_animated_listbox_click(&keylist);
         break;
     case KEY_ESC:
-        fezui_link_frame_go_back(&mainframe);
+        fezui_link_frame_go_back(&g_mainframe);
         break;
     default:
         break;

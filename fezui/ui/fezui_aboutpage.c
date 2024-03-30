@@ -199,7 +199,7 @@ static void aboutpage_event_handler(void *e)
     case KEY_ENTER:
         break;
     case KEY_ESC:
-        fezui_link_frame_go_back(&mainframe);
+        fezui_link_frame_go_back(&g_mainframe);
         fezui_cursor_set(&g_fezui_cursor ,0 ,0 ,WIDTH ,HEIGHT);
         break;
     default:

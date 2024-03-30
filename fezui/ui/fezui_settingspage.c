@@ -22,18 +22,17 @@ const char *settingsmenu_items[] =
 static void settings_menu_cb(void *menu);
 void settingspage_init()
 {
-    fezui_animated_listbox_init(&settingsmenu, settingsmenu_items, sizeof(settingsmenu_items) / sizeof(const char *), settings_menu_cb);
-    settingsmenu.show_scrollbar = true;
+    fezui_animated_string_listbox_init(&settingsmenu, settingsmenu_items, sizeof(settingsmenu_items) / sizeof(const char *), settings_menu_cb);
+    settingsmenu.listbox.show_scrollbar = true;
 }
 
 static void settingspage_tick(void *page)
 {
-    fezui_animated_listbox_update(&fezui, &settingsmenu);
 }
 static void settingspage_draw(void *page)
 {
     u8g2_SetFont(&(fezui.u8g2), u8g2_font_6x13_mr);
-    fezui_draw_animated_listbox(&fezui, 0, 0, WIDTH, HEIGHT, &settingsmenu, ROW_HEIGHT, 3);
+    fezui_draw_animated_listbox(&fezui, 0, 0, WIDTH, HEIGHT, &settingsmenu, ROW_HEIGHT);
     fezui_animated_listbox_get_cursor(&fezui, 0, 0, WIDTH, HEIGHT, &settingsmenu, ROW_HEIGHT, &g_target_cursor);
     fezui_draw_cursor(&fezui, &g_fezui_cursor);
 }
@@ -43,25 +42,25 @@ static void settings_menu_cb(void *menu)
     switch (((fezui_list_base_t *)menu)->selected_index)
     {
     case 0:
-        fezui_link_frame_navigate(&mainframe, &panelpage);
+        fezui_link_frame_navigate(&g_mainframe, &panelpage);
         break;
     case 1:
-        fezui_link_frame_navigate(&mainframe, &keymappage);
+        fezui_link_frame_navigate(&g_mainframe, &keymappage);
         break;
     case 2:
-        fezui_link_frame_navigate(&mainframe, &rgbconfigpage);
+        fezui_link_frame_navigate(&g_mainframe, &rgbconfigpage);
         break;
     case 3:
-        fezui_link_frame_navigate(&mainframe, &calibrationpage);
+        fezui_link_frame_navigate(&g_mainframe, &calibrationpage);
         break;
     case 4:
-        fezui_link_frame_navigate(&mainframe, &displayconfigpage);
+        fezui_link_frame_navigate(&g_mainframe, &displayconfigpage);
         break;
     case 5:
-        fezui_link_frame_navigate(&mainframe, &advancedsettingspage);
+        fezui_link_frame_navigate(&g_mainframe, &advancedsettingspage);
         break;
     case 6:
-        fezui_link_frame_navigate(&mainframe, &aboutpage);
+        fezui_link_frame_navigate(&g_mainframe, &aboutpage);
         break;
     default:
         break;
@@ -85,7 +84,7 @@ static void settingspage_event_handler(void *e)
         fezui_animated_listbox_click(&settingsmenu);
         break;
     case KEY_ESC:
-        fezui_link_frame_go_back(&mainframe);
+        fezui_link_frame_go_back(&g_mainframe);
         break;
     default:
         break;

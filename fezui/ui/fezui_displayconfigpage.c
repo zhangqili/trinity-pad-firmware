@@ -9,21 +9,22 @@
 
 #define ROW_HEIGHT 16
 
-static fezui_animated_menu_t displayconfig_menu;
+static fezui_animated_listbox_t displayconfig_menu;
 static uint16_t speed;
-static const fezui_menuitem_t displayconfig_menu_items[] =
+static const fezui_menuitem_t *displayconfig_menu_ptr_items[] =
     {
-        {"bInvert", &fezui.invert},
-        {"8Contrast", &fezui.contrast},
-        {"uSpeed", &speed},
-        {"uTimeout", &fezui.screensaver_timeout},
+        &(fezui_menuitem_t){"bInvert", &fezui.invert},
+        &(fezui_menuitem_t){"8Contrast", &fezui.contrast},
+        &(fezui_menuitem_t){"uSpeed", &speed},
+        &(fezui_menuitem_t){"uTimeout", &fezui.screensaver_timeout},
 };
+//static const fezui_menuitem_t *displayconfig_menu_ptr_items[4];
 static fezui_flyout_numberic_dialog_t dialog;
 static bool configing;
 
 void displayconfig_menu_cb(void *m)
 {
-    switch (displayconfig_menu.selected_index)
+    switch (displayconfig_menu.listbox.list.selected_index)
     {
     case 0:
         fezui_flyout_numberic_dialog_init(&dialog, &fezui.invert, FEZUI_TYPE_BOOL, 0, 1, 1, "Invert");
@@ -44,21 +45,21 @@ void displayconfig_menu_cb(void *m)
 }
 
 void displayconfigpage_init()
-{
-    fezui_animated_menu_init(&displayconfig_menu, displayconfig_menu_items, sizeof(displayconfig_menu_items) / sizeof(fezui_menuitem_t), displayconfig_menu_cb);
+{   
+    fezui_animated_menu_list_init(&displayconfig_menu, displayconfig_menu_ptr_items, sizeof(displayconfig_menu_ptr_items) / sizeof(fezui_menuitem_t*), displayconfig_menu_cb);
 }
 
 static void displayconfigpage_tick(void *page)
 {
-    fezui_animated_menu_update(&fezui, &displayconfig_menu);
+    //fezui_animated_listbox_update(&fezui, &displayconfig_menu);
     fezui_flyout_numberic_dialog_update(&fezui, &dialog);
 }
 
 static void displayconfigpage_draw(void *page)
 {
     u8g2_SetFont(&(fezui.u8g2), u8g2_font_6x13_mr);
-    fezui_draw_animated_menu(&fezui, 0, 0, WIDTH, HEIGHT, &displayconfig_menu, 16, 3);
-    fezui_animated_menu_get_cursor(&fezui, 0, 0, WIDTH, HEIGHT, &displayconfig_menu, 16, &g_target_cursor);
+    fezui_draw_animated_listbox(&fezui, 0, 0, WIDTH, HEIGHT, &displayconfig_menu, 16);
+    fezui_animated_listbox_get_cursor(&fezui, 0, 0, WIDTH, HEIGHT, &displayconfig_menu, 16, &g_target_cursor);
     fezui_draw_cursor(&fezui, &g_fezui_cursor);
     fezui_veil(&fezui, 0, 0, WIDTH, HEIGHT, dialog.animation * 5, fezui.invert ? 1 : 0);
     fezui_draw_flyout_numberic_dialog(&fezui, &dialog);
@@ -68,7 +69,7 @@ static void displayconfigpage_draw(void *page)
 
 static void displayconfigpage_load(void *page)
 {
-    fezui_animated_menu_begin(&displayconfig_menu);
+    fezui_animated_listbox_begin(&displayconfig_menu);
     speed = fezui.speed * 100;
 }
 static void displayconfigpage_event_handler(void *e)
@@ -79,7 +80,7 @@ static void displayconfigpage_event_handler(void *e)
 
         if (configing)
         {
-            switch (displayconfig_menu.selected_index)
+            switch (displayconfig_menu.listbox.list.selected_index)
             {
             case 0:
                 VAR_LOOP_INCREMENT(fezui.invert, 0, 1, 1);
@@ -99,13 +100,13 @@ static void displayconfigpage_event_handler(void *e)
         }
         else
         {
-            fezui_animated_menu_index_increase(&displayconfig_menu, 1);
+            fezui_animated_listbox_index_increase(&displayconfig_menu, 1);
         }
         break;
     case KEY_DOWN_ARROW:
         if (configing)
         {
-            switch (displayconfig_menu.selected_index)
+            switch (displayconfig_menu.listbox.list.selected_index)
             {
             case 0:
                 VAR_LOOP_DECREMENT(fezui.invert, 0, 1, 1);
@@ -125,7 +126,7 @@ static void displayconfigpage_event_handler(void *e)
         }
         else
         {
-            fezui_animated_menu_index_increase(&displayconfig_menu, -1);
+            fezui_animated_listbox_index_increase(&displayconfig_menu, -1);
         }
         break;
     case KEY_ENTER:
@@ -148,7 +149,7 @@ static void displayconfigpage_event_handler(void *e)
         else
         {
             // fezui_save();
-            fezui_link_frame_go_back(&mainframe);
+            fezui_link_frame_go_back(&g_mainframe);
         }
         break;
     default:

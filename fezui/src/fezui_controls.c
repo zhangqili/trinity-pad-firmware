@@ -21,24 +21,6 @@ void fezui_draw_flowingwater(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u
     }
 }
 
-void fezui_draw_chart(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g2_uint_t w,
-                      u8g2_uint_t h, lefl_loop_array_t *arr, uint8_t max)
-{
-    float y1;
-    float y2;
-    float ymax = (float)max;
-    for (int8_t i = 0; i < w; i++)
-    {
-        y1 = lefl_loop_array_get(arr, i);
-        y2 = lefl_loop_array_get(arr, i + 1);
-
-        u8g2_DrawLine(&(fezui_ptr->u8g2), x + w - i,
-                      h + y - (uint8_t)((float)(h - 1) * (y1 / ymax)),
-                      x + w - i - 1,
-                      h + y - (uint8_t)((float)(h - 1) * (y2 / ymax)));
-    }
-}
-
 void fezui_veil(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g2_uint_t w,
                 u8g2_uint_t h, uint8_t level, uint8_t color)
 {
@@ -244,6 +226,8 @@ void fezui_draw_rolling_number(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y,
 {
     const uint8_t *temp_font = (fezui_ptr->u8g2).font;
     u8g2_SetFont(&(fezui_ptr->u8g2), rolling_number->font);
+    u8g2_font_calc_vref_fnptr fnptr_bk = fezui_ptr->u8g2.font_calc_vref;
+    u8g2_SetFontPosBottom(&(fezui_ptr->u8g2));
     uint8_t font_height = u8g2_GetMaxCharHeight(&(fezui_ptr->u8g2));
     uint8_t font_width = u8g2_GetMaxCharWidth(&(fezui_ptr->u8g2));
     uint8_t actual_digit = 1;
@@ -263,6 +247,7 @@ void fezui_draw_rolling_number(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y,
     }
     u8g2_SetMaxClipWindow(&(fezui_ptr->u8g2));
     u8g2_SetFont(&(fezui_ptr->u8g2), temp_font);
+    fezui_ptr->u8g2.font_calc_vref = fnptr_bk;
 }
 
 void fezui_rolling_number_update(fezui_t *fezui_ptr, fezui_rolling_number_t *rolling_number)
@@ -387,219 +372,4 @@ void fezui_scrolling_text_begin_once(fezui_scrolling_text_t *text)
 {
     text->status = SCROLLING_TEXT_PLAYING_ONCE;
     text->offset = text->width;
-}
-
-void fezui_list_base_init(fezui_list_base_t* list, const char* *items,uint8_t len,void (*cb)(void* list))
-{
-    list->items=items;
-    list->len=len;
-    list->list_cb=cb;
-    list->selected_index=0;
-}
-
-void fezui_list_base_index_increase(fezui_list_base_t *list, int8_t delta)
-{
-    list->selected_index+=delta;
-    if(list->selected_index>=list->len)
-    {
-        list->selected_index=0;
-    }
-    if(list->selected_index<0)
-    {
-        list->selected_index=list->len-1;
-    }
-}
-void fezui_list_base_click(fezui_list_base_t *list)
-{
-    if(list->list_cb!=NULL)
-        list->list_cb(list);
-}
-
-void fezui_animated_listbox_init(fezui_animated_listbox_t *listbox, const char **items, uint8_t len, void (*cb)(void *listbox))
-{
-    fezui_list_base_init(&listbox->list,items,len,cb);
-    listbox->scroll_animation.begin_time=fezui_tick;
-    listbox->scroll_animation.duration = DEFAULT_ANIMATION_DURATION;
-    listbox->scroll_animation.easing_func = DEFAULT_ANIMATION_EASE_FUNCTION;
-    listbox->scroll_animation.mode = DEFAULT_ANIMATION_MODE;
-}
-
-void fezui_animated_listbox_index_increase(fezui_animated_listbox_t *listbox, int8_t delta)
-{
-    fezui_animation_begin(&listbox->scroll_animation);
-    listbox->offset = FEZUI_ANIMATION_GET_VALUE(&listbox->scroll_animation,listbox->offset,listbox->targetoffset);
-    fezui_list_base_index_increase(&listbox->list,delta);
-}
-
-void fezui_animated_listbox_click(fezui_animated_listbox_t *listbox)
-{
-    if (listbox->list.list_cb != NULL)
-        listbox->list.list_cb(&listbox->list);
-}
-
-void fezui_animated_listbox_update(fezui_t *fezui_ptr, fezui_animated_listbox_t *listbox)
-{
-}
-
-void fezui_animated_listbox_get_cursor(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g2_uint_t w, u8g2_uint_t h, fezui_animated_listbox_t *listbox, u8g2_uint_t item_height, fezui_cursor_t *c)
-{
-    c->x = x;
-    c->y = item_height * (listbox->list.selected_index) - FEZUI_ANIMATION_GET_VALUE(&listbox->scroll_animation,listbox->offset,listbox->targetoffset);
-    c->h = item_height;
-    c->w = u8g2_GetStrWidth(&fezui_ptr->u8g2, listbox->list.items[listbox->list.selected_index]) + 1;
-    if (c->y + item_height > y + h)
-    {
-        c->y = y + h - item_height;
-    }
-    if (c->y < y)
-    {
-        c->y = y;
-    }
-}
-void fezui_animated_listbox_begin(fezui_animated_listbox_t *listbox)
-{
-    listbox->start_animation.begin_time=fezui_tick;
-    listbox->start_animation.duration = DEFAULT_ANIMATION_DURATION;
-    listbox->start_animation.easing_func = DEFAULT_ANIMATION_EASE_FUNCTION;
-    listbox->start_animation.mode = DEFAULT_ANIMATION_MODE;
-}
-void fezui_draw_animated_listbox(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g2_uint_t w, u8g2_uint_t h, fezui_animated_listbox_t *listbox, u8g2_uint_t item_height, u8g2_uint_t adjust)
-{
-    fezui_animation_calculate(&listbox->start_animation);
-    fezui_animation_calculate(&listbox->scroll_animation);
-    if ((listbox->list.selected_index + 1) * item_height - listbox->targetoffset > h)
-    {
-        listbox->targetoffset = (listbox->list.selected_index + 1) * item_height - h;
-    }
-    if ((listbox->list.selected_index) * item_height < listbox->targetoffset)
-    {
-        listbox->targetoffset = (listbox->list.selected_index) * item_height;
-    }
-    u8g2_SetClipWindow(&(fezui_ptr->u8g2), x, y, x + w, y + h);
-    for (uint16_t i = 0; i < listbox->list.len; i++)
-    {
-        u8g2_DrawStr(&(fezui_ptr->u8g2), x + 1, (u8g2_int_t)floorf(y+(item_height * (i + 1) - FEZUI_ANIMATION_GET_VALUE(&listbox->scroll_animation,listbox->offset,listbox->targetoffset) - adjust) * listbox->start_animation.value + 0.5), listbox->list.items[i]);
-    }
-    if (listbox->show_scrollbar)
-    {
-        fezui_draw_scrollbar(fezui_ptr, x + w - 5, y, 5, (u8g2_int_t)(FEZUI_ANIMATION_GET_VALUE(&listbox->start_animation,0,h)  + 0.5), (float)h / (float)(item_height * listbox->list.len), FEZUI_ANIMATION_GET_VALUE(&listbox->scroll_animation,listbox->offset,listbox->targetoffset) / (float)(item_height * listbox->list.len - h), ORIENTATION_VERTICAL);
-    }
-    u8g2_SetMaxClipWindow(&(fezui_ptr->u8g2));
-}
-
-void fezui_animated_menu_init(fezui_animated_menu_t *menu,const fezui_menuitem_t *items, uint8_t len, void (*cb)(void *menu))
-{
-    menu->items = items;
-    menu->len = len;
-    menu->menu_cb = cb;
-    menu->selected_index = 0;
-}
-
-void fezui_animated_menu_index_increase(fezui_animated_menu_t *menu, int8_t delta)
-{
-    menu->selected_index += delta;
-    if (menu->selected_index >= menu->len)
-    {
-        menu->selected_index = 0;
-    }
-    if (menu->selected_index < 0)
-    {
-        menu->selected_index = menu->len - 1;
-    }
-}
-
-void fezui_animated_menu_click(fezui_animated_menu_t *menu)
-{
-    if (menu->menu_cb != NULL)
-        menu->menu_cb(menu);
-}
-
-void fezui_animated_menu_update(fezui_t *fezui_ptr, fezui_animated_menu_t *menu)
-{
-    CONVERGE_TO_ROUNDED(menu->offset, menu->targetoffset, fezui_ptr->speed);
-    CONVERGE_TO(menu->animation, 1, fezui_ptr->speed);
-}
-
-void fezui_animated_menu_get_cursor(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g2_uint_t w, u8g2_uint_t h, fezui_animated_menu_t *menu, u8g2_uint_t item_height, fezui_cursor_t *c)
-{
-    c->x = x;
-    c->y = item_height * (menu->selected_index) - (u8g2_int_t)menu->offset;
-    c->h = item_height;
-    c->w = u8g2_GetStrWidth(&fezui_ptr->u8g2, menu->items[menu->selected_index].header + 1) + 1;
-    if (c->y + item_height > y + h)
-    {
-        c->y = y + h - item_height;
-    }
-    if (c->y < y)
-    {
-        c->y = y;
-    }
-}
-void fezui_animated_menu_begin(fezui_animated_menu_t *menu)
-{
-    menu->animation = 0;
-}
-void fezui_draw_animated_menu(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g2_uint_t w, u8g2_uint_t h, fezui_animated_menu_t *menu, u8g2_uint_t item_height, u8g2_uint_t adjust)
-{
-    if ((menu->selected_index + 1) * item_height - menu->targetoffset > h)
-    {
-        menu->targetoffset = (menu->selected_index + 1) * item_height - h;
-    }
-    if ((menu->selected_index) * item_height < menu->targetoffset)
-    {
-        menu->targetoffset = (menu->selected_index) * item_height;
-    }
-    u8g2_SetClipWindow(&(fezui_ptr->u8g2), x, y, x + w, y + h);
-    if (menu->show_scrollbar)
-    {
-        fezui_draw_scrollbar(fezui_ptr, x + w - 5, y, 5, (u8g2_int_t)(h * menu->animation + 0.5), (float)h / (float)(item_height * menu->len), (float)menu->offset / (float)(item_height * menu->len - h), ORIENTATION_VERTICAL);
-        w-=5;
-    }
-    for (uint16_t i = 0; i < menu->len; i++)
-    {
-        char *_Format=strrchr(menu->items[i].header,'%');
-        char _FormatStr[16];
-        if(_Format)
-        {
-            memcpy(g_fezui_printf_buffer,menu->items[i].header+1,_Format-menu->items[i].header-1);
-            u8g2_DrawStr(&(fezui_ptr->u8g2), x + 1, (u8g2_int_t)floorf(y+(item_height * (i + 1) - (u8g2_int_t)menu->offset - adjust) * menu->animation + 0.5), g_fezui_printf_buffer);
-            sprintf(_FormatStr,"[%s]",_Format);
-        }
-        else
-        {
-            u8g2_DrawStr(&(fezui_ptr->u8g2), x + 1, (u8g2_int_t)floorf(y+(item_height * (i + 1) - (u8g2_int_t)menu->offset - adjust) * menu->animation + 0.5), menu->items[i].header + 1);
-        }
-        switch (*(menu->items[i].header))
-        {
-        case FEZUI_TYPE_FLOAT:
-            sprintf(g_fezui_printf_buffer, _Format ? _FormatStr :  "[%f]", *(float *)menu->items[i].target);
-            break;
-        case FEZUI_TYPE_DOUBLE:
-            sprintf(g_fezui_printf_buffer,  _Format ? _FormatStr : "[%lf]", *(double *)menu->items[i].target);
-            break;
-        case FEZUI_TYPE_INT16:
-            sprintf(g_fezui_printf_buffer,  _Format ? _FormatStr : "[%d]", *(int16_t*)menu->items[i].target);
-            break;
-        case FEZUI_TYPE_INT32:
-            sprintf(g_fezui_printf_buffer,  _Format ? _FormatStr :  "[%ld]", *(int32_t*)menu->items[i].target);
-            break;
-        case FEZUI_TYPE_UINT16:
-            sprintf(g_fezui_printf_buffer,  _Format ? _FormatStr :  "[%u]", *(uint16_t*)menu->items[i].target);
-            break;
-        case FEZUI_TYPE_UINT32:
-            sprintf(g_fezui_printf_buffer,  _Format ? _FormatStr :  "[%lu]", *(uint32_t*)menu->items[i].target);
-            break;
-        case FEZUI_TYPE_UINT8:
-            sprintf(g_fezui_printf_buffer,  _Format ? _FormatStr :  "[%d]", *(uint8_t *)menu->items[i].target);
-            break;
-        case FEZUI_TYPE_BOOL:
-        case 'B':
-            sprintf(g_fezui_printf_buffer, "[%s]", *(bool*)menu->items[i].target?"ON":"OFF");
-            break;
-        default:
-            break;
-        }
-        fezui_printf_right_aligned(fezui_ptr, x + w, (u8g2_int_t)floorf(y+(item_height * (i + 1) - (u8g2_int_t)menu->offset - adjust) * menu->animation + 0.5), g_fezui_printf_buffer);
-    }
-    u8g2_SetMaxClipWindow(&(fezui_ptr->u8g2));
 }

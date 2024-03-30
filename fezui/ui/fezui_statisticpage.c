@@ -42,7 +42,7 @@ static void statisticpage_draw(void *page)
 
     fezui_printf(&fezui, 0, ROW_HEIGHT * 7 - (u8g2_int_t)(scrollview.ordinate), "  Run time");
 
-    fezui_printf_right_aligned(&fezui, WIDTH - 6, ROW_HEIGHT * 7 - (u8g2_int_t)(scrollview.ordinate),  "%02ldh%02ldm%02lds", fezui_run_time / 3600, fezui_run_time / 60 % 60, fezui_run_time % 60);
+    fezui_printf_right_aligned(&fezui, WIDTH - 6, ROW_HEIGHT * 7 - (u8g2_int_t)(scrollview.ordinate),  "%02ldh%02ldm%02lds", g_fezui_run_time / 3600, g_fezui_run_time / 60 % 60, g_fezui_run_time % 60);
 
     fezui_printf_right_aligned(&fezui, WIDTH - 6, ROW_HEIGHT * 2 - (u8g2_int_t)(scrollview.ordinate), "%8ld", g_key_counts[0]);
 
@@ -74,11 +74,11 @@ static void statisticpage_event_handler(void *e)
             target_ordinate = scrollview.content_height - 64;
         break;
     case KEY_ENTER:
-        fezui_link_frame_go_back(&mainframe);
+        fezui_link_frame_go_back(&g_mainframe);
         fezui_cursor_set(&g_fezui_cursor, 0, 0, WIDTH, HEIGHT);
         break;
     case KEY_ESC:
-        fezui_link_frame_go_back(&mainframe);
+        fezui_link_frame_go_back(&g_mainframe);
         fezui_cursor_set(&g_fezui_cursor, 0, 0, WIDTH, HEIGHT);
         break;
     default:

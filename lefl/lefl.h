@@ -15,7 +15,6 @@ extern "C" {
 #include "stdbool.h"
 #include "string.h"
 #include "math.h"
-#include "lefl_macro.h"
 
     /*
      * lefl_datastruct.c

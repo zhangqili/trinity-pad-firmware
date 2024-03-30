@@ -15,12 +15,12 @@ extern fezui_t fezui;
 extern u8log_t u8log;
 extern uint8_t u8log_buf[1024];
 
-extern uint32_t fezui_fps;
-extern uint8_t KPS_history_max;
+extern uint32_t g_fezui_fps;
+extern uint8_t g_kps_history_max;
 extern char g_fpsstr[8];
-extern uint32_t fezui_debug;
+extern uint32_t g_fezui_debug;
 
-extern uint32_t fezui_run_time;
+extern uint32_t g_fezui_run_time;
 extern uint32_t g_usb_report_count;
 extern uint32_t g_usb_report_count1;
 
@@ -28,7 +28,7 @@ extern fezui_notification_t fezui_notification;
 
 extern const char *g_hid_usage_names[138];
 
-extern fezui_link_frame_t mainframe;
+extern fezui_link_frame_t g_mainframe;
 
 extern fezui_link_page_t homepage;
 
@@ -47,9 +47,6 @@ extern fezui_link_page_t keylistpage;
 void keylistpage_init();
 extern uint16_t* current_target_id;
 
-extern fezui_link_page_t keyconfigpage;
-void keyconfigpage_init();
-extern char current_key_name[32];
 
 extern fezui_link_page_t advancedconfigpage;
 void advancedconfigpage_init();

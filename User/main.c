@@ -20,7 +20,6 @@
 
 #include "debug.h"
 #include "main.h"
-#include "lefl.h"
 #include "analog.h"
 #include "fezui.h"
 #include "fezui_var.h"
@@ -773,15 +772,15 @@ void TIM6_IRQHandler(void)
         count++;
         if (count == REFRESH_RATE)
         {
-            sprintf(g_fpsstr, "%ld", fezui_fps);
-            fezui_fps = 0;
+            sprintf(g_fpsstr, "%ld", g_fezui_fps);
+            g_fezui_fps = 0;
             count = 0;
             if (fezui.screensaver_countdown)
                 fezui.screensaver_countdown--;
             record_kps_history_timer();
             g_usb_report_count1=g_usb_report_count;
             g_usb_report_count=0;
-            fezui_run_time++;
+            g_fezui_run_time++;
         }
         fezui_timer_handler();
         record_bit_stream_timer();
