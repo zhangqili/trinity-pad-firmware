@@ -7,9 +7,8 @@ static void string_item_draw(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u
     fezui_ptr->u8g2.font_calc_vref = fnptr_bk;
 }
 
-static void string_item_get_cursor(fezui_t *fezui_ptr, fezui_cursor_t *cursor, u8g2_uint_t w, u8g2_uint_t h, void *item)
+static void string_item_get_cursor(fezui_t *fezui_ptr, fezui_cursor_t *cursor, void *item)
 {
-    cursor->h = h;
     cursor->w = u8g2_GetStrWidth(&fezui_ptr->u8g2,item) + 1;
 }
 
@@ -39,7 +38,6 @@ void fezui_animated_listbox_get_cursor(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_u
 {
     c->x = x;
     c->y = item_height * (listbox->listbox.list.selected_index) - FEZUI_ANIMATION_GET_VALUE(&listbox->scroll_animation,listbox->listbox.offset,listbox->targetoffset);
-    listbox->listbox.item_cursor_cb(fezui_ptr,c,w,item_height,listbox->listbox.list.items[listbox->listbox.list.selected_index]);
     if (c->y + item_height > y + h)
     {
         c->y = y + h - item_height;
@@ -47,6 +45,12 @@ void fezui_animated_listbox_get_cursor(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_u
     if (c->y < y)
     {
         c->y = y;
+    }
+    c->w = w;
+    c->h = item_height;
+    if(listbox->listbox.item_cursor_cb)
+    {
+        listbox->listbox.item_cursor_cb(fezui_ptr,c,listbox->listbox.list.items[listbox->listbox.list.selected_index]);
     }
 }
 void fezui_animated_listbox_begin(fezui_animated_listbox_t *listbox)
@@ -131,9 +135,8 @@ static void menu_item_draw(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g
     fezui_ptr->u8g2.font_calc_vref = fnptr_bk;
 }
 
-static void menu_item_get_cursor(fezui_t *fezui_ptr, fezui_cursor_t *cursor, u8g2_uint_t w, u8g2_uint_t h, void *item)
+static void menu_item_get_cursor(fezui_t *fezui_ptr, fezui_cursor_t *cursor, void *item)
 {
-    cursor->h = h;
     cursor->w = u8g2_GetStrWidth(&fezui_ptr->u8g2, ((fezui_menuitem_t*)item)->header + 1) + 1;
 }
 

@@ -160,14 +160,14 @@ void keyboard_send_report()
     // keyboard_6KRObuffer_add(&Keyboard_ReportBuffer,(KeyBinding){KEY_E,KEY_NO_MODIFIER});
     for (int i = 0; i < ADVANCED_KEY_NUM; i++)
     {
-        if (g_keyboard_advanced_keys[i].key.state)
+        if (g_keyboard_advanced_keys[i].key.report_state)
         {
             keyboard_6KRObuffer_add(&g_keyboard_6kro_buffer, g_keymap[g_keyboard_current_layer][i]);
         }
     }
     for (int i = 0; i < KEY_NUM; i++)
     {
-        if (g_keyboard_keys[i].state)
+        if (g_keyboard_keys[i].report_state)
         {
             keyboard_6KRObuffer_add(&g_keyboard_6kro_buffer, g_keymap[g_keyboard_current_layer][i + ADVANCED_KEY_NUM]);
         }
@@ -183,9 +183,15 @@ __WEAK void keyboard_timer()
     keyboard_scan();
     analog_average();
     analog_check();
+    keyboard_post_process();
     keyboard_send_report();
 }
 
 __WEAK void keyboard_hid_send(uint8_t *report, uint16_t len)
 {
+
+}
+__WEAK void keyboard_post_process()
+{
+    
 }

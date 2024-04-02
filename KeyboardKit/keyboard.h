@@ -44,6 +44,7 @@ void keyboard_system_reset();
 void keyboard_factory_reset();
 void keyboard_scan();
 void keyboard_send_report();
+void keyboard_post_process();
 void keyboard_recovery();
 void keyboard_save();
 void keyboard_timer();

@@ -136,7 +136,7 @@ void record_bit_stream_timer()
             g_bit_stream_datas[i][j] |= (g_bit_stream_datas[i][j - 1] >> ((sizeof(size_t) * 8) - 1));
         }
         g_bit_stream_datas[i][0] <<= 1;
-        g_bit_stream_datas[i][0] |= g_keyboard_advanced_keys[i].key.state;
+        g_bit_stream_datas[i][0] |= g_keyboard_advanced_keys[i].key.report_state;
     }
 }
 

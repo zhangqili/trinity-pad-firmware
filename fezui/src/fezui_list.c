@@ -44,15 +44,6 @@ void fezui_listbox_click(fezui_listbox_t* list)
 
 void fezui_listbox_get_cursor(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g2_uint_t w, u8g2_uint_t h, fezui_listbox_t *listbox, u8g2_uint_t item_height, fezui_cursor_t *c)
 {
-    if(listbox->item_cursor_cb)
-    {
-        listbox->item_cursor_cb(fezui_ptr,c,w,item_height,listbox->list.items[listbox->list.selected_index]);
-    }
-    else
-    {
-        c->h = item_height;
-        c->w = w;
-    }
     c->x = x;
     c->y = item_height * (listbox->list.selected_index)  - (u8g2_int_t)listbox->offset;
     if (c->y + item_height > y + h)
@@ -62,6 +53,12 @@ void fezui_listbox_get_cursor(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, 
     if (c->y < y)
     {
         c->y = y;
+    }
+    c->h = item_height;
+    c->w = w;
+    if(listbox->item_cursor_cb)
+    {
+        listbox->item_cursor_cb(fezui_ptr,c,listbox->list.items[listbox->list.selected_index]);
     }
 }
 

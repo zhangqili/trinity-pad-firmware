@@ -328,7 +328,7 @@ void fezui_list_base_init(fezui_list_base_t* list, void* *items,uint8_t len,void
 void fezui_list_base_index_increase(fezui_list_base_t* list, int8_t delta);
 void fezui_list_base_click(fezui_list_base_t* list);
 typedef void (*item_draw_fn)(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g2_uint_t w, u8g2_uint_t h, void *item);
-typedef void (*item_cursor_fn)(fezui_t *fezui_ptr, fezui_cursor_t *cursor, u8g2_uint_t w, u8g2_uint_t h, void *item);
+typedef void (*item_cursor_fn)(fezui_t *fezui_ptr, fezui_cursor_t *cursor, void *item);
 typedef struct __fezui_listbox_t
 {   
     fezui_list_base_t list;

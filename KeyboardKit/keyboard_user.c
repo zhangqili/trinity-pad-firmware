@@ -1126,3 +1126,7 @@ void keyboard_scan()
         g_keybaord_alpha_flag = false;
     }
 }
+void keyboard_post_process()
+{
+    
+}
