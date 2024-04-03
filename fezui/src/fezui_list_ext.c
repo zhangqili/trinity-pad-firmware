@@ -1,9 +1,9 @@
 #include"fezui.h"
-static void string_item_draw(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g2_uint_t w, u8g2_uint_t h, void *item)
+static void string_item_draw(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g2_uint_t w, u8g2_uint_t h, void *item, uint16_t index)
 {
     u8g2_font_calc_vref_fnptr fnptr_bk = fezui_ptr->u8g2.font_calc_vref;
     u8g2_SetFontPosBottom(&(fezui_ptr->u8g2));
-    u8g2_DrawStr(&fezui_ptr->u8g2,x,y,item);
+    u8g2_DrawStr(&fezui_ptr->u8g2,x+1,y+h,item);
     fezui_ptr->u8g2.font_calc_vref = fnptr_bk;
 }
 
@@ -21,6 +21,14 @@ void fezui_animated_string_listbox_init(fezui_animated_listbox_t *listbox, const
     listbox->scroll_animation.mode = DEFAULT_ANIMATION_MODE;
 }
 
+void fezui_animated_listbox_init(fezui_animated_listbox_t *listbox, void **items, uint8_t len, void (*cb)(void *listbox),item_draw_fn item_draw_cb,item_cursor_fn item_cursor_cb)
+{
+    fezui_listbox_init(&listbox->listbox,(void**)items,len,cb,item_draw_cb,item_cursor_cb);
+    listbox->scroll_animation.begin_time=fezui_tick;
+    listbox->scroll_animation.duration = DEFAULT_ANIMATION_DURATION;
+    listbox->scroll_animation.easing_func = DEFAULT_ANIMATION_EASE_FUNCTION;
+    listbox->scroll_animation.mode = DEFAULT_ANIMATION_MODE;
+}
 void fezui_animated_listbox_index_increase(fezui_animated_listbox_t *listbox, int8_t delta)
 {
     fezui_animation_begin(&listbox->scroll_animation);
@@ -77,7 +85,7 @@ void fezui_draw_animated_listbox(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t 
     u8g2_SetClipWindow(&(fezui_ptr->u8g2), x, y, x + w, y + h);
     for (uint16_t i = 0; i < listbox->listbox.list.len; i++)
     {
-        listbox->listbox.item_draw_cb(fezui_ptr, x + 1, (u8g2_int_t)floorf(y+(item_height * (i + 1) - FEZUI_ANIMATION_GET_VALUE(&listbox->scroll_animation,listbox->listbox.offset,listbox->targetoffset)) * listbox->start_animation.value + 0.5), w,item_height,listbox->listbox.list.items[i]);
+        listbox->listbox.item_draw_cb(fezui_ptr, x, (u8g2_int_t)floorf(y+(item_height * (i) - FEZUI_ANIMATION_GET_VALUE(&listbox->scroll_animation,listbox->listbox.offset,listbox->targetoffset)) * listbox->start_animation.value - item_height*(1-listbox->start_animation.value) + 0.5), w,item_height,listbox->listbox.list.items[i],i);
     }
     if (listbox->listbox.show_scrollbar)
     {
@@ -86,7 +94,7 @@ void fezui_draw_animated_listbox(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t 
     u8g2_SetMaxClipWindow(&(fezui_ptr->u8g2));
 }
 
-static void menu_item_draw(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g2_uint_t w, u8g2_uint_t h, void *menu_item)
+static void menu_item_draw(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g2_uint_t w, u8g2_uint_t h, void *menu_item, uint16_t index)
 {
     u8g2_font_calc_vref_fnptr fnptr_bk = fezui_ptr->u8g2.font_calc_vref;
     u8g2_SetFontPosBottom(&(fezui_ptr->u8g2));
@@ -96,12 +104,12 @@ static void menu_item_draw(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g
     if(_Format)
     {
         memcpy(g_fezui_printf_buffer,item->header+1,_Format-item->header-1);
-        u8g2_DrawStr(&(fezui_ptr->u8g2), x, y, g_fezui_printf_buffer);
+        u8g2_DrawStr(&(fezui_ptr->u8g2), x, y+h, g_fezui_printf_buffer);
         sprintf(_FormatStr,"[%s]",_Format);
     }
     else
     {
-        u8g2_DrawStr(&(fezui_ptr->u8g2), x, y, item->header + 1);
+        u8g2_DrawStr(&(fezui_ptr->u8g2), x+1, y+h, item->header + 1);
     }
     switch (*(item->header))
     {
@@ -133,7 +141,7 @@ static void menu_item_draw(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g
     default:
         break;
     }
-    fezui_printf_right_aligned(fezui_ptr, x + w, y, g_fezui_printf_buffer);
+    fezui_printf_right_aligned(fezui_ptr, x + w, y+h, g_fezui_printf_buffer);
     fezui_ptr->u8g2.font_calc_vref = fnptr_bk;
 }
 
@@ -142,7 +150,7 @@ static void menu_item_get_cursor(fezui_t *fezui_ptr, fezui_cursor_t *cursor, voi
     cursor->w = u8g2_GetStrWidth(&fezui_ptr->u8g2, ((fezui_menuitem_t*)item)->header + 1) + 1;
 }
 
-void fezui_animated_menu_list_init(fezui_animated_listbox_t *menu,const fezui_menuitem_t *items, uint8_t len, void (*cb)(void *menu))
+void fezui_animated_menu_list_init(fezui_animated_listbox_t *menu,const fezui_menuitem_t **items, uint8_t len, void (*cb)(void *menu))
 {
     fezui_listbox_init(&menu->listbox,(void**)items,len,cb,menu_item_draw,menu_item_get_cursor);
     menu->scroll_animation.begin_time=fezui_tick;

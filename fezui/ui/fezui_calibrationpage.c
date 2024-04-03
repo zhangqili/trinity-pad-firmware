@@ -39,7 +39,7 @@ void drawrawdata(uint8_t x, uint8_t y, uint8_t n)
 
 void calibrationpage_init()
 {
-    fezui_list_base_init(&calibrationmenu, calibrationmenu_items, sizeof(calibrationmenu_items) / sizeof(const char *), NULL);
+    fezui_list_base_init(&calibrationmenu, (void**)calibrationmenu_items, sizeof(calibrationmenu_items) / sizeof(const char *), NULL);
 }
 
 static void calibrationpage_tick(void *page)

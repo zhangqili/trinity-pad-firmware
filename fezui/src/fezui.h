@@ -327,7 +327,7 @@ typedef struct __fezui_list_base_t
 void fezui_list_base_init(fezui_list_base_t* list, void* *items,uint8_t len,void (*cb)(void* list));
 void fezui_list_base_index_increase(fezui_list_base_t* list, int8_t delta);
 void fezui_list_base_click(fezui_list_base_t* list);
-typedef void (*item_draw_fn)(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g2_uint_t w, u8g2_uint_t h, void *item);
+typedef void (*item_draw_fn)(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g2_uint_t w, u8g2_uint_t h, void *item, uint16_t index);
 typedef void (*item_cursor_fn)(fezui_t *fezui_ptr, fezui_cursor_t *cursor, void *item);
 typedef struct __fezui_listbox_t
 {   
@@ -363,6 +363,7 @@ typedef struct __fezui_animated_listbox_t
 #define fezui_animated_listbox_selected_index(x) ((x)->listbox.list.selected_index)
 #define fezui_animated_listbox_len(x) ((x)->listbox.list.len)
 void fezui_animated_string_listbox_init(fezui_animated_listbox_t *listbox, const char **items, uint8_t len, void (*cb)(void *listbox));
+void fezui_animated_listbox_init(fezui_animated_listbox_t *listbox, void **items, uint8_t len, void (*cb)(void *listbox),item_draw_fn item_draw_cb,item_cursor_fn item_cursor_cb);
 void fezui_animated_listbox_index_increase(fezui_animated_listbox_t *listbox, int8_t delta);
 void fezui_animated_listbox_click(fezui_animated_listbox_t *listbox);
 void fezui_animated_listbox_get_cursor(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g2_uint_t w, u8g2_uint_t h, fezui_animated_listbox_t *listbox, u8g2_uint_t item_height, fezui_cursor_t *c);
@@ -387,7 +388,7 @@ typedef struct __fezui_animated_menu_t
     bool show_scrollbar;
     void (*menu_cb)(void *menu);
 } fezui_animated_menu_t;
-void fezui_animated_menu_list_init(fezui_animated_listbox_t *menu,const fezui_menuitem_t *items, uint8_t len, void (*cb)(void *menu));
+void fezui_animated_menu_list_init(fezui_animated_listbox_t *menu,const fezui_menuitem_t **items, uint8_t len, void (*cb)(void *menu));
 void fezui_animated_menu_init(fezui_animated_menu_t *menu,const fezui_menuitem_t *items, uint8_t len, void (*cb)(void *menu));
 void fezui_animated_menu_index_increase(fezui_animated_menu_t *menu, int8_t delta);
 void fezui_animated_menu_click(fezui_animated_menu_t *menu);

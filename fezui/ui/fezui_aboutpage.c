@@ -82,10 +82,13 @@ static const char* device_version = "Version: 1.0.0";
 static float device_version_offsets[14] = {WIDTH,WIDTH,WIDTH,WIDTH,WIDTH,WIDTH,WIDTH,WIDTH,WIDTH,WIDTH,WIDTH,WIDTH,WIDTH,WIDTH};
 
 static const char* device_information[]={
-        "Copyright (c) 2023 Lzq12345",
+        "Copyright (c) 2023",
+        "Lzq12345",
+        "Powered by FEZUI",
         "",
         "MCU: CH32V307WCU6",
-        "Date:" __DATE__ " " __TIME__,
+        "Date:" __DATE__,
+        "Time:" __TIME__,
 };
 
 static const char* device_project_url[]={
@@ -151,34 +154,32 @@ static void aboutpage_tick(void *page)
 }
 static void aboutpage_draw(void *page)
 {
-    /*
     u8g2_SetFont(&(fezui.u8g2), u8g2_font_helvB12_tr);
     for (uint8_t i = 0; i < 11; i++)
     {
         single_char[0]=device_name[i];
-        u8g2_DrawStr(&(fezui.u8g2), 19+device_name_offsets[i], 12, single_char);
+        u8g2_DrawStr(&(fezui.u8g2), 34+device_name_offsets[i], 16, single_char);
     }
     u8g2_SetFont(&(fezui.u8g2), u8g2_font_4x6_mr);
     for (uint8_t i = 0; i < 14; i++)
     {
         single_char[0]=device_version[i];
-        u8g2_DrawStr(&(fezui.u8g2), 19+device_version_offsets[i], 18, single_char);
+        u8g2_DrawStr(&(fezui.u8g2), 34+device_version_offsets[i], 23, single_char);
     }
-
     for (uint8_t i = 0; i < sizeof(device_project_url)/sizeof(char*); i++)
     {
         u8g2_DrawStr(&(fezui.u8g2), 0, url_y+6*(i+1), device_project_url[i]);
     }
     fezui_draw_scrolling_text(&fezui,0,url_y+6*2,&url_text);
-    draw_gemini();
-    u8g2_SetClipWindow(&(fezui.u8g2),19,19,WIDTH,50);
+    //draw_gemini();
+    u8g2_SetClipWindow(&(fezui.u8g2),34,23,WIDTH,50);
     for (uint8_t i = 0; i < sizeof(device_information)/sizeof(char*); i++)
     {
-        u8g2_DrawStr(&(fezui.u8g2), 19, 18+ROW_HEIGHT*(i+1)-(u8g2_int_t)ordinate, device_information[i]);
+        u8g2_DrawStr(&(fezui.u8g2), 34, 18+ROW_HEIGHT*(i+1)-(u8g2_int_t)ordinate, device_information[i]);
     }
     u8g2_SetMaxClipWindow(&(fezui.u8g2));
-    */
-    u8g2_DrawXBMP(&fezui.u8g2,10,10,33,33,qr_code);
+
+    u8g2_DrawXBMP(&fezui.u8g2,((u8g2_int_t)icon_x),0,33,33,qr_code);
 }
 
 static void aboutpage_event_handler(void *e)
@@ -218,7 +219,7 @@ static void aboutpage_load(void *page)
     fezui_scrolling_text_begin(&url_text);
     ordinate=-text_box_height;
     target_ordinate=-text_box_height;
-    icon_x=WIDTH;
+    icon_x=-33;
     url_y=HEIGHT;
     for (uint8_t i = 0; i < 11; i++)
     {

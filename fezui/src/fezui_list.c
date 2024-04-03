@@ -79,7 +79,7 @@ void fezui_draw_listbox(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g2_u
     u8g2_SetClipWindow(&(fezui_ptr->u8g2), x, y, x + w, y + h);
     for (uint16_t i = 0; i < listbox->list.len; i++)
     {
-        listbox->item_draw_cb(fezui_ptr, x + 1, (u8g2_int_t)floorf(y+(item_height * (i + 1) - listbox->offset) + 0.5), w,item_height,listbox->list.items[i]);
+        listbox->item_draw_cb(fezui_ptr, x, (u8g2_int_t)floorf(y+(item_height * (i + 1) - listbox->offset) + 0.5), w,item_height,listbox->list.items[i],i);
     }
     if (listbox->show_scrollbar)
     {
