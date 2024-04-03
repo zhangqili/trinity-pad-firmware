@@ -439,7 +439,7 @@ static void advancedconfigpage_event_handler(void *e)
         }
         else
         {
-            fezui_link_frame_go_back(&g_mainframe);
+            fezui_frame_go_back(&g_mainframe);
         }
         break;
     default:
@@ -452,5 +452,5 @@ static void advancedconfigpage_load(void *page)
     fezui_scrolling_text_init(&fezui,&scrolling_text, 78, 0.2, u8g2_font_4x6_mr, binding_text);
 }
 
-fezui_link_page_t advancedconfigpage={advancedconfigpage_tick,advancedconfigpage_draw,advancedconfigpage_load,advancedconfigpage_event_handler};
+fezui_page_t advancedconfigpage={advancedconfigpage_tick,advancedconfigpage_draw,advancedconfigpage_load,advancedconfigpage_event_handler};
 

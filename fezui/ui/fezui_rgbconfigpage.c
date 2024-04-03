@@ -367,7 +367,7 @@ static void rgbconfigpage_event_handler(void *e)
             }
             else
             {
-                fezui_link_frame_go_back(&g_mainframe);
+                fezui_frame_go_back(&g_mainframe);
             }
         }
         break;
@@ -375,4 +375,4 @@ static void rgbconfigpage_event_handler(void *e)
         break;
     }
 }
-fezui_link_page_t rgbconfigpage = {rgbconfigpage_tick, rgbconfigpage_draw, rgbconfigpage_load, rgbconfigpage_event_handler};
+fezui_page_t rgbconfigpage = {rgbconfigpage_tick, rgbconfigpage_draw, rgbconfigpage_load, rgbconfigpage_event_handler};

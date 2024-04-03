@@ -170,4 +170,4 @@ static void homepage_load(void *page)
     g_keybaord_alpha_flag=false;
 }
 
-fezui_link_page_t homepage={homepage_tick,homepage_draw,homepage_load};
+fezui_page_t homepage={homepage_tick,homepage_draw,homepage_load};

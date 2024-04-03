@@ -86,11 +86,11 @@ static void keylistpage_event_handler(void *e)
         fezui_animated_listbox_click(&keylist);
         break;
     case KEY_ESC:
-        fezui_link_frame_go_back(&g_mainframe);
+        fezui_frame_go_back(&g_mainframe);
         break;
     default:
         break;
     }
 }
 
-fezui_link_page_t keylistpage = {keylistpage_tick, keylistpage_draw, keylistpage_load, keylistpage_event_handler};
+fezui_page_t keylistpage = {keylistpage_tick, keylistpage_draw, keylistpage_load, keylistpage_event_handler};

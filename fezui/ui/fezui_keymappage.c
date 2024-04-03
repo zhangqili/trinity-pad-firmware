@@ -32,7 +32,7 @@ extern uint16_t *current_target_key_binding;
 void layer_select_menu_cb(void *menu)
 {
     current_target_key_binding = &g_keymap[layer_select_menu.selected_index][key_select_list.listbox.list.selected_index];
-    fezui_link_frame_navigate(&g_mainframe, &keylistpage);
+    fezui_frame_navigate(&g_mainframe, &keylistpage);
 }
 
 static void key_select_list_cb(void*e)
@@ -166,7 +166,7 @@ static void keymappage_event_handler(void *e)
         }
         else
         {
-            fezui_link_frame_go_back(&g_mainframe);
+            fezui_frame_go_back(&g_mainframe);
         }
         break;
     default:
@@ -174,4 +174,4 @@ static void keymappage_event_handler(void *e)
     }
 }
 
-fezui_link_page_t keymappage = {keymappage_tick, keymappage_draw, keymappage_load, keymappage_event_handler};
+fezui_page_t keymappage = {keymappage_tick, keymappage_draw, keymappage_load, keymappage_event_handler};

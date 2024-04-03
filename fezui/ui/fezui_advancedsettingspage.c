@@ -18,7 +18,7 @@ static void advancedsettings_menu_cb(void* menu)
     switch (((fezui_list_base_t *)menu)->selected_index)
     {
         case 0:
-            fezui_link_frame_navigate(&g_mainframe, &debugpage);
+            fezui_frame_navigate(&g_mainframe, &debugpage);
             break;
         case 1:
             keyboard_save();
@@ -76,13 +76,13 @@ static void advancedsettingspage_event_handler(void* e)
             fezui_animated_listbox_click(&advancedsettingsmenu);
             break;
         case KEY_ESC:
-            fezui_link_frame_go_back(&g_mainframe);
+            fezui_frame_go_back(&g_mainframe);
             break;
         default:
             break;
     }
 }
 
-fezui_link_page_t advancedsettingspage = {
+fezui_page_t advancedsettingspage = {
     advancedsettingspage_tick, advancedsettingspage_draw, advancedsettingspage_load, advancedsettingspage_event_handler
 };

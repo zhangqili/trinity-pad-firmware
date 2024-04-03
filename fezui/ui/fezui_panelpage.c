@@ -17,7 +17,7 @@ static fezui_progressbar_t bars[4] =
 static void panelmenu_cb(void *m)
 {
     current_config_advanced_key = g_keyboard_advanced_keys + ((fezui_list_base_t *)m)->selected_index;
-    fezui_link_frame_navigate(&g_mainframe, &advancedconfigpage);
+    fezui_frame_navigate(&g_mainframe, &advancedconfigpage);
 }
 
 void panelpage_init()
@@ -67,11 +67,11 @@ static void panelpage_event_handler(void *e)
         fezui_list_base_click(&panelmenu);
         break;
     case KEY_ESC:
-        fezui_link_frame_go_back(&g_mainframe);
+        fezui_frame_go_back(&g_mainframe);
         break;
     default:
         break;
     }
 }
 
-fezui_link_page_t panelpage = {panelpage_logic, panelpage_draw, panelpage_load, panelpage_event_handler};
+fezui_page_t panelpage = {panelpage_logic, panelpage_draw, panelpage_load, panelpage_event_handler};

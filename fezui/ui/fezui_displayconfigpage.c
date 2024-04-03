@@ -149,7 +149,7 @@ static void displayconfigpage_event_handler(void *e)
         else
         {
             // fezui_save();
-            fezui_link_frame_go_back(&g_mainframe);
+            fezui_frame_go_back(&g_mainframe);
         }
         break;
     default:
@@ -157,4 +157,4 @@ static void displayconfigpage_event_handler(void *e)
     }
 }
 
-fezui_link_page_t displayconfigpage = {displayconfigpage_tick, displayconfigpage_draw, displayconfigpage_load,displayconfigpage_event_handler};
+fezui_page_t displayconfigpage = {displayconfigpage_tick, displayconfigpage_draw, displayconfigpage_load,displayconfigpage_event_handler};

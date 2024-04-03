@@ -73,10 +73,10 @@ static void debugpage_event_handler(void *e)
         fezui_numberic_dialog_increase(&dialog.dialog, -1);
         break;
     case KEY_ENTER:
-        fezui_link_frame_go_back(&g_mainframe);
+        fezui_frame_go_back(&g_mainframe);
         break;
     case KEY_ESC:
-        fezui_link_frame_go_back(&g_mainframe);
+        fezui_frame_go_back(&g_mainframe);
         fezui_cursor_set(&g_fezui_cursor, 0, 0, WIDTH, HEIGHT);
         break;
     default:
@@ -84,4 +84,4 @@ static void debugpage_event_handler(void *e)
     }
 }
 
-fezui_link_page_t debugpage = {debugpage_tick, debugpage_draw, debugpage_load, debugpage_event_handler};
+fezui_page_t debugpage = {debugpage_tick, debugpage_draw, debugpage_load, debugpage_event_handler};

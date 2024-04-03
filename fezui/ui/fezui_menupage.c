@@ -34,16 +34,16 @@ static void main_menu_cb(void *menu)
     switch (((fezui_animated_listbox_t*)menu)->listbox.list.selected_index)
     {
     case 0:
-    	fezui_link_frame_go_back(&g_mainframe);
+    	fezui_frame_go_back(&g_mainframe);
         break;
     case 1:
-        fezui_link_frame_navigate(&g_mainframe, &oscilloscopepage);
+        fezui_frame_navigate(&g_mainframe, &oscilloscopepage);
         break;
     case 2:
-    	fezui_link_frame_navigate(&g_mainframe, &statisticpage);
+    	fezui_frame_navigate(&g_mainframe, &statisticpage);
         break;
     case 3:
-        fezui_link_frame_navigate(&g_mainframe, &settingspage);
+        fezui_frame_navigate(&g_mainframe, &settingspage);
         break;
     default:
         break;
@@ -70,11 +70,11 @@ static void menupage_event_handler(void *e)
         fezui_animated_listbox_click(&mainmenu);
         break;
     case KEY_ESC:
-        fezui_link_frame_go_back(&g_mainframe);
+        fezui_frame_go_back(&g_mainframe);
         break;
     default:
         break;
     }
 }
 
-fezui_link_page_t menupage={menupage_tick,menupage_draw,menupage_load,menupage_event_handler};
+fezui_page_t menupage={menupage_tick,menupage_draw,menupage_load,menupage_event_handler};

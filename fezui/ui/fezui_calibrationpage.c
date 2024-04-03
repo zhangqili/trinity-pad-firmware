@@ -78,7 +78,7 @@ static void calibrationpage_event_handler(void *e)
         analog_reset_range();
         break;
     case KEY_ESC:
-        fezui_link_frame_go_back(&g_mainframe);
+        fezui_frame_go_back(&g_mainframe);
         break;
     default:
         break;
@@ -89,4 +89,4 @@ static void calibrationpage_load(void *page)
     calibrationstate = 0;
 }
 
-fezui_link_page_t calibrationpage = {calibrationpage_tick, calibrationpage_draw, calibrationpage_load, calibrationpage_event_handler};
+fezui_page_t calibrationpage = {calibrationpage_tick, calibrationpage_draw, calibrationpage_load, calibrationpage_event_handler};

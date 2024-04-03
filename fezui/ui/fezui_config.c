@@ -80,7 +80,7 @@ uint8_t u8log_buffer[U8LOG_WIDTH * U8LOG_HEIGHT];
 
 void fezui_input(uint16_t in)
 {
-    fezui_link_frame_input(&g_mainframe, (void *)&in);
+    fezui_frame_input(&g_mainframe, (void *)&in);
 }
 
 static void key_up_cb()
@@ -131,20 +131,20 @@ void fezui_init()
     panelpage_init();
     advancedsettingspage_init();
 
-    fezui_link_frame_init(&g_mainframe, &homepage, &frame_animation);
+    fezui_frame_init(&g_mainframe, &homepage, &frame_animation);
     key_attach(&KEY_KNOB, KEY_EVENT_DOWN, key_enter_cb);
     key_attach(&KEY_KNOB_CLOCKWISE, KEY_EVENT_DOWN, key_up_cb);
     key_attach(&KEY_KNOB_ANTICLOCKWISE, KEY_EVENT_DOWN, key_down_cb);
     key_attach(&KEY_FN_K5, KEY_EVENT_DOWN, key_enter_cb);
     key_attach(&KEY_FN_K6, KEY_EVENT_DOWN, key_esc_cb);
     // Keybaord_SendReport_Enable=false;
-    // fezui_link_frame_navigate(&g_mainframe, &debugpage);
-    // fezui_link_frame_navigate(&g_mainframe, &oscilloscopepage);
+    // fezui_frame_navigate(&g_mainframe, &debugpage);
+    // fezui_frame_navigate(&g_mainframe, &oscilloscopepage);
 }
 
 void fezui_timer_handler()
 {
-    fezui_link_frame_logic(&g_mainframe);
+    fezui_frame_tick(&g_mainframe);
     fezui_notification_update(&fezui, &fezui_notification);
     fezui_cursor_move(&fezui, &g_fezui_cursor, &g_target_cursor);
     // fezui_animated_cursor_update(&animated_cursor);
@@ -167,7 +167,7 @@ void fezui_render_handler()
 {
     u8g2_ClearBuffer(&(fezui.u8g2));
     u8g2_SetDrawColor(&(fezui.u8g2), 1);
-    fezui_link_frame_draw(&g_mainframe);
+    fezui_frame_draw(&g_mainframe);
     fezui_draw_notification(&fezui, &fezui_notification);
     if (fezui.invert)
     {

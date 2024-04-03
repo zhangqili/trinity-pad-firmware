@@ -42,25 +42,25 @@ static void settings_menu_cb(void *menu)
     switch (((fezui_list_base_t *)menu)->selected_index)
     {
     case 0:
-        fezui_link_frame_navigate(&g_mainframe, &panelpage);
+        fezui_frame_navigate(&g_mainframe, &panelpage);
         break;
     case 1:
-        fezui_link_frame_navigate(&g_mainframe, &keymappage);
+        fezui_frame_navigate(&g_mainframe, &keymappage);
         break;
     case 2:
-        fezui_link_frame_navigate(&g_mainframe, &rgbconfigpage);
+        fezui_frame_navigate(&g_mainframe, &rgbconfigpage);
         break;
     case 3:
-        fezui_link_frame_navigate(&g_mainframe, &calibrationpage);
+        fezui_frame_navigate(&g_mainframe, &calibrationpage);
         break;
     case 4:
-        fezui_link_frame_navigate(&g_mainframe, &displayconfigpage);
+        fezui_frame_navigate(&g_mainframe, &displayconfigpage);
         break;
     case 5:
-        fezui_link_frame_navigate(&g_mainframe, &advancedsettingspage);
+        fezui_frame_navigate(&g_mainframe, &advancedsettingspage);
         break;
     case 6:
-        fezui_link_frame_navigate(&g_mainframe, &aboutpage);
+        fezui_frame_navigate(&g_mainframe, &aboutpage);
         break;
     default:
         break;
@@ -84,11 +84,11 @@ static void settingspage_event_handler(void *e)
         fezui_animated_listbox_click(&settingsmenu);
         break;
     case KEY_ESC:
-        fezui_link_frame_go_back(&g_mainframe);
+        fezui_frame_go_back(&g_mainframe);
         break;
     default:
         break;
     }
 }
 
-fezui_link_page_t settingspage = {settingspage_tick, settingspage_draw, settingspage_load, settingspage_event_handler};
+fezui_page_t settingspage = {settingspage_tick, settingspage_draw, settingspage_load, settingspage_event_handler};

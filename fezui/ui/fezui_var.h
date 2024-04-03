@@ -28,53 +28,53 @@ extern fezui_notification_t fezui_notification;
 
 extern const char *g_hid_usage_names[138];
 
-extern fezui_link_frame_t g_mainframe;
+extern fezui_frame_t g_mainframe;
 
-extern fezui_link_page_t homepage;
+extern fezui_page_t homepage;
 
-extern fezui_link_page_t menupage;
+extern fezui_page_t menupage;
 void menupage_init();
 
-extern fezui_link_page_t settingspage;
+extern fezui_page_t settingspage;
 void settingspage_init();
 
-extern fezui_link_page_t advancedsettingspage;
+extern fezui_page_t advancedsettingspage;
 void advancedsettingspage_init();
 
-extern fezui_link_page_t oscilloscopepage;
+extern fezui_page_t oscilloscopepage;
 
-extern fezui_link_page_t keylistpage;
+extern fezui_page_t keylistpage;
 void keylistpage_init();
 extern uint16_t* current_target_id;
 
 
-extern fezui_link_page_t advancedconfigpage;
+extern fezui_page_t advancedconfigpage;
 void advancedconfigpage_init();
 extern AdvancedKey* current_config_advanced_key;
 
-extern fezui_link_page_t displayconfigpage;
+extern fezui_page_t displayconfigpage;
 void displayconfigpage_init();
 
-extern fezui_link_page_t panelpage;
+extern fezui_page_t panelpage;
 void panelpage_init();
 
-extern fezui_link_page_t keymappage;
+extern fezui_page_t keymappage;
 void keymappage_init();
 
-extern fezui_link_page_t debugpage;
+extern fezui_page_t debugpage;
 void debugpage_init();
 
-extern fezui_link_page_t calibrationpage;
+extern fezui_page_t calibrationpage;
 void calibrationpage_init();
 
-extern fezui_link_page_t rgbconfigpage;
+extern fezui_page_t rgbconfigpage;
 void rgbconfigpage_init();
 
-extern fezui_link_page_t statisticpage;
+extern fezui_page_t statisticpage;
 
-extern fezui_link_page_t aboutpage;
+extern fezui_page_t aboutpage;
 
-extern fezui_link_page_t calibrationpage;
+extern fezui_page_t calibrationpage;
 void calibrationpage_init();
 
 

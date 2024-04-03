@@ -133,11 +133,11 @@ static void oscilloscopepage_event_handler(void *e)
     case KEY_ENTER:
         break;
     case KEY_ESC:
-        fezui_link_frame_go_back(&g_mainframe);
+        fezui_frame_go_back(&g_mainframe);
         fezui_cursor_set(&g_fezui_cursor, 0, 0, WIDTH, HEIGHT);
         break;
     default:
         break;
     }
 }
-fezui_link_page_t oscilloscopepage = {oscilloscopepage_tick, oscilloscopepage_draw, oscilloscopepage_load, oscilloscopepage_event_handler};
+fezui_page_t oscilloscopepage = {oscilloscopepage_tick, oscilloscopepage_draw, oscilloscopepage_load, oscilloscopepage_event_handler};

@@ -469,31 +469,33 @@ void fezui_draw_flyout_numberic_dialog(fezui_t *fezui_ptr, fezui_flyout_numberic
  * fezui_nav.c
  */
 
-typedef struct __fezui_link_page_t
+typedef struct __fezui_page_t
 {
     void (*page_tick_cb)(void *page);
     void (*page_draw_cb)(void *page);
     void (*page_load_cb)(void *page);
     void (*event_handler)(void *e);
-    struct __fezui_link_page_t *forward;
-    struct __fezui_link_page_t *back;
-} fezui_link_page_t;
+    struct __fezui_page_t *forward;
+    struct __fezui_page_t *back;
+} fezui_page_t;
 
-typedef struct __fezui_link_frame_t
+#define FEZUI_FRAME_MAX_PAGE 8
+typedef struct __fezui_frame_t
 {
-    fezui_link_page_t *old_page;
-    fezui_link_page_t *current_page;
-    void (*link_frame_cb)(void *frame);
+    fezui_page_t *pages[FEZUI_FRAME_MAX_PAGE];
+    uint8_t current_page_index;
+    uint8_t old_page_index;
     fezui_animation_base_t *animation;
-} fezui_link_frame_t;
-void fezui_link_frame_init(fezui_link_frame_t *frame, fezui_link_page_t *page, fezui_animation_base_t *animation);
-void fezui_link_frame_go_home(fezui_link_frame_t *frame);
-void fezui_link_frame_go_forward(fezui_link_frame_t *frame);
-void fezui_link_frame_go_back(fezui_link_frame_t *frame);
-void fezui_link_frame_navigate(fezui_link_frame_t *frame, fezui_link_page_t *page);
-void fezui_link_frame_logic(fezui_link_frame_t *frame);
-void fezui_link_frame_draw(fezui_link_frame_t *frame);
-void fezui_link_frame_input(fezui_link_frame_t* frame, void* sender);
+} fezui_frame_t;
+#define fezui_frame_current_page(f) ((f)->pages[(f)->current_page_index])
+void fezui_frame_init(fezui_frame_t *frame, fezui_page_t *page, fezui_animation_base_t *animation);
+void fezui_frame_go_home(fezui_frame_t *frame);
+void fezui_frame_go_forward(fezui_frame_t *frame);
+void fezui_frame_go_back(fezui_frame_t *frame);
+void fezui_frame_navigate(fezui_frame_t *frame, fezui_page_t *page);
+void fezui_frame_tick(fezui_frame_t *frame);
+void fezui_frame_draw(fezui_frame_t *frame);
+void fezui_frame_input(fezui_frame_t* frame, void* sender);
 
 /*
  * fezui_util.c

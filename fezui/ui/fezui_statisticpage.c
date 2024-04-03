@@ -74,11 +74,11 @@ static void statisticpage_event_handler(void *e)
             target_ordinate = scrollview.content_height - 64;
         break;
     case KEY_ENTER:
-        fezui_link_frame_go_back(&g_mainframe);
+        fezui_frame_go_back(&g_mainframe);
         fezui_cursor_set(&g_fezui_cursor, 0, 0, WIDTH, HEIGHT);
         break;
     case KEY_ESC:
-        fezui_link_frame_go_back(&g_mainframe);
+        fezui_frame_go_back(&g_mainframe);
         fezui_cursor_set(&g_fezui_cursor, 0, 0, WIDTH, HEIGHT);
         break;
     default:
@@ -86,4 +86,4 @@ static void statisticpage_event_handler(void *e)
     }
 }
 
-fezui_link_page_t statisticpage = {statisticpage_tick, statisticpage_draw, statisticpage_load, statisticpage_event_handler};
+fezui_page_t statisticpage = {statisticpage_tick, statisticpage_draw, statisticpage_load, statisticpage_event_handler};

@@ -36,7 +36,7 @@ const uint8_t fez_font_6x10_m[204] U8G2_FONT_SECTION("fez_font_6x10_m") =
   "\232\61\321\0\0\0\0\4\377\377\0";
 
 
-fezui_link_frame_t g_mainframe;
+fezui_frame_t g_mainframe;
 
 fezui_cursor_t g_fezui_cursor;
 fezui_cursor_t g_target_cursor;

@@ -36,22 +36,24 @@ void fezui_animated_listbox_click(fezui_animated_listbox_t *listbox)
 
 void fezui_animated_listbox_get_cursor(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g2_uint_t w, u8g2_uint_t h, fezui_animated_listbox_t *listbox, u8g2_uint_t item_height, fezui_cursor_t *c)
 {
-    c->x = x;
-    c->y = item_height * (listbox->listbox.list.selected_index) - FEZUI_ANIMATION_GET_VALUE(&listbox->scroll_animation,listbox->listbox.offset,listbox->targetoffset);
-    if (c->y + item_height > y + h)
+    fezui_cursor_t cursor;
+    cursor.x = x;
+    cursor.y = item_height * (listbox->listbox.list.selected_index) - FEZUI_ANIMATION_GET_VALUE(&listbox->scroll_animation,listbox->listbox.offset,listbox->targetoffset);
+    if (cursor.y + item_height > y + h)
     {
-        c->y = y + h - item_height;
+        cursor.y = y + h - item_height;
     }
-    if (c->y < y)
+    if (cursor.y < y)
     {
-        c->y = y;
+        cursor.y = y;
     }
-    c->w = w;
-    c->h = item_height;
+    cursor.w = w;
+    cursor.h = item_height;
     if(listbox->listbox.item_cursor_cb)
     {
-        listbox->listbox.item_cursor_cb(fezui_ptr,c,listbox->listbox.list.items[listbox->listbox.list.selected_index]);
+        listbox->listbox.item_cursor_cb(fezui_ptr,&cursor,listbox->listbox.list.items[listbox->listbox.list.selected_index]);
     }
+    *c=cursor;
 }
 void fezui_animated_listbox_begin(fezui_animated_listbox_t *listbox)
 {
