@@ -15,10 +15,10 @@
 static bool key_selected = false;
 static bool configing = false;
 
-fezui_list_base_t rgb_key_select_menu;
+static fezui_list_base_t rgb_key_select_menu;
 static const char *rgb_key_select_menu_items[] = {"Global", "KEY1", "KEY2", "KEY3", "KEY4"};
 
-fezui_list_base_t rgb_config_menu;
+static fezui_list_base_t rgb_config_menu;
 static const char *rgb_config_menu_items[] = {"Mode", "R", "G", "B", "H", "S", "V", "Speed"};
 
 static const char *rgb_mode_items[] = {"Static", "Cycle", "Linear", "Trigger"};
@@ -29,10 +29,10 @@ static ColorHSV *target_hsv;
 
 static fezui_cursor_t config_cursor;
 static fezui_cursor_t target_config_cursor;
-fezui_list_base_t rgb_global_config_menu;
+static fezui_list_base_t rgb_global_config_menu;
 static const char *rgb_global_config_menu_items[] = {"Mode", "R", "G", "B", "H", "S", "V", "Speed"};
 
-void set_target_color()
+static void set_target_color()
 {
 
     if (rgb_key_select_menu.selected_index)
@@ -47,11 +47,12 @@ void set_target_color()
     }
 }
 
-void rgb_key_select_menu_cb(void *m)
+static void rgb_key_select_menu_cb(void *m)
 {
     key_selected = true;
 }
-void rgb_config_menu_cb(void *m)
+
+static void rgb_config_menu_cb(void *m)
 {
     configing = true;
 }

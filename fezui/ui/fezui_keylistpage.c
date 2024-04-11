@@ -18,13 +18,13 @@
 
 #define ROW_HEIGHT 8
 
-fezui_animated_listbox_t keylist;
+static fezui_animated_listbox_t keylist;
 uint16_t* current_target_id;
 uint16_t* current_target_key_binding;
 #define KEY_MODIFIER_PART *(((uint8_t*)current_target_key_binding)+1)
 #define KEY_KEYCODE_PART *(((uint8_t*)current_target_key_binding))
 
-void keylist_cb(void *m)
+static void keylist_cb(void *m)
 {
     if(((fezui_list_base_t*)m)->selected_index<8)
     {

@@ -1126,7 +1126,17 @@ void keyboard_scan()
         g_keybaord_alpha_flag = false;
     }
 }
+void keyboard_system_reset()
+{
+    //__set_FAULTMASK(1);
+    __disable_irq();
+    NVIC_SystemReset();
+}
 void keyboard_post_process()
 {
     
+}
+void keyboard_delay(uint32_t ms)
+{
+    Delay_Ms(ms);
 }

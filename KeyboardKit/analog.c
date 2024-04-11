@@ -4,7 +4,6 @@
  *  Created on: 2023骞�5鏈�21鏃�
  *      Author: xq123
  */
-#include "main.h"
 #include "stdlib.h"
 #include "stdio.h"
 #include "rgb.h"

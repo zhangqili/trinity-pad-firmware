@@ -45,3 +45,11 @@ void fezui_apply(fezui_t* fezui_ptr)
     u8g2_SetContrast(&(fezui_ptr->u8g2),fezui_ptr->contrast);
     fezui_ptr->screensaver_countdown=fezui_ptr->screensaver_timeout;
 }
+
+__WEAK void fezui_timer_handler()
+{
+}
+
+__WEAK void fezui_render_handler()
+{
+}

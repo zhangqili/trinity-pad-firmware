@@ -18,10 +18,10 @@ static bool key_selected = false;
 static float target_ordinate = 0;
 static float start_animation = 0;
 
-fezui_animated_listbox_t key_select_list;
+static fezui_animated_listbox_t key_select_list;
 static const char *key_select_list_items[] = {"KEY1", "KEY2", "KEY3", "KEY4", "FN_KEY1", "FN_KEY2", "FN_KEY3", "FN_KEY4", "FN_KEY5", "FN_KEY6", "KNOB", "KNOB_CW", "KNOB_CCW"};
 
-fezui_list_base_t layer_select_menu;
+static fezui_list_base_t layer_select_menu;
 static const char *layer_select_menu_items[] = {"Layer 1", "Layer 2", "Layer 3"};
 
 static fezui_cursor_t config_cursor;

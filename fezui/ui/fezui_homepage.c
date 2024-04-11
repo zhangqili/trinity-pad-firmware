@@ -25,42 +25,42 @@
 #define TILE4                 31
 
 
-fezui_rolling_number_t key1_num=
+static fezui_rolling_number_t key1_num=
 {
     .number=0,
     .font=fez_font_6x10_m,
     .digit=5
 };
 
-fezui_rolling_number_t key2_num=
+static fezui_rolling_number_t key2_num=
 {
     .number=0,
     .font=fez_font_6x10_m,
     .digit=5
 };
 
-fezui_rolling_number_t key3_num=
+static fezui_rolling_number_t key3_num=
 {
     .number=0,
     .font=fez_font_6x10_m,
     .digit=5
 };
 
-fezui_rolling_number_t key4_num=
+static fezui_rolling_number_t key4_num=
 {
     .number=0,
     .font=fez_font_6x10_m,
     .digit=5
 };
 
-fezui_rolling_number_t kps_num=
+static fezui_rolling_number_t kps_num=
 {
     .number=0,
     .font=fez_font_6x10_m,
     .digit=2
 };
 
-fezui_rolling_number_t max_kps_num=
+static fezui_rolling_number_t max_kps_num=
 {
     .number=0,
     .font=fez_font_6x10_m,

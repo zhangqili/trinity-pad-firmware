@@ -7,8 +7,8 @@
 #include "fezui.h"
 #include "fezui_var.h"
 #include "main.h"
-fezui_animated_listbox_t settingsmenu;
-const char *settingsmenu_items[] = 
+static fezui_animated_listbox_t settingsmenu;
+static const char *settingsmenu_items[] = 
 {
     "Keys Configuration", 
     "Keymap", 
@@ -16,7 +16,8 @@ const char *settingsmenu_items[] =
     "Calibration", 
     "Display", 
     "Advanced Settings", 
-    "About"};
+    "About"
+};
 
 #define ROW_HEIGHT 16
 static void settings_menu_cb(void *menu);

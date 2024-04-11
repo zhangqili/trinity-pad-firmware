@@ -9,8 +9,6 @@
 char g_fpsstr[8] = {0};
 
 fezui_t fezui={.speed=0.1};
-u8log_t u8log;
-uint8_t u8log_buf[1024];
 
 uint8_t g_kps_history_max;
 uint32_t g_fezui_fps;

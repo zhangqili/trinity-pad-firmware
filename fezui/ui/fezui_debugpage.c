@@ -11,7 +11,7 @@
 // static float target_ordinate = 0;
 // static float target_abscissa = 0;
 
-static float targetnum = 50;
+static uint16_t targetnum = 50;
 
 static fezui_rolling_number_t rolling_number =
     {
@@ -22,6 +22,7 @@ static fezui_rolling_number_t rolling_number =
 
 static fezui_animated_listbox_t listbox;
 static fezui_flyout_numberic_dialog_t dialog;
+static fezui_rangebase_t rangebase;
 
 void listbox_cb(void *l)
 {
@@ -31,6 +32,7 @@ void debugpage_init()
 {
     fezui_animated_string_listbox_init(&listbox, g_hid_usage_names, sizeof(g_hid_usage_names) / sizeof(const char *), listbox_cb);
     listbox.listbox.show_scrollbar = true;
+    fezui_rangebase_init(&rangebase,&targetnum,FEZUI_TYPE_UINT16,0,100,2);
 }
 
 static void debugpage_tick(void *page)
@@ -43,15 +45,16 @@ static void debugpage_draw(void *page)
     fezui_printf(&fezui, 64, 16, "%#lx", g_fezui_debug);
 
     // u8g2_SetFont(&fezui.u8g2, u8g2_font_8x13B_mf);
-    fezui_printf(&fezui, 90, 60, "%d", (short)TIM8->CNT);
 
     u8g2_SetFont(&(fezui.u8g2), u8g2_font_5x8_mr);
     // fezui_draw_animated_listbox(&fezui, 0, 0, WIDTH, HEIGHT, &listbox, 8, 1);
     // fezui_animated_listbox_get_cursor(&fezui, 0, 0, WIDTH, HEIGHT, &listbox, 8, &g_target_cursor);
     extern uint8_t read_buffer[64];
     u8g2_DrawStr(&(fezui.u8g2), 0, 64, (char *)read_buffer + 1);
-
-    fezui_draw_flyout_numberic_dialog(&fezui, &dialog);
+    fezui_printf(&fezui,32,32,"%d",targetnum);
+    fezui_printf(&fezui, 64, 32, "%f", (-1)*(&rangebase)->interval);
+    fezui_printf(&fezui, 64, 40, "%d", (int16_t)((-1)*(&rangebase)->interval));
+    //fezui_draw_flyout_numberic_dialog(&fezui, &dialog);
     fezui_draw_cursor(&fezui, &g_fezui_cursor);
 }
 
@@ -67,17 +70,17 @@ static void debugpage_event_handler(void *e)
     switch (*(uint16_t *)e)
     {
     case KEY_UP_ARROW:
-        fezui_numberic_dialog_increase(&dialog.dialog, 1);
+        fezui_rangebase_increase(&rangebase, 1);
         break;
     case KEY_DOWN_ARROW:
-        fezui_numberic_dialog_increase(&dialog.dialog, -1);
+        fezui_rangebase_increase(&rangebase, -1);
+        targetnum+=(uint16_t)((-1)*(&rangebase)->interval);
         break;
     case KEY_ENTER:
         fezui_frame_go_back(&g_mainframe);
         break;
     case KEY_ESC:
         fezui_frame_go_back(&g_mainframe);
-        fezui_cursor_set(&g_fezui_cursor, 0, 0, WIDTH, HEIGHT);
         break;
     default:
         break;

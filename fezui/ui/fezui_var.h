@@ -12,8 +12,6 @@
 
 extern const uint8_t fez_font_6x10_m[204] U8G2_FONT_SECTION("fez_font_6x10_m");
 extern fezui_t fezui;
-extern u8log_t u8log;
-extern uint8_t u8log_buf[1024];
 
 extern uint32_t g_fezui_fps;
 extern uint8_t g_kps_history_max;

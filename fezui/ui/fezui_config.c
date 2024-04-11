@@ -76,7 +76,8 @@ uint8_t u8x8_riscv_gpio_and_delay(U8X8_UNUSED u8x8_t *u8x8,
 
 #define U8LOG_WIDTH 32
 #define U8LOG_HEIGHT 10
-uint8_t u8log_buffer[U8LOG_WIDTH * U8LOG_HEIGHT];
+static u8log_t u8log;
+static uint8_t u8log_buffer[U8LOG_WIDTH * U8LOG_HEIGHT];
 
 void fezui_input(uint16_t in)
 {
@@ -176,7 +177,7 @@ void fezui_render_handler()
     }
     if (fezui.screensaver_timeout)
     {
-        fezui_veil_full_screen(&(fezui), (7 - fezui.screensaver_countdown) > 256 ? 0 : 7 - fezui.screensaver_countdown);
+        fezui_veil_full_screen(&(fezui), (fezui.screensaver_countdown) < 7 ? 7 - fezui.screensaver_countdown : 0);
         u8g2_SetPowerSave(&(fezui.u8g2), !fezui.screensaver_countdown);
     }
 #ifdef SHOW_FPS

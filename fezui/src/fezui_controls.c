@@ -177,33 +177,78 @@ void fezui_draw_scrollbar(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g2
     }
 }
 
+
+
+#define TYPE_GENERIC_INCREASE(rangebase,type,n) \
+if (n>0)\
+{\
+    if ((type)(r->max) - *(type*)(rangebase)->target > (type)((n)*(rangebase)->interval))\
+        *(type*)(rangebase)->target+=(type)((n)*(rangebase)->interval);\
+    else\
+        *(type*)(rangebase)->target = r->max;\
+}\
+else\
+{\
+    if (*(type*)(rangebase)->target - (type)(r->min) > (type)((n)*(rangebase)->interval))\
+        *(type*)(rangebase)->target+=(type)((n)*(rangebase)->interval);\
+    else\
+        *(type*)(rangebase)->target = r->min;\
+}\
+
+#define TYPE_GENERIC_UNSIGNED_INCREASE(rangebase,type,n)\
+if (n>0)\
+{\
+    if ((u##type)(r->max) - *(u##type*)(rangebase)->target > (u##type)((n)*(rangebase)->interval))\
+        *(u##type*)(rangebase)->target+=(type)((n)*(rangebase)->interval);\
+    else\
+        *(u##type*)(rangebase)->target = r->max;\
+}\
+else\
+{\
+    if (*(u##type*)(rangebase)->target - (u##type)(r->min) > (u##type)((n)*(rangebase)->interval))\
+        *(u##type*)(rangebase)->target+=(type)((n)*(rangebase)->interval);\
+    else\
+        *(u##type*)(rangebase)->target = r->min;\
+}\
+
 void fezui_rangebase_increase(fezui_rangebase_t *r, int8_t n)
 {
-    float temp=fezui_generics_convert_to_float(r->target,r->type);
-    if(r->type!=FEZUI_TYPE_BOOL)
+    switch (r->type)
     {
-        temp += r->interval*(float)n;
-        if (temp>r->max)
-        {
-            temp=r->max;
-        }
-        if (temp<r->min)
-        {
-            temp=r->min;
-        }
+    case FEZUI_TYPE_FLOAT:
+        TYPE_GENERIC_INCREASE(r,float,n);
+        break;
+    case FEZUI_TYPE_DOUBLE:
+        TYPE_GENERIC_INCREASE(r,double,n);
+        break;
+    case FEZUI_TYPE_INT16:
+        TYPE_GENERIC_INCREASE(r,int16_t,n);
+        break;
+    case FEZUI_TYPE_INT32:
+        TYPE_GENERIC_INCREASE(r,int32_t,n);
+        break;
+    case FEZUI_TYPE_UINT16:
+        TYPE_GENERIC_UNSIGNED_INCREASE(r,int16_t,n);
+        break;
+    case FEZUI_TYPE_UINT32:
+        TYPE_GENERIC_UNSIGNED_INCREASE(r,int32_t,n);
+        break;
+    case FEZUI_TYPE_UINT8:
+        TYPE_GENERIC_UNSIGNED_INCREASE(r,int8_t,n);
+        break;
+    case FEZUI_TYPE_BOOL:
+        *(bool*)(r)->target=!(*(bool*)(r)->target);
+        break;
+    default:
+        break;
     }
-    else
-    {
-        temp=!temp;
-    }
-    fezui_generics_convertback(r->target,r->type,temp);
 }
 void fezui_rangebase_init(fezui_rangebase_t *r, void *target, uint8_t type, float min, float max, float interval)
 {
     r->target=target;
     r->max=max;
     r->min=min;
-    r->interval=interval;
+    r->interval=fabsf(interval);
     r->type=type;
 }
 
@@ -230,19 +275,12 @@ void fezui_draw_rolling_number(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y,
     u8g2_SetFontPosBottom(&(fezui_ptr->u8g2));
     uint8_t font_height = u8g2_GetMaxCharHeight(&(fezui_ptr->u8g2));
     uint8_t font_width = u8g2_GetMaxCharWidth(&(fezui_ptr->u8g2));
-    uint8_t actual_digit = 1;
-    char str_buffer[2] = {0};
-    u8g2_long_t num = rolling_number->number;
-    for (; num /= 10; actual_digit++)
-        ;
-    num = rolling_number->number;
     u8g2_SetClipWindow(&(fezui_ptr->u8g2), x, y - font_height, x + rolling_number->digit * font_width, y + 1);
     for (uint8_t i = 0; i < rolling_number->digit; i++)
     {
         for (uint8_t j = 0; j < 10; j++)
         {
-            str_buffer[0] = j + 48;
-            u8g2_DrawStr(&(fezui_ptr->u8g2), x + (rolling_number->digit - i - 1) * font_width, y + j * font_height - (u8g2_int_t)rolling_number->offsets[i], str_buffer);
+            fezui_printf(fezui_ptr, x + (rolling_number->digit - i - 1) * font_width, y + j * font_height - (u8g2_int_t)rolling_number->offsets[i], "%d",j);
         }
     }
     u8g2_SetMaxClipWindow(&(fezui_ptr->u8g2));

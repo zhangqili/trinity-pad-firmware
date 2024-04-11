@@ -4,7 +4,6 @@
  *  Created on: May 21, 2023
  *      Author: xq123
  */
-#include "main.h"
 #include "rgb.h"
 #include "string.h"
 #include "math.h"
@@ -248,7 +247,7 @@ void rgb_flash()
         {
             rgb_set(i, i, i, j);
         }
-        Delay_Ms(2);
+        keyboard_delay(2);
     }
     for (uint8_t i = 128; i > 0; i--)
     {
@@ -256,7 +255,7 @@ void rgb_flash()
         {
             rgb_set(i, i, i, j);
         }
-        Delay_Ms(2);
+        keyboard_delay(2);
     }
     rgb_turn_off();
 }

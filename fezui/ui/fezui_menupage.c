@@ -10,8 +10,8 @@
 #include "fezui_var.h"
 
 
-fezui_animated_listbox_t mainmenu;
-const char* mainmenu_items[] = {"Home","Oscilloscope","Statistic","Settings"};
+static fezui_animated_listbox_t mainmenu;
+static const char* mainmenu_items[] = {"Home","Oscilloscope","Statistic","Settings"};
 static void main_menu_cb(void *menu);
 void menupage_init()
 {

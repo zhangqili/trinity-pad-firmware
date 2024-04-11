@@ -48,6 +48,7 @@ void keyboard_post_process();
 void keyboard_recovery();
 void keyboard_save();
 void keyboard_timer();
+void keyboard_delay();
 void keyboard_hid_send(uint8_t *report, uint16_t len);
 
 #endif /* KEYBOARD_H_ */

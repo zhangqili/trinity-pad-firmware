@@ -8,8 +8,8 @@
 #include "analog.h"
 #include "keyboard_conf.h"
 #include "rgb.h"
+#include "stdio.h"
 #include "lfs.h"
-#include "main.h"
 
 Key g_keyboard_keys[KEY_NUM];
 uint8_t g_keyboard_current_layer;
@@ -71,11 +71,8 @@ void keyboard_factory_reset()
     keyboard_system_reset();
 }
 
-void keyboard_system_reset()
+__WEAK void keyboard_system_reset()
 {
-    //__set_FAULTMASK(1);
-    __disable_irq();
-    NVIC_SystemReset();
 }
 
 __WEAK void keyboard_scan()
@@ -190,6 +187,10 @@ __WEAK void keyboard_timer()
 __WEAK void keyboard_hid_send(uint8_t *report, uint16_t len)
 {
 
+}
+__WEAK void keyboard_delay(uint32_t ms)
+{
+    
 }
 __WEAK void keyboard_post_process()
 {

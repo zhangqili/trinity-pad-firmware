@@ -84,9 +84,9 @@ static void keyconfig_digital_mode_menu_cb(void *m)
     }
 }
 
-static void keyconfig_digital_mode_menu_draw_cb(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g2_uint_t w, u8g2_uint_t h, void *item, uint16_t index)
+static void keyconfig_digital_mode_menu_draw_cb(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g2_uint_t w, u8g2_uint_t h, void **item, uint16_t index)
 {
-    u8g2_DrawStr(&(fezui.u8g2), x, y + h / 2, item);
+    u8g2_DrawStr(&(fezui.u8g2), x, y + h / 2, (const char*)item[index]);
     const uint8_t *font_bk = fezui_ptr->u8g2.font;
     u8g2_SetFont(&(fezui_ptr->u8g2), u8g2_font_4x6_mr);
     switch (index)
@@ -135,9 +135,9 @@ static void keyconfig_analog_normal_mode_menu_cb(void *m)
     }
 }
 
-static void keyconfig_analog_normal_mode_menu_draw_cb(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g2_uint_t w, u8g2_uint_t h, void *item, uint16_t index)
+static void keyconfig_analog_normal_mode_menu_draw_cb(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g2_uint_t w, u8g2_uint_t h, void **item, uint16_t index)
 {
-    u8g2_DrawStr(&(fezui.u8g2), x, y + h / 2, item);
+    u8g2_DrawStr(&(fezui.u8g2), x, y + h / 2, (const char*)item[index]);
     const uint8_t *font_bk = fezui_ptr->u8g2.font;
     u8g2_SetFont(&(fezui_ptr->u8g2), u8g2_font_4x6_mr);
     switch (index)
@@ -208,9 +208,9 @@ static void keyconfig_analog_rapid_mode_menu_cb(void *m)
     }
 }
 
-static void keyconfig_analog_rapid_mode_menu_draw_cb(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g2_uint_t w, u8g2_uint_t h, void *item, uint16_t index)
+static void keyconfig_analog_rapid_mode_menu_draw_cb(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g2_uint_t w, u8g2_uint_t h, void **item, uint16_t index)
 {
-    u8g2_DrawStr(&(fezui_ptr->u8g2), x, y + h / 2, item);
+    u8g2_DrawStr(&(fezui_ptr->u8g2), x, y + h / 2, (const char*)item[index]);
     const uint8_t *font_bk = fezui_ptr->u8g2.font;
     u8g2_SetFont(&(fezui_ptr->u8g2), u8g2_font_4x6_mr);
     switch (index)
@@ -287,9 +287,9 @@ static void keyconfig_analog_speed_mode_menu_cb(void *m)
     }
 }
 
-static void keyconfig_analog_speed_mode_menu_draw_cb(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g2_uint_t w, u8g2_uint_t h, void *item, uint16_t index)
+static void keyconfig_analog_speed_mode_menu_draw_cb(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g2_uint_t w, u8g2_uint_t h, void **item, uint16_t index)
 {
-    u8g2_DrawStr(&(fezui_ptr->u8g2), x, y + h / 2, item);
+    u8g2_DrawStr(&(fezui_ptr->u8g2), x, y + h / 2, (const char*)item[index]);
     const uint8_t *font_bk = fezui_ptr->u8g2.font;
     u8g2_SetFont(&(fezui_ptr->u8g2), u8g2_font_4x6_mr);
     switch (index)

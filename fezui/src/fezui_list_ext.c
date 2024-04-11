@@ -1,9 +1,9 @@
 #include"fezui.h"
-static void string_item_draw(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g2_uint_t w, u8g2_uint_t h, void *item, uint16_t index)
+static void string_item_draw(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g2_uint_t w, u8g2_uint_t h, void **item, uint16_t index)
 {
     u8g2_font_calc_vref_fnptr fnptr_bk = fezui_ptr->u8g2.font_calc_vref;
     u8g2_SetFontPosBottom(&(fezui_ptr->u8g2));
-    u8g2_DrawStr(&fezui_ptr->u8g2,x+1,y+h,item);
+    u8g2_DrawStr(&fezui_ptr->u8g2,x+1,y+h-1,(const char*)item[index]);
     fezui_ptr->u8g2.font_calc_vref = fnptr_bk;
 }
 
@@ -85,7 +85,7 @@ void fezui_draw_animated_listbox(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t 
     u8g2_SetClipWindow(&(fezui_ptr->u8g2), x, y, x + w, y + h);
     for (uint16_t i = 0; i < listbox->listbox.list.len; i++)
     {
-        listbox->listbox.item_draw_cb(fezui_ptr, x, (u8g2_int_t)floorf(y+(item_height * (i) - FEZUI_ANIMATION_GET_VALUE(&listbox->scroll_animation,listbox->listbox.offset,listbox->targetoffset)) * listbox->start_animation.value - item_height*(1-listbox->start_animation.value) + 0.5), w,item_height,listbox->listbox.list.items[i],i);
+        listbox->listbox.item_draw_cb(fezui_ptr, x, (u8g2_int_t)floorf(y+(item_height * (i) - FEZUI_ANIMATION_GET_VALUE(&listbox->scroll_animation,listbox->listbox.offset,listbox->targetoffset)) * listbox->start_animation.value - item_height*(1-listbox->start_animation.value) + 0.5), w,item_height,listbox->listbox.list.items,i);
     }
     if (listbox->listbox.show_scrollbar)
     {
@@ -94,11 +94,11 @@ void fezui_draw_animated_listbox(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t 
     u8g2_SetMaxClipWindow(&(fezui_ptr->u8g2));
 }
 
-static void menu_item_draw(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g2_uint_t w, u8g2_uint_t h, void *menu_item, uint16_t index)
+static void menu_item_draw(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g2_uint_t w, u8g2_uint_t h, void **menu_item, uint16_t index)
 {
     u8g2_font_calc_vref_fnptr fnptr_bk = fezui_ptr->u8g2.font_calc_vref;
     u8g2_SetFontPosBottom(&(fezui_ptr->u8g2));
-    fezui_menuitem_t* item = menu_item;
+    fezui_menuitem_t* item = (fezui_menuitem_t*)menu_item[index];
     char *_Format=strrchr(item->header,'%');
     char _FormatStr[16];
     if(_Format)
