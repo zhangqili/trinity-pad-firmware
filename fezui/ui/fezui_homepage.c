@@ -83,6 +83,13 @@ static void homepage_tick(void *page)
     fezui_rolling_number_update(&fezui, &key4_num);
     fezui_rolling_number_update(&fezui, &kps_num);
     fezui_rolling_number_update(&fezui, &max_kps_num);
+    
+    if (g_keybaord_shift_flag && g_keybaord_alpha_flag)
+    {
+        fezui_frame_navigate(&g_mainframe, &menupage);
+        g_keybaord_shift_flag = false;
+        g_keybaord_alpha_flag = false;
+    }
 
 }
 

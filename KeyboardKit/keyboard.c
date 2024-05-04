@@ -11,7 +11,10 @@
 #include "stdio.h"
 #include "lfs.h"
 
-Key g_keyboard_keys[KEY_NUM];
+__WEAK const uint16_t g_default_keymap[LAYER_NUM][ADVANCED_KEY_NUM+KEY_NUM];
+__WEAK AdvancedKey g_keyboard_advanced_keys[ADVANCED_KEY_NUM];
+__WEAK Key g_keyboard_keys[KEY_NUM];
+
 uint8_t g_keyboard_current_layer;
 uint16_t g_keymap[LAYER_NUM][ADVANCED_KEY_NUM + KEY_NUM];
 Keyboard_6KROBuffer g_keyboard_6kro_buffer;

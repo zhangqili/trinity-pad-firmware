@@ -19,8 +19,8 @@ static const fezui_menuitem_t *displayconfig_menu_ptr_items[] =
     &(fezui_menuitem_t){"uTimeout", &fezui.screensaver_timeout},
 };
 //static const fezui_menuitem_t *displayconfig_menu_ptr_items[4];
-void sliderdialog_show(void *target, uint8_t type, float min, float max, float interval, const char *title);
-void displayconfig_menu_cb(void *m)
+void sliderdialog_show(void *target, uint8_t type, float min, float max, float interval, const char *title); 
+static void displayconfig_menu_cb(void *m)
 {
     extern fezui_page_t sliderdialog;
     switch (displayconfig_menu.listbox.list.selected_index)

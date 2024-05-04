@@ -86,13 +86,13 @@ static void keyconfig_digital_mode_menu_cb(void *m)
 
 static void keyconfig_digital_mode_menu_draw_cb(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g2_uint_t w, u8g2_uint_t h, void **item, uint16_t index)
 {
-    u8g2_DrawStr(&(fezui.u8g2), x, y + h / 2, (const char*)item[index]);
+    u8g2_DrawStr(&(fezui_ptr->u8g2), x + 1, y + h / 2, (const char*)item[index]);
     const uint8_t *font_bk = fezui_ptr->u8g2.font;
     u8g2_SetFont(&(fezui_ptr->u8g2), u8g2_font_4x6_mr);
     switch (index)
     {
     case 0:
-        fezui_printf_right_aligned(&fezui, x + w, y + h, "Digital");
+        fezui_printf_right_aligned(fezui_ptr, x + w, y + h, "Digital");
         break;
     }
     u8g2_SetFont(&(fezui_ptr->u8g2), font_bk);
@@ -137,25 +137,25 @@ static void keyconfig_analog_normal_mode_menu_cb(void *m)
 
 static void keyconfig_analog_normal_mode_menu_draw_cb(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g2_uint_t w, u8g2_uint_t h, void **item, uint16_t index)
 {
-    u8g2_DrawStr(&(fezui.u8g2), x, y + h / 2, (const char*)item[index]);
+    u8g2_DrawStr(&(fezui_ptr->u8g2), x + 1, y + h / 2, (const char*)item[index]);
     const uint8_t *font_bk = fezui_ptr->u8g2.font;
     u8g2_SetFont(&(fezui_ptr->u8g2), u8g2_font_4x6_mr);
     switch (index)
     {
     case 0:
-        fezui_printf_right_aligned(&fezui, x + w, y + h, "Analog Normal");
+        fezui_printf_right_aligned(fezui_ptr, x + w, y + h, "Analog Normal");
         break;
     case 1:
-        fezui_printf_right_aligned(&fezui, x + w, y + h, "%6.1f", current_config_advanced_key->upper_bound);
+        fezui_printf_right_aligned(fezui_ptr, x + w, y + h, "%6.1f", current_config_advanced_key->upper_bound);
         break;
     case 2:
-        fezui_printf_right_aligned(&fezui, x + w, y + h, "%6.1f", current_config_advanced_key->lower_bound);
+        fezui_printf_right_aligned(fezui_ptr, x + w, y + h, "%6.1f", current_config_advanced_key->lower_bound);
         break;
     case 3:
-        fezui_printf_right_aligned(&fezui, x + w, y + h, "%6.1f%%", (current_config_advanced_key->trigger_distance) * 100);
+        fezui_printf_right_aligned(fezui_ptr, x + w, y + h, "%6.1f%%", (current_config_advanced_key->trigger_distance) * 100);
         break;
     case 4:
-        fezui_printf_right_aligned(&fezui, x + w, y + h, "%6.1f%%", (current_config_advanced_key->schmitt_parameter) * 100);
+        fezui_printf_right_aligned(fezui_ptr, x + w, y + h, "%6.1f%%", (current_config_advanced_key->schmitt_parameter) * 100);
         break;
     }
     u8g2_SetFont(&(fezui_ptr->u8g2), font_bk);
@@ -210,7 +210,7 @@ static void keyconfig_analog_rapid_mode_menu_cb(void *m)
 
 static void keyconfig_analog_rapid_mode_menu_draw_cb(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g2_uint_t w, u8g2_uint_t h, void **item, uint16_t index)
 {
-    u8g2_DrawStr(&(fezui_ptr->u8g2), x, y + h / 2, (const char*)item[index]);
+    u8g2_DrawStr(&(fezui_ptr->u8g2), x + 1, y + h / 2, (const char*)item[index]);
     const uint8_t *font_bk = fezui_ptr->u8g2.font;
     u8g2_SetFont(&(fezui_ptr->u8g2), u8g2_font_4x6_mr);
     switch (index)
@@ -289,7 +289,7 @@ static void keyconfig_analog_speed_mode_menu_cb(void *m)
 
 static void keyconfig_analog_speed_mode_menu_draw_cb(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g2_uint_t w, u8g2_uint_t h, void **item, uint16_t index)
 {
-    u8g2_DrawStr(&(fezui_ptr->u8g2), x, y + h / 2, (const char*)item[index]);
+    u8g2_DrawStr(&(fezui_ptr->u8g2), x + 1, y + h / 2, (const char*)item[index]);
     const uint8_t *font_bk = fezui_ptr->u8g2.font;
     u8g2_SetFont(&(fezui_ptr->u8g2), u8g2_font_4x6_mr);
     switch (index)
@@ -375,13 +375,13 @@ static void advancedconfigpage_draw(void *page)
 
     u8g2_SetDrawColor(&(fezui.u8g2), 2);
     u8g2_SetFont(&(fezui.u8g2), u8g2_font_5x8_mr);
-    fezui_printf(&fezui, SPERATOR_X + 2, 8 - 1, "KEY%d", current_config_advanced_key - g_keyboard_advanced_keys + 1);
+    fezui_printf(&fezui, SPERATOR_X + 2, 8, "KEY%d", current_config_advanced_key - g_keyboard_advanced_keys + 1);
 
     u8g2_SetFont(&(fezui.u8g2), u8g2_font_4x6_mr);
-    fezui_printf(&fezui, SPERATOR_X + 2, ROW_HEIGHT - 1, current_config_advanced_key->key.state ? "TRUE" : "FALSE");
-    fezui_printf(&fezui, WIDTH - 4 * 7, 8 - 1, "%6.1f%%", current_config_advanced_key->value * 100);
+    fezui_printf(&fezui, SPERATOR_X + 2, ROW_HEIGHT, current_config_advanced_key->key.state ? "TRUE" : "FALSE");
+    fezui_printf(&fezui, WIDTH - 4 * 7, 8, "%6.1f%%", current_config_advanced_key->value * 100);
 
-    fezui_printf(&fezui, WIDTH - 4 * 6, 16 - 1, "%6.1f", current_config_advanced_key->raw);
+    fezui_printf(&fezui, WIDTH - 4 * 6, 16, "%6.1f", current_config_advanced_key->raw);
     u8g2_SetDrawColor(&(fezui.u8g2), color);
     fezui_draw_cursor(&fezui, &g_fezui_cursor);
 }

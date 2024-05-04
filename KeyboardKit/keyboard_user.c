@@ -1119,12 +1119,6 @@ void keyboard_scan()
         key_update(&KEY_KNOB_CLOCKWISE, false);
         key_update(&KEY_KNOB_ANTICLOCKWISE, false);
     }
-    if (g_keybaord_shift_flag && g_keybaord_alpha_flag)
-    {
-        fezui_frame_navigate(&g_mainframe, &menupage);
-        g_keybaord_shift_flag = false;
-        g_keybaord_alpha_flag = false;
-    }
 }
 void keyboard_system_reset()
 {

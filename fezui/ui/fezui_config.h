@@ -13,7 +13,7 @@
 #define PRINTF_BUFFER_LENGTH 64
 #define REFRESH_RATE          144
 
-#define SHOW_FPS
+//#define SHOW_FPS
 
 #define roll()                rand()%2;
 

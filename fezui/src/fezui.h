@@ -10,7 +10,6 @@
 
 #include "u8g2.h"
 #include "fezui_def.h"
-#include "stdlib.h"
 #include "stdio.h"
 #include "stdbool.h"
 #include "math.h"
@@ -469,8 +468,6 @@ typedef struct __fezui_page_t
     void (*page_draw_cb)(void *page);
     void (*page_load_cb)(void *page);
     void (*event_handler)(void *e);
-    struct __fezui_page_t *forward;
-    struct __fezui_page_t *back;
 } fezui_page_t;
 
 #define FEZUI_FRAME_MAX_PAGE 8

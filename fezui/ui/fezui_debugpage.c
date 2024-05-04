@@ -62,7 +62,6 @@ static void debugpage_load(void *page)
 {
     fezui_flyout_numberic_dialog_init(&dialog, &targetnum, FEZUI_TYPE_FLOAT, 0, 100, 0.1, "NUMBER");
     fezui_flyout_numberic_dialog_show(&dialog);
-
 }
 
 static void debugpage_event_handler(void *e)

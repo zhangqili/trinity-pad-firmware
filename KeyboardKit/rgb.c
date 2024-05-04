@@ -10,6 +10,11 @@
 
 #define loop_queue_foreach(q,i) for(uint16_t (i)=(q)->front;(i)!=(q)->rear;(i)=(i+1)%(q)->len)
 
+
+__WEAK const uint8_t g_rgb_mapping[ADVANCED_KEY_NUM];
+__WEAK const RGBLocation g_rgb_locations[RGB_NUM];
+
+
 uint8_t g_rgb_buffer[RGB_BUFFER_LENGTH];
 RGBGlobalConfig g_rgb_global_config;
 RGBIndividualConfig g_rgb_configs[RGB_NUM];
@@ -68,9 +73,9 @@ void rgb_update()
                             g_rgb_configs[rgb_index].begin_time = RGB_Tick;
                         }
                         tempf = powf(1 - g_rgb_configs[rgb_index].speed, RGB_Tick - g_rgb_configs[rgb_index].begin_time);
-                        g_rgb_colors[rgb_index].r = (uint8_t)((float)(g_rgb_configs[rgb_index].rgb.r) * tempf);;
-                        g_rgb_colors[rgb_index].g = (uint8_t)((float)(g_rgb_configs[rgb_index].rgb.g) * tempf);;
-                        g_rgb_colors[rgb_index].b = (uint8_t)((float)(g_rgb_configs[rgb_index].rgb.b) * tempf);;
+                        g_rgb_colors[rgb_index].r = (uint8_t)((float)(g_rgb_configs[rgb_index].rgb.r) * tempf);
+                        g_rgb_colors[rgb_index].g = (uint8_t)((float)(g_rgb_configs[rgb_index].rgb.g) * tempf);
+                        g_rgb_colors[rgb_index].b = (uint8_t)((float)(g_rgb_configs[rgb_index].rgb.b) * tempf);
                         break;
                     case RGB_MODE_STATIC:
                         g_rgb_colors[rgb_index].r = g_rgb_configs[rgb_index].rgb.r;
