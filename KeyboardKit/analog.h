@@ -13,7 +13,7 @@
 #define ADDRESS BCD_TO_GRAY(Analog_ActiveChannel)
 #define BCD_TO_GRAY(x) (x^(x>>1))
 
-#define ANALOG_BUFFER_LENGTH 16
+#define ANALOG_BUFFER_LENGTH 64
 
 #define TOLERANCE 3
 #define RING_BUF_LEN 8
@@ -27,9 +27,9 @@ typedef struct
 }RingBuf;
 
 
-extern uint8_t g_ADC_Conversion_Count;
+extern uint16_t g_ADC_Conversion_Count;
 extern uint16_t g_ADC_Buffer[ADVANCED_KEY_NUM*ANALOG_BUFFER_LENGTH];
-extern uint32_t g_ADC_Averages[ADVANCED_KEY_NUM];
+extern float g_ADC_Averages[ADVANCED_KEY_NUM];
 
 void analog_init();
 void analog_channel_select(uint8_t x);

@@ -103,6 +103,19 @@ void advanced_key_update(AdvancedKey* advanced_key, float value)
 void advanced_key_update_raw(AdvancedKey* key, float value)
 {
     key->raw = value;
+    switch (key->calibration_mode)
+    {
+    case KEY_AUTO_CALIBRATION_POSITIVE:
+        if (value > key->lower_bound)
+            key->lower_bound = value;
+        break;
+    case KEY_AUTO_CALIBRATION_NEGATIVE:
+        if (value < key->lower_bound)
+            key->lower_bound = value;
+        break;
+    default:
+        break;
+    }
     if (key->mode == KEY_DIGITAL_MODE)
         advanced_key_update(key, value);
     else
@@ -124,6 +137,22 @@ void advanced_key_set_range(AdvancedKey* key, float upper, float lower)
     key->upper_bound = upper;
     key->lower_bound = lower;
     key->range = key->upper_bound - key->lower_bound;
+}
+
+void advanced_key_reset_range(AdvancedKey* key, float value)
+{
+    switch (key->calibration_mode)
+    {
+    case KEY_AUTO_CALIBRATION_POSITIVE:
+        advanced_key_set_range(key, value, value+200);
+        break;
+    case KEY_AUTO_CALIBRATION_NEGATIVE:
+        advanced_key_set_range(key, value, value-200);
+        break;
+    default:
+        advanced_key_set_range(key, value, value-200);
+        break;
+    }
 }
 
 void advanced_key_set_deadzone(AdvancedKey* key, float upper, float lower)

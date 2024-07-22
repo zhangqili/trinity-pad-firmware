@@ -365,11 +365,11 @@ void ADC_Function_Init(void)
     while (ADC_GetCalibrationStatus(ADC1))
         ;
     // Calibrattion_Val = Get_CalibrationValue(ADC1);
-
-    ADC_RegularChannelConfig(ADC1, ADC_Channel_1, 1, ADC_SampleTime_239Cycles5);
-    ADC_RegularChannelConfig(ADC1, ADC_Channel_0, 2, ADC_SampleTime_239Cycles5);
-    ADC_RegularChannelConfig(ADC1, ADC_Channel_13, 3, ADC_SampleTime_239Cycles5);
-    ADC_RegularChannelConfig(ADC1, ADC_Channel_12, 4, ADC_SampleTime_239Cycles5);
+#define ADC_SampleTime ADC_SampleTime_55Cycles5
+    ADC_RegularChannelConfig(ADC1, ADC_Channel_1, 1, ADC_SampleTime);
+    ADC_RegularChannelConfig(ADC1, ADC_Channel_0, 2, ADC_SampleTime);
+    ADC_RegularChannelConfig(ADC1, ADC_Channel_13, 3, ADC_SampleTime);
+    ADC_RegularChannelConfig(ADC1, ADC_Channel_12, 4, ADC_SampleTime);
 }
 
 void DMA_ADC_Init(DMA_Channel_TypeDef *DMA_CHx, uint32_t memadr, uint16_t bufsize)
@@ -477,6 +477,14 @@ void DMA1_Tx_Init(DMA_Channel_TypeDef *DMA_CHx, u32 ppadr, u32 memadr, u16 bufsi
     DMA_InitStructure.DMA_Priority = DMA_Priority_VeryHigh;
     DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
     DMA_Init(DMA_CHx, &DMA_InitStructure);
+
+    //DMA_ITConfig ( DMA1_Channel1, DMA_IT_TC, ENABLE );
+
+	//NVIC_InitTypeDef NVIC_InitStructure = { 0 };
+	//NVIC_InitStructure.NVIC_IRQChannel = DMA1_Channel1_IRQn;
+	//NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 4;
+	//NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	//NVIC_Init ( &NVIC_InitStructure );
 }
 
 void EXTI0_INT_INIT(void)
@@ -615,7 +623,7 @@ void DMA_TIM1_Init(void)
 
     DMA_Cmd(DMA1_Channel5, DISABLE);
 
-    DMA_ITConfig(DMA1_Channel5, DMA_IT_TC, ENABLE);
+    //DMA_ITConfig(DMA1_Channel5, DMA_IT_TC, ENABLE);
 
     // NVIC_InitStructure.NVIC_IRQChannel = DMA1_Channel5_IRQn;
     // NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
@@ -762,6 +770,7 @@ int main(void)
     }
 }
 
+//static uint16_t temp_count = 0;
 void TIM6_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 void TIM6_IRQHandler(void)
 {
@@ -772,6 +781,8 @@ void TIM6_IRQHandler(void)
         count++;
         if (count == REFRESH_RATE)
         {
+            //g_ADC_Conversion_Count = temp_count;
+            //temp_count=0;
             sprintf(g_fpsstr, "%ld", g_fezui_fps);
             g_fezui_fps = 0;
             count = 0;
@@ -836,5 +847,15 @@ void SysTick_Handler(void)
     if(SysTick->SR == 1)
     {
         SysTick->SR = 0;//clear State flag
+    }
+}
+
+void DMA1_Channel1_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+void DMA1_Channel1_IRQHandler(void)
+{
+    if (DMA_GetITStatus(DMA1_IT_TC1) != RESET) // 检查TIM1中断是否发生。
+    {
+        DMA_ClearITPendingBit(DMA1_IT_TC1); // 清除TIM1的中断挂起位。
+        temp_count++;
     }
 }

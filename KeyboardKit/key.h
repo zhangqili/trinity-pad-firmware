@@ -29,13 +29,21 @@ typedef enum
     KEY_ANALOG_RAPID_MODE,
     KEY_ANALOG_SPEED_MODE
 } KeyMode;
+typedef enum
+{
+    KEY_NO_CALIBRATION,
+    KEY_AUTO_CALIBRATION_POSITIVE,
+    KEY_AUTO_CALIBRATION_NEGATIVE,
+} CalibrationMode;
 
 typedef struct __AdvancedKey
 {
     Key key;
-    KeyMode mode;
+    uint8_t mode;
+    uint8_t calibration_mode;
     float value;
     float raw;
+    
 
     float activation_value;
     float phantom_lower_deadzone;
@@ -60,5 +68,6 @@ void advanced_key_update_raw(AdvancedKey *key, float value);
 void advanced_key_update_state(AdvancedKey *key, bool state);
 float advanced_key_normalize(AdvancedKey *key, float value);
 void advanced_key_set_range(AdvancedKey *key, float upper, float lower);
+void advanced_key_reset_range(AdvancedKey* key, float value);
 void advanced_key_set_deadzone(AdvancedKey *key, float upper, float lower);
 #endif

@@ -10,9 +10,9 @@
 #include "analog.h"
 #include "record.h"
 
-uint8_t g_ADC_Conversion_Count;
+uint16_t g_ADC_Conversion_Count;
 uint16_t g_ADC_Buffer[ADVANCED_KEY_NUM * ANALOG_BUFFER_LENGTH];
-uint32_t g_ADC_Averages[ADVANCED_KEY_NUM];
+float g_ADC_Averages[ADVANCED_KEY_NUM];
 
 void analog_init()
 {
@@ -33,14 +33,15 @@ void analog_scan()
 
 void analog_average()
 {
+    uint32_t ADC_sum;
     for (uint8_t i = 0; i < ADVANCED_KEY_NUM; i++)
     {
-        g_ADC_Averages[i] = 0;
+        ADC_sum = 0;
         for (uint8_t j = 0; j < ANALOG_BUFFER_LENGTH; j++)
         {
-            g_ADC_Averages[i] += g_ADC_Buffer[i + j * ADVANCED_KEY_NUM];
+            ADC_sum += g_ADC_Buffer[i + j * ADVANCED_KEY_NUM];
         }
-        g_ADC_Averages[i] /= ANALOG_BUFFER_LENGTH;
+        g_ADC_Averages[i] = ADC_sum/((float)ANALOG_BUFFER_LENGTH);
     }
 }
 
@@ -53,8 +54,18 @@ void analog_check()
         state = g_keyboard_advanced_keys[i].key.state;
         if (g_keyboard_advanced_keys[i].mode != KEY_DIGITAL_MODE)
         {
-            if (g_ADC_Averages[i] < g_keyboard_advanced_keys[i].lower_bound)
-                g_keyboard_advanced_keys[i].lower_bound = g_ADC_Averages[i];
+            switch (g_keyboard_advanced_keys[i].calibration_mode)
+            {
+            case KEY_AUTO_CALIBRATION_POSITIVE:
+                if (g_ADC_Averages[i] > g_keyboard_advanced_keys[i].lower_bound)
+                    g_keyboard_advanced_keys[i].lower_bound = g_ADC_Averages[i];
+                break;
+            case KEY_AUTO_CALIBRATION_NEGATIVE:
+                if (g_ADC_Averages[i] < g_keyboard_advanced_keys[i].lower_bound)
+                    g_keyboard_advanced_keys[i].lower_bound = g_ADC_Averages[i];
+            default:
+                break;
+            }
             advanced_key_update_raw(g_keyboard_advanced_keys + i, g_ADC_Averages[i]);
         }
         if (g_keyboard_advanced_keys[i].key.state && !state)
@@ -82,7 +93,16 @@ void analog_reset_range()
             g_ADC_Averages[i] += g_ADC_Buffer[i + j * ADVANCED_KEY_NUM];
         }
         g_ADC_Averages[i] /= ANALOG_BUFFER_LENGTH;
-        advanced_key_set_range(g_keyboard_advanced_keys + i, g_ADC_Averages[i], 200);
+            switch (g_keyboard_advanced_keys[i].calibration_mode)
+            {
+            case KEY_AUTO_CALIBRATION_POSITIVE:
+                advanced_key_set_range(g_keyboard_advanced_keys + i, g_ADC_Averages[i], g_ADC_Averages[i]+800);
+                break;
+            case KEY_AUTO_CALIBRATION_NEGATIVE:
+                advanced_key_set_range(g_keyboard_advanced_keys + i, g_ADC_Averages[i], g_ADC_Averages[i]-800);
+            default:
+                break;
+            }
     }
 }
 
