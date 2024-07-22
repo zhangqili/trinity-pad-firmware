@@ -856,6 +856,6 @@ void DMA1_Channel1_IRQHandler(void)
     if (DMA_GetITStatus(DMA1_IT_TC1) != RESET) // 检查TIM1中断是否发生。
     {
         DMA_ClearITPendingBit(DMA1_IT_TC1); // 清除TIM1的中断挂起位。
-        temp_count++;
+        //temp_count++;
     }
 }
