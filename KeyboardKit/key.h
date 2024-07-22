@@ -57,7 +57,6 @@ typedef struct __AdvancedKey
     float release_speed;
     float upper_deadzone;
     float lower_deadzone;
-    float range;
     float upper_bound;
     float lower_bound;
 } AdvancedKey;

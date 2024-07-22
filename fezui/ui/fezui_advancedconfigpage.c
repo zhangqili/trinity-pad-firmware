@@ -11,14 +11,14 @@
 #define ROW_HEIGHT 16
 #define SPERATOR_X 80
 
-#define MAINBAR_X (SPERATOR_X + 4)
+#define MAINBAR_X (SPERATOR_X + 7)
 #define MAINBAR_Y (ROW_HEIGHT + 4)
-#define MAINBAR_W (18)
+#define MAINBAR_W (12)
 #define MAINBAR_H (40)
 
-#define SUBBAR_X (SPERATOR_X + 24 + 4)
+#define SUBBAR_X (SPERATOR_X + 24 + 7)
 #define SUBBAR_Y (ROW_HEIGHT + 4)
-#define SUBBAR_W (18)
+#define SUBBAR_W (12)
 #define SUBBAR_H (40)
 
 static void keyconfig_digital_mode_menu_cb(void *m);
@@ -374,7 +374,9 @@ static void advancedconfigpage_draw(void *page)
 
     u8g2_DrawHLine(&(fezui.u8g2), MAINBAR_X, MAINBAR_Y + MAINBAR_H - ROUND(MAINBAR_H * (current_config_advanced_key->upper_bound) / (4096.0F)), MAINBAR_W);
     u8g2_DrawLine(&(fezui.u8g2), MAINBAR_X + MAINBAR_W, MAINBAR_Y + MAINBAR_H - ROUND(MAINBAR_H * (current_config_advanced_key->upper_bound) / (4096.0F)), SUBBAR_X, SUBBAR_Y);
+    u8g2_DrawHLine(&(fezui.u8g2), MAINBAR_X, MAINBAR_Y + MAINBAR_H - ROUND(MAINBAR_H * (current_config_advanced_key->lower_bound) / (4096.0F)), MAINBAR_W);
     u8g2_DrawLine(&(fezui.u8g2), MAINBAR_X + MAINBAR_W, MAINBAR_Y + MAINBAR_H - ROUND(MAINBAR_H * (current_config_advanced_key->lower_bound) / (4096.0F)), SUBBAR_X, SUBBAR_Y + SUBBAR_H - 1);
+
 
 
     u8g2_SetFont(&(fezui.u8g2), u8g2_font_5x8_mr);

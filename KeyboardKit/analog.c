@@ -85,24 +85,10 @@ void analog_check()
 
 void analog_reset_range()
 {
+    analog_average();
     for (uint8_t i = 0; i < ADVANCED_KEY_NUM; i++)
     {
-        g_ADC_Averages[i] = 0;
-        for (uint8_t j = 0; j < ANALOG_BUFFER_LENGTH; j++)
-        {
-            g_ADC_Averages[i] += g_ADC_Buffer[i + j * ADVANCED_KEY_NUM];
-        }
-        g_ADC_Averages[i] /= ANALOG_BUFFER_LENGTH;
-            switch (g_keyboard_advanced_keys[i].calibration_mode)
-            {
-            case KEY_AUTO_CALIBRATION_POSITIVE:
-                advanced_key_set_range(g_keyboard_advanced_keys + i, g_ADC_Averages[i], g_ADC_Averages[i]+800);
-                break;
-            case KEY_AUTO_CALIBRATION_NEGATIVE:
-                advanced_key_set_range(g_keyboard_advanced_keys + i, g_ADC_Averages[i], g_ADC_Averages[i]-800);
-            default:
-                break;
-            }
+        advanced_key_reset_range(g_keyboard_advanced_keys + i, g_ADC_Averages[i]);
     }
 }
 

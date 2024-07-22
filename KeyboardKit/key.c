@@ -136,7 +136,7 @@ void advanced_key_set_range(AdvancedKey* key, float upper, float lower)
 {
     key->upper_bound = upper;
     key->lower_bound = lower;
-    key->range = key->upper_bound - key->lower_bound;
+    //key->range = key->upper_bound - key->lower_bound;
 }
 
 void advanced_key_reset_range(AdvancedKey* key, float value)
@@ -144,13 +144,13 @@ void advanced_key_reset_range(AdvancedKey* key, float value)
     switch (key->calibration_mode)
     {
     case KEY_AUTO_CALIBRATION_POSITIVE:
-        advanced_key_set_range(key, value, value+200);
+        advanced_key_set_range(key, value, value+500);
         break;
     case KEY_AUTO_CALIBRATION_NEGATIVE:
-        advanced_key_set_range(key, value, value-200);
+        advanced_key_set_range(key, value, value-500);
         break;
     default:
-        advanced_key_set_range(key, value, value-200);
+        advanced_key_set_range(key, value, value-500);
         break;
     }
 }
@@ -164,6 +164,6 @@ void advanced_key_set_deadzone(AdvancedKey* key, float upper, float lower)
     */
     key->upper_deadzone = upper;
     key->lower_deadzone = lower;
-    key->range = (key->upper_bound - (key->upper_bound - key->lower_bound) * key->upper_deadzone) - (
-                     key->lower_bound + (key->upper_bound - key->lower_bound) * key->lower_deadzone);
+    //key->range = (key->upper_bound - (key->upper_bound - key->lower_bound) * key->upper_deadzone) - (
+    //                 key->lower_bound + (key->upper_bound - key->lower_bound) * key->lower_deadzone);
 }

@@ -747,7 +747,7 @@ int main(void)
     */
     keyboard_recovery();
     Delay_Ms(100);
-    analog_reset_range();
+    //analog_reset_range();
     fram_read_bytes(0x400,g_key_counts,sizeof(g_key_counts));
     memcpy(g_key_init_counts,g_key_counts,sizeof(g_key_counts));
 

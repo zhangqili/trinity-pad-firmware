@@ -88,6 +88,7 @@ void fezui_draw_detailed_wave(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, 
     fezui_printf(fezui_ptr, x + 1, y + 6, "%04d", loop_array_get(arr, 0));
     u8g2_SetDrawColor(&(fezui_ptr->u8g2), color_backup);
     // u8g2_SetDrawColor(&(fezui_ptr->u8g2), !fezui_ptr->invert);
+    
 }
 
 static void oscilloscopepage_tick(void *page)
