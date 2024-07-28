@@ -16,7 +16,6 @@ typedef struct __Key
 {
     uint16_t id;
     bool state;
-    bool report_state;
     key_cb_t key_cb[EVENT_NUM];
 } Key;
 void key_update(Key *key, bool state);
@@ -61,6 +60,8 @@ typedef struct __AdvancedKey
     float lower_bound;
 } AdvancedKey;
 
+#include "action.h"
+
 void advanced_key_init(AdvancedKey *key);
 void advanced_key_update(AdvancedKey *key, float value);
 void advanced_key_update_raw(AdvancedKey *key, float value);
@@ -69,4 +70,5 @@ float advanced_key_normalize(AdvancedKey *key, float value);
 void advanced_key_set_range(AdvancedKey *key, float upper, float lower);
 void advanced_key_reset_range(AdvancedKey* key, float value);
 void advanced_key_set_deadzone(AdvancedKey *key, float upper, float lower);
+
 #endif

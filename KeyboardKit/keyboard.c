@@ -63,7 +63,7 @@ void keyboard_factory_reset()
         g_keyboard_advanced_keys[i].trigger_distance = DEFAULT_TRIGGER_DISTANCE;
         g_keyboard_advanced_keys[i].release_distance = DEFAULT_RELEASE_DISTANCE;
         g_keyboard_advanced_keys[i].schmitt_parameter = DEFAULT_SCHMITT_PARAMETER;
-        g_keyboard_advanced_keys[i].activation_value = 0.3;
+        g_keyboard_advanced_keys[i].activation_value = 0.5;
         g_keyboard_advanced_keys[i].calibration_mode = KEY_AUTO_CALIBRATION_NEGATIVE;
         // Keyboard_AdvancedKeys[i].lower_deadzone = 0.32;
         advanced_key_set_deadzone(g_keyboard_advanced_keys + i, DEFAULT_UPPER_DEADZONE, DEFAULT_LOWER_DEADZONE);
@@ -161,14 +161,14 @@ void keyboard_send_report()
     // keyboard_6KRObuffer_add(&Keyboard_ReportBuffer,(KeyBinding){KEY_E,KEY_NO_MODIFIER});
     for (int i = 0; i < ADVANCED_KEY_NUM; i++)
     {
-        if (g_keyboard_advanced_keys[i].key.report_state)
+        if (g_keyboard_advanced_keys[i].key.state)
         {
             keyboard_6KRObuffer_add(&g_keyboard_6kro_buffer, g_keymap[g_keyboard_current_layer][i]);
         }
     }
     for (int i = 0; i < KEY_NUM; i++)
     {
-        if (g_keyboard_keys[i].report_state)
+        if (g_keyboard_keys[i].state)
         {
             keyboard_6KRObuffer_add(&g_keyboard_6kro_buffer, g_keymap[g_keyboard_current_layer][i + ADVANCED_KEY_NUM]);
         }
