@@ -15,6 +15,8 @@ uint16_t g_ADC_Conversion_Count;
 uint16_t g_ADC_Buffer[ADVANCED_KEY_NUM * ANALOG_BUFFER_LENGTH];
 float g_ADC_Averages[ADVANCED_KEY_NUM];
 
+AdaptiveSchimidtFilter g_analog_filters[ADVANCED_KEY_NUM];
+
 void analog_init()
 {
 }
@@ -43,6 +45,7 @@ void analog_average()
             ADC_sum += g_ADC_Buffer[i + j * ADVANCED_KEY_NUM];
         }
         g_ADC_Averages[i] = ADC_sum/((float)ANALOG_BUFFER_LENGTH);
+        g_ADC_Averages[i] = adaptive_schimidt_filter(g_analog_filters+i,g_ADC_Averages[i]);
     }
 }
 
@@ -108,9 +111,9 @@ float ringbuf_avg(RingBuf* ringbuf)
 
     avg = ((avg >> 2) & 0x01) + (avg >> 3);
     //  avg = ringbuf->Datas[ringbuf->Pointer];
-    if (avg - TOLERANCE > ringbuf->state)ringbuf->state = avg - TOLERANCE;
-    if (avg + TOLERANCE < ringbuf->state)ringbuf->state = avg + TOLERANCE;
+    //if (avg - TOLERANCE > ringbuf->state)ringbuf->state = avg - TOLERANCE;
+    //if (avg + TOLERANCE < ringbuf->state)ringbuf->state = avg + TOLERANCE;
 
-    //  return (float_t)avg;
-    return (float)ringbuf->state;
+    return (float)avg;
+    //return (float)ringbuf->state;
 }

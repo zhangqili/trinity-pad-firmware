@@ -11,6 +11,7 @@
 #include "stdio.h"
 #include "lfs.h"
 #include "action.h"
+#include "filter.h"
 #include "fezui.h"
 #include "fezui_var.h"
 

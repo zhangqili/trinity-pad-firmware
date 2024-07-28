@@ -8,6 +8,7 @@
 #ifndef ANALOG_H_
 #define ANALOG_H_
 #include "keyboard.h"
+#include "filter.h"
 
 #define Analog_Clean() (ADC_Conversion_Count=0)
 #define ADDRESS BCD_TO_GRAY(Analog_ActiveChannel)
@@ -15,21 +16,22 @@
 
 #define ANALOG_BUFFER_LENGTH 64
 
-#define TOLERANCE 3
 #define RING_BUF_LEN 8
 #define DMA_BUF_LEN 10
 
 typedef struct
 {
-    uint32_t datas[RING_BUF_LEN];
-    uint32_t pointer;
-    uint32_t state;
+    uint16_t datas[RING_BUF_LEN];
+    uint16_t pointer;
+    //uint32_t state;
 }RingBuf;
 
 
 extern uint16_t g_ADC_Conversion_Count;
 extern uint16_t g_ADC_Buffer[ADVANCED_KEY_NUM*ANALOG_BUFFER_LENGTH];
 extern float g_ADC_Averages[ADVANCED_KEY_NUM];
+
+extern AdaptiveSchimidtFilter g_analog_filters[ADVANCED_KEY_NUM];
 
 void analog_init();
 void analog_channel_select(uint8_t x);
