@@ -21,6 +21,7 @@ uint32_t g_int_count1;
 uint32_t g_interval;
 uint32_t g_max_interval;
 uint32_t g_last_max_interval;
+uint32_t g_error_count;
 
 fezui_notification_t fezui_notification={.text.font=u8g2_font_5x8_mn};
 /*

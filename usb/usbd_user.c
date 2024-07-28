@@ -458,10 +458,14 @@ void hid_keyboard_send(uint8_t*buffer)
         {
             g_max_interval = g_interval;
         }
-        
     }
     else
     {
+        if(g_interval>80)
+        {
+            fezui_notification_begin(&fezui,&fezui_notification,"Warning: Detected USB report issue.",500,0.5);
+            g_error_count++;
+        }
         g_interval = 0;
     }
     memcpy(write_buffer, buffer, 8);

@@ -795,7 +795,7 @@ void TIM6_IRQHandler(void)
             g_int_count=0;
             g_fezui_run_time++;
             g_last_max_interval = g_max_interval;
-            g_interval = 0;
+            //g_interval = 0;
             g_max_interval = 0;
         }
         fezui_timer_handler();
