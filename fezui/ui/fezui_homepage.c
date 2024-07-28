@@ -150,7 +150,9 @@ static void homepage_draw(void *page)
     u8g2_DrawVLine(&(fezui.u8g2),96,HEIGHT-MARGIN_DOWN,MARGIN_DOWN);
 
     u8g2_SetFont(&(fezui.u8g2), u8g2_font_micro_tr);
-    //fezui_printf(&fezui,64,MARGIN_UP-2,"%ld",RGB_Tick);
+    fezui_printf(&fezui,65,MARGIN_UP-2,"%ld",g_usb_report_count1);
+    fezui_printf(&fezui,65,MARGIN_UP*2-2,"%ld",g_int_count1);
+    fezui_printf(&fezui,65,MARGIN_UP*3-2,"%ld",g_last_max_interval);
     if(g_keybaord_shift_flag)
     {
         u8g2_DrawBox(&(fezui.u8g2), 65 , 1 ,MARGIN_UP-2, MARGIN_UP-2);

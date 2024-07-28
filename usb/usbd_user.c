@@ -387,6 +387,7 @@ void usbd_event_handler(uint8_t event)
 void usbd_hid_kayboard_int_callback(uint8_t ep, uint32_t nbytes)
 {
     hid_state = HID_STATE_IDLE;
+    g_usb_report_count++;
 }
 void usbd_hid_mouse_int_callback(uint8_t ep, uint32_t nbytes)
 {
@@ -452,7 +453,16 @@ USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t write_buffer[64];
 void hid_keyboard_send(uint8_t*buffer)
 {
     if (hid_state == HID_STATE_BUSY) {
-        return;
+        g_interval++;
+        if (g_interval>g_max_interval)
+        {
+            g_max_interval = g_interval;
+        }
+        
+    }
+    else
+    {
+        g_interval = 0;
     }
     memcpy(write_buffer, buffer, 8);
     int ret = usbd_ep_start_write(HID_KEYBOARD_INT_EP, write_buffer, 8);
@@ -460,7 +470,6 @@ void hid_keyboard_send(uint8_t*buffer)
         return;
     }
     hid_state = HID_STATE_BUSY;
-    g_usb_report_count++;
 }
 
 void hid_mouse_send(uint8_t*buffer)

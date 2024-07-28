@@ -791,7 +791,12 @@ void TIM6_IRQHandler(void)
             record_kps_history_timer();
             g_usb_report_count1=g_usb_report_count;
             g_usb_report_count=0;
+            g_int_count1=g_int_count;
+            g_int_count=0;
             g_fezui_run_time++;
+            g_last_max_interval = g_max_interval;
+            g_interval = 0;
+            g_max_interval = 0;
         }
         fezui_timer_handler();
         record_bit_stream_timer();
@@ -813,6 +818,7 @@ void TIM7_IRQHandler(void)
             RGB_Tick++;
         }
         TIM_ClearITPendingBit(TIM7, TIM_IT_Update);
+        g_int_count++;
         // if(!HAL_GPIO_ReadPin(MENU_GPIO_Port, MENU_Pin))
         keyboard_timer();
     }
