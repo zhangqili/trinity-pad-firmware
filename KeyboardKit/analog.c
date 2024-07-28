@@ -9,6 +9,7 @@
 #include "rgb.h"
 #include "analog.h"
 #include "record.h"
+#include "advanced_key.h"
 
 uint16_t g_ADC_Conversion_Count;
 uint16_t g_ADC_Buffer[ADVANCED_KEY_NUM * ANALOG_BUFFER_LENGTH];

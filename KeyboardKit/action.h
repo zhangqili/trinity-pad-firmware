@@ -5,6 +5,7 @@
 #include "stddef.h"
 #include "stdbool.h"
 #include "key.h"
+#include "advanced_key.h"
 
 typedef enum __Action
 {
@@ -14,6 +15,7 @@ typedef enum __Action
     ACTION_RAPPY_SNAPPY,
     ACTION_NUM
 } Action;
+void action_execute(Key *key, Action *action);
 
 typedef struct __ActionDynamicKeystroke4x4
 {
@@ -37,8 +39,10 @@ typedef struct __ActionToggleKey
 typedef struct __ActionRappySnappy
 {
     Action type;
-    AdvancedKey *key1;
-    AdvancedKey *key2;
+    uint16_t key1_id;
+    uint16_t key2_id;
 } ActionRappySnappy;
+
+void action_rs_execute(Key*key, Action*action);
 
 #endif

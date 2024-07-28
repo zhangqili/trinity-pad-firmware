@@ -55,6 +55,11 @@ static void debugpage_draw(void *page)
     fezui_printf(&fezui, 64, 32, "%f", (-1)*(&rangebase)->interval);
     fezui_printf(&fezui, 64, 40, "%d", (int16_t)((-1)*(&rangebase)->interval));
     //fezui_draw_flyout_numberic_dialog(&fezui, &dialog);
+    fezui_printf(&fezui,0,8,"%d",g_keymap[0][0]);
+    fezui_printf(&fezui,8,8,"%d",g_keymap[0][1]);
+    fezui_printf(&fezui,16,8,"%d",g_keymap[0][2]);
+    fezui_printf(&fezui,24,8,"%d",g_keymap[0][3]);
+    fezui_printf(&fezui,0,16,"%d",g_keyboard_advanced_keys[1].key.id);
     fezui_draw_cursor(&fezui, &g_fezui_cursor);
 }
 

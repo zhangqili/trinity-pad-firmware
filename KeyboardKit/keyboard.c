@@ -10,10 +10,15 @@
 #include "rgb.h"
 #include "stdio.h"
 #include "lfs.h"
+#include "action.h"
+#include "fezui.h"
+#include "fezui_var.h"
 
 __WEAK const uint16_t g_default_keymap[LAYER_NUM][ADVANCED_KEY_NUM+KEY_NUM];
 __WEAK AdvancedKey g_keyboard_advanced_keys[ADVANCED_KEY_NUM];
 __WEAK Key g_keyboard_keys[KEY_NUM];
+
+Action *g_keyboard_actions[LAYER_NUM][ADVANCED_KEY_NUM+KEY_NUM];
 
 uint8_t g_keyboard_current_layer;
 uint16_t g_keymap[LAYER_NUM][ADVANCED_KEY_NUM + KEY_NUM];
@@ -23,6 +28,19 @@ uint8_t g_keyboard_knob_flag;
 volatile bool g_keybaord_send_report_enable = true;
 volatile bool g_keybaord_alpha_flag;
 volatile bool g_keybaord_shift_flag;
+
+void keyboard_key_add_buffer(Key*k)
+{
+    if (g_keyboard_actions[g_keyboard_current_layer][k->id])
+    {
+        action_execute(k,g_keyboard_actions[g_keyboard_current_layer][k->id]);
+    }
+    else if (k->state)
+    {
+        KEYBOARD_REPORT_BUFFER_ADD(g_keymap[g_keyboard_current_layer][k->id]);
+        g_fezui_debug = k->id;
+    }
+}
 
 int keyboard_6KRObuffer_add(Keyboard_6KROBuffer* buf, uint16_t key)
 {
@@ -98,8 +116,8 @@ void keyboard_recovery()
     lfs_file_rewind(&lfs_w25qxx, &lfs_file_w25qxx);
     for (uint8_t i = 0; i < ADVANCED_KEY_NUM; i++)
     {
-        lfs_file_read(&lfs_w25qxx, &lfs_file_w25qxx, &(g_keyboard_advanced_keys[i].key.id),
-                      sizeof(g_keyboard_advanced_keys[i].key.id));
+        //lfs_file_read(&lfs_w25qxx, &lfs_file_w25qxx, &(g_keyboard_advanced_keys[i].key.id),
+        //              sizeof(g_keyboard_advanced_keys[i].key.id));
         lfs_file_read(&lfs_w25qxx, &lfs_file_w25qxx, ((void *)(&g_keyboard_advanced_keys[i])) + sizeof(Key),
                       sizeof(AdvancedKey) - sizeof(Key));
     }
@@ -130,8 +148,8 @@ void keyboard_save()
     lfs_file_rewind(&lfs_w25qxx, &lfs_file_w25qxx);
     for (uint8_t i = 0; i < ADVANCED_KEY_NUM; i++)
     {
-        lfs_file_write(&lfs_w25qxx, &lfs_file_w25qxx, &(g_keyboard_advanced_keys[i].key.id),
-                       sizeof(g_keyboard_advanced_keys[i].key.id));
+        //lfs_file_write(&lfs_w25qxx, &lfs_file_w25qxx, &(g_keyboard_advanced_keys[i].key.id),
+        //               sizeof(g_keyboard_advanced_keys[i].key.id));
         lfs_file_write(&lfs_w25qxx, &lfs_file_w25qxx, ((void *)(&g_keyboard_advanced_keys[i])) + sizeof(Key),
                        sizeof(AdvancedKey) - sizeof(Key));
     }
@@ -161,17 +179,11 @@ void keyboard_send_report()
     // keyboard_6KRObuffer_add(&Keyboard_ReportBuffer,(KeyBinding){KEY_E,KEY_NO_MODIFIER});
     for (int i = 0; i < ADVANCED_KEY_NUM; i++)
     {
-        if (g_keyboard_advanced_keys[i].key.state)
-        {
-            keyboard_6KRObuffer_add(&g_keyboard_6kro_buffer, g_keymap[g_keyboard_current_layer][i]);
-        }
+        keyboard_key_add_buffer(&g_keyboard_advanced_keys[i].key);
     }
     for (int i = 0; i < KEY_NUM; i++)
     {
-        if (g_keyboard_keys[i].state)
-        {
-            keyboard_6KRObuffer_add(&g_keyboard_6kro_buffer, g_keymap[g_keyboard_current_layer][i + ADVANCED_KEY_NUM]);
-        }
+        keyboard_key_add_buffer(&g_keyboard_keys[i]);
     }
     if (g_keybaord_send_report_enable)
     {
