@@ -45,7 +45,9 @@ void analog_average()
             ADC_sum += g_ADC_Buffer[i + j * ADVANCED_KEY_NUM];
         }
         g_ADC_Averages[i] = ADC_sum/((float)ANALOG_BUFFER_LENGTH);
+#ifdef ENABLE_FILTER
         g_ADC_Averages[i] = adaptive_schimidt_filter(g_analog_filters+i,g_ADC_Averages[i]);
+#endif
     }
 }
 

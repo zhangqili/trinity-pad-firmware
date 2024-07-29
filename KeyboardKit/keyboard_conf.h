@@ -10,6 +10,8 @@
 
 //#define EXTENDED_SAMPLING
 
+#define ENABLE_FILTER
+
 #define STATIC_RECORD
 
 #define ENABLE_ANALOG_HISTORY

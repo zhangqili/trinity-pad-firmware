@@ -410,7 +410,7 @@ void TIM6_INT_Init(u16 arr, u16 psc)
     TIM_TimeBaseInit(TIM6, &TIM_TimeBaseStructure); // 根据指定的参数初始化TIMx的时间基数单位
 
     // 初始化TIM NVIC，设置中断优先级分组
-    NVIC_InitStructure.NVIC_IRQChannel = TIM6_IRQn;           // TIM1中断
+    NVIC_InitStructure.NVIC_IRQChannel = TIM6_IRQn;           // TIM6中断
     NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0; // 设置抢占优先级0
     NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;        // 设置响应优先级3
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;           // 使能通道1中断
@@ -436,7 +436,7 @@ void TIM7_INT_Init(u16 arr, u16 psc)
     TIM_TimeBaseInit(TIM7, &TIM_TimeBaseStructure); // 根据指定的参数初始化TIMx的时间基数单位
 
     // 初始化TIM NVIC，设置中断优先级分组
-    NVIC_InitStructure.NVIC_IRQChannel = TIM7_IRQn;           // TIM1中断
+    NVIC_InitStructure.NVIC_IRQChannel = TIM7_IRQn;           // TIM7中断
     NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1; // 设置抢占优先级0
     NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;        // 设置响应优先级
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;           // 使能通道1中断
@@ -522,6 +522,7 @@ void usb_dc_low_level_init(void)
     RCC_USBHSPLLCKREFCLKConfig(RCC_USBHSPLLCKREFCLK_4M);
     RCC_USBHSPHYPLLALIVEcmd(ENABLE);
     RCC_AHBPeriphClockCmd(RCC_AHBPeriph_USBHS, ENABLE);
+    NVIC_SetPriority(USBHS_IRQn,0xC0);
     NVIC_EnableIRQ(USBHS_IRQn);
 
     Delay_Us(100);
