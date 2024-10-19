@@ -1070,6 +1070,7 @@ float advanced_key_normalize(AdvancedKey* key, float value)
 
 void keyboard_hid_send(uint8_t *report, uint16_t len)
 {
+    g_usb_interval++;
     hid_keyboard_send(report);
 }
 

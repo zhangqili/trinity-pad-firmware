@@ -60,6 +60,11 @@ static void debugpage_draw(void *page)
     fezui_printf(&fezui,16,8,"%d",g_keymap[0][2]);
     fezui_printf(&fezui,24,8,"%d",g_keymap[0][3]);
     fezui_printf(&fezui,0,16,"%d",g_keyboard_advanced_keys[1].key.id);
+
+
+    fezui_printf(&fezui,30,20+8-2,"%ld",g_usb_report_count1);
+    fezui_printf(&fezui,30,20+8*3-2,"%ld",g_usb_interval);
+
     fezui_draw_cursor(&fezui, &g_fezui_cursor);
 }
 

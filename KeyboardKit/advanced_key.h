@@ -2,6 +2,13 @@
 #define ADVANCED_KEY_H_
 
 #include "key.h"
+#include "keyboard_conf.h"
+
+#ifdef USE_FLOAT_VALUE
+typedef float KeyValueType;
+#else
+typedef uint KeyValueType;
+#endif
 
 typedef enum
 {

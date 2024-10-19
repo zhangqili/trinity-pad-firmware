@@ -16,12 +16,7 @@ uint32_t g_fezui_debug;
 uint32_t g_fezui_run_time;
 uint32_t g_usb_report_count;
 uint32_t g_usb_report_count1;
-uint32_t g_int_count;
-uint32_t g_int_count1;
-uint32_t g_interval;
-uint32_t g_max_interval;
-uint32_t g_last_max_interval;
-uint32_t g_error_count;
+uint32_t g_usb_interval;
 
 fezui_notification_t fezui_notification={.text.font=u8g2_font_5x8_mn};
 /*

@@ -78,7 +78,8 @@ void fezui_frame_tick(fezui_frame_t *frame)
         fezui_animation_calculate(frame->animation);
         if (frame->animation->value < 0.5)
         {
-            // if(frame->old_page!=NULL)
+            if(frame->pages[frame->old_page_index])
+                frame->pages[frame->old_page_index]->page_tick_cb(frame->pages[frame->old_page_index]);
             //     frame->old_page->page_tick_cb(frame->old_page);
         }
         else

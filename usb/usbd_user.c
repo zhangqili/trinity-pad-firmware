@@ -453,22 +453,15 @@ USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t write_buffer[64];
 void hid_keyboard_send(uint8_t*buffer)
 {
     if (hid_state == HID_STATE_BUSY) {
-        g_interval++;
-        if (g_interval>g_max_interval)
+        if(g_usb_interval>80)
         {
-            g_max_interval = g_interval;
-        }
-        if(g_interval>80)
-        {
-            fezui_notification_begin(&fezui,&fezui_notification,"Warning: Detected USB report issue, check USB cable.",1000,0.5);
-            g_error_count++;
-            hid_state = HID_STATE_IDLE;
+            //hid_state = HID_STATE_IDLE;
         }
         return;
     }
     else
     {
-        g_interval = 0;
+        //g_usb_interval = 0;
     }
     memcpy(write_buffer, buffer, 8);
     int ret = usbd_ep_start_write(HID_KEYBOARD_INT_EP, write_buffer, 8);

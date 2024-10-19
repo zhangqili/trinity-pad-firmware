@@ -80,9 +80,6 @@ void keyboard_factory_reset()
     {
         g_keyboard_advanced_keys[i].mode = DEFAULT_ADVANCED_KEY_MODE;
         g_keyboard_advanced_keys[i].trigger_distance = DEFAULT_TRIGGER_DISTANCE;
-        g_keyboard_advanced_keys[i].release_distance = DEFAULT_RELEASE_DISTANCE;
-        g_keyboard_advanced_keys[i].schmitt_parameter = DEFAULT_SCHMITT_PARAMETER;
-        g_keyboard_advanced_keys[i].activation_value = 0.5;
         g_keyboard_advanced_keys[i].calibration_mode = KEY_AUTO_CALIBRATION_NEGATIVE;
         // Keyboard_AdvancedKeys[i].lower_deadzone = 0.32;
         advanced_key_set_deadzone(g_keyboard_advanced_keys + i, DEFAULT_UPPER_DEADZONE, DEFAULT_LOWER_DEADZONE);

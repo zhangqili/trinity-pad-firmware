@@ -21,12 +21,7 @@ extern uint32_t g_fezui_debug;
 extern uint32_t g_fezui_run_time;
 extern uint32_t g_usb_report_count;
 extern uint32_t g_usb_report_count1;
-extern uint32_t g_int_count;
-extern uint32_t g_int_count1;
-extern uint32_t g_interval;
-extern uint32_t g_max_interval;
-extern uint32_t g_last_max_interval;
-extern uint32_t g_error_count;
+extern uint32_t g_usb_interval;
 
 extern fezui_notification_t fezui_notification;
 
