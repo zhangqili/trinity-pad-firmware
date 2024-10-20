@@ -17,12 +17,12 @@ typedef enum __Action
 } Action;
 void action_execute(Key *key, Action *action);
 
-typedef struct __ActionDynamicKeystroke4x4
+typedef struct __ActionDynamicKeyStroke4x4
 {
     Action type;
     uint16_t key_binding[4];
     float distance[4];
-} ActionDynamicKeystroke4x4;
+} ActionDynamicKeyStroke4x4;
 
 typedef struct __ActionModTap
 {
@@ -43,6 +43,9 @@ typedef struct __ActionRappySnappy
     uint16_t key2_id;
 } ActionRappySnappy;
 
+void action_dks_execute(Key*key, Action*action);
+void action_mt_execute(Key*key, Action*action);
+void action_tk_execute(Key*key, Action*action);
 void action_rs_execute(Key*key, Action*action);
 
 #endif

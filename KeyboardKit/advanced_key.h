@@ -29,33 +29,32 @@ typedef struct __AdvancedKey
     Key key;
     uint8_t mode;
     uint8_t calibration_mode;
-    float value;
-    float raw;
+    KeyValueType value;
+    KeyValueType raw;
     
+    KeyValueType activation_value;
+    KeyValueType phantom_lower_deadzone;
 
-    float activation_value;
-    float phantom_lower_deadzone;
-
-    float trigger_distance;
-    float release_distance;
-    float schmitt_parameter;
-    float maximum;
-    float minimum;
-    float trigger_speed;
-    float release_speed;
-    float upper_deadzone;
-    float lower_deadzone;
-    float upper_bound;
-    float lower_bound;
+    KeyValueType trigger_distance;
+    KeyValueType release_distance;
+    KeyValueType schmitt_parameter;
+    KeyValueType maximum;
+    KeyValueType minimum;
+    KeyValueType trigger_speed;
+    KeyValueType release_speed;
+    KeyValueType upper_deadzone;
+    KeyValueType lower_deadzone;
+    KeyValueType upper_bound;
+    KeyValueType lower_bound;
 } AdvancedKey;
 
 void advanced_key_init(AdvancedKey *key);
-void advanced_key_update(AdvancedKey *key, float value);
-void advanced_key_update_raw(AdvancedKey *key, float value);
+void advanced_key_update(AdvancedKey *key, KeyValueType value);
+void advanced_key_update_raw(AdvancedKey *key, KeyValueType value);
 void advanced_key_update_state(AdvancedKey *key, bool state);
-float advanced_key_normalize(AdvancedKey *key, float value);
-void advanced_key_set_range(AdvancedKey *key, float upper, float lower);
-void advanced_key_reset_range(AdvancedKey* key, float value);
-void advanced_key_set_deadzone(AdvancedKey *key, float upper, float lower);
+KeyValueType advanced_key_normalize(AdvancedKey *key, KeyValueType value);
+void advanced_key_set_range(AdvancedKey *key, KeyValueType upper, KeyValueType lower);
+void advanced_key_reset_range(AdvancedKey* key, KeyValueType value);
+void advanced_key_set_deadzone(AdvancedKey *key, KeyValueType upper, KeyValueType lower);
 
 #endif

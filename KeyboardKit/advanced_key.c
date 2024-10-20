@@ -1,7 +1,7 @@
 #include "advanced_key.h"
 #include "keyboard_def.h"
 
-void advanced_key_update(AdvancedKey* advanced_key, float value)
+void advanced_key_update(AdvancedKey* advanced_key, KeyValueType value)
 {
     bool state = advanced_key->key.state;
     switch (advanced_key->mode)
@@ -76,7 +76,7 @@ void advanced_key_update(AdvancedKey* advanced_key, float value)
     key_update(&(advanced_key->key), state);
 }
 
-void advanced_key_update_raw(AdvancedKey* key, float value)
+void advanced_key_update_raw(AdvancedKey* key, KeyValueType value)
 {
     key->raw = value;
     switch (key->calibration_mode)
@@ -103,19 +103,19 @@ void advanced_key_update_state(AdvancedKey* advanced_key, bool state)
     key_update(&(advanced_key->key), state);
 }
 
-__WEAK float advanced_key_normalize(AdvancedKey* key, float value)
+__WEAK KeyValueType advanced_key_normalize(AdvancedKey* key, KeyValueType value)
 {
     return (key->upper_bound - value) / (key->upper_bound - key->lower_bound);
 }
 
-void advanced_key_set_range(AdvancedKey* key, float upper, float lower)
+void advanced_key_set_range(AdvancedKey* key, KeyValueType upper, KeyValueType lower)
 {
     key->upper_bound = upper;
     key->lower_bound = lower;
     //key->range = key->upper_bound - key->lower_bound;
 }
 
-void advanced_key_reset_range(AdvancedKey* key, float value)
+void advanced_key_reset_range(AdvancedKey* key, KeyValueType value)
 {
     switch (key->calibration_mode)
     {
@@ -131,7 +131,7 @@ void advanced_key_reset_range(AdvancedKey* key, float value)
     }
 }
 
-void advanced_key_set_deadzone(AdvancedKey* key, float upper, float lower)
+void advanced_key_set_deadzone(AdvancedKey* key, KeyValueType upper, KeyValueType lower)
 {
     /*
     key->upper_deadzone = (key->upper_bound - key->lower_bound)*upper;

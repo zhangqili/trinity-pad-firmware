@@ -165,7 +165,7 @@ static void homepage_draw(void *page)
     //{
     //    u8g2_DrawXBMP(&fezui.u8g2, 65 + MARGIN_UP * 2 - 2, 1, MARGIN_UP - 2, MARGIN_UP - 2, disconnected_bitmap);
     //}
-    fezui_printf(&fezui,66,32,"%ld",g_usb_interval);
+    //fezui_printf(&fezui,66,32,"%ld",g_usb_interval);
 
     u8g2_SetDrawColor(&(fezui.u8g2), color);
 }
