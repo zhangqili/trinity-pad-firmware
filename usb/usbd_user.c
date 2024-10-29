@@ -2,6 +2,8 @@
 #include "fezui.h"
 #include "fezui_var.h"
 
+#define ENABLE_MOUSE
+
 #define USBD_VID           0xffff
 #define USBD_PID           0xffff
 #define USBD_MAX_POWER     300
@@ -16,7 +18,7 @@
 #define HID_MOUSE_INT_EP_INTERVAL 1
 
 /*!< hidraw in endpoint */
-#define HIDRAW_IN_EP       0x82
+#define HIDRAW_IN_EP       0x83
 #define HIDRAW_IN_EP_SIZE  64
 #define HIDRAW_IN_INTERVAL 10
 
@@ -25,14 +27,14 @@
 #define HIDRAW_OUT_EP_SIZE     64
 #define HIDRAW_OUT_EP_INTERVAL 10
 
-#define USB_HID_CONFIG_DESC_SIZ       (9+25+32)
+#define USB_HID_CONFIG_DESC_SIZ       (9+25+25+32)
 #define HID_KEYBOARD_REPORT_DESC_SIZE 63
 #define HID_MOUSE_REPORT_DESC_SIZE 74
 #define HID_RAW_REPORT_DESC_SIZE 38
 
 static const uint8_t hid_descriptor[] = {
     USB_DEVICE_DESCRIPTOR_INIT(USB_2_0, 0x00, 0x00, 0x00, USBD_VID, USBD_PID, 0x0002, 0x01),
-    USB_CONFIG_DESCRIPTOR_INIT(USB_HID_CONFIG_DESC_SIZ, 0x02, 0x01, USB_CONFIG_BUS_POWERED, USBD_MAX_POWER),
+    USB_CONFIG_DESCRIPTOR_INIT(USB_HID_CONFIG_DESC_SIZ, 0x03, 0x01, USB_CONFIG_BUS_POWERED, USBD_MAX_POWER),
     //Keyboard
     /************** Descriptor of Joystick Mouse interface ****************/
     /* 09 */
@@ -67,48 +69,48 @@ static const uint8_t hid_descriptor[] = {
     HID_KEYBOARD_INT_EP_INTERVAL, /* bInterval: Polling Interval */
     /* 34 */
     //Mouse
-    ///************** Descriptor of Joystick Mouse interface ****************/
-    ///* 09 */
-    //0x09,                          /* bLength: Interface Descriptor size */
-    //USB_DESCRIPTOR_TYPE_INTERFACE, /* bDescriptorType: Interface descriptor type */
-    //0x01,                          /* bInterfaceNumber: Number of Interface */
-    //0x00,                          /* bAlternateSetting: Alternate setting */
-    //0x01,                          /* bNumEndpoints */
-    //0x03,                          /* bInterfaceClass: HID */
-    //0x01,                          /* bInterfaceSubClass : 1=BOOT, 0=no boot */
-    //0x02,                          /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
-    //0,                             /* iInterface: Index of string descriptor */
-    ///******************** Descriptor of Joystick Mouse HID ********************/
-    ///* 18 */
-    //0x09,                    /* bLength: HID Descriptor size */
-    //HID_DESCRIPTOR_TYPE_HID, /* bDescriptorType: HID */
-    //0x11,                    /* bcdHID: HID Class Spec release number */
-    //0x01,
-    //0x00,                       /* bCountryCode: Hardware target country */
-    //0x01,                       /* bNumDescriptors: Number of HID class descriptors to follow */
-    //0x22,                       /* bDescriptorType */
-    //HID_MOUSE_REPORT_DESC_SIZE, /* wItemLength: Total length of Report descriptor */
-    //0x00,
-    ///******************** Descriptor of Mouse endpoint ********************/
-    ///* 27 */
-    //0x07,                         /* bLength: Endpoint Descriptor size */
-    //USB_DESCRIPTOR_TYPE_ENDPOINT, /* bDescriptorType: */
-    //HID_MOUSE_INT_EP,                   /* bEndpointAddress: Endpoint Address (IN) */
-    //0x03,                         /* bmAttributes: Interrupt endpoint */
-    //HID_MOUSE_INT_EP_SIZE,              /* wMaxPacketSize: 4 Byte max */
-    //0x00,
-    //HID_MOUSE_INT_EP_INTERVAL, /* bInterval: Polling Interval */
-    ///* 34 */
+    /************** Descriptor of Joystick Mouse interface ****************/
+    /* 09 */
+    0x09,                          /* bLength: Interface Descriptor size */
+    USB_DESCRIPTOR_TYPE_INTERFACE, /* bDescriptorType: Interface descriptor type */
+    0x01,                          /* bInterfaceNumber: Number of Interface */
+    0x00,                          /* bAlternateSetting: Alternate setting */
+    0x01,                          /* bNumEndpoints */
+    0x03,                          /* bInterfaceClass: HID */
+    0x01,                          /* bInterfaceSubClass : 1=BOOT, 0=no boot */
+    0x02,                          /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
+    0,                             /* iInterface: Index of string descriptor */
+    /******************** Descriptor of Joystick Mouse HID ********************/
+    /* 18 */
+    0x09,                    /* bLength: HID Descriptor size */
+    HID_DESCRIPTOR_TYPE_HID, /* bDescriptorType: HID */
+    0x11,                    /* bcdHID: HID Class Spec release number */
+    0x01,
+    0x00,                       /* bCountryCode: Hardware target country */
+    0x01,                       /* bNumDescriptors: Number of HID class descriptors to follow */
+    0x22,                       /* bDescriptorType */
+    HID_MOUSE_REPORT_DESC_SIZE, /* wItemLength: Total length of Report descriptor */
+    0x00,
+    /******************** Descriptor of Mouse endpoint ********************/
+    /* 27 */
+    0x07,                         /* bLength: Endpoint Descriptor size */
+    USB_DESCRIPTOR_TYPE_ENDPOINT, /* bDescriptorType: */
+    HID_MOUSE_INT_EP,                   /* bEndpointAddress: Endpoint Address (IN) */
+    0x03,                         /* bmAttributes: Interrupt endpoint */
+    HID_MOUSE_INT_EP_SIZE,              /* wMaxPacketSize: 4 Byte max */
+    0x00,
+    HID_MOUSE_INT_EP_INTERVAL, /* bInterval: Polling Interval */
+    /* 34 */
 
     //HID_RAW
     /************** Descriptor of Custom interface *****************/
     0x09,                          /* bLength: Interface Descriptor size */
     USB_DESCRIPTOR_TYPE_INTERFACE, /* bDescriptorType: Interface descriptor type */
-    0x01,                          /* bInterfaceNumber: Number of Interface */
+    0x02,                          /* bInterfaceNumber: Number of Interface */
     0x00,                          /* bAlternateSetting: Alternate setting */
     0x02,                          /* bNumEndpoints */
     0x03,                          /* bInterfaceClass: HID */
-    0x01,                          /* bInterfaceSubClass : 1=BOOT, 0=no boot */
+    0x00,                          /* bInterfaceSubClass : 1=BOOT, 0=no boot */
     0x00,                          /* nInterfaceProtocol : 0=none, 1=keyboard, 2=mouse */
     0,                             /* iInterface: Index of string descriptor */
     /******************** Descriptor of Custom HID ********************/
@@ -439,8 +441,8 @@ void hid_init(void)
     usbd_desc_register(hid_descriptor);
     usbd_add_interface(usbd_hid_init_intf(&intf0, hid_keyboard_report_desc, HID_KEYBOARD_REPORT_DESC_SIZE));
     usbd_add_endpoint(&hid_keyboard_in_ep);
-    //usbd_add_interface(usbd_hid_init_intf(&intf1, hid_mouse_report_desc, HID_MOUSE_REPORT_DESC_SIZE));
-    //usbd_add_endpoint(&hid_mouse_in_ep);
+    usbd_add_interface(usbd_hid_init_intf(&intf1, hid_mouse_report_desc, HID_MOUSE_REPORT_DESC_SIZE));
+    usbd_add_endpoint(&hid_mouse_in_ep);
     usbd_add_interface(usbd_hid_init_intf(&intf2, hid_raw_report_desc, HID_RAW_REPORT_DESC_SIZE));
     usbd_add_endpoint(&custom_in_ep);
     usbd_add_endpoint(&custom_out_ep);
