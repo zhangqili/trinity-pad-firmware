@@ -138,7 +138,7 @@ void fezui_init()
     key_attach(&KEY_FN_K5, KEY_EVENT_DOWN, key_enter_cb);
     key_attach(&KEY_FN_K6, KEY_EVENT_DOWN, key_esc_cb);
     // Keybaord_SendReport_Enable=false;
-    // fezui_frame_navigate(&g_mainframe, &debugpage);
+    //fezui_frame_navigate(&g_mainframe, &calibrationpage);
     // fezui_frame_navigate(&g_mainframe, &oscilloscopepage);
 }
 

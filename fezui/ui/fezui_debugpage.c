@@ -40,6 +40,7 @@ static void debugpage_tick(void *page)
     fezui_rolling_number_update(&fezui, &rolling_number);
     fezui_flyout_numberic_dialog_update(&fezui, &dialog);
 }
+uint8_t debug[8];
 static void debugpage_draw(void *page)
 {
     fezui_printf(&fezui, 64, 16, "%#lx", g_fezui_debug);
@@ -51,19 +52,23 @@ static void debugpage_draw(void *page)
     // fezui_animated_listbox_get_cursor(&fezui, 0, 0, WIDTH, HEIGHT, &listbox, 8, &g_target_cursor);
     extern uint8_t read_buffer[64];
     u8g2_DrawStr(&(fezui.u8g2), 0, 64, (char *)read_buffer + 1);
-    fezui_printf(&fezui,32,32,"%d",targetnum);
-    fezui_printf(&fezui, 64, 32, "%f", (-1)*(&rangebase)->interval);
-    fezui_printf(&fezui, 64, 40, "%d", (int16_t)((-1)*(&rangebase)->interval));
+    fezui_printf(&fezui,32,8,"%d",targetnum);
+    fezui_printf(&fezui, 64, 8, "%f", (-1)*(&rangebase)->interval);
+    fezui_printf(&fezui, 64, 8, "%d", (int16_t)((-1)*(&rangebase)->interval));
     //fezui_draw_flyout_numberic_dialog(&fezui, &dialog);
-    fezui_printf(&fezui,0,8,"%d",g_keymap[0][0]);
-    fezui_printf(&fezui,8,8,"%d",g_keymap[0][1]);
-    fezui_printf(&fezui,16,8,"%d",g_keymap[0][2]);
-    fezui_printf(&fezui,24,8,"%d",g_keymap[0][3]);
-    fezui_printf(&fezui,0,16,"%d",g_keyboard_advanced_keys[1].key.id);
 
+    for (uint8_t i = 0; i < 8; i++)
+    {
+        fezui_printf_right_aligned(&fezui,(i+1)*16,24,"%d",debug[i]);
+        fezui_printf_right_aligned(&fezui,(i+1)*16,32,"%d",read_buffer[i]);
+        fezui_printf_right_aligned(&fezui,(i+1)*16,40,"%d",read_buffer[i+8]);
+        fezui_printf_right_aligned(&fezui,(i+1)*16,48,"%d",read_buffer[i+16]);
+        fezui_printf_right_aligned(&fezui,(i+1)*16,56,"%d",read_buffer[i+24]);
+    }
+    
 
-    fezui_printf(&fezui,30,20+8-2,"%ld",g_usb_report_count1);
-    fezui_printf(&fezui,30,20+8*3-2,"%ld",g_usb_interval);
+    //fezui_printf(&fezui,30,20+8-2,"%ld",g_usb_report_count1);
+    //fezui_printf(&fezui,30,20+8*3-2,"%ld",g_usb_interval);
 
     fezui_draw_cursor(&fezui, &g_fezui_cursor);
 }

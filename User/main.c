@@ -1,14 +1,14 @@
 /********************************** (C) COPYRIGHT *******************************
-* File Name          : main.c
-* Author             : WCH
-* Version            : V1.0.0
-* Date               : 2021/06/06
-* Description        : Main program body.
-*********************************************************************************
-* Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
-* Attention: This software (modified or not) and binary are used for 
-* microcontroller manufactured by Nanjing Qinheng Microelectronics.
-*******************************************************************************/
+ * File Name          : main.c
+ * Author             : WCH
+ * Version            : V1.0.0
+ * Date               : 2021/06/06
+ * Description        : Main program body.
+ *********************************************************************************
+ * Copyright (c) 2021 Nanjing Qinheng Microelectronics Co., Ltd.
+ * Attention: This software (modified or not) and binary are used for
+ * microcontroller manufactured by Nanjing Qinheng Microelectronics.
+ *******************************************************************************/
 
 /*
  *@Note
@@ -37,9 +37,9 @@
 /* Global Variable */
 
 sfud_flash sfud_norflash0 = {
-        .name = "norflash0",
-        .spi.name = "SPI2",
-        .chip = {"W25Q128JV", SFUD_MF_ID_WINBOND, 0x40, 0x18, 16L*1024L*1024L, SFUD_WM_PAGE_256B, 4096, 0x20},
+    .name = "norflash0",
+    .spi.name = "SPI2",
+    .chip = {"W25Q128JV", SFUD_MF_ID_WINBOND, 0x40, 0x18, 16L * 1024L * 1024L, SFUD_WM_PAGE_256B, 4096, 0x20},
 };
 
 void User_GPIO_Init(void)
@@ -225,7 +225,7 @@ int SPI3_Init()
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOC, ENABLE);
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
 
-    AFIO->PCFR1|=(1<<28);
+    AFIO->PCFR1 |= (1 << 28);
 
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
@@ -283,11 +283,11 @@ void Encoder_Init_TIM8(void)
     TIM_ICInitStructure.TIM_ICFilter = 3;   // 设置滤波器长度
     TIM_ICInit(TIM8, &TIM_ICInitStructure); // 根据 TIM_ICInitStruct 的参数初始化外设   TIMx
 
-    NVIC_InitStructure.NVIC_IRQChannel = TIM8_CC_IRQn;           //使能中断
-    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;  //设置抢占优先级为1
-    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 2;         //设置子优先级为2
-    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;            //使能外部中断通道
-    NVIC_Init(&NVIC_InitStructure);                            //中断优先级分组初始化
+    NVIC_InitStructure.NVIC_IRQChannel = TIM8_CC_IRQn;        // 使能中断
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0; // 设置抢占优先级为1
+    NVIC_InitStructure.NVIC_IRQChannelSubPriority = 2;        // 设置子优先级为2
+    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;           // 使能外部中断通道
+    NVIC_Init(&NVIC_InitStructure);                           // 中断优先级分组初始化
 
     TIM_ClearFlag(TIM8, TIM_FLAG_Update);      // 清除TIM的更新标志位
     TIM_ITConfig(TIM8, TIM_IT_Update, ENABLE); // 使能定时器中断
@@ -364,7 +364,7 @@ void ADC_Function_Init(void)
     ADC_StartCalibration(ADC1);
     while (ADC_GetCalibrationStatus(ADC1))
         ;
-    // Calibrattion_Val = Get_CalibrationValue(ADC1);
+        // Calibrattion_Val = Get_CalibrationValue(ADC1);
 #define ADC_SampleTime ADC_SampleTime_55Cycles5
     ADC_RegularChannelConfig(ADC1, ADC_Channel_1, 1, ADC_SampleTime);
     ADC_RegularChannelConfig(ADC1, ADC_Channel_0, 2, ADC_SampleTime);
@@ -478,13 +478,13 @@ void DMA1_Tx_Init(DMA_Channel_TypeDef *DMA_CHx, u32 ppadr, u32 memadr, u16 bufsi
     DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
     DMA_Init(DMA_CHx, &DMA_InitStructure);
 
-    //DMA_ITConfig ( DMA1_Channel1, DMA_IT_TC, ENABLE );
+    // DMA_ITConfig ( DMA1_Channel1, DMA_IT_TC, ENABLE );
 
-	//NVIC_InitTypeDef NVIC_InitStructure = { 0 };
-	//NVIC_InitStructure.NVIC_IRQChannel = DMA1_Channel1_IRQn;
-	//NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 4;
-	//NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-	//NVIC_Init ( &NVIC_InitStructure );
+    // NVIC_InitTypeDef NVIC_InitStructure = { 0 };
+    // NVIC_InitStructure.NVIC_IRQChannel = DMA1_Channel1_IRQn;
+    // NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 4;
+    // NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+    // NVIC_Init ( &NVIC_InitStructure );
 }
 
 void EXTI0_INT_INIT(void)
@@ -522,7 +522,7 @@ void usb_dc_low_level_init(void)
     RCC_USBHSPLLCKREFCLKConfig(RCC_USBHSPLLCKREFCLK_4M);
     RCC_USBHSPHYPLLALIVEcmd(ENABLE);
     RCC_AHBPeriphClockCmd(RCC_AHBPeriph_USBHS, ENABLE);
-    NVIC_SetPriority(USBHS_IRQn,0xC0);
+    NVIC_SetPriority(USBHS_IRQn, 0xC0);
     NVIC_EnableIRQ(USBHS_IRQn);
 
     Delay_Us(100);
@@ -603,7 +603,7 @@ void TIM1_Init(void)
 void DMA_TIM1_Init(void)
 {
     DMA_InitTypeDef DMA_InitStructure = {0};
-    //NVIC_InitTypeDef NVIC_InitStructure = {0};
+    // NVIC_InitTypeDef NVIC_InitStructure = {0};
 
     RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
 
@@ -624,7 +624,7 @@ void DMA_TIM1_Init(void)
 
     DMA_Cmd(DMA1_Channel5, DISABLE);
 
-    //DMA_ITConfig(DMA1_Channel5, DMA_IT_TC, ENABLE);
+    // DMA_ITConfig(DMA1_Channel5, DMA_IT_TC, ENABLE);
 
     // NVIC_InitStructure.NVIC_IRQChannel = DMA1_Channel5_IRQn;
     // NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
@@ -641,7 +641,7 @@ void DMA_TIM1_Init(void)
  */
 void SYSTICK_Init_Config(uint64_t ticks)
 {
-    SysTick->SR &= ~(1 << 0);//clear State flag
+    SysTick->SR &= ~(1 << 0); // clear State flag
     SysTick->CMP = ticks;
     SysTick->CNT = 0;
     SysTick->CTLR = 0xF;
@@ -653,50 +653,50 @@ void SYSTICK_Init_Config(uint64_t ticks)
 void (*SysMemBootJump)(void);
 __IO uint32_t BootAddr = 0x1FFF8000; /* BootLoader 地址 */
 
-void JumpToBootloader(void) {
-  uint32_t i=0;
+void JumpToBootloader(void)
+{
+    uint32_t i = 0;
 
-  /* 关闭全局中断 */
-  __disable_irq();
+    /* 关闭全局中断 */
+    __disable_irq();
 
-  /* 关闭滴答定时器，复位到默认值 */
-  //SysTick->CTRL = 0;
-  //SysTick->LOAD = 0;
-  //SysTick->VAL = 0;
-  SysTick->CTLR=0;
-  SysTick->CMP=0;
-  SysTick->CNT=0;
-  SysTick->SR=0;
+    /* 关闭滴答定时器，复位到默认值 */
+    // SysTick->CTRL = 0;
+    // SysTick->LOAD = 0;
+    // SysTick->VAL = 0;
+    SysTick->CTLR = 0;
+    SysTick->CMP = 0;
+    SysTick->CNT = 0;
+    SysTick->SR = 0;
 
-  /* 设置所有时钟到默认状态，使用HSI时钟 */
-  RCC_DeInit();
+    /* 设置所有时钟到默认状态，使用HSI时钟 */
+    RCC_DeInit();
 
-  /* 关闭所有中断，清除所有中断挂起标志 */
-  for (i = 0; i < 8; i++)
-  {
-      NVIC->IPSR[i]=0xFFFFFFFF;
-      NVIC->IPRR[i]=0xFFFFFFFF;
-  }
+    /* 关闭所有中断，清除所有中断挂起标志 */
+    for (i = 0; i < 8; i++)
+    {
+        NVIC->IPSR[i] = 0xFFFFFFFF;
+        NVIC->IPRR[i] = 0xFFFFFFFF;
+    }
 
-  /* 使能全局中断 */
-  __enable_irq();
+    /* 使能全局中断 */
+    __enable_irq();
 
-  /* 跳转到系统BootLoader，首地址是MSP，地址+4是复位中断服务程序地址 */
-  SysMemBootJump = (void (*)(void)) (*((uint32_t *) (BootAddr + 4)));
+    /* 跳转到系统BootLoader，首地址是MSP，地址+4是复位中断服务程序地址 */
+    SysMemBootJump = (void (*)(void))(*((uint32_t *)(BootAddr + 4)));
 
-  /* 设置主堆栈指针 */
-  //__set_MSP(*(uint32_t *)BootAddr);
-  //__asm("li  a6, 0x5z000");
-  //__asm("jr  a6");
+    /* 设置主堆栈指针 */
+    //__set_MSP(*(uint32_t *)BootAddr);
+    //__asm("li  a6, 0x5z000");
+    //__asm("jr  a6");
 
-  /* 跳转到系统BootLoader */
-  SysMemBootJump();
+    /* 跳转到系统BootLoader */
+    SysMemBootJump();
 
-  /* 跳转成功的话，不会执行到这里，用户可以在这里添加代码 */
-  while (1)
-  {
-
-  }
+    /* 跳转成功的话，不会执行到这里，用户可以在这里添加代码 */
+    while (1)
+    {
+    }
 }
 /*********************************************************************
  * @fn      main
@@ -711,16 +711,16 @@ int main(void)
     SystemCoreClockUpdate();
     Delay_Init();
     USART_Printf_Init(115200);
-    //printf("SystemClk:%ld\r\n", SystemCoreClock);
-    //printf("ChipID:%08lx\r\n", DBGMCU_GetCHIPID());
-    //printf("This is printf example\r\n");
-    //SYSTICK_Init_Config(SystemCoreClock-1);
+    // printf("SystemClk:%ld\r\n", SystemCoreClock);
+    // printf("ChipID:%08lx\r\n", DBGMCU_GetCHIPID());
+    // printf("This is printf example\r\n");
+    // SYSTICK_Init_Config(SystemCoreClock-1);
     User_GPIO_Init();
     SPI1_Init();
     SPI2_Init();
     SPI3_Init();
     ADC_Function_Init();
-    //Encoder_Init_TIM8();
+    // Encoder_Init_TIM8();
     sfud_device_init(&sfud_norflash0);
     fezui_init();
     keyboard_init();
@@ -748,9 +748,9 @@ int main(void)
     */
     keyboard_recovery();
     Delay_Ms(100);
-    //analog_reset_range();
-    fram_read_bytes(0x400,g_key_counts,sizeof(g_key_counts));
-    memcpy(g_key_init_counts,g_key_counts,sizeof(g_key_counts));
+    // analog_reset_range();
+    fram_read_bytes(0x400, g_key_counts, sizeof(g_key_counts));
+    memcpy(g_key_init_counts, g_key_counts, sizeof(g_key_counts));
 
     TIM6_INT_Init(14400 / 144 - 1, 10000 - 1);
     TIM7_INT_Init(14400 / 8 - 1, 10 - 1);
@@ -760,18 +760,18 @@ int main(void)
         // hid_keyboard_test();
         fezui_render_handler();
         rgb_update();
-        
-        fram_write_bytes(0x400,g_key_counts,sizeof(g_key_counts));
+
+        fram_write_bytes(0x400, g_key_counts, sizeof(g_key_counts));
         GPIO_WriteBit(LED_GPIO_Port, LED_Pin, !GPIO_ReadInputDataBit(LED_GPIO_Port, LED_Pin));
-        //if(usb_state!=usb_device_is_configured())
+        // if(usb_state!=usb_device_is_configured())
         //{
-        //    fezui_notification_begin(&fezui,&fezui_notification,"USB Connected",REFRESH_RATE*3,0.5);
-        //}
-        //usb_state=usb_device_is_configured;
+        //     fezui_notification_begin(&fezui,&fezui_notification,"USB Connected",REFRESH_RATE*3,0.5);
+        // }
+        // usb_state=usb_device_is_configured;
     }
 }
 
-//static uint16_t temp_count = 0;
+// static uint16_t temp_count = 0;
 void TIM6_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 void TIM6_IRQHandler(void)
 {
@@ -782,16 +782,16 @@ void TIM6_IRQHandler(void)
         count++;
         if (count == REFRESH_RATE)
         {
-            //g_ADC_Conversion_Count = temp_count;
-            //temp_count=0;
+            // g_ADC_Conversion_Count = temp_count;
+            // temp_count=0;
             sprintf(g_fpsstr, "%ld", g_fezui_fps);
             g_fezui_fps = 0;
             count = 0;
             if (fezui.screensaver_countdown)
                 fezui.screensaver_countdown--;
             record_kps_history_timer();
-            g_usb_report_count1=g_usb_report_count;
-            g_usb_report_count=0;
+            g_usb_report_count1 = g_usb_report_count;
+            g_usb_report_count = 0;
             g_fezui_run_time++;
         }
         fezui_timer_handler();
@@ -804,31 +804,40 @@ void TIM7_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 void TIM7_IRQHandler(void)
 {
     static uint8_t count = 0;
+    static uint8_t buffer[64];
     if (TIM_GetITStatus(TIM7, TIM_IT_Update) != RESET)
     {
         count++;
         if (count == 8)
         {
-            count=0;
+            count = 0;
             fezui_tick++;
             RGB_Tick++;
         }
         TIM_ClearITPendingBit(TIM7, TIM_IT_Update);
         // if(!HAL_GPIO_ReadPin(MENU_GPIO_Port, MENU_Pin))
         keyboard_timer();
+        /*
+        memcpy(buffer + 2 + 4 * 0, &g_keyboard_advanced_keys[0].raw, sizeof(float));
+        memcpy(buffer + 2 + 4 * 1, &g_keyboard_advanced_keys[1].raw, sizeof(float));
+        memcpy(buffer + 2 + 4 * 2, &g_keyboard_advanced_keys[2].raw, sizeof(float));
+        memcpy(buffer + 2 + 4 * 3, &g_keyboard_advanced_keys[3].raw, sizeof(float));
+        buffer[1] = 0xFF;
+        hid_raw_send(&buffer, 18);
+        */
     }
 }
 
 /**
-* @brief  中断函数
-**/
-void EXTI9_5_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast"))); //中断函数前加这上这句,告诉编译器这个是中断函数
+ * @brief  中断函数
+ **/
+void EXTI9_5_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast"))); // 中断函数前加这上这句,告诉编译器这个是中断函数
 void EXTI9_5_IRQHandler(void)
 {
-    if(EXTI_GetITStatus(EXTI_Line6)!=RESET)//产生中断
+    if (EXTI_GetITStatus(EXTI_Line6) != RESET) // 产生中断
     {
-        g_keyboard_knob_flag=6;
-        if(GPIO_ReadInputDataBit(EC11_B_GPIO_Port,EC11_B_Pin))
+        g_keyboard_knob_flag = 6;
+        if (GPIO_ReadInputDataBit(EC11_B_GPIO_Port, EC11_B_Pin))
         {
             key_update(&KEY_KNOB_CLOCKWISE, false);
             key_update(&KEY_KNOB_ANTICLOCKWISE, true);
@@ -838,16 +847,16 @@ void EXTI9_5_IRQHandler(void)
             key_update(&KEY_KNOB_CLOCKWISE, true);
             key_update(&KEY_KNOB_ANTICLOCKWISE, false);
         }
-        EXTI_ClearITPendingBit(EXTI_Line6);//清除中断标志
+        EXTI_ClearITPendingBit(EXTI_Line6); // 清除中断标志
     }
 }
 
 void SysTick_Handler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 void SysTick_Handler(void)
 {
-    if(SysTick->SR == 1)
+    if (SysTick->SR == 1)
     {
-        SysTick->SR = 0;//clear State flag
+        SysTick->SR = 0; // clear State flag
     }
 }
 
@@ -857,6 +866,6 @@ void DMA1_Channel1_IRQHandler(void)
     if (DMA_GetITStatus(DMA1_IT_TC1) != RESET) // 检查TIM1中断是否发生。
     {
         DMA_ClearITPendingBit(DMA1_IT_TC1); // 清除TIM1的中断挂起位。
-        //temp_count++;
+        // temp_count++;
     }
 }
