@@ -93,7 +93,7 @@ fezui_animated_cursor_t animated_cursor =
 //    };
 
 
-const char *g_hid_usage_names[178] =
+const char *g_hid_usage_names[180] =
 {
     "Left Control",
     "Left Shift",
@@ -271,6 +271,8 @@ const char *g_hid_usage_names[178] =
     "Mouse LButton",
     "Mouse RButton",
     "Mouse MButton",
+    "Mouse Forward",
+    "Mouse Back",
     "Mouse Wheel Up",
     "Mouse Wheel Down",
 };

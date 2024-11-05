@@ -22,7 +22,7 @@ extern uint32_t g_fezui_run_time;
 
 extern fezui_notification_t fezui_notification;
 
-extern const char *g_hid_usage_names[178];
+extern const char *g_hid_usage_names[180];
 
 extern fezui_frame_t g_mainframe;
 

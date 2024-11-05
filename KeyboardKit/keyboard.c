@@ -54,6 +54,12 @@ void keyboard_key_add_buffer(Key *k)
             case MOUSE_MBUTTON:
                 g_mouse.buttons |= 0x04;
                 break;
+            case MOUSE_FORWARD:
+                g_mouse.buttons |= 0x08;
+                break;
+            case MOUSE_BACK:
+                g_mouse.buttons |= 0x10;
+                break;
             case MOUSE_WHEEL_UP:
                 g_mouse.wheel = 1;
                 break;

@@ -808,7 +808,7 @@ void TIM7_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 void TIM7_IRQHandler(void)
 {
     static uint8_t count = 0;
-    static uint8_t buffer[64];
+    //static uint8_t buffer[64];
     static bool flag = true;
     if (TIM_GetITStatus(TIM7, TIM_IT_Update) != RESET)
     {
