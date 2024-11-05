@@ -29,6 +29,8 @@
 #include "rgb.h"
 #include "fram.h"
 #include "record.h"
+#include "mouse.h"
+#include "keyboard.h"
 
 /* Global typedef */
 
@@ -792,6 +794,8 @@ void TIM6_IRQHandler(void)
             record_kps_history_timer();
             g_usb_report_count1 = g_usb_report_count;
             g_usb_report_count = 0;
+            g_usb_mouse_report_count1 = g_usb_mouse_report_count;
+            g_usb_mouse_report_count = 0;
             g_fezui_run_time++;
         }
         fezui_timer_handler();
@@ -805,6 +809,7 @@ void TIM7_IRQHandler(void)
 {
     static uint8_t count = 0;
     static uint8_t buffer[64];
+    static bool flag = true;
     if (TIM_GetITStatus(TIM7, TIM_IT_Update) != RESET)
     {
         count++;
@@ -817,6 +822,12 @@ void TIM7_IRQHandler(void)
         TIM_ClearITPendingBit(TIM7, TIM_IT_Update);
         // if(!HAL_GPIO_ReadPin(MENU_GPIO_Port, MENU_Pin))
         keyboard_timer();
+        if (flag)
+        {
+            flag = false;
+            keyboard_6KRObuffer_send(&g_keyboard_6kro_buffer);
+            mouse_buffer_send(&g_mouse);
+        }
         /*
         memcpy(buffer + 2 + 4 * 0, &g_keyboard_advanced_keys[0].raw, sizeof(float));
         memcpy(buffer + 2 + 4 * 1, &g_keyboard_advanced_keys[1].raw, sizeof(float));
@@ -836,7 +847,7 @@ void EXTI9_5_IRQHandler(void)
 {
     if (EXTI_GetITStatus(EXTI_Line6) != RESET) // 产生中断
     {
-        g_keyboard_knob_flag = 6;
+        g_keyboard_knob_flag = 8;
         if (GPIO_ReadInputDataBit(EC11_B_GPIO_Port, EC11_B_Pin))
         {
             key_update(&KEY_KNOB_CLOCKWISE, false);

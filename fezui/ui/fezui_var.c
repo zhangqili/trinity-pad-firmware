@@ -14,9 +14,6 @@ uint8_t g_kps_history_max;
 uint32_t g_fezui_fps;
 uint32_t g_fezui_debug;
 uint32_t g_fezui_run_time;
-uint32_t g_usb_report_count;
-uint32_t g_usb_report_count1;
-uint32_t g_usb_interval;
 
 fezui_notification_t fezui_notification={.text.font=u8g2_font_5x8_mn};
 /*
@@ -96,7 +93,7 @@ fezui_animated_cursor_t animated_cursor =
 //    };
 
 
-const char *g_hid_usage_names[138] =
+const char *g_hid_usage_names[178] =
 {
     "Left Control",
     "Left Shift",
@@ -235,7 +232,47 @@ const char *g_hid_usage_names[138] =
     "Find",
     "Mute",
     "Volume Up",
-    "Volume Down"
+    "Volume Down",
+    "Locking Caps Lock",
+    "Locking Num Lock",
+    "Locking Scroll Lock",
+    "Comma",
+    "Equal Sign",
+    "Int' 1",
+    "Int' 2",
+    "Int' 3",
+    "Int' 4",
+    "Int' 5",
+    "Int' 6",
+    "Int' 7",
+    "Int' 8",
+    "Int' 9",
+    "Lang 1",
+    "Lang 2",
+    "Lang 3",
+    "Lang 4",
+    "Lang 5",
+    "Lang 6",
+    "Lang 7",
+    "Lang 8",
+    "Lang 9",
+    "Alternate Erase",
+    "SysReq/Attention",
+    "Cancel",
+    "Clear",
+    "Prior",
+    "Return",
+    "Separator",
+    "Out",
+    "Oper",
+    "Clear/Again",
+    "CrSel/Props",
+    "ExSel",
+    "Mouse LButton",
+    "Mouse RButton",
+    "Mouse MButton",
+    "Mouse Wheel Up",
+    "Mouse Wheel Down",
 };
 
 

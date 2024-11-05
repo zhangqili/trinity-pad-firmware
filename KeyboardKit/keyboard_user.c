@@ -22,8 +22,8 @@ const uint16_t g_default_keymap[LAYER_NUM][ADVANCED_KEY_NUM + KEY_NUM] = {
         KEYBINDING(KEY_NO_EVENT, KEY_NO_MODIFIER),
         KEYBINDING(KEY_NO_EVENT, KEY_NO_MODIFIER),
         KEYBINDING(KEY_ESC, KEY_NO_MODIFIER),
-        KEYBINDING(KEY_UP_ARROW, KEY_NO_MODIFIER),
-        KEYBINDING(KEY_DOWN_ARROW, KEY_NO_MODIFIER),
+        KEYBINDING(MOUSE_WHEEL_UP, KEY_NO_MODIFIER),
+        KEYBINDING(MOUSE_WHEEL_DOWN, KEY_NO_MODIFIER),
     },
 };
 const uint8_t g_rgb_mapping[ADVANCED_KEY_NUM] = {0, 1, 2, 3};
@@ -1070,7 +1070,6 @@ float advanced_key_normalize(AdvancedKey* key, float value)
 
 void keyboard_hid_send(uint8_t *report, uint16_t len)
 {
-    g_usb_interval++;
     hid_keyboard_send(report);
 }
 
@@ -1147,4 +1146,10 @@ void keyboard_post_process()
 void keyboard_delay(uint32_t ms)
 {
     Delay_Ms(ms);
+}
+
+
+void mouse_hid_send(uint8_t *report, uint16_t len)
+{
+    hid_mouse_send(report);
 }

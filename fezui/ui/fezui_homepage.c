@@ -10,6 +10,7 @@
 #include "fezui.h"
 #include "fezui_var.h"
 #include "rgb.h"
+#include "usbd_user.h"
 
 #define MARGIN_LEFT           65
 #define PADDING_UP            0
@@ -161,11 +162,9 @@ static void homepage_draw(void *page)
         u8g2_SetDrawColor(&(fezui.u8g2), 2);
         u8g2_DrawStr(&(fezui.u8g2), 68 + MARGIN_UP - 2, MARGIN_UP - 2, "A");
     }
-    //if (g_usb_interval > 80)
-    //{
-    //    u8g2_DrawXBMP(&fezui.u8g2, 65 + MARGIN_UP * 2 - 2, 1, MARGIN_UP - 2, MARGIN_UP - 2, disconnected_bitmap);
-    //}
-    //fezui_printf(&fezui,66,32,"%ld",g_usb_interval);
+
+    //fezui_printf(&fezui,66,32,"%ld",g_usb_report_count1);
+    //fezui_printf(&fezui,66,48,"%ld",g_usb_mouse_report_count1);
 
     u8g2_SetDrawColor(&(fezui.u8g2), color);
 }

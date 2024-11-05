@@ -68,7 +68,6 @@ static void debugpage_draw(void *page)
     
 
     //fezui_printf(&fezui,30,20+8-2,"%ld",g_usb_report_count1);
-    //fezui_printf(&fezui,30,20+8*3-2,"%ld",g_usb_interval);
 
     fezui_draw_cursor(&fezui, &g_fezui_cursor);
 }

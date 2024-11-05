@@ -2,6 +2,8 @@
 #include "fezui.h"
 #include "fezui_var.h"
 #include "command.h"
+#include "keyboard.h"
+#include "mouse.h"
 
 #define ENABLE_MOUSE
 
@@ -10,23 +12,6 @@
 #define USBD_MAX_POWER     300
 #define USBD_LANGID_STRING 1033
 
-#define HID_KEYBOARD_INT_EP          0x81
-#define HID_KEYBOARD_INT_EP_SIZE     8
-#define HID_KEYBOARD_INT_EP_INTERVAL 1
-
-#define HID_MOUSE_INT_EP          0x82
-#define HID_MOUSE_INT_EP_SIZE     4
-#define HID_MOUSE_INT_EP_INTERVAL 1
-
-/*!< hidraw in endpoint */
-#define HIDRAW_IN_EP       0x83
-#define HIDRAW_IN_EP_SIZE  64
-#define HIDRAW_IN_INTERVAL 10
-
-/*!< hidraw out endpoint */
-#define HIDRAW_OUT_EP          0x01
-#define HIDRAW_OUT_EP_SIZE     64
-#define HIDRAW_OUT_EP_INTERVAL 10
 
 #define USB_HID_CONFIG_DESC_SIZ       (9+25+25+32)
 #define HID_KEYBOARD_REPORT_DESC_SIZE 63
@@ -243,7 +228,7 @@ static const uint8_t hid_keyboard_report_desc[HID_KEYBOARD_REPORT_DESC_SIZE] = {
     0x25, 0xFF, // LOGICAL_MAXIMUM (255)
     0x05, 0x07, // USAGE_PAGE (Keyboard)
     0x19, 0x00, // USAGE_MINIMUM (Reserved (no event indicated))
-    0x29, 0x65, // USAGE_MAXIMUM (Keyboard Application)
+    0x29, 0xA4, // USAGE_MAXIMUM (Keyboard Application)
     0x81, 0x00, // INPUT (Data,Ary,Abs)
     0xc0        // END_COLLECTION
 };
@@ -333,7 +318,17 @@ enum {
 
 /*!< hid state ! Data can be sent only when state is idle  */
 static volatile uint8_t custom_state;
-static volatile uint8_t hid_state = HID_STATE_IDLE;
+static volatile uint8_t hid_keyboard_state = HID_STATE_IDLE;
+static volatile uint8_t hid_mouse_state = HID_STATE_IDLE;
+
+uint32_t g_usb_keyboard_interval;
+uint32_t g_usb_mouse_interval;
+
+
+uint32_t g_usb_report_count;
+uint32_t g_usb_report_count1;
+uint32_t g_usb_mouse_report_count;
+uint32_t g_usb_mouse_report_count1;
 
 USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t read_buffer[HIDRAW_OUT_EP_SIZE];
 USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t send_buffer[HIDRAW_IN_EP_SIZE];
@@ -342,7 +337,8 @@ void usbd_event_handler(uint8_t event)
     switch (event) {
         case USBD_EVENT_RESET:
             custom_state=HID_STATE_IDLE;
-            hid_state=HID_STATE_IDLE;
+            hid_keyboard_state=HID_STATE_IDLE;
+            hid_mouse_state=HID_STATE_IDLE;
             //fezui_notification_begin(&fezui,&fezui_notification,"USBD_EVENT_RESET",500,0.1);
             break;
         case USBD_EVENT_CONNECTED:
@@ -375,12 +371,17 @@ void usbd_event_handler(uint8_t event)
 
 void usbd_hid_kayboard_int_callback(uint8_t ep, uint32_t nbytes)
 {
-    hid_state = HID_STATE_IDLE;
+    hid_keyboard_state = HID_STATE_IDLE;
     g_usb_report_count++;
+    //usbd_ep_start_write(HID_KEYBOARD_INT_EP, g_keyboard_6kro_buffer.buffer, 8);
+    //usbd_ep_start_write(HID_MOUSE_INT_EP, (uint8_t*)&g_mouse, 4);
 }
 void usbd_hid_mouse_int_callback(uint8_t ep, uint32_t nbytes)
 {
-    hid_state = HID_STATE_IDLE;
+    hid_mouse_state = HID_STATE_IDLE;
+    g_usb_mouse_report_count++;
+    //usbd_ep_start_write(HID_MOUSE_INT_EP, (uint8_t*)&g_mouse, 4);
+    //usbd_ep_start_write(HID_KEYBOARD_INT_EP, g_keyboard_6kro_buffer.buffer, 8);
 }
 
 static void usbd_hid_custom_in_callback(uint8_t ep, uint32_t nbytes)
@@ -443,36 +444,37 @@ USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t keyboard_write_buffer[64];
 
 void hid_keyboard_send(uint8_t*buffer)
 {
-    if (hid_state == HID_STATE_BUSY) {
-        if(g_usb_interval>80)
-        {
-            //hid_state = HID_STATE_IDLE;
-        }
+    if (hid_keyboard_state == HID_STATE_BUSY) {
         return;
     }
     else
     {
-        //g_usb_interval = 0;
+        //g_usb_keyboard_interval = 0;
     }
     memcpy(keyboard_write_buffer, buffer, 8);
     int ret = usbd_ep_start_write(HID_KEYBOARD_INT_EP, keyboard_write_buffer, 8);
     if (ret < 0) {
         return;
     }
-    hid_state = HID_STATE_BUSY;
+    hid_keyboard_state = HID_STATE_BUSY;
 }
 
+USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t mouse_write_buffer[64];
 void hid_mouse_send(uint8_t*buffer)
 {
-    if (hid_state == HID_STATE_BUSY) {
+    //static uint8_t hid_mouse_buzy_count = 0;
+    if (hid_mouse_state == HID_STATE_BUSY) {
         return;
     }
-    memcpy(keyboard_write_buffer, buffer, 4);
-    int ret = usbd_ep_start_write(HID_MOUSE_INT_EP, keyboard_write_buffer, 4);
+    else
+    {
+    }
+    memcpy(mouse_write_buffer, buffer, 4);
+    int ret = usbd_ep_start_write(HID_MOUSE_INT_EP, mouse_write_buffer, 4);
     if (ret < 0) {
         return;
     }
-    hid_state = HID_STATE_BUSY;
+    hid_mouse_state = HID_STATE_BUSY;
 }
 
 USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t hid_raw_write_buffer[64];
@@ -490,19 +492,6 @@ void hid_raw_send(uint8_t*buffer,int size)
     custom_state = HID_STATE_BUSY;
 }
 
-void hid_keyboard_test(void)
-{
-    const uint8_t sendbuffer[8] = { 0x00, 0x00, HID_KBD_USAGE_A, 0x00, 0x00, 0x00, 0x00, 0x00 };
-
-    memcpy(keyboard_write_buffer, sendbuffer, 8);
-    int ret = usbd_ep_start_write(HID_KEYBOARD_INT_EP, keyboard_write_buffer, 8);
-    if (ret < 0) {
-        return;
-    }
-    hid_state = HID_STATE_BUSY;
-    while (hid_state == HID_STATE_BUSY) {
-    }
-}
 struct hid_mouse {
     uint8_t buttons;
     int8_t x;
@@ -530,8 +519,8 @@ void hid_mouse_test(void)
         if (ret < 0) {
             return;
         }
-        hid_state = HID_STATE_BUSY;
-        while (hid_state == HID_STATE_BUSY) {
+        hid_mouse_state = HID_STATE_BUSY;
+        while (hid_mouse_state == HID_STATE_BUSY) {
         }
 
         counter++;

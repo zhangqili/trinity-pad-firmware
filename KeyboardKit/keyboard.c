@@ -12,14 +12,13 @@
 #include "lfs.h"
 #include "action.h"
 #include "filter.h"
-#include "fezui.h"
-#include "fezui_var.h"
+#include "mouse.h"
 
-__WEAK const uint16_t g_default_keymap[LAYER_NUM][ADVANCED_KEY_NUM+KEY_NUM];
+__WEAK const uint16_t g_default_keymap[LAYER_NUM][ADVANCED_KEY_NUM + KEY_NUM];
 __WEAK AdvancedKey g_keyboard_advanced_keys[ADVANCED_KEY_NUM];
 __WEAK Key g_keyboard_keys[KEY_NUM];
 
-Action *g_keyboard_actions[LAYER_NUM][ADVANCED_KEY_NUM+KEY_NUM];
+Action *g_keyboard_actions[LAYER_NUM][ADVANCED_KEY_NUM + KEY_NUM];
 
 uint8_t g_keyboard_current_layer;
 uint16_t g_keymap[LAYER_NUM][ADVANCED_KEY_NUM + KEY_NUM];
@@ -30,20 +29,45 @@ volatile bool g_keybaord_send_report_enable = true;
 volatile bool g_keybaord_alpha_flag;
 volatile bool g_keybaord_shift_flag;
 
-void keyboard_key_add_buffer(Key*k)
+void keyboard_key_add_buffer(Key *k)
 {
     if (g_keyboard_actions[g_keyboard_current_layer][k->id])
     {
-        action_execute(k,g_keyboard_actions[g_keyboard_current_layer][k->id]);
+        action_execute(k, g_keyboard_actions[g_keyboard_current_layer][k->id]);
     }
     else if (k->state)
     {
-        KEYBOARD_REPORT_BUFFER_ADD(g_keymap[g_keyboard_current_layer][k->id]);
-        g_fezui_debug = k->id;
+        if ((g_keymap[g_keyboard_current_layer][k->id] & 0xFF) <= KEY_EXSEL)
+        {
+            KEYBOARD_REPORT_BUFFER_ADD(g_keymap[g_keyboard_current_layer][k->id]);
+        }
+        else
+        {
+            switch (g_keymap[g_keyboard_current_layer][k->id])
+            {
+            case MOUSE_LBUTTON:
+                g_mouse.buttons |= 0x01;
+                break;
+            case MOUSE_RBUTTON:
+                g_mouse.buttons |= 0x02;
+                break;
+            case MOUSE_MBUTTON:
+                g_mouse.buttons |= 0x04;
+                break;
+            case MOUSE_WHEEL_UP:
+                g_mouse.wheel = 1;
+                break;
+            case MOUSE_WHEEL_DOWN:
+                g_mouse.wheel = -1;
+                break;
+            default:
+                break;
+            }
+        }
     }
 }
 
-int keyboard_6KRObuffer_add(Keyboard_6KROBuffer* buf, uint16_t key)
+int keyboard_6KRObuffer_add(Keyboard_6KROBuffer *buf, uint16_t key)
 {
     buf->buffer[0] |= KEY_MODIFIER(key);
     if (KEY_KEYCODE(key) != KEY_NO_EVENT && buf->keynum < 6)
@@ -58,12 +82,12 @@ int keyboard_6KRObuffer_add(Keyboard_6KROBuffer* buf, uint16_t key)
     }
 }
 
-void keyboard_6KRObuffer_send(Keyboard_6KROBuffer* buf)
+void keyboard_6KRObuffer_send(Keyboard_6KROBuffer *buf)
 {
     keyboard_hid_send(buf->buffer, sizeof(buf->buffer));
 }
 
-void keyboard_6KRObuffer_clear(Keyboard_6KROBuffer* buf)
+void keyboard_6KRObuffer_clear(Keyboard_6KROBuffer *buf)
 {
     memset(buf, 0, sizeof(Keyboard_6KROBuffer));
 }
@@ -165,7 +189,9 @@ void keyboard_save()
 
 void keyboard_send_report()
 {
+    static uint32_t mouse_value;
     keyboard_6KRObuffer_clear(&g_keyboard_6kro_buffer);
+    mouse_buffer_clear(&g_mouse);
     g_keyboard_current_layer = 0;
     if (g_keybaord_shift_flag)
     {
@@ -187,7 +213,12 @@ void keyboard_send_report()
     if (g_keybaord_send_report_enable)
     {
         keyboard_6KRObuffer_send(&g_keyboard_6kro_buffer);
+        if ((*(uint32_t*)&g_mouse)!=mouse_value)
+        {
+            mouse_buffer_send(&g_mouse);
+        }
     }
+    mouse_value = *(uint32_t*)&g_mouse;
 }
 
 __WEAK void keyboard_timer()
@@ -201,13 +232,10 @@ __WEAK void keyboard_timer()
 
 __WEAK void keyboard_hid_send(uint8_t *report, uint16_t len)
 {
-
 }
 __WEAK void keyboard_delay(uint32_t ms)
 {
-    
 }
 __WEAK void keyboard_post_process()
 {
-    
 }
