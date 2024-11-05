@@ -138,7 +138,7 @@ void fezui_init()
     key_attach(&KEY_FN_K5, KEY_EVENT_DOWN, key_enter_cb);
     key_attach(&KEY_FN_K6, KEY_EVENT_DOWN, key_esc_cb);
     // Keybaord_SendReport_Enable=false;
-    // fezui_frame_navigate(&g_mainframe, &debugpage);
+    //fezui_frame_navigate(&g_mainframe, &calibrationpage);
     // fezui_frame_navigate(&g_mainframe, &oscilloscopepage);
 }
 
@@ -152,6 +152,10 @@ void fezui_timer_handler()
     // fezui_save_counts();
 
     uint8_t key_pressed_num = 0;
+    for (uint8_t i = 0; i < ADVANCED_KEY_NUM; i++)
+    {
+        key_pressed_num += g_keyboard_advanced_keys[i].key.state;
+    }
     for (uint8_t i = 0; i < KEY_NUM; i++)
     {
         key_pressed_num += g_keyboard_keys[i].state;

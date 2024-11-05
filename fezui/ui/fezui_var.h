@@ -19,12 +19,10 @@ extern char g_fpsstr[8];
 extern uint32_t g_fezui_debug;
 
 extern uint32_t g_fezui_run_time;
-extern uint32_t g_usb_report_count;
-extern uint32_t g_usb_report_count1;
 
 extern fezui_notification_t fezui_notification;
 
-extern const char *g_hid_usage_names[138];
+extern const char *g_hid_usage_names[180];
 
 extern fezui_frame_t g_mainframe;
 

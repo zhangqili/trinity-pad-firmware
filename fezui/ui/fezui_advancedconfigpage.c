@@ -37,7 +37,7 @@ static fezui_animated_listbox_t keyconfig_digital_mode_menu;
 static const char *keyconfig_digital_mode_menu_items[] = {"Mode"};
 
 static fezui_animated_listbox_t keyconfig_analog_normal_mode_menu;
-static const char *keyconfig_analog_normal_mode_menu_items[] = {"Mode", "Calibration Mode", "Upper bound", "Lower bound", "Trigger distance", "Schmitt parameter"};
+static const char *keyconfig_analog_normal_mode_menu_items[] = {"Mode", "Calibration Mode", "Upper bound", "Lower bound", "Activation distance", "Schmitt parameter"};
 
 static fezui_animated_listbox_t keyconfig_analog_rapid_mode_menu;
 static const char *keyconfig_analog_rapid_mode_menu_items[] = {"Mode", "Calibration Mode", "Upper bound", "Lower bound", "Trigger distance", "Release distance", "Upper deadzone", "Lower deadzone"};
@@ -131,7 +131,7 @@ static void keyconfig_analog_normal_mode_menu_cb(void *m)
         advancedconfigpage_interval = 0.1;
         break;
     case 4:
-        target_property = &(current_config_advanced_key->trigger_distance);
+        target_property = &(current_config_advanced_key->activation_value);
         advancedconfigpage_interval = 0.001;
         break;
     case 5:
@@ -163,7 +163,7 @@ static void keyconfig_analog_normal_mode_menu_draw_cb(fezui_t *fezui_ptr, u8g2_u
         fezui_printf_right_aligned(fezui_ptr, x + w, y + h, "%6.1f", current_config_advanced_key->lower_bound);
         break;
     case 4:
-        fezui_printf_right_aligned(fezui_ptr, x + w, y + h, "%6.1f%%", (current_config_advanced_key->trigger_distance) * 100);
+        fezui_printf_right_aligned(fezui_ptr, x + w, y + h, "%6.1f%%", (current_config_advanced_key->activation_value) * 100);
         break;
     case 5:
         fezui_printf_right_aligned(fezui_ptr, x + w, y + h, "%6.1f%%", (current_config_advanced_key->schmitt_parameter) * 100);
@@ -367,9 +367,9 @@ static void advancedconfigpage_draw(void *page)
     mainbar.value = current_config_advanced_key->raw;
     fezui_draw_progressbar(&fezui, MAINBAR_X, MAINBAR_Y, MAINBAR_W, MAINBAR_H, &mainbar);
 
-    subbar.max = current_config_advanced_key->upper_bound;
-    subbar.min = current_config_advanced_key->lower_bound;
-    subbar.value = current_config_advanced_key->raw;
+    subbar.max = 0;
+    subbar.min = 1;
+    subbar.value = current_config_advanced_key->value;
     fezui_draw_progressbar(&fezui, SUBBAR_X, SUBBAR_Y, SUBBAR_W, SUBBAR_H, &subbar);
 
     u8g2_DrawHLine(&(fezui.u8g2), MAINBAR_X, MAINBAR_Y + MAINBAR_H - ROUND(MAINBAR_H * (current_config_advanced_key->upper_bound) / (4096.0F)), MAINBAR_W);

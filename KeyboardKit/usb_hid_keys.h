@@ -184,7 +184,14 @@ enum USB_HID_KEYCODES {
   KEY_CRSEL_PROPS              = 0xa3,   // Keyboard CrSel/Props
   KEY_EXSEL                    = 0xa4,   // Keyboard ExSel
   //Reserved b5-DF
-  FN = 0xA5,
+  MOUSE_LBUTTON = 0xa5,
+  MOUSE_RBUTTON = 0xa6,
+  MOUSE_MBUTTON = 0xa7,
+  MOUSE_FORWARD = 0xa8,
+  MOUSE_BACK = 0xa9,
+  MOUSE_WHEEL_UP = 0xaa,
+  MOUSE_WHEEL_DOWN = 0xab,
+  FN = 0xB0,
 } ;
 
 #endif /* USB_HID_KEYS_H_ */

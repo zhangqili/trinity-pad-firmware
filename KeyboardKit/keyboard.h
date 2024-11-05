@@ -9,6 +9,7 @@
 #define KEYBOARD_H_
 
 #include "key.h"
+#include "advanced_key.h"
 #include "keyboard_conf.h"
 #include "keyboard_def.h"
 #include "usb_hid_keys.h"
@@ -16,6 +17,8 @@
 #define KEYBINDING(keycode, modifier) (((modifier) << 8) | (keycode))
 #define KEY_KEYCODE(binding) ((binding) & 0xFF)
 #define KEY_MODIFIER(binding) (((binding) >> 8) & 0xFF)
+
+#define KEYBOARD_REPORT_BUFFER_ADD(binding) keyboard_6KRObuffer_add(&g_keyboard_6kro_buffer, (binding))
 
 typedef struct
 {
@@ -28,6 +31,7 @@ extern AdvancedKey g_keyboard_advanced_keys[ADVANCED_KEY_NUM];
 extern uint8_t g_keyboard_current_layer;
 extern const uint16_t g_default_keymap[LAYER_NUM][ADVANCED_KEY_NUM + KEY_NUM];
 extern uint16_t g_keymap[LAYER_NUM][ADVANCED_KEY_NUM + KEY_NUM];
+extern Keyboard_6KROBuffer g_keyboard_6kro_buffer;
 
 extern uint8_t g_keyboard_report_buffer[HID_BUFFER_LENGTH];
 

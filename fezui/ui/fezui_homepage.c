@@ -10,6 +10,7 @@
 #include "fezui.h"
 #include "fezui_var.h"
 #include "rgb.h"
+#include "usbd_user.h"
 
 #define MARGIN_LEFT           65
 #define PADDING_UP            0
@@ -70,12 +71,12 @@ static fezui_rolling_number_t max_kps_num=
 
 static void homepage_tick(void *page)
 {
-    fezui_rolling_number_set(&key1_num,g_key_counts[0]-g_key_init_counts[0]);
-    fezui_rolling_number_set(&key2_num,g_key_counts[1]-g_key_init_counts[1]);
-    fezui_rolling_number_set(&key3_num,g_key_counts[2]-g_key_init_counts[2]);
-    fezui_rolling_number_set(&key4_num,g_key_counts[3]-g_key_init_counts[3]);
-    fezui_rolling_number_set(&kps_num,g_kps);
-    fezui_rolling_number_set(&max_kps_num,g_kps_history_max);
+    fezui_rolling_number_set(&key1_num, g_key_counts[0] - g_key_init_counts[0]);
+    fezui_rolling_number_set(&key2_num, g_key_counts[1] - g_key_init_counts[1]);
+    fezui_rolling_number_set(&key3_num, g_key_counts[2] - g_key_init_counts[2]);
+    fezui_rolling_number_set(&key4_num, g_key_counts[3] - g_key_init_counts[3]);
+    fezui_rolling_number_set(&kps_num, g_kps);
+    fezui_rolling_number_set(&max_kps_num, g_kps_history_max);
 
     fezui_rolling_number_update(&fezui, &key1_num);
     fezui_rolling_number_update(&fezui, &key2_num);
@@ -94,7 +95,7 @@ static void homepage_tick(void *page)
 }
 
 static void draw_chart(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g2_uint_t w,
-                      u8g2_uint_t h, LoopArray *arr, uint8_t max)
+                       u8g2_uint_t h, LoopArray *arr, uint8_t max)
 {
     float y1;
     float y2;
@@ -114,17 +115,16 @@ static void homepage_draw(void *page)
 {
     uint8_t color = u8g2_GetDrawColor(&(fezui.u8g2));
 
-    fezui_draw_flowingwater(&(fezui),MARGIN_LEFT,TILE1+MARGIN_UP,HALF_WIDTH,TILE_WIDTH,(uint8_t*)g_bit_stream_datas[0]);
-    fezui_draw_flowingwater(&(fezui),MARGIN_LEFT,TILE2+MARGIN_UP,HALF_WIDTH,TILE_WIDTH,(uint8_t*)g_bit_stream_datas[1]);
-    fezui_draw_flowingwater(&(fezui),MARGIN_LEFT,TILE3+MARGIN_UP,HALF_WIDTH,TILE_WIDTH,(uint8_t*)g_bit_stream_datas[2]);
-    fezui_draw_flowingwater(&(fezui),MARGIN_LEFT,TILE4+MARGIN_UP,HALF_WIDTH,TILE_WIDTH,(uint8_t*)g_bit_stream_datas[3]);
+    fezui_draw_flowingwater(&(fezui), MARGIN_LEFT, TILE1 + MARGIN_UP, HALF_WIDTH, TILE_WIDTH, (uint8_t *)g_bit_stream_datas[0]);
+    fezui_draw_flowingwater(&(fezui), MARGIN_LEFT, TILE2 + MARGIN_UP, HALF_WIDTH, TILE_WIDTH, (uint8_t *)g_bit_stream_datas[1]);
+    fezui_draw_flowingwater(&(fezui), MARGIN_LEFT, TILE3 + MARGIN_UP, HALF_WIDTH, TILE_WIDTH, (uint8_t *)g_bit_stream_datas[2]);
+    fezui_draw_flowingwater(&(fezui), MARGIN_LEFT, TILE4 + MARGIN_UP, HALF_WIDTH, TILE_WIDTH, (uint8_t *)g_bit_stream_datas[3]);
 
     draw_chart(&(fezui), 0, MARGIN_UP, CHART_WIDTH, CHART_HEIGHT, &g_kps_history, g_kps_history_max);
     u8g2_SetFont(&(fezui.u8g2), u8g2_font_micro_tr);
-    u8g2_DrawStr(&(fezui.u8g2),0,MARGIN_UP-1,"KPS:");
-    u8g2_DrawStr(&(fezui.u8g2),32,MARGIN_UP-1,"MAX:");
-    u8g2_DrawStr(&(fezui.u8g2),95,MARGIN_UP-1,"FPS:");
-
+    u8g2_DrawStr(&(fezui.u8g2), 0, MARGIN_UP - 1, "KPS:");
+    u8g2_DrawStr(&(fezui.u8g2), 32, MARGIN_UP - 1, "MAX:");
+    u8g2_DrawStr(&(fezui.u8g2), 95, MARGIN_UP - 1, "FPS:");
 
     u8g2_SetFont(&(fezui.u8g2), fez_font_6x10_m);
 
@@ -134,47 +134,48 @@ static void homepage_draw(void *page)
     fezui_draw_rolling_number(&fezui, 98, 63, &key4_num);
 
 #ifndef SHOW_FPS
-    u8g2_DrawStr(&(fezui.u8g2),95+15,MARGIN_UP-1,g_fpsstr);
+    u8g2_DrawStr(&(fezui.u8g2), 95 + 15, MARGIN_UP - 1, g_fpsstr);
 #endif
 
-    fezui_draw_rolling_number(&fezui, 15, MARGIN_UP-1, &kps_num);
-    fezui_draw_rolling_number(&fezui, 15+32, MARGIN_UP-1, &max_kps_num);
-
+    fezui_draw_rolling_number(&fezui, 15, MARGIN_UP - 1, &kps_num);
+    fezui_draw_rolling_number(&fezui, 15 + 32, MARGIN_UP - 1, &max_kps_num);
 
     u8g2_SetFont(&(fezui.u8g2), u8g2_font_6x13_tf);
 
-    u8g2_DrawHLine(&(fezui.u8g2),0,MARGIN_UP,128);
-    u8g2_DrawHLine(&(fezui.u8g2),0,CHART_HEIGHT+MARGIN_UP,128);
-    u8g2_DrawVLine(&(fezui.u8g2),64,MARGIN_UP,CHART_HEIGHT+MARGIN_DOWN);
-    u8g2_DrawVLine(&(fezui.u8g2),32,HEIGHT-MARGIN_DOWN,MARGIN_DOWN);
-    u8g2_DrawVLine(&(fezui.u8g2),96,HEIGHT-MARGIN_DOWN,MARGIN_DOWN);
+    u8g2_DrawHLine(&(fezui.u8g2), 0, MARGIN_UP, 128);
+    u8g2_DrawHLine(&(fezui.u8g2), 0, CHART_HEIGHT + MARGIN_UP, 128);
+    u8g2_DrawVLine(&(fezui.u8g2), 64, MARGIN_UP, CHART_HEIGHT + MARGIN_DOWN);
+    u8g2_DrawVLine(&(fezui.u8g2), 32, HEIGHT - MARGIN_DOWN, MARGIN_DOWN);
+    u8g2_DrawVLine(&(fezui.u8g2), 96, HEIGHT - MARGIN_DOWN, MARGIN_DOWN);
 
     u8g2_SetFont(&(fezui.u8g2), u8g2_font_micro_tr);
-    //fezui_printf(&fezui,64,MARGIN_UP-2,"%ld",RGB_Tick);
-    if(g_keybaord_shift_flag)
-    {
-        u8g2_DrawBox(&(fezui.u8g2), 65 , 1 ,MARGIN_UP-2, MARGIN_UP-2);
-        u8g2_SetDrawColor(&(fezui.u8g2), 2);
-        u8g2_DrawStr(&(fezui.u8g2), 68 ,MARGIN_UP-2,"S");
 
-    }
-    if(g_keybaord_alpha_flag)
+    if (g_keybaord_shift_flag)
     {
-        u8g2_DrawBox(&(fezui.u8g2), 65 + MARGIN_UP - 2, 1 ,MARGIN_UP-2, MARGIN_UP-2);
+        u8g2_DrawBox(&(fezui.u8g2), 65, 1, MARGIN_UP - 2, MARGIN_UP - 2);
         u8g2_SetDrawColor(&(fezui.u8g2), 2);
-        u8g2_DrawStr(&(fezui.u8g2), 68 + MARGIN_UP - 2 , MARGIN_UP-2,"A");
+        u8g2_DrawStr(&(fezui.u8g2), 68, MARGIN_UP - 2, "S");
     }
+    if (g_keybaord_alpha_flag)
+    {
+        u8g2_DrawBox(&(fezui.u8g2), 65 + MARGIN_UP - 2, 1, MARGIN_UP - 2, MARGIN_UP - 2);
+        u8g2_SetDrawColor(&(fezui.u8g2), 2);
+        u8g2_DrawStr(&(fezui.u8g2), 68 + MARGIN_UP - 2, MARGIN_UP - 2, "A");
+    }
+
+    //fezui_printf(&fezui,66,32,"%ld",g_usb_report_count1);
+    //fezui_printf(&fezui,66,48,"%ld",g_usb_mouse_report_count1);
 
     u8g2_SetDrawColor(&(fezui.u8g2), color);
 }
 
 static void homepage_load(void *page)
 {
-    //fezui_scrolling_text_init(&fezui,&scrolling_text,15,0.1,u8g2_font_4x6_mr,"HELLO!");
-    //fezui_scrolling_text_begin_once(&scrolling_text);
-    g_keybaord_send_report_enable=true;
-    g_keybaord_shift_flag=false;
-    g_keybaord_alpha_flag=false;
+    // fezui_scrolling_text_init(&fezui,&scrolling_text,15,0.1,u8g2_font_4x6_mr,"HELLO!");
+    // fezui_scrolling_text_begin_once(&scrolling_text);
+    g_keybaord_send_report_enable = true;
+    g_keybaord_shift_flag = false;
+    g_keybaord_alpha_flag = false;
 }
 
-fezui_page_t homepage={homepage_tick,homepage_draw,homepage_load};
+fezui_page_t homepage = {homepage_tick, homepage_draw, homepage_load};

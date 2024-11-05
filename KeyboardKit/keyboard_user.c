@@ -22,8 +22,8 @@ const uint16_t g_default_keymap[LAYER_NUM][ADVANCED_KEY_NUM + KEY_NUM] = {
         KEYBINDING(KEY_NO_EVENT, KEY_NO_MODIFIER),
         KEYBINDING(KEY_NO_EVENT, KEY_NO_MODIFIER),
         KEYBINDING(KEY_ESC, KEY_NO_MODIFIER),
-        KEYBINDING(KEY_UP_ARROW, KEY_NO_MODIFIER),
-        KEYBINDING(KEY_DOWN_ARROW, KEY_NO_MODIFIER),
+        KEYBINDING(MOUSE_WHEEL_UP, KEY_NO_MODIFIER),
+        KEYBINDING(MOUSE_WHEEL_DOWN, KEY_NO_MODIFIER),
     },
 };
 const uint8_t g_rgb_mapping[ADVANCED_KEY_NUM] = {0, 1, 2, 3};
@@ -35,6 +35,19 @@ AdvancedKey g_keyboard_advanced_keys[ADVANCED_KEY_NUM] =
     {.key.id = 1},
     {.key.id = 2},
     {.key.id = 3},
+};
+
+Key g_keyboard_keys[KEY_NUM] =
+{
+    {.id = 4},
+    {.id = 5},
+    {.id = 6},
+    {.id = 7},
+    {.id = 8},
+    {.id = 9},
+    {.id = 10},
+    {.id = 11},
+    {.id = 12},
 };
 
 static const float table[] =
@@ -1133,4 +1146,10 @@ void keyboard_post_process()
 void keyboard_delay(uint32_t ms)
 {
     Delay_Ms(ms);
+}
+
+
+void mouse_hid_send(uint8_t *report, uint16_t len)
+{
+    hid_mouse_send(report);
 }
