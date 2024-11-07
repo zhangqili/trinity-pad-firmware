@@ -60,7 +60,7 @@ __attribute__ ((aligned(4))) uint8_t USBHS_EP0_Buf[ DEF_USBD_UEP0_SIZE ];       
 __attribute__ ((aligned(4))) uint8_t USBHS_EP1_TX_Buf[ DEF_USB_EP1_HS_SIZE ];    //ep1_in(64)
 __attribute__ ((aligned(4))) uint8_t USBHS_EP2_TX_Buf[ DEF_USB_EP2_HS_SIZE ];    //ep2_in(64)
 __attribute__ ((aligned(4))) uint8_t USBHS_EP3_TX_Buf[ DEF_USB_EP3_HS_SIZE ];    //ep3_in(64)
-__attribute__ ((aligned(4))) uint8_t USBHS_EP4_RX_Buf[ DEF_USB_EP4_HS_SIZE ];    //ep4_out(64)
+__attribute__ ((aligned(4))) uint8_t USBHS_EP1_RX_Buf[ DEF_USB_EP1_HS_SIZE ];    //ep1_out(64)
 
 /* USB IN Endpoint Busy Flag */
 volatile uint8_t  USBHS_Endp_Busy[ DEF_UEP_NUM ];
@@ -142,26 +142,26 @@ void USBHS_RCC_Init( void )
  */
 void USBHS_Device_Endp_Init( void )
 {
-    USBHSD->ENDP_CONFIG = USBHS_UEP0_T_EN | USBHS_UEP0_R_EN | USBHS_UEP1_T_EN | USBHS_UEP2_T_EN | USBHS_UEP3_T_EN | USBHS_UEP4_R_EN;
+    USBHSD->ENDP_CONFIG = USBHS_UEP0_T_EN | USBHS_UEP0_R_EN | USBHS_UEP1_T_EN | USBHS_UEP2_T_EN | USBHS_UEP3_T_EN | USBHS_UEP1_R_EN;
 
     USBHSD->UEP0_MAX_LEN = DEF_USBD_UEP0_SIZE;
     USBHSD->UEP1_MAX_LEN = DEF_USB_EP1_HS_SIZE;
     USBHSD->UEP2_MAX_LEN = DEF_USB_EP2_HS_SIZE;
     USBHSD->UEP3_MAX_LEN = DEF_USB_EP3_HS_SIZE;
-    USBHSD->UEP4_MAX_LEN = DEF_USB_EP4_HS_SIZE;
+    USBHSD->UEP1_MAX_LEN = DEF_USB_EP1_HS_SIZE;
 
     USBHSD->UEP0_DMA    = (uint32_t)(uint8_t *)USBHS_EP0_Buf;
     USBHSD->UEP1_TX_DMA = (uint32_t)(uint8_t *)USBHS_EP1_TX_Buf;
     USBHSD->UEP2_TX_DMA = (uint32_t)(uint8_t *)USBHS_EP2_TX_Buf;
     USBHSD->UEP3_TX_DMA = (uint32_t)(uint8_t *)USBHS_EP3_TX_Buf;
-    USBHSD->UEP4_RX_DMA = (uint32_t)(uint8_t *)USBHS_EP4_RX_Buf;
+    USBHSD->UEP1_RX_DMA = (uint32_t)(uint8_t *)USBHS_EP1_RX_Buf;
 
     USBHSD->UEP0_TX_CTRL = USBHS_UEP_T_RES_NAK;
     USBHSD->UEP0_RX_CTRL = USBHS_UEP_R_RES_ACK;
     USBHSD->UEP1_TX_CTRL = USBHS_UEP_T_RES_NAK;
     USBHSD->UEP2_TX_CTRL = USBHS_UEP_T_RES_NAK;
     USBHSD->UEP3_TX_CTRL = USBHS_UEP_T_RES_NAK;
-    USBHSD->UEP4_RX_CTRL = USBHS_UEP_R_RES_ACK;
+    USBHSD->UEP1_RX_CTRL = USBHS_UEP_R_RES_ACK;
 }
 
 /*********************************************************************
@@ -395,10 +395,6 @@ void USBHS_IRQHandler( void )
                         g_usb_raw_report_count++;
                         break;
 
-                    /* end-point 4 data in interrupt */
-                    case USBHS_UIS_TOKEN_IN | DEF_UEP4:
-                        break;
-
                     default :
                         break;
                 }
@@ -443,34 +439,34 @@ void USBHS_IRQHandler( void )
 
                     
                     /* end-point 1 data out interrupt */
-                    case USBHS_UIS_TOKEN_OUT | DEF_UEP4:
+                    case USBHS_UIS_TOKEN_OUT | DEF_UEP1:
                         fezui_notification_begin(&fezui,&fezui_notification,"message received",500,0.1);
                         if ( intst & USBHS_UIS_TOG_OK )
                         {
                             ///* Write In Buffer */
-                            USBHSD->UEP4_RX_CTRL ^= USBHS_UEP_R_TOG_DATA1;
+                            USBHSD->UEP1_RX_CTRL ^= USBHS_UEP_R_TOG_DATA1;
                             //RingBuffer_Comm.PackLen[RingBuffer_Comm.LoadPtr] = USBHSD->RX_LEN;
                             //RingBuffer_Comm.LoadPtr ++;
                             //if(RingBuffer_Comm.LoadPtr == DEF_Ring_Buffer_Max_Blks)
                             //{
                             //    RingBuffer_Comm.LoadPtr = 0;
                             //}
-                            USBHSD->UEP4_RX_DMA = (uint32_t)USBHS_EP4_RX_Buf;
+                            USBHSD->UEP1_RX_DMA = (uint32_t)USBHS_EP1_RX_Buf;
                             //RingBuffer_Comm.RemainPack ++;
                             //if(RingBuffer_Comm.RemainPack >= DEF_Ring_Buffer_Max_Blks-DEF_RING_BUFFER_REMINE)
                             //{
-                            USBHSD->UEP4_RX_CTRL = ((USBHSD->UEP4_RX_CTRL) & ~USBHS_UEP_R_RES_MASK) | USBHS_UEP_R_RES_NAK;
+                            USBHSD->UEP1_RX_CTRL = ((USBHSD->UEP1_RX_CTRL) & ~USBHS_UEP_R_RES_MASK) | USBHS_UEP_R_RES_NAK;
                             //USB_LOG_RAW("actual out len:%ld\r\n", nbytes);
                             //usbd_ep_start_read(HIDRAW_OUT_EP, read_buffer, 64);
                             //char out_buf[32];
                             //sprintf(out_buf,"%x",read_buffer[1]);
-                            command_prase(USBHS_EP4_RX_Buf+1,64-1);
+                            command_prase(USBHS_EP1_RX_Buf+1,64-1);
                             fezui_notification_begin(&fezui,&fezui_notification,"message received",500,0.1);
                             //read_buffer[0] = 0x02; /* IN: report id */
                             //usbd_ep_start_write(HIDRAW_IN_EP, read_buffer, nbytes);
                             //    RingBuffer_Comm.StopFlag = 1;
                             //}
-                            USBHSD->UEP4_RX_CTRL = (USBHSD->UEP4_RX_CTRL & ~USBHS_UEP_R_RES_MASK) | USBHS_UEP_R_RES_ACK;
+                            USBHSD->UEP1_RX_CTRL = (USBHSD->UEP1_RX_CTRL & ~USBHS_UEP_R_RES_MASK) | USBHS_UEP_R_RES_ACK;
                         }
                         break;
                     default:
@@ -745,9 +741,9 @@ void USBHS_IRQHandler( void )
                                 USBHSD->UEP3_TX_CTRL = USBHS_UEP_T_TOG_DATA0 | USBHS_UEP_T_RES_NAK;
                                 break;
 
-                            case ( DEF_UEP_OUT | DEF_UEP4 ):
+                            case ( DEF_UEP_OUT | DEF_UEP1 ):
                                 /* Set End-point 1 OUT ACK */
-                                USBHSD->UEP4_RX_CTRL = ( USBHSD->UEP4_RX_CTRL & ~( USBHS_UEP_R_TOG_DATA1 | USBHS_UEP_R_RES_MASK ) ) | USBHS_UEP_R_RES_ACK;
+                                USBHSD->UEP1_RX_CTRL = ( USBHSD->UEP1_RX_CTRL & ~( USBHS_UEP_R_TOG_DATA1 | USBHS_UEP_R_RES_MASK ) ) | USBHS_UEP_R_RES_ACK;
                                 break;
 
                             default:
@@ -823,8 +819,8 @@ void USBHS_IRQHandler( void )
                                     USBHSD->UEP3_TX_CTRL = ( USBHSD->UEP3_TX_CTRL & ~USBHS_UEP_T_RES_MASK ) | USBHS_UEP_T_RES_STALL;
                                     break;
 
-                                case ( DEF_UEP_OUT | DEF_UEP4 ) :
-                                    USBHSD->UEP4_RX_CTRL = ( USBHSD->UEP4_RX_CTRL & ~USBHS_UEP_R_RES_MASK ) | USBHS_UEP_R_RES_STALL;
+                                case ( DEF_UEP_OUT | DEF_UEP1 ) :
+                                    USBHSD->UEP1_RX_CTRL = ( USBHSD->UEP1_RX_CTRL & ~USBHS_UEP_R_RES_MASK ) | USBHS_UEP_R_RES_STALL;
                                     break;
 
                                 default:
@@ -893,9 +889,9 @@ void USBHS_IRQHandler( void )
                                 USBHS_EP0_Buf[ 0 ] = 0x01;
                             }
                         }
-                        else if((uint8_t)(USBHS_SetupReqIndex&0xFF) == ( DEF_UEP_OUT | DEF_UEP4 ) )
+                        else if((uint8_t)(USBHS_SetupReqIndex&0xFF) == ( DEF_UEP_OUT | DEF_UEP1 ) )
                         {
-                            if( ( USBHSD->UEP4_RX_CTRL & USBHS_UEP_R_RES_MASK ) == USBHS_UEP_R_RES_STALL )
+                            if( ( USBHSD->UEP1_RX_CTRL & USBHS_UEP_R_RES_MASK ) == USBHS_UEP_R_RES_STALL )
                             {
                                 USBHS_EP0_Buf[ 0 ] = 0x01;
                             }

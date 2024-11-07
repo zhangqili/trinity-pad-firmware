@@ -759,7 +759,7 @@ int main(void)
 
     TIM6_INT_Init(14400 / 144 - 1, 10000 - 1);
     TIM7_INT_Init(14400 / 8 - 1, 10 - 1);
-    USBHSD->UEP4_RX_CTRL = (USBHSD->UEP4_RX_CTRL & ~USBHS_UEP_R_RES_MASK) | USBHS_UEP_R_RES_ACK;
+    USBHSD->UEP1_RX_CTRL = (USBHSD->UEP1_RX_CTRL & ~USBHS_UEP_R_RES_MASK) | USBHS_UEP_R_RES_ACK;
     while (1)
     {
         // extern void hid_keyboard_test(void);

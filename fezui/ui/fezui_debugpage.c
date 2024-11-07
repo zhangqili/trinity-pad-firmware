@@ -12,7 +12,7 @@
 #else
 #include "usbd_composite_hid.h"
 #include "ch32v30x_usbhs_device.h"
-#define read_buffer USBHS_EP4_RX_Buf
+#define read_buffer USBHS_EP1_RX_Buf
 #endif
 
 extern uint8_t read_buffer[];
@@ -77,7 +77,7 @@ static void debugpage_draw(void *page)
     fezui_printf(&fezui,0,16,"%ld",g_usb_report_count1);
     fezui_printf(&fezui,32,16,"%ld",g_usb_mouse_report_count1);
     fezui_printf(&fezui,64,16,"%ld",g_usb_raw_report_count1);
-    fezui_printf(&fezui,96,16,"%ld",g_usb_report_count1);
+    //fezui_printf(&fezui,96,16,"%ld",g_usb_report_count1);
 
     fezui_draw_cursor(&fezui, &g_fezui_cursor);
 }

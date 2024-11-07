@@ -32,7 +32,7 @@
 /*!< hidraw in endpoint */
 #define HIDRAW_IN_EP       0x83
 #define HIDRAW_IN_EP_SIZE  64
-#define HIDRAW_IN_INTERVAL 8
+#define HIDRAW_IN_INTERVAL 1
 
 /*!< hidraw out endpoint */
 #define HIDRAW_OUT_EP          0x01

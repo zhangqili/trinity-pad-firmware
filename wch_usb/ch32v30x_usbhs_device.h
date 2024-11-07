@@ -102,7 +102,7 @@ extern __attribute__ ((aligned(4))) uint8_t USBHS_EP0_Buf[ DEF_USBD_UEP0_SIZE ];
 extern __attribute__ ((aligned(4))) uint8_t USBHS_EP1_TX_Buf[ DEF_USB_EP1_HS_SIZE ];    //ep1_in(64)
 extern __attribute__ ((aligned(4))) uint8_t USBHS_EP2_TX_Buf[ DEF_USB_EP2_HS_SIZE ];    //ep2_in(64)
 extern __attribute__ ((aligned(4))) uint8_t USBHS_EP3_TX_Buf[ DEF_USB_EP3_HS_SIZE ];    //ep3_in(64)
-extern __attribute__ ((aligned(4))) uint8_t USBHS_EP4_RX_Buf[ DEF_USB_EP4_HS_SIZE ];    //ep4_out(64)
+extern __attribute__ ((aligned(4))) uint8_t USBHS_EP1_RX_Buf[ DEF_USB_EP1_HS_SIZE ];    //ep1_out(64)
 
 /* USB IN Endpoint Busy Flag */
 extern volatile uint8_t  USBHS_Endp_Busy[ DEF_UEP_NUM ];
