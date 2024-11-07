@@ -7,7 +7,15 @@
 #include "fezui.h"
 #include "fezui_var.h"
 #include "main.h"
+#ifdef CONFIG_CHERRYUSB_DEVICE
+#include "usbd_user.h"
+#else
+#include "usbd_composite_hid.h"
+#include "ch32v30x_usbhs_device.h"
+#define read_buffer USBHS_EP4_RX_Buf
+#endif
 
+extern uint8_t read_buffer[];
 // static float target_ordinate = 0;
 // static float target_abscissa = 0;
 
@@ -43,14 +51,13 @@ static void debugpage_tick(void *page)
 uint8_t debug[8];
 static void debugpage_draw(void *page)
 {
-    fezui_printf(&fezui, 64, 16, "%#lx", g_fezui_debug);
+    //fezui_printf(&fezui, 64, 16, "%#lx", g_fezui_debug);
 
     // u8g2_SetFont(&fezui.u8g2, u8g2_font_8x13B_mf);
 
     u8g2_SetFont(&(fezui.u8g2), u8g2_font_5x8_mr);
     // fezui_draw_animated_listbox(&fezui, 0, 0, WIDTH, HEIGHT, &listbox, 8, 1);
     // fezui_animated_listbox_get_cursor(&fezui, 0, 0, WIDTH, HEIGHT, &listbox, 8, &g_target_cursor);
-    extern uint8_t read_buffer[64];
     u8g2_DrawStr(&(fezui.u8g2), 0, 64, (char *)read_buffer + 1);
     fezui_printf(&fezui,32,8,"%d",targetnum);
     fezui_printf(&fezui, 64, 8, "%f", (-1)*(&rangebase)->interval);
@@ -66,14 +73,18 @@ static void debugpage_draw(void *page)
         fezui_printf_right_aligned(&fezui,(i+1)*16,56,"%d",read_buffer[i+24]);
     }
     
-
-    //fezui_printf(&fezui,30,20+8-2,"%ld",g_usb_report_count1);
+    
+    fezui_printf(&fezui,0,16,"%ld",g_usb_report_count1);
+    fezui_printf(&fezui,32,16,"%ld",g_usb_mouse_report_count1);
+    fezui_printf(&fezui,64,16,"%ld",g_usb_raw_report_count1);
+    fezui_printf(&fezui,96,16,"%ld",g_usb_report_count1);
 
     fezui_draw_cursor(&fezui, &g_fezui_cursor);
 }
 
 static void debugpage_load(void *page)
 {
+    g_keybaord_send_report_enable=true;
     fezui_flyout_numberic_dialog_init(&dialog, &targetnum, FEZUI_TYPE_FLOAT, 0, 100, 0.1, "NUMBER");
     fezui_flyout_numberic_dialog_show(&dialog);
 }
@@ -93,6 +104,7 @@ static void debugpage_event_handler(void *e)
         fezui_frame_go_back(&g_mainframe);
         break;
     case KEY_ESC:
+        g_keybaord_send_report_enable=false;
         fezui_frame_go_back(&g_mainframe);
         break;
     default:

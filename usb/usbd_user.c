@@ -329,6 +329,8 @@ uint32_t g_usb_report_count;
 uint32_t g_usb_report_count1;
 uint32_t g_usb_mouse_report_count;
 uint32_t g_usb_mouse_report_count1;
+uint32_t g_usb_raw_report_count;
+uint32_t g_usb_raw_report_count1;
 
 USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t read_buffer[HIDRAW_OUT_EP_SIZE];
 USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t send_buffer[HIDRAW_IN_EP_SIZE];

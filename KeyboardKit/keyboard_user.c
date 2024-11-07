@@ -6,8 +6,12 @@
 #include "rgb.h"
 #include "fezui.h"
 #include "fezui_var.h"
-#include "usbd_user.h"
 #include "lfs.h"
+#ifdef CONFIG_CHERRYUSB_DEVICE
+#include "usbd_user.h"
+#else
+#include "ch32v30x_usbhs_device.h"
+#endif
 
 const uint16_t g_default_keymap[LAYER_NUM][ADVANCED_KEY_NUM + KEY_NUM] = {
     {
@@ -1070,7 +1074,11 @@ float advanced_key_normalize(AdvancedKey* key, float value)
 
 void keyboard_hid_send(uint8_t *report, uint16_t len)
 {
-    hid_keyboard_send(report);
+#ifdef CONFIG_CHERRYUSB_DEVICE
+hid_keyboard_send(report);
+#else
+USBHS_Endp_DataUp(DEF_UEP1,report,len,DEF_UEP_CPY_LOAD);
+#endif
 }
 
 void key_update1(Key* key, bool state)
@@ -1151,5 +1159,9 @@ void keyboard_delay(uint32_t ms)
 
 void mouse_hid_send(uint8_t *report, uint16_t len)
 {
-    hid_mouse_send(report);
+#ifdef CONFIG_CHERRYUSB_DEVICE
+hid_mouse_send(report);
+#else
+USBHS_Endp_DataUp(DEF_UEP2,report,len,DEF_UEP_CPY_LOAD);
+#endif
 }

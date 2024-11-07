@@ -23,7 +23,6 @@
 #include "analog.h"
 #include "fezui.h"
 #include "fezui_var.h"
-#include "usbd_user.h"
 #include "sfud.h"
 #include "lfs.h"
 #include "rgb.h"
@@ -31,6 +30,12 @@
 #include "record.h"
 #include "mouse.h"
 #include "keyboard.h"
+#ifdef CONFIG_CHERRYUSB_DEVICE
+#include "usbd_user.h"
+#else
+#include "ch32v30x_usbhs_device.h"
+#include "usbd_composite_hid.h"
+#endif
 
 /* Global typedef */
 
@@ -737,17 +742,15 @@ int main(void)
     DMA1_Tx_Init(DMA1_Channel1, (u32)&ADC1->RDATAR, (u32)g_ADC_Buffer, ANALOG_BUFFER_LENGTH * ADVANCED_KEY_NUM);
     DMA_Cmd(DMA1_Channel1, ENABLE);
     ADC_SoftwareStartConvCmd(ADC1, ENABLE);
+#ifdef CONFIG_CHERRYUSB_DEVICE
     hid_init();
+#else
+	USBHS_RCC_Init( );
+	USBHS_Device_Init( ENABLE );
+	//USB_Sleep_Wakeup_CFG( );
+#endif
     rgb_flash();
-    /*
-    while (1)
-    {
-        break;
-        Delay_Ms(500);
-        GPIO_WriteBit(LED_GPIO_Port, LED_Pin, !GPIO_ReadInputDataBit(LED_GPIO_Port, LED_Pin));
-        hid_mouse_test();
-    }
-    */
+    
     keyboard_recovery();
     Delay_Ms(100);
     // analog_reset_range();
@@ -756,6 +759,7 @@ int main(void)
 
     TIM6_INT_Init(14400 / 144 - 1, 10000 - 1);
     TIM7_INT_Init(14400 / 8 - 1, 10 - 1);
+    USBHSD->UEP4_RX_CTRL = (USBHSD->UEP4_RX_CTRL & ~USBHS_UEP_R_RES_MASK) | USBHS_UEP_R_RES_ACK;
     while (1)
     {
         // extern void hid_keyboard_test(void);
@@ -796,6 +800,8 @@ void TIM6_IRQHandler(void)
             g_usb_report_count = 0;
             g_usb_mouse_report_count1 = g_usb_mouse_report_count;
             g_usb_mouse_report_count = 0;
+            g_usb_raw_report_count1 = g_usb_raw_report_count;
+            g_usb_raw_report_count = 0;
             g_fezui_run_time++;
         }
         fezui_timer_handler();
@@ -808,8 +814,8 @@ void TIM7_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 void TIM7_IRQHandler(void)
 {
     static uint8_t count = 0;
-    //static uint8_t buffer[64];
-    static bool flag = true;
+    static uint8_t buffer[64];
+    //static bool flag = true;
     if (TIM_GetITStatus(TIM7, TIM_IT_Update) != RESET)
     {
         count++;
@@ -822,19 +828,23 @@ void TIM7_IRQHandler(void)
         TIM_ClearITPendingBit(TIM7, TIM_IT_Update);
         // if(!HAL_GPIO_ReadPin(MENU_GPIO_Port, MENU_Pin))
         keyboard_timer();
-        if (flag)
-        {
-            flag = false;
-            keyboard_6KRObuffer_send(&g_keyboard_6kro_buffer);
-            mouse_buffer_send(&g_mouse);
-        }
+        //if (flag)
+        //{
+        //    flag = false;
+        //    keyboard_6KRObuffer_send(&g_keyboard_6kro_buffer);
+        //    mouse_buffer_send(&g_mouse);
+        //}
         /*
+        
         memcpy(buffer + 2 + 4 * 0, &g_keyboard_advanced_keys[0].raw, sizeof(float));
         memcpy(buffer + 2 + 4 * 1, &g_keyboard_advanced_keys[1].raw, sizeof(float));
         memcpy(buffer + 2 + 4 * 2, &g_keyboard_advanced_keys[2].raw, sizeof(float));
         memcpy(buffer + 2 + 4 * 3, &g_keyboard_advanced_keys[3].raw, sizeof(float));
         buffer[1] = 0xFF;
-        hid_raw_send(&buffer, 18);
+        buffer[0] = 0x02;
+        //void hid_raw_send(uint8_t *buffer, int size);
+        //hid_raw_send(buffer, 18);
+        USBHS_Endp_DataUp(DEF_UEP3,&buffer, 64,DEF_UEP_CPY_LOAD);
         */
     }
 }

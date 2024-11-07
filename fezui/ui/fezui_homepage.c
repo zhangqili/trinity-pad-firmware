@@ -10,7 +10,11 @@
 #include "fezui.h"
 #include "fezui_var.h"
 #include "rgb.h"
+#ifdef CONFIG_CHERRYUSB_DEVICE
 #include "usbd_user.h"
+#else
+#include "usbd_composite_hid.h"
+#endif
 
 #define MARGIN_LEFT           65
 #define PADDING_UP            0
@@ -164,7 +168,8 @@ static void homepage_draw(void *page)
     }
 
     //fezui_printf(&fezui,66,32,"%ld",g_usb_report_count1);
-    //fezui_printf(&fezui,66,48,"%ld",g_usb_mouse_report_count1);
+    //fezui_printf(&fezui,66,40,"%ld",g_usb_mouse_report_count1);
+    //fezui_printf(&fezui,66,48,"%ld",g_usb_raw_report_count1);
 
     u8g2_SetDrawColor(&(fezui.u8g2), color);
 }
