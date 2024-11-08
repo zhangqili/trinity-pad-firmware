@@ -8,22 +8,22 @@
 #include "fezui_var.h"
 #include "main.h"
 static fezui_animated_listbox_t settingsmenu;
-static const char *settingsmenu_items[] = 
+static const char *settingsmenu_items[7][LANG_NUM] = 
 {
-    "Keys Configuration", 
-    "Keymap", 
-    "RGB", 
-    "Calibration", 
-    "Display", 
-    "Advanced Settings", 
-    "About"
+    {"Keys Configuration","按键设置"}, 
+    {"Keymap","按键映射"}, 
+    {"RGB","灯效"}, 
+    {"Calibration","校准"}, 
+    {"Display","显示"}, 
+    {"Advanced Settings","高级设置"}, 
+    {"About","关于"}
 };
 
 #define ROW_HEIGHT 16
 static void settings_menu_cb(void *menu);
 void settingspage_init()
 {
-    fezui_animated_string_listbox_init(&settingsmenu, settingsmenu_items, sizeof(settingsmenu_items) / sizeof(const char *), settings_menu_cb);
+    fezui_animated_listbox_init(&settingsmenu, (void**)settingsmenu_items, 7, settings_menu_cb, i18n_item_draw, i18n_item_get_cursor);
     settingsmenu.listbox.show_scrollbar = true;
 }
 
@@ -32,7 +32,17 @@ static void settingspage_tick(void *page)
 }
 static void settingspage_draw(void *page)
 {
-    u8g2_SetFont(&(fezui.u8g2), u8g2_font_6x13_mr);
+    switch (fezui.lang)
+    {
+    case LANG_EN:
+        u8g2_SetFont(&(fezui.u8g2), u8g2_font_6x13_mr);
+        break;
+    case LANG_ZH:
+        u8g2_SetFont(&(fezui.u8g2), u8g2_font_wqy13_t_gb2312a);
+        break;
+    default:
+        break;
+    }
     fezui_draw_animated_listbox(&fezui, 0, 0, WIDTH, HEIGHT, &settingsmenu, ROW_HEIGHT);
     fezui_animated_listbox_get_cursor(&fezui, 0, 0, WIDTH, HEIGHT, &settingsmenu, ROW_HEIGHT, &g_target_cursor);
     fezui_draw_cursor(&fezui, &g_fezui_cursor);

@@ -11,19 +11,37 @@
 
 
 static fezui_animated_listbox_t mainmenu;
-static const char* mainmenu_items[] = {"Home","Oscilloscope","Statistic","Settings"};
+static const char* mainmenu_items[4][LANG_NUM] = 
+{
+    {"Home","主页"},
+    {"Oscilloscope","示波器"},
+    {"Statistic","统计数据"},
+    {"Settings","设置"}
+};
 static void main_menu_cb(void *menu);
 void menupage_init()
 {
-    fezui_animated_string_listbox_init(&mainmenu, mainmenu_items, sizeof(mainmenu_items)/sizeof(const char*), main_menu_cb);
+    fezui_animated_listbox_init(&mainmenu, (void**)mainmenu_items, 4, main_menu_cb, i18n_item_draw, i18n_item_get_cursor);
 }
 
 static void menupage_tick(void *page)
 {
+    
 }
+
 static void menupage_draw(void *page)
 {
-    u8g2_SetFont(&(fezui.u8g2), u8g2_font_6x13_mr);
+    switch (fezui.lang)
+    {
+    case LANG_EN:
+        u8g2_SetFont(&(fezui.u8g2), u8g2_font_6x13_mr);
+        break;
+    case LANG_ZH:
+        u8g2_SetFont(&(fezui.u8g2), u8g2_font_wqy13_t_gb2312a);
+        break;
+    default:
+        break;
+    }
     fezui_draw_animated_listbox(&fezui,0,0,WIDTH,HEIGHT,&mainmenu,HEIGHT/4);
     fezui_animated_listbox_get_cursor(&fezui,0,0,WIDTH,HEIGHT,&mainmenu,HEIGHT/4,&g_target_cursor);
     fezui_draw_cursor(&fezui, &g_fezui_cursor);

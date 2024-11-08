@@ -63,6 +63,7 @@ include_directories(User
 
 # 宏定义
 # add_definitions(-DDEBUG=1)
+add_compile_definitions(U8G2_USE_LARGE_FONTS)
 
 # 源码文件
 file(GLOB_RECURSE SOURCES 
