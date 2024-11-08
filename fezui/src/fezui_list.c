@@ -59,7 +59,7 @@ void fezui_listbox_get_cursor(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, 
     cursor.w = w;
     if(listbox->item_cursor_cb)
     {
-        listbox->item_cursor_cb(fezui_ptr,&cursor,listbox->list.items[listbox->list.selected_index]);
+        listbox->item_cursor_cb(fezui_ptr,&listbox->list,&cursor);
     }
     *c=cursor;
 }

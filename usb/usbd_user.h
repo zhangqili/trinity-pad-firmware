@@ -31,6 +31,8 @@ extern uint32_t g_usb_report_count;
 extern uint32_t g_usb_report_count1;
 extern uint32_t g_usb_mouse_report_count;
 extern uint32_t g_usb_mouse_report_count1;
+extern uint32_t g_usb_raw_report_count;
+extern uint32_t g_usb_raw_report_count1;
 
 extern uint32_t g_usb_keyboard_interval;
 

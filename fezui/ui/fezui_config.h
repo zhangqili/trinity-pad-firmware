@@ -18,10 +18,9 @@
 #define roll()                rand()%2;
 
 void keyid_prase(uint16_t id,char* str,uint16_t str_len);
-void fezui_read_counts();
-void fezui_save_counts();
 void fezui_read();
 void fezui_save();
+void fezui_recovery();
 void fezui_reset();
 void fezui_POST();
 

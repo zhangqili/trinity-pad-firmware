@@ -34,6 +34,12 @@
 typedef u8g2_uint_t fezui_uint_t;
 typedef u8g2_int_t fezui_int_t;
 
+typedef enum __fezui_lang_code_t{
+    LANG_EN,
+    LANG_ZH,
+    LANG_NUM
+} fezui_lang_code_t;
+
 extern char g_fezui_printf_buffer[PRINTF_BUFFER_LENGTH];
 //#define g_fezui_printf_buffer (fezui_get_buffer())
 
@@ -43,6 +49,7 @@ typedef struct __fezui_t
     bool invert;
     uint8_t contrast;
     float speed;
+    uint8_t lang;
     uint16_t screensaver_timeout;
     uint16_t screensaver_countdown;
 } fezui_t;
@@ -320,8 +327,8 @@ typedef struct __fezui_list_base_t
 void fezui_list_base_init(fezui_list_base_t* list, void* *items,uint8_t len,void (*cb)(void* list));
 void fezui_list_base_index_increase(fezui_list_base_t* list, int8_t delta);
 void fezui_list_base_click(fezui_list_base_t* list);
-typedef void (*item_draw_fn)(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g2_uint_t w, u8g2_uint_t h, void **item, uint16_t index);
-typedef void (*item_cursor_fn)(fezui_t *fezui_ptr, fezui_cursor_t *cursor, void *item);
+typedef void (*item_draw_fn)(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g2_uint_t w, u8g2_uint_t h, fezui_list_base_t *list, uint16_t index);
+typedef void (*item_cursor_fn)(fezui_t *fezui_ptr, fezui_list_base_t *list, fezui_cursor_t *cursor);
 typedef struct __fezui_listbox_t
 {   
     fezui_list_base_t list;
@@ -354,6 +361,8 @@ typedef struct __fezui_animated_listbox_t
 #define fezui_animated_listbox_items(x) ((x)->listbox.list.items)
 #define fezui_animated_listbox_selected_index(x) ((x)->listbox.list.selected_index)
 #define fezui_animated_listbox_len(x) ((x)->listbox.list.len)
+void i18n_item_draw(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g2_uint_t w, u8g2_uint_t h, fezui_list_base_t *list, uint16_t index);
+void i18n_item_get_cursor(fezui_t *fezui_ptr, fezui_list_base_t *list, fezui_cursor_t *cursor);
 void fezui_animated_string_listbox_init(fezui_animated_listbox_t *listbox, const char **items, uint8_t len, void (*cb)(void *listbox));
 void fezui_animated_listbox_init(fezui_animated_listbox_t *listbox, void **items, uint8_t len, void (*cb)(void *listbox),item_draw_fn item_draw_cb,item_cursor_fn item_cursor_cb);
 void fezui_animated_listbox_index_increase(fezui_animated_listbox_t *listbox, int8_t delta);

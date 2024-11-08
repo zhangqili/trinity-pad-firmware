@@ -43,6 +43,8 @@ add_compile_options(-Ofast)
 # 编译信息等级
 add_compile_options(-Wall)
 
+set(CONFIG_CHERRYUSB_DEVICE 0)
+set(CONFIG_CHERRYUSB_DEVICE_HID 0)
 
 # 头文件路径
 include_directories(User
@@ -56,12 +58,12 @@ include_directories(User
                     usb
                     littlefs
                     fram
-                    CherryUSB/port/ch32
                     )
+                    
 
 # 宏定义
 # add_definitions(-DDEBUG=1)
-add_compile_definitions(CONFIG_USB_HS)
+add_compile_definitions(U8G2_USE_LARGE_FONTS)
 
 # 源码文件
 file(GLOB_RECURSE SOURCES 
@@ -73,16 +75,21 @@ file(GLOB_RECURSE SOURCES
                 "fezui/ui/*.c" 
                 "fezui/src/*.c" 
                 "Peripheral/src/*.c" 
-                "usb/*.c" 
                 "littlefs/*.c" 
                 "fram/*.c" 
                 "Startup/startup_ch32v30x_D8C.S"
-                "CherryUSB/port/ch32/usb_dc_usbhs.c"
                 )
 
+if(CONFIG_CHERRYUSB_DEVICE)
+include_directories(CherryUSB/port/ch32)
+file(GLOB_RECURSE SOURCES ${SOURCES} "usb/*.c" "CherryUSB/port/ch32/usb_dc_usbhs.c")
+add_compile_definitions(CONFIG_USB_HS)
+add_compile_definitions(CONFIG_CHERRYUSB_DEVICE)
+else()
+include_directories(wch_usb)
+file(GLOB_RECURSE SOURCES ${SOURCES} "wch_usb/*.c")
+endif()
 
-set(CONFIG_CHERRYUSB_DEVICE TRUE)
-set(CONFIG_CHERRYUSB_DEVICE_HID TRUE)
 
 # 链接参数
 set(LINKER_SCRIPT  ${CMAKE_SOURCE_DIR}/Ld/Link.ld)
@@ -101,16 +108,20 @@ add_link_options(-T ${LINKER_SCRIPT})
 #add_link_options(-lprintfloat)
 
 # 编译可执行文件
-add_subdirectory(cherryusb)
 add_subdirectory(u8g2)
 add_subdirectory(sfud)
 add_executable(${PROJECT_NAME}.elf ${SOURCES} ${LINKER_SCRIPT})
 
 # 链接静态库
 target_link_libraries(${PROJECT_NAME}.elf u8g2)
-target_link_libraries(${PROJECT_NAME}.elf cherryusb)
 target_link_libraries(${PROJECT_NAME}.elf sfud)
 target_link_libraries(${PROJECT_NAME}.elf m)
+
+if(CONFIG_CHERRYUSB_DEVICE)
+add_subdirectory(cherryusb)
+target_link_libraries(${PROJECT_NAME}.elf cherryusb)
+else()
+endif()
 
 # 输出hex和bin
 set(HEX_FILE ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.hex)

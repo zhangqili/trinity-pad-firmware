@@ -2,13 +2,13 @@
 #include "fezui_var.h"
 #include "main.h"
 static fezui_animated_listbox_t advancedsettingsmenu;
-static const char* advancedsettingsmenu_items[] =
+static const char* advancedsettingsmenu_items[5][LANG_NUM] =
 {
-    "Debug",
-    "Save",
-    "Reboot",
-    "Factory Reset",
-    "Enter Bootloader",
+    {"Debug","调试"},
+    {"Save","保存"},
+    {"Reboot","重启"},
+    {"Factory Reset","恢复出厂设置"},
+    {"Enter Bootloader","进入Bootloader"},
 };
 
 #define ROW_HEIGHT 16
@@ -21,6 +21,7 @@ static void advancedsettings_menu_cb(void* menu)
             fezui_frame_navigate(&g_mainframe, &debugpage);
             break;
         case 1:
+            fezui_save();
             keyboard_save();
             fezui_notification_begin(&fezui, &fezui_notification, "Configuration saved!", 500, 0.1);
             break;
@@ -28,6 +29,8 @@ static void advancedsettings_menu_cb(void* menu)
             keyboard_system_reset();
             break;
         case 3:
+            fezui_reset();
+            fezui_save();
             keyboard_factory_reset();
             break;
         case 4:
@@ -40,8 +43,8 @@ static void advancedsettings_menu_cb(void* menu)
 
 void advancedsettingspage_init()
 {
-    fezui_animated_string_listbox_init(&advancedsettingsmenu, advancedsettingsmenu_items,
-                                sizeof(advancedsettingsmenu_items) / sizeof(const char *), advancedsettings_menu_cb);
+    fezui_animated_listbox_init(&advancedsettingsmenu, (void**)advancedsettingsmenu_items,
+                                5, advancedsettings_menu_cb,i18n_item_draw,i18n_item_get_cursor);
     advancedsettingsmenu.listbox.show_scrollbar = true;
 }
 
@@ -51,7 +54,17 @@ static void advancedsettingspage_tick(void* page)
 
 static void advancedsettingspage_draw(void* page)
 {
-    u8g2_SetFont(&(fezui.u8g2), u8g2_font_6x13_mr);
+    switch (fezui.lang)
+    {
+    case LANG_EN:
+        u8g2_SetFont(&(fezui.u8g2), u8g2_font_6x13_mr);
+        break;
+    case LANG_ZH:
+        u8g2_SetFont(&(fezui.u8g2), u8g2_font_wqy13_t_gb2312a);
+        break;
+    default:
+        break;
+    }
     fezui_draw_animated_listbox(&fezui, 0, 0, WIDTH, HEIGHT, &advancedsettingsmenu, ROW_HEIGHT);
     fezui_animated_listbox_get_cursor(&fezui, 0, 0, WIDTH, HEIGHT, &advancedsettingsmenu, ROW_HEIGHT, &g_target_cursor);
     fezui_draw_cursor(&fezui, &g_fezui_cursor);

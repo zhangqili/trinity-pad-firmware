@@ -26,6 +26,17 @@ static void sliderdialog_tick(void *page)
 
 static void sliderdialog_draw(void *page)
 {
+    switch (fezui.lang)
+    {
+    case LANG_EN:
+        u8g2_SetFont(&(fezui.u8g2), u8g2_font_6x13_mr);
+        break;
+    case LANG_ZH:
+        u8g2_SetFont(&(fezui.u8g2), u8g2_font_wqy13_t_gb2312a);
+        break;
+    default:
+        break;
+    }
     fezui_veil(&fezui, 0, 0, WIDTH, HEIGHT, (HEIGHT - offset)/7, 0);
     uint8_t color_backup = u8g2_GetDrawColor(&(fezui.u8g2));
     u8g2_SetDrawColor(&(fezui.u8g2), 0);
@@ -37,7 +48,7 @@ static void sliderdialog_draw(void *page)
     uint8_t char_height = u8g2_GetMaxCharHeight(&fezui.u8g2);
     float temp = fezui_generics_convert_to_float(rangebase.target, rangebase.type);
 
-    u8g2_DrawStr(&fezui.u8g2, 0 + 1, offset + char_height, dialogtitle);
+    u8g2_DrawUTF8(&fezui.u8g2, 0 + 1, offset + char_height, dialogtitle);
 
     switch (rangebase.type)
     {

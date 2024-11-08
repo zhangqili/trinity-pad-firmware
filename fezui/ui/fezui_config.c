@@ -116,7 +116,6 @@ void fezui_init()
     u8g2_SetFontPosBottom(&fezui.u8g2);
     u8log_Init(&u8log, U8LOG_WIDTH, U8LOG_HEIGHT, u8log_buffer);
 
-    fezui_reset();
     fezui_POST();
 
     debugpage_init();
@@ -142,9 +141,11 @@ void fezui_init()
     // fezui_frame_navigate(&g_mainframe, &oscilloscopepage);
 }
 
+static float screensaver_countdown = 0;
 void fezui_timer_handler()
 {
     fezui_frame_tick(&g_mainframe);
+    CONVERGE_TO(screensaver_countdown, (float)fezui.screensaver_countdown,0.02);
     fezui_notification_update(&fezui, &fezui_notification);
     fezui_cursor_move(&fezui, &g_fezui_cursor, &g_target_cursor);
     // fezui_animated_cursor_update(&animated_cursor);
@@ -180,7 +181,7 @@ void fezui_render_handler()
     }
     if (fezui.screensaver_timeout)
     {
-        fezui_veil_full_screen(&(fezui), (fezui.screensaver_countdown) < 7 ? 7 - fezui.screensaver_countdown : 0);
+        fezui_veil_full_screen(&(fezui), (screensaver_countdown) < 7 ? 7 - screensaver_countdown : 0);
         u8g2_SetPowerSave(&(fezui.u8g2), !fezui.screensaver_countdown);
     }
 #ifdef SHOW_FPS
@@ -242,8 +243,14 @@ void fezui_POST()
     {
         u8log_WriteString(&u8log, " [OK]\n");
     }
-    u8g2_DrawLog(&fezui.u8g2, 0, CHAR_HEIGHT * 2, &u8log);
+    u8log_WriteString(&u8log, "Recoverying data...");
     u8g2_SendBuffer(&fezui.u8g2);
+    u8g2_DrawLog(&fezui.u8g2, 0, CHAR_HEIGHT * 2, &u8log);
+    fezui_recovery();
+    fezui_apply(&fezui);
+    u8log_WriteString(&u8log, " [OK]\n");
+    u8g2_SendBuffer(&fezui.u8g2);
+    u8g2_DrawLog(&fezui.u8g2, 0, CHAR_HEIGHT * 2, &u8log);
 }
 
 void keyid_prase(uint16_t id, char *str, uint16_t str_len)
@@ -296,5 +303,59 @@ void fezui_reset()
     fezui.screensaver_countdown = 60;
     fezui.screensaver_timeout = 60;
     fezui.speed = 0.05;
+    fezui.lang = LANG_EN;
     fezui_apply(&fezui);
+}
+
+void fezui_save()
+{
+    // mount the filesystem
+    int err = lfs_mount(&lfs_w25qxx, &cfg);
+    // reformat if we can't mount the filesystem
+    // this should only happen on the first boot
+    if (err)
+    {
+        lfs_format(&lfs_w25qxx, &cfg);
+        lfs_mount(&lfs_w25qxx, &cfg);
+    }
+    // read current count
+    lfs_file_open(&lfs_w25qxx, &lfs_file_w25qxx, "fezui.dat", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_file_rewind(&lfs_w25qxx, &lfs_file_w25qxx);
+    lfs_file_write(&lfs_w25qxx, &lfs_file_w25qxx, &fezui.contrast, sizeof(fezui.contrast));
+    lfs_file_write(&lfs_w25qxx, &lfs_file_w25qxx, &fezui.invert, sizeof(fezui.invert));
+    lfs_file_write(&lfs_w25qxx, &lfs_file_w25qxx, &fezui.speed, sizeof(fezui.speed));
+    lfs_file_write(&lfs_w25qxx, &lfs_file_w25qxx, &fezui.screensaver_timeout, sizeof(fezui.screensaver_timeout));
+    lfs_file_write(&lfs_w25qxx, &lfs_file_w25qxx, &fezui.lang, sizeof(fezui.lang));
+    // remember the storage is not updated until the file is closed successfully
+    err = lfs_file_close(&lfs_w25qxx, &lfs_file_w25qxx);
+    printf("save = %d", err);
+    // release any resources we were using
+    lfs_unmount(&lfs_w25qxx);
+    // print the boot count
+}
+
+void fezui_recovery()
+{
+    // mount the filesystem
+    int err = lfs_mount(&lfs_w25qxx, &cfg);
+    // reformat if we can't mount the filesystem
+    // this should only happen on the first boot
+    if (err)
+    {
+        lfs_format(&lfs_w25qxx, &cfg);
+        lfs_mount(&lfs_w25qxx, &cfg);
+    }
+    lfs_file_open(&lfs_w25qxx, &lfs_file_w25qxx, "fezui.dat", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_file_rewind(&lfs_w25qxx, &lfs_file_w25qxx);
+    lfs_file_read(&lfs_w25qxx, &lfs_file_w25qxx, &fezui.contrast, sizeof(fezui.contrast));
+    lfs_file_read(&lfs_w25qxx, &lfs_file_w25qxx, &fezui.invert, sizeof(fezui.invert));
+    lfs_file_read(&lfs_w25qxx, &lfs_file_w25qxx, &fezui.speed, sizeof(fezui.speed));
+    lfs_file_read(&lfs_w25qxx, &lfs_file_w25qxx, &fezui.screensaver_timeout, sizeof(fezui.screensaver_timeout));
+    lfs_file_read(&lfs_w25qxx, &lfs_file_w25qxx, &fezui.lang, sizeof(fezui.lang));
+    // remember the storage is not updated until the file is closed successfully
+    lfs_file_close(&lfs_w25qxx, &lfs_file_w25qxx);
+    printf("recovery = %d", err);
+    // release any resources we were using
+    lfs_unmount(&lfs_w25qxx);
+    // print the boot count
 }
