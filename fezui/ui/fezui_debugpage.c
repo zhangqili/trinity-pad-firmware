@@ -53,8 +53,6 @@ static void debugpage_draw(void *page)
 {
     //fezui_printf(&fezui, 64, 16, "%#lx", g_fezui_debug);
 
-    // u8g2_SetFont(&fezui.u8g2, u8g2_font_8x13B_mf);
-
     u8g2_SetFont(&(fezui.u8g2), u8g2_font_5x8_mr);
     // fezui_draw_animated_listbox(&fezui, 0, 0, WIDTH, HEIGHT, &listbox, 8, 1);
     // fezui_animated_listbox_get_cursor(&fezui, 0, 0, WIDTH, HEIGHT, &listbox, 8, &g_target_cursor);

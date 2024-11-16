@@ -81,6 +81,7 @@ static uint8_t u8log_buffer[U8LOG_WIDTH * U8LOG_HEIGHT];
 void fezui_input(uint16_t in)
 {
     fezui_frame_input(&g_mainframe, (void *)&in);
+    fezui.screensaver_countdown = fezui.screensaver_timeout;
 }
 
 static void key_up_cb()
@@ -182,7 +183,7 @@ void fezui_render_handler()
     if (fezui.screensaver_timeout)
     {
         fezui_veil_full_screen(&(fezui), (screensaver_countdown) < 7 ? 7 - screensaver_countdown : 0);
-        u8g2_SetPowerSave(&(fezui.u8g2), !fezui.screensaver_countdown);
+        u8g2_SetPowerSave(&(fezui.u8g2), (screensaver_countdown<1));
     }
 #ifdef SHOW_FPS
     u8g2_SetDrawColor(&(fezui.u8g2), 1);

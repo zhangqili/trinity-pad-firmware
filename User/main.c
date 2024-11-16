@@ -814,7 +814,7 @@ void TIM7_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 void TIM7_IRQHandler(void)
 {
     static uint8_t count = 0;
-    //static uint8_t buffer[64];
+    static uint8_t buffer[64];
     //static bool flag = true;
     if (TIM_GetITStatus(TIM7, TIM_IT_Update) != RESET)
     {
@@ -834,18 +834,19 @@ void TIM7_IRQHandler(void)
         //    keyboard_6KRObuffer_send(&g_keyboard_6kro_buffer);
         //    mouse_buffer_send(&g_mouse);
         //}
-        /*
         
-        memcpy(buffer + 2 + 4 * 0, &g_keyboard_advanced_keys[0].raw, sizeof(float));
-        memcpy(buffer + 2 + 4 * 1, &g_keyboard_advanced_keys[1].raw, sizeof(float));
-        memcpy(buffer + 2 + 4 * 2, &g_keyboard_advanced_keys[2].raw, sizeof(float));
-        memcpy(buffer + 2 + 4 * 3, &g_keyboard_advanced_keys[3].raw, sizeof(float));
-        buffer[1] = 0xFF;
-        buffer[0] = 0x02;
-        //void hid_raw_send(uint8_t *buffer, int size);
-        //hid_raw_send(buffer, 18);
-        USBHS_Endp_DataUp(DEF_UEP3,&buffer, 64,DEF_UEP_CPY_LOAD);
-        */
+        if (g_debug_enable)
+        {
+            memcpy(buffer + 2 + 4 * 0, &g_keyboard_advanced_keys[0].raw, sizeof(float));
+            memcpy(buffer + 2 + 4 * 1, &g_keyboard_advanced_keys[1].raw, sizeof(float));
+            memcpy(buffer + 2 + 4 * 2, &g_keyboard_advanced_keys[2].raw, sizeof(float));
+            memcpy(buffer + 2 + 4 * 3, &g_keyboard_advanced_keys[3].raw, sizeof(float));
+            buffer[1] = 0xFF;
+            buffer[0] = 0x02;
+            //void hid_raw_send(uint8_t *buffer, int size);
+            //hid_raw_send(buffer, 18);
+            USBHS_Endp_DataUp(DEF_UEP3, buffer, 64, DEF_UEP_CPY_LOAD);
+        }
     }
 }
 

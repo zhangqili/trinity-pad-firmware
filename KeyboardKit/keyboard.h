@@ -40,6 +40,8 @@ extern volatile bool g_keybaord_alpha_flag;
 extern volatile bool g_keybaord_shift_flag;
 extern volatile bool g_keybaord_send_report_enable;
 
+extern volatile bool g_debug_enable;
+
 int keyboard_6KRObuffer_add(Keyboard_6KROBuffer *buf, uint16_t key);
 void keyboard_6KRObuffer_send(Keyboard_6KROBuffer *buf);
 void keyboard_6KRObuffer_clear(Keyboard_6KROBuffer *buf);

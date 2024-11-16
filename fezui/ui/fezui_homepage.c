@@ -152,7 +152,7 @@ static void homepage_draw(void *page)
     u8g2_DrawVLine(&(fezui.u8g2), 32, HEIGHT - MARGIN_DOWN, MARGIN_DOWN);
     u8g2_DrawVLine(&(fezui.u8g2), 96, HEIGHT - MARGIN_DOWN, MARGIN_DOWN);
 
-    u8g2_SetFont(&(fezui.u8g2), u8g2_font_micro_tr);
+    u8g2_SetFont(&(fezui.u8g2), u8g2_font_4x6_mr);
 
     if (g_keybaord_shift_flag)
     {

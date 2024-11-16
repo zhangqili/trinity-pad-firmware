@@ -83,6 +83,9 @@ void command_prase(uint8_t *buf, uint8_t len)
     case 0x82: // Factory Reset
         keyboard_factory_reset();
         break;
+    case 0xB0: // Set Debug
+        g_debug_enable = buf[1];
+        break;
     case 0xFF: // Legacy
         unload_cargo(buf+1);
         break;

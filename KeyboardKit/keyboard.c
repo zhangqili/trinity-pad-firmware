@@ -29,6 +29,8 @@ volatile bool g_keybaord_send_report_enable = true;
 volatile bool g_keybaord_alpha_flag;
 volatile bool g_keybaord_shift_flag;
 
+volatile bool g_debug_enable;
+
 void keyboard_key_add_buffer(Key *k)
 {
     if (g_keyboard_actions[g_keyboard_current_layer][k->id])

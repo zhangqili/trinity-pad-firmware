@@ -136,7 +136,7 @@ static void displayconfigpage_draw(void *page)
         u8g2_SetFont(&(fezui.u8g2), u8g2_font_6x13_mr);
         break;
     case LANG_ZH:
-        u8g2_SetFont(&(fezui.u8g2), u8g2_font_wqy13_t_gb2312a);
+        u8g2_SetFont(&(fezui.u8g2), u8g2_font_wqy13_t_gb2312b);
         break;
     default:
         break;
