@@ -6,6 +6,7 @@
  */
 #include "fezui.h"
 #include "fezui_var.h"
+#include "compile_time.h"
 
 #define PROJECT_URL "github.com/zhangqili/trinity-pad-firmware"
 
@@ -87,8 +88,10 @@ static const char* device_information[]={
         "Powered by FEZUI",
         "",
         "MCU: CH32V307WCU6",
-        "Date:" __DATE__,
-        "Time:" __TIME__,
+        //"Date:" __DATE__,
+        //"Time:" __TIME__,
+        "Date:" COMPILE_DATE,
+        "Time:" COMPILE_TIME,
 };
 
 static const char* device_project_url[]={
@@ -158,24 +161,24 @@ static void aboutpage_draw(void *page)
     for (uint8_t i = 0; i < 11; i++)
     {
         single_char[0]=device_name[i];
-        u8g2_DrawStr(&(fezui.u8g2), 34+device_name_offsets[i], 16, single_char);
+        u8g2_DrawUTF8(&(fezui.u8g2), 34+device_name_offsets[i], 16, single_char);
     }
     u8g2_SetFont(&(fezui.u8g2), u8g2_font_4x6_mr);
     for (uint8_t i = 0; i < 14; i++)
     {
         single_char[0]=device_version[i];
-        u8g2_DrawStr(&(fezui.u8g2), 34+device_version_offsets[i], 23, single_char);
+        u8g2_DrawUTF8(&(fezui.u8g2), 34+device_version_offsets[i], 23, single_char);
     }
     for (uint8_t i = 0; i < sizeof(device_project_url)/sizeof(char*); i++)
     {
-        u8g2_DrawStr(&(fezui.u8g2), 0, url_y+6*(i+1), device_project_url[i]);
+        u8g2_DrawUTF8(&(fezui.u8g2), 0, url_y+6*(i+1), device_project_url[i]);
     }
     fezui_draw_scrolling_text(&fezui,0,url_y+6*2,&url_text);
     //draw_gemini();
     u8g2_SetClipWindow(&(fezui.u8g2),34,23,WIDTH,50);
     for (uint8_t i = 0; i < sizeof(device_information)/sizeof(char*); i++)
     {
-        u8g2_DrawStr(&(fezui.u8g2), 34, 18+ROW_HEIGHT*(i+1)-(u8g2_int_t)ordinate, device_information[i]);
+        u8g2_DrawUTF8(&(fezui.u8g2), 34, 18+ROW_HEIGHT*(i+1)-(u8g2_int_t)ordinate, device_information[i]);
     }
     u8g2_SetMaxClipWindow(&(fezui.u8g2));
 

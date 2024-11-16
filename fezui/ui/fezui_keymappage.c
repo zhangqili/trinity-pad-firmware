@@ -92,7 +92,7 @@ static void keymappage_draw(void *page)
     fezui_animated_listbox_get_cursor(&fezui, 0, 0, SPERATOR_X, HEIGHT, &key_select_list, ROW_HEIGHT, &g_target_cursor);
     for (uint8_t i = 0; i < LAYER_NUM; i++)
     {
-        u8g2_DrawStr(&(fezui.u8g2), SPERATOR_X + 2, SUBROW_HEIGHT * (i + 1) - 8 - 1, layer_select_menu.items[i]);
+        u8g2_DrawUTF8(&(fezui.u8g2), SPERATOR_X + 2, SUBROW_HEIGHT * (i + 1) - 8 - 1, layer_select_menu.items[i]);
         fezui_draw_scrolling_text(&fezui, SPERATOR_X + 2, SUBROW_HEIGHT * (i + 1) - 2, scrolling_text + i);
     }
     fezui_draw_cursor(&fezui, &g_fezui_cursor);

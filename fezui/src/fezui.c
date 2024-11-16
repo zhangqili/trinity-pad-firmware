@@ -28,7 +28,7 @@ u8g2_uint_t fezui_tgprintf(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, con
 	va_start(ap, fmt);
 	tgvsprintf(g_fezui_printf_buffer, fmt, ap);
 	va_end(ap);
-    return u8g2_DrawStr(&(fezui_ptr->u8g2), x, y, g_fezui_printf_buffer);
+    return u8g2_DrawUTF8(&(fezui_ptr->u8g2), x, y, g_fezui_printf_buffer);
 }
 
 u8g2_uint_t fezui_printf_right_aligned(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, const char *fmt,...)

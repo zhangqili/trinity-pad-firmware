@@ -54,7 +54,6 @@ void analog_average()
 void analog_check()
 {
     bool state;
-    RGBArgument a;
     for (uint8_t i = 0; i < ADVANCED_KEY_NUM; i++)
     {
         state = g_keyboard_advanced_keys[i].key.state;
@@ -82,9 +81,6 @@ void analog_check()
 #ifdef ENABLE_COUNTER
             g_key_counts[i]++;
 #endif
-            a.rgb_ptr = g_rgb_mapping[i];
-            a.begin_time = RGB_Tick;
-            rgb_loop_queue_enqueue(&g_rgb_argument_queue, a);
         }
     }
 }

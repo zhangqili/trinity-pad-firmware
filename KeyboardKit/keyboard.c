@@ -153,7 +153,7 @@ void keyboard_recovery()
                       sizeof(AdvancedKey) - sizeof(Key));
     }
     lfs_file_read(&lfs_w25qxx, &lfs_file_w25qxx, g_keymap, sizeof(g_keymap));
-    lfs_file_read(&lfs_w25qxx, &lfs_file_w25qxx, &g_rgb_global_config, sizeof(g_rgb_global_config));
+    lfs_file_read(&lfs_w25qxx, &lfs_file_w25qxx, &g_rgb_switch, sizeof(g_rgb_switch));
     lfs_file_read(&lfs_w25qxx, &lfs_file_w25qxx, &g_rgb_configs, sizeof(g_rgb_configs));
     // remember the storage is not updated until the file is closed successfully
     lfs_file_close(&lfs_w25qxx, &lfs_file_w25qxx);
@@ -185,7 +185,7 @@ void keyboard_save()
                        sizeof(AdvancedKey) - sizeof(Key));
     }
     lfs_file_write(&lfs_w25qxx, &lfs_file_w25qxx, g_keymap, sizeof(g_keymap));
-    lfs_file_write(&lfs_w25qxx, &lfs_file_w25qxx, &g_rgb_global_config, sizeof(g_rgb_global_config));
+    lfs_file_write(&lfs_w25qxx, &lfs_file_w25qxx, &g_rgb_switch, sizeof(g_rgb_switch));
     lfs_file_write(&lfs_w25qxx, &lfs_file_w25qxx, &g_rgb_configs, sizeof(g_rgb_configs));
     // remember the storage is not updated until the file is closed successfully
     err = lfs_file_close(&lfs_w25qxx, &lfs_file_w25qxx);
@@ -229,7 +229,7 @@ void keyboard_send_report()
     mouse_value = *(uint32_t*)&g_mouse;
 }
 
-__WEAK void keyboard_timer()
+__WEAK void keyboard_task()
 {
     keyboard_scan();
     analog_average();

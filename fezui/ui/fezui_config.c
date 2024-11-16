@@ -190,7 +190,7 @@ void fezui_render_handler()
     u8g2_DrawBox(&fezui.u8g2, 95 + 14, 0, WIDTH - 95 - 14, 11);
     u8g2_SetDrawColor(&(fezui.u8g2), 2);
     u8g2_SetFont(&(fezui.u8g2), fez_font_6x10_m);
-    u8g2_DrawStr(&(fezui.u8g2), 95 + 15, 10, g_fpsstr);
+    u8g2_DrawUTF8(&(fezui.u8g2), 95 + 15, 10, g_fpsstr);
 #endif
     u8g2_SendBuffer(&(fezui.u8g2));
     g_fezui_fps++;
@@ -201,7 +201,7 @@ void fezui_render_handler()
 void fezui_POST()
 {
     u8g2_SetFont(&fezui.u8g2, u8g2_font_5x7_tf);
-    u8g2_DrawStr(&fezui.u8g2, 0, CHAR_HEIGHT - 1, "FEZUI");
+    u8g2_DrawUTF8(&fezui.u8g2, 0, CHAR_HEIGHT - 1, "FEZUI");
     u8g2_DrawHLine(&fezui.u8g2, 0, CHAR_HEIGHT, WIDTH);
     u8log_WriteString(&u8log, "Mounting Flash...");
     u8g2_DrawLog(&fezui.u8g2, 0, CHAR_HEIGHT * 2, &u8log);

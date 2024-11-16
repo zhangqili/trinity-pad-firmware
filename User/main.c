@@ -827,7 +827,7 @@ void TIM7_IRQHandler(void)
         }
         TIM_ClearITPendingBit(TIM7, TIM_IT_Update);
         // if(!HAL_GPIO_ReadPin(MENU_GPIO_Port, MENU_Pin))
-        keyboard_timer();
+        keyboard_task();
         //if (flag)
         //{
         //    flag = false;

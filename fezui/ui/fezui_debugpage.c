@@ -56,7 +56,7 @@ static void debugpage_draw(void *page)
     u8g2_SetFont(&(fezui.u8g2), u8g2_font_5x8_mr);
     // fezui_draw_animated_listbox(&fezui, 0, 0, WIDTH, HEIGHT, &listbox, 8, 1);
     // fezui_animated_listbox_get_cursor(&fezui, 0, 0, WIDTH, HEIGHT, &listbox, 8, &g_target_cursor);
-    u8g2_DrawStr(&(fezui.u8g2), 0, 64, (char *)read_buffer + 1);
+    u8g2_DrawUTF8(&(fezui.u8g2), 0, 64, (char *)read_buffer + 1);
     fezui_printf(&fezui,32,8,"%d",fezui.contrast);
     fezui_printf(&fezui, 64, 8, "%f", (-1)*(&rangebase)->interval);
     fezui_printf(&fezui, 64, 8, "%d", (int16_t)((-1)*(&rangebase)->interval));
