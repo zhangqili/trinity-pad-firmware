@@ -31,7 +31,7 @@ static bool mode_switching = false;
 static float *target_property;
 static float advancedconfigpage_interval;
 
-static const char *key_calibration_desc[] = {"Off","Positive","Negative"};
+static const char *key_calibration_desc[] = {"Off","Positive","Negative","Undefined"};
 
 static fezui_animated_listbox_t keyconfig_digital_mode_menu;
 static const char *keyconfig_digital_mode_menu_items[] = {"Mode"};
@@ -408,7 +408,7 @@ static void advancedconfigpage_event_handler(void *e)
         }
         else if (configing==1)
         {
-            VAR_LOOP_INCREMENT(current_config_advanced_key->calibration_mode,KEY_NO_CALIBRATION,KEY_AUTO_CALIBRATION_NEGATIVE,1);
+            VAR_LOOP_INCREMENT(current_config_advanced_key->calibration_mode,KEY_NO_CALIBRATION,KEY_AUTO_CALIBRATION_UNDEFINED,1);
             advanced_key_reset_range(current_config_advanced_key,current_config_advanced_key->value);
         }
         else if (mode_switching)
@@ -427,7 +427,7 @@ static void advancedconfigpage_event_handler(void *e)
         }
         else if (configing==1)
         {
-            VAR_LOOP_DECREMENT(current_config_advanced_key->calibration_mode,KEY_NO_CALIBRATION,KEY_AUTO_CALIBRATION_NEGATIVE,1);
+            VAR_LOOP_DECREMENT(current_config_advanced_key->calibration_mode,KEY_NO_CALIBRATION,KEY_AUTO_CALIBRATION_UNDEFINED,1);
         }
         else if (mode_switching)
         {

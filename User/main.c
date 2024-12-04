@@ -739,7 +739,7 @@ int main(void)
     EXTI_INT_INIT();
     DMA_Cmd(DMA1_Channel5, ENABLE);
 
-    DMA1_Tx_Init(DMA1_Channel1, (u32)&ADC1->RDATAR, (u32)g_ADC_Buffer, ANALOG_BUFFER_LENGTH * ADVANCED_KEY_NUM);
+    DMA1_Tx_Init(DMA1_Channel1, (u32)&ADC1->RDATAR, (u32)g_ADC_Buffer, ANALOG_BUFFER_LENGTH);
     DMA_Cmd(DMA1_Channel1, ENABLE);
     ADC_SoftwareStartConvCmd(ADC1, ENABLE);
 #ifdef CONFIG_CHERRYUSB

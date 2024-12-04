@@ -94,9 +94,9 @@ void keyboard_buffer_send()
 void keyboard_buffer_clear()
 {
 #ifdef NKRO_ENABLE
-    keyboard_NKRObuffer_send(&g_keyboard_nkro_buffer);
+    keyboard_NKRObuffer_clear(&g_keyboard_nkro_buffer);
 #else
-    keyboard_6KRObuffer_send(&g_keyboard_6kro_buffer);
+    keyboard_6KRObuffer_clear(&g_keyboard_6kro_buffer);
 #endif
 }
 
@@ -136,7 +136,7 @@ int keyboard_NKRObuffer_add(Keyboard_NKROBuffer*buf,uint16_t key)
     uint8_t index = KEY_KEYCODE(key)/8+1;
     if (index<buf->length)
     {
-        buf->buffer[KEY_KEYCODE(key)/8+1] |= (1 << KEY_KEYCODE(key));
+        buf->buffer[index] |= (1 << (KEY_KEYCODE(key)%8));
     }
     buf->buffer[0] |= KEY_MODIFIER(key);
     return 0;
@@ -257,7 +257,7 @@ void keyboard_send_report()
     static uint32_t mouse_value;
     keyboard_buffer_clear();
     mouse_buffer_clear(&g_mouse);
-    // keyboard_6KRObuffer_add(&Keyboard_ReportBuffer,(KeyBinding){KEY_E,KEY_NO_MODIFIER});
+    
     for (int i = 0; i < ADVANCED_KEY_NUM; i++)
     {
         keyboard_key_add_buffer(&g_keyboard_advanced_keys[i].key);

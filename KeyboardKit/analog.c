@@ -12,7 +12,7 @@
 #include "advanced_key.h"
 
 uint16_t g_ADC_Conversion_Count;
-uint16_t g_ADC_Buffer[ADVANCED_KEY_NUM * ANALOG_BUFFER_LENGTH];
+uint16_t g_ADC_Buffer[ANALOG_BUFFER_LENGTH];
 float g_ADC_Averages[ADVANCED_KEY_NUM];
 
 AdaptiveSchimidtFilter g_analog_filters[ADVANCED_KEY_NUM];
@@ -25,7 +25,7 @@ void analog_init()
 {
 }
 
-void analog_channel_select(uint8_t x)
+__WEAK void analog_channel_select(uint8_t x)
 {
     //x=BCD_TO_GRAY(x);
     //HAL_GPIO_WritePin(A_GPIO_Port, A_Pin, x&0x01);
@@ -44,11 +44,11 @@ void analog_average()
     for (uint8_t i = 0; i < ADVANCED_KEY_NUM; i++)
     {
         ADC_sum = 0;
-        for (uint8_t j = 0; j < ANALOG_BUFFER_LENGTH; j++)
+        for (uint8_t j = 0; j < 64; j++)
         {
             ADC_sum += g_ADC_Buffer[i + j * ADVANCED_KEY_NUM];
         }
-        g_ADC_Averages[i] = ADC_sum/((float)ANALOG_BUFFER_LENGTH);
+        g_ADC_Averages[i] = ADC_sum/64.0f;
 #ifdef ENABLE_FILTER
         g_ADC_Averages[i] = adaptive_schimidt_filter(g_analog_filters+i,g_ADC_Averages[i]);
 #endif
@@ -63,18 +63,6 @@ void analog_check()
         state = g_keyboard_advanced_keys[i].key.state;
         if (g_keyboard_advanced_keys[i].mode != KEY_DIGITAL_MODE)
         {
-            switch (g_keyboard_advanced_keys[i].calibration_mode)
-            {
-            case KEY_AUTO_CALIBRATION_POSITIVE:
-                if (g_ADC_Averages[i] > g_keyboard_advanced_keys[i].lower_bound)
-                    g_keyboard_advanced_keys[i].lower_bound = g_ADC_Averages[i];
-                break;
-            case KEY_AUTO_CALIBRATION_NEGATIVE:
-                if (g_ADC_Averages[i] < g_keyboard_advanced_keys[i].lower_bound)
-                    g_keyboard_advanced_keys[i].lower_bound = g_ADC_Averages[i];
-            default:
-                break;
-            }
             advanced_key_update_raw(g_keyboard_advanced_keys + i, g_ADC_Averages[i]);
         }
         if (g_keyboard_advanced_keys[i].key.state && !state)
@@ -112,10 +100,6 @@ float ringbuf_avg(RingBuf* ringbuf)
         avg += ringbuf->datas[i];
 
     avg = ((avg >> 2) & 0x01) + (avg >> 3);
-    //  avg = ringbuf->Datas[ringbuf->Pointer];
-    //if (avg - TOLERANCE > ringbuf->state)ringbuf->state = avg - TOLERANCE;
-    //if (avg + TOLERANCE < ringbuf->state)ringbuf->state = avg + TOLERANCE;
 
     return (float)avg;
-    //return (float)ringbuf->state;
 }
