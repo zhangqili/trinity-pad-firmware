@@ -70,7 +70,7 @@ void rgb_loop_queue_push(RGBLoopQueue* q, RGBLoopQueueElm t);
 extern uint32_t RGB_Tick;
 //#define loop_queue_foreach(q,i) for(uint16_t (i)=(q)->front;(i)!=(q)->rear;(i)=(i+1)%(q)->len)
 
-#define ARGUMENT_BUFFER_LENGTH 16
+#define ARGUMENT_BUFFER_LENGTH 64
 extern uint8_t g_rgb_buffer[RGB_BUFFER_LENGTH];
 extern ColorRGB g_rgb_colors[RGB_NUM];
 extern RGBConfig g_rgb_configs[RGB_NUM];
@@ -84,7 +84,7 @@ void rgb_update();
 void rgb_set(uint8_t r,uint8_t g,uint8_t b,uint16_t index);
 void rgb_flash();
 void rgb_turn_off();
-void rgb_recovery();
+void rgb_factory_reset();
 void rgb_save();
 void rgb_activate(void * key);
 

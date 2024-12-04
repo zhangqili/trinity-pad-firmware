@@ -235,7 +235,7 @@ void rgb_turn_off()
     }
 }
 
-void rgb_recovery()
+void rgb_factory_reset()
 {
     ColorHSV temphsv = {273, 78, 99};
     for (uint8_t i = 0; i < RGB_NUM; i++)

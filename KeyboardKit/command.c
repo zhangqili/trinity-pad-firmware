@@ -41,6 +41,7 @@ void unload_cargo(uint8_t *buf)
         //g_keyboard_advanced_keys[command_advanced_key_mapping[buf[1]]].lower_bound = fill_in_float(&buf[2 + 4 * 8]);
         break;
     case 1: // Global LED
+        g_rgb_switch = buf[1];
         break;
     case 2: // LED
         for (uint8_t i = 0; i < RGB_NUM; i++)

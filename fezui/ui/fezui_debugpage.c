@@ -7,7 +7,7 @@
 #include "fezui.h"
 #include "fezui_var.h"
 #include "main.h"
-#ifdef CONFIG_CHERRYUSB_DEVICE
+#ifdef CONFIG_CHERRYUSB
 #include "usbd_user.h"
 #else
 #include "usbd_composite_hid.h"
@@ -82,7 +82,7 @@ static void debugpage_draw(void *page)
 
 static void debugpage_load(void *page)
 {
-    g_keybaord_send_report_enable=true;
+    g_keyboard_send_report_enable=true;
     fezui_flyout_numberic_dialog_init(&dialog, &targetnum, FEZUI_TYPE_FLOAT, 0, 100, 0.1, "NUMBER");
     fezui_flyout_numberic_dialog_show(&dialog);
 }
@@ -102,7 +102,7 @@ static void debugpage_event_handler(void *e)
         fezui_frame_go_back(&g_mainframe);
         break;
     case KEY_ESC:
-        g_keybaord_send_report_enable=false;
+        g_keyboard_send_report_enable=false;
         fezui_frame_go_back(&g_mainframe);
         break;
     default:

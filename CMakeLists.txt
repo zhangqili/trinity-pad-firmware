@@ -43,8 +43,9 @@ add_compile_options(-Ofast)
 # 编译信息等级
 add_compile_options(-Wall)
 
-set(CONFIG_CHERRYUSB_DEVICE 0)
-set(CONFIG_CHERRYUSB_DEVICE_HID 0)
+set(CONFIG_CHERRYUSB 0)
+set(CONFIG_CHERRYUSB_DEVICE 1)
+set(CONFIG_CHERRYUSB_DEVICE_HID 1)
 
 # 头文件路径
 include_directories(User
@@ -78,13 +79,14 @@ file(GLOB_RECURSE SOURCES
                 "littlefs/*.c" 
                 "fram/*.c" 
                 "Startup/startup_ch32v30x_D8C.S"
+                "usb/*.c"
                 )
 
-if(CONFIG_CHERRYUSB_DEVICE)
+if(CONFIG_CHERRYUSB)
 include_directories(CherryUSB/port/ch32)
-file(GLOB_RECURSE SOURCES ${SOURCES} "usb/*.c" "CherryUSB/port/ch32/usb_dc_usbhs.c")
+file(GLOB_RECURSE SOURCES ${SOURCES} "CherryUSB/port/ch32/usb_dc_usbhs.c")
 add_compile_definitions(CONFIG_USB_HS)
-add_compile_definitions(CONFIG_CHERRYUSB_DEVICE)
+add_compile_definitions(CONFIG_CHERRYUSB)
 else()
 include_directories(wch_usb)
 file(GLOB_RECURSE SOURCES ${SOURCES} "wch_usb/*.c")
@@ -133,6 +135,7 @@ add_link_options(-T ${LINKER_SCRIPT})
 # 编译可执行文件
 add_subdirectory(u8g2)
 add_subdirectory(sfud)
+add_subdirectory(cherryusb)
 add_executable(${PROJECT_NAME}.elf ${SOURCES} ${LINKER_SCRIPT})
 # Add dependencies to your main target to ensure it's built in the correct order
 add_dependencies(${PROJECT_NAME}.elf generate_compile_time_header)
@@ -141,10 +144,9 @@ add_dependencies(${PROJECT_NAME}.elf generate_compile_time_header)
 target_link_libraries(${PROJECT_NAME}.elf u8g2)
 target_link_libraries(${PROJECT_NAME}.elf sfud)
 target_link_libraries(${PROJECT_NAME}.elf m)
-
-if(CONFIG_CHERRYUSB_DEVICE)
-add_subdirectory(cherryusb)
 target_link_libraries(${PROJECT_NAME}.elf cherryusb)
+
+if(CONFIG_CHERRYUSB)
 else()
 endif()
 

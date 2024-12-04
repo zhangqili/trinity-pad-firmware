@@ -207,13 +207,13 @@ void fezui_POST()
     u8g2_DrawLog(&fezui.u8g2, 0, CHAR_HEIGHT * 2, &u8log);
     u8g2_SendBuffer(&fezui.u8g2);
     // mount the filesystem
-    int err = lfs_mount(&lfs_w25qxx, &cfg);
+    int err = lfs_mount(&lfs_w25qxx, &lfs_cfg);
     // reformat if we can't mount the filesystem
     // this should only happen on the first boot
     if (err)
     {
-        err = lfs_format(&lfs_w25qxx, &cfg);
-        lfs_mount(&lfs_w25qxx, &cfg);
+        err = lfs_format(&lfs_w25qxx, &lfs_cfg);
+        lfs_mount(&lfs_w25qxx, &lfs_cfg);
         u8log_WriteString(&u8log, " [Failed]\n");
         u8log_WriteString(&u8log, "Formating Flash...");
         u8g2_DrawLog(&fezui.u8g2, 0, CHAR_HEIGHT * 2, &u8log);
@@ -311,13 +311,13 @@ void fezui_reset()
 void fezui_save()
 {
     // mount the filesystem
-    int err = lfs_mount(&lfs_w25qxx, &cfg);
+    int err = lfs_mount(&lfs_w25qxx, &lfs_cfg);
     // reformat if we can't mount the filesystem
     // this should only happen on the first boot
     if (err)
     {
-        lfs_format(&lfs_w25qxx, &cfg);
-        lfs_mount(&lfs_w25qxx, &cfg);
+        lfs_format(&lfs_w25qxx, &lfs_cfg);
+        lfs_mount(&lfs_w25qxx, &lfs_cfg);
     }
     // read current count
     lfs_file_open(&lfs_w25qxx, &lfs_file_w25qxx, "fezui.dat", LFS_O_RDWR | LFS_O_CREAT);
@@ -338,13 +338,13 @@ void fezui_save()
 void fezui_recovery()
 {
     // mount the filesystem
-    int err = lfs_mount(&lfs_w25qxx, &cfg);
+    int err = lfs_mount(&lfs_w25qxx, &lfs_cfg);
     // reformat if we can't mount the filesystem
     // this should only happen on the first boot
     if (err)
     {
-        lfs_format(&lfs_w25qxx, &cfg);
-        lfs_mount(&lfs_w25qxx, &cfg);
+        lfs_format(&lfs_w25qxx, &lfs_cfg);
+        lfs_mount(&lfs_w25qxx, &lfs_cfg);
     }
     lfs_file_open(&lfs_w25qxx, &lfs_file_w25qxx, "fezui.dat", LFS_O_RDWR | LFS_O_CREAT);
     lfs_file_rewind(&lfs_w25qxx, &lfs_file_w25qxx);

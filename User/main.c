@@ -30,11 +30,11 @@
 #include "record.h"
 #include "mouse.h"
 #include "keyboard.h"
-#ifdef CONFIG_CHERRYUSB_DEVICE
 #include "usbd_user.h"
+#ifdef CONFIG_CHERRYUSB
 #else
 #include "ch32v30x_usbhs_device.h"
-#include "usbd_composite_hid.h"
+//#include "usbd_composite_hid.h"
 #endif
 
 /* Global typedef */
@@ -735,14 +735,14 @@ int main(void)
     rgb_init();
     TIM1_Init();
     DMA_TIM1_Init();
-    rgb_recovery();
+    rgb_factory_reset();
     EXTI_INT_INIT();
     DMA_Cmd(DMA1_Channel5, ENABLE);
 
     DMA1_Tx_Init(DMA1_Channel1, (u32)&ADC1->RDATAR, (u32)g_ADC_Buffer, ANALOG_BUFFER_LENGTH * ADVANCED_KEY_NUM);
     DMA_Cmd(DMA1_Channel1, ENABLE);
     ADC_SoftwareStartConvCmd(ADC1, ENABLE);
-#ifdef CONFIG_CHERRYUSB_DEVICE
+#ifdef CONFIG_CHERRYUSB
     hid_init();
 #else
 	USBHS_RCC_Init( );
@@ -759,7 +759,10 @@ int main(void)
 
     TIM6_INT_Init(14400 / 144 - 1, 10000 - 1);
     TIM7_INT_Init(14400 / 8 - 1, 10 - 1);
+#ifdef CONFIG_CHERRYUSB
+#else
     USBHSD->UEP1_RX_CTRL = (USBHSD->UEP1_RX_CTRL & ~USBHS_UEP_R_RES_MASK) | USBHS_UEP_R_RES_ACK;
+#endif
     while (1)
     {
         // extern void hid_keyboard_test(void);
@@ -843,9 +846,12 @@ void TIM7_IRQHandler(void)
             memcpy(buffer + 2 + 4 * 3, &g_keyboard_advanced_keys[3].raw, sizeof(float));
             buffer[1] = 0xFF;
             buffer[0] = 0x02;
-            //void hid_raw_send(uint8_t *buffer, int size);
-            //hid_raw_send(buffer, 18);
-            USBHS_Endp_DataUp(DEF_UEP3, buffer, 64, DEF_UEP_CPY_LOAD);
+            #ifdef CONFIG_CHERRYUSB
+            void hid_raw_send(uint8_t *buffer, int size);
+            hid_raw_send(buffer, 18);
+            #else
+            USBHS_Endp_DataUp(HIDRAW_IN_EP, buffer, 64, DEF_UEP_CPY_LOAD);
+            #endif
         }
     }
 }

@@ -70,7 +70,8 @@ static void main_menu_cb(void *menu)
 
 static void menupage_load(void *page)
 {
-    g_keybaord_send_report_enable=false;
+    g_keyboard_send_report_enable=false;
+    g_keyboard_current_layer = 0;
     fezui_animated_listbox_begin(&mainmenu);
 }
 

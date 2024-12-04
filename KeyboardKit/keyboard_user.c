@@ -7,8 +7,8 @@
 #include "fezui.h"
 #include "fezui_var.h"
 #include "lfs.h"
-#ifdef CONFIG_CHERRYUSB_DEVICE
 #include "usbd_user.h"
+#ifdef CONFIG_CHERRYUSB
 #else
 #include "ch32v30x_usbhs_device.h"
 #endif
@@ -1074,10 +1074,10 @@ float advanced_key_normalize(AdvancedKey* key, float value)
 
 void keyboard_hid_send(uint8_t *report, uint16_t len)
 {
-#ifdef CONFIG_CHERRYUSB_DEVICE
+#ifdef CONFIG_CHERRYUSB
 hid_keyboard_send(report);
 #else
-USBHS_Endp_DataUp(DEF_UEP1,report,len,DEF_UEP_CPY_LOAD);
+USBHS_Endp_DataUp(HID_KEYBOARD_INT_EP,report,len,DEF_UEP_CPY_LOAD);
 #endif
 }
 
@@ -1085,11 +1085,18 @@ void key_update1(Key* key, bool state)
 {
     if ((!(key->state)) && state)
     {
-        if (g_keybaord_send_report_enable)
-        {
-            g_keybaord_alpha_flag = !g_keybaord_alpha_flag;
+        if (g_keyboard_send_report_enable)
+        {   
+            if (g_keyboard_current_layer == 1)
+            {
+                fezui_frame_navigate(&g_mainframe, &menupage);
+            }
+            else
+            {
+                g_keyboard_current_layer = g_keyboard_current_layer == 2 ? 0 : 2;
+            }
         }
-        if (key->key_cb[KEY_EVENT_DOWN])
+        else if (key->key_cb[KEY_EVENT_DOWN])
         {
             key->key_cb[KEY_EVENT_DOWN](key);
         }
@@ -1106,11 +1113,18 @@ void key_update2(Key* key, bool state)
 {
     if ((!(key->state)) && state)
     {
-        if (g_keybaord_send_report_enable)
+        if (g_keyboard_send_report_enable)
         {
-            g_keybaord_shift_flag = !g_keybaord_shift_flag;
+            if (g_keyboard_current_layer == 2)
+            {
+                fezui_frame_navigate(&g_mainframe, &menupage);
+            }
+            else
+            {
+                g_keyboard_current_layer = g_keyboard_current_layer == 1 ? 0 : 1;
+            }
         }
-        if (key->key_cb[KEY_EVENT_DOWN])
+        else if (key->key_cb[KEY_EVENT_DOWN])
         {
             key->key_cb[KEY_EVENT_DOWN](key);
         }
@@ -1159,9 +1173,9 @@ void keyboard_delay(uint32_t ms)
 
 void mouse_hid_send(uint8_t *report, uint16_t len)
 {
-#ifdef CONFIG_CHERRYUSB_DEVICE
+#ifdef CONFIG_CHERRYUSB
 hid_mouse_send(report);
 #else
-USBHS_Endp_DataUp(DEF_UEP2,report,len,DEF_UEP_CPY_LOAD);
+USBHS_Endp_DataUp(HID_MOUSE_INT_EP,report,len,DEF_UEP_CPY_LOAD);
 #endif
 }

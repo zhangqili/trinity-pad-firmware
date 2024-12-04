@@ -13,37 +13,9 @@
 
 /*******************************************************************************/
 /* Header Files */
-#include "ch32v30x_usbhs_device.h"
 #include "usbd_composite_hid.h"
+#include "ch32v30x_usbhs_device.h"
 #include "usb_hid_keys.h"
-
-/*******************************************************************************/
-/* Variable Definition */
-
-uint32_t g_usb_report_count;
-uint32_t g_usb_report_count1;
-uint32_t g_usb_mouse_report_count;
-uint32_t g_usb_mouse_report_count1;
-uint32_t g_usb_raw_report_count;
-uint32_t g_usb_raw_report_count1;
-/* Mouse */
-volatile uint8_t  MS_Scan_Done = 0x00;                                          // Mouse Movement Scan Done
-volatile uint16_t MS_Scan_Result = 0x00F0;                                      // Mouse Movement Scan Result
-uint8_t  MS_Data_Pack[ 4 ] = { 0x00 };                                          // Mouse IN Data Packet
-
-/* Keyboard */
-volatile uint8_t  KB_Scan_Done = 0x00;                                          // Keyboard Keys Scan Done
-volatile uint16_t KB_Scan_Result = 0xF000;                                      // Keyboard Keys Current Scan Result
-volatile uint16_t KB_Scan_Last_Result = 0xF000;                                 // Keyboard Keys Last Scan Result
-uint8_t  KB_Data_Pack[ 8 ] = { 0x00 };                                          // Keyboard IN Data Packet
-volatile uint8_t  KB_LED_Last_Status = 0x00;                                    // Keyboard LED Last Result
-volatile uint8_t  KB_LED_Cur_Status = 0x00;                                     // Keyboard LED Current Result
-
-/* USART */
-volatile uint8_t  USART_Recv_Dat = 0x00;
-volatile uint8_t  USART_Send_Flag = 0x00;
-volatile uint8_t  USART_Send_Cnt = 0x00;
-
 
 /*********************************************************************
  * @fn      USB_Sleep_Wakeup_CFG
@@ -107,6 +79,7 @@ void MCU_Sleep_Wakeup_Operate( void )
     printf( "Wake\r\n" );
 }
 
+/*
 void hid_raw_send(uint8_t *buffer, int size)
 {
 
@@ -128,3 +101,4 @@ void hid_raw_send(uint8_t *buffer, int size)
     //    UART2_Rx_Deal_Ptr = 0x00;
     //}
 }
+*/

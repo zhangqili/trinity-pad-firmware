@@ -25,9 +25,7 @@ uint16_t g_keymap[LAYER_NUM][ADVANCED_KEY_NUM + KEY_NUM];
 Keyboard_6KROBuffer g_keyboard_6kro_buffer;
 
 uint8_t g_keyboard_knob_flag;
-volatile bool g_keybaord_send_report_enable = true;
-volatile bool g_keybaord_alpha_flag;
-volatile bool g_keybaord_shift_flag;
+volatile bool g_keyboard_send_report_enable = true;
 
 volatile bool g_debug_enable;
 
@@ -100,6 +98,29 @@ void keyboard_6KRObuffer_clear(Keyboard_6KROBuffer *buf)
     memset(buf, 0, sizeof(Keyboard_6KROBuffer));
 }
 
+void keyboard_NKRObuffer_init(Keyboard_NKROBuffer*buf,uint8_t* data_buf,uint8_t length)
+{
+    buf->buffer = data_buf;
+    buf->length = length;
+}
+
+int keyboard_NKRObuffer_add(Keyboard_NKROBuffer*buf,uint16_t key)
+{
+    buf->buffer[0] |= KEY_MODIFIER(key);
+    buf->buffer[KEY_KEYCODE(key)/8+1] |= (1 << KEY_KEYCODE(key));
+    return 0;
+}
+
+void keyboard_NKRObuffer_send(Keyboard_NKROBuffer*buf)
+{
+    keyboard_hid_send(buf->buffer, buf->length);
+}
+
+void keyboard_NKRObuffer_clear(Keyboard_NKROBuffer*buf)
+{
+    memset(buf, 0, sizeof(Keyboard_6KROBuffer));
+}
+
 void keyboard_init()
 {
     memcpy(g_keymap, g_default_keymap, sizeof(g_keymap));
@@ -119,9 +140,9 @@ void keyboard_factory_reset()
         // Keyboard_AdvancedKeys[i].phantom_lower_deadzone = 0.32;
         // Keyboard_AdvancedKeys[i].key.keycode = default_keymap[0][Keyboard_AdvancedKeys[i].key.id];
     }
-    rgb_recovery();
+    rgb_factory_reset();
     keyboard_save();
-    keyboard_system_reset();
+    //keyboard_system_reset();
 }
 
 __WEAK void keyboard_system_reset()
@@ -135,13 +156,13 @@ __WEAK void keyboard_scan()
 void keyboard_recovery()
 {
     // mount the filesystem
-    int err = lfs_mount(&lfs_w25qxx, &cfg);
+    int err = lfs_mount(&lfs_w25qxx, &lfs_cfg);
     // reformat if we can't mount the filesystem
     // this should only happen on the first boot
     if (err)
     {
-        lfs_format(&lfs_w25qxx, &cfg);
-        lfs_mount(&lfs_w25qxx, &cfg);
+        lfs_format(&lfs_w25qxx, &lfs_cfg);
+        lfs_mount(&lfs_w25qxx, &lfs_cfg);
     }
     lfs_file_open(&lfs_w25qxx, &lfs_file_w25qxx, "config1.dat", LFS_O_RDWR | LFS_O_CREAT);
     lfs_file_rewind(&lfs_w25qxx, &lfs_file_w25qxx);
@@ -166,13 +187,13 @@ void keyboard_recovery()
 void keyboard_save()
 {
     // mount the filesystem
-    int err = lfs_mount(&lfs_w25qxx, &cfg);
+    int err = lfs_mount(&lfs_w25qxx, &lfs_cfg);
     // reformat if we can't mount the filesystem
     // this should only happen on the first boot
     if (err)
     {
-        lfs_format(&lfs_w25qxx, &cfg);
-        lfs_mount(&lfs_w25qxx, &cfg);
+        lfs_format(&lfs_w25qxx, &lfs_cfg);
+        lfs_mount(&lfs_w25qxx, &lfs_cfg);
     }
     // read current count
     lfs_file_open(&lfs_w25qxx, &lfs_file_w25qxx, "config1.dat", LFS_O_RDWR | LFS_O_CREAT);
@@ -200,15 +221,6 @@ void keyboard_send_report()
     static uint32_t mouse_value;
     keyboard_6KRObuffer_clear(&g_keyboard_6kro_buffer);
     mouse_buffer_clear(&g_mouse);
-    g_keyboard_current_layer = 0;
-    if (g_keybaord_shift_flag)
-    {
-        g_keyboard_current_layer = 1;
-    }
-    if (g_keybaord_alpha_flag)
-    {
-        g_keyboard_current_layer = 2;
-    }
     // keyboard_6KRObuffer_add(&Keyboard_ReportBuffer,(KeyBinding){KEY_E,KEY_NO_MODIFIER});
     for (int i = 0; i < ADVANCED_KEY_NUM; i++)
     {
@@ -218,7 +230,7 @@ void keyboard_send_report()
     {
         keyboard_key_add_buffer(&g_keyboard_keys[i]);
     }
-    if (g_keybaord_send_report_enable)
+    if (g_keyboard_send_report_enable)
     {
         keyboard_6KRObuffer_send(&g_keyboard_6kro_buffer);
         if ((*(uint32_t*)&g_mouse)!=mouse_value)

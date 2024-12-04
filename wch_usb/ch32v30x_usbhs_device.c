@@ -13,9 +13,9 @@
 
 /*******************************************************************************/
 /* Header File */
+#include "usbd_user.h"
 #include "ch32v30x_usbhs_device.h"
 #include "usbd_composite_hid.h"
-#include "ch32v30x_usb.h"
 #include "fezui.h"
 #include "fezui_var.h"
 #include "command.h"
@@ -213,7 +213,7 @@ void USBHS_Device_Init( FunctionalState sta )
 uint8_t USBHS_Endp_DataUp( uint8_t endp, uint8_t *pbuf, uint16_t len, uint8_t mod )
 {
     uint8_t endp_buf_mode, endp_en, endp_tx_ctrl;
-
+    endp &= 0x0F;
     /* DMA config, endp_ctrl config, endp_len config */
     if( ( endp >= DEF_UEP1 ) && ( endp <= DEF_UEP15 ) )
     {
@@ -415,7 +415,7 @@ void USBHS_IRQHandler( void )
                                     switch( USBHS_SetupReqCode )
                                     {
                                         case HID_SET_REPORT:
-                                            KB_LED_Cur_Status = USBHS_EP0_Buf[ 0 ];
+                                            //KB_LED_Cur_Status = USBHS_EP0_Buf[ 0 ];
                                             USBHS_SetupReqLen = 0;
                                             break;
 
@@ -588,31 +588,31 @@ void USBHS_IRQHandler( void )
                     {
                         /* get usb device descriptor */
                         case USB_DESCR_TYP_DEVICE:
-                            pUSBHS_Descr = MyDevDescr;
-                            len = DEF_USBD_DEVICE_DESC_LEN;
+                            pUSBHS_Descr = usb_device_descriptor;
+                            len = usb_device_descriptor_length;
                             break;
 
                         /* get usb configuration descriptor */
                         case USB_DESCR_TYP_CONFIG:
-                            pUSBHS_Descr = MyCfgDescr;
-                            len = DEF_USBD_CONFIG_DESC_LEN;
+                            pUSBHS_Descr = usb_config_descriptor;
+                            len = usb_config_descriptor_length;
                             break;
 
                         /* get usb hid descriptor */
                         case USB_DESCR_TYP_HID:
                             if( USBHS_SetupReqIndex == 0x00 )
                             {
-                                pUSBHS_Descr = &MyCfgDescr[ 18 ];
+                                pUSBHS_Descr = &hid_descriptor[ 18 + 18];
                                 len = 9;
                             }
                             else if( USBHS_SetupReqIndex == 0x01 )
                             {
-                                pUSBHS_Descr = &MyCfgDescr[ 43 ];
+                                pUSBHS_Descr = &hid_descriptor[ 43 + 18 ];
                                 len = 9;
                             }
                             else if( USBHS_SetupReqIndex == 0x02 )
                             {
-                                pUSBHS_Descr = &MyCfgDescr[ 68 ];
+                                pUSBHS_Descr = &hid_descriptor[ 68 + 18 ];
                                 len = 9;
                             }
                             else
@@ -625,18 +625,18 @@ void USBHS_IRQHandler( void )
                         case USB_DESCR_TYP_REPORT:
                             if( USBHS_SetupReqIndex == 0x00 )
                             {
-                                pUSBHS_Descr = KeyRepDesc;
-                                len = DEF_USBD_REPORT_DESC_LEN_KB;
+                                pUSBHS_Descr = hid_keyboard_report_desc;
+                                len = HID_KEYBOARD_REPORT_DESC_SIZE;
                             }
                             else if( USBHS_SetupReqIndex == 0x01 )
                             {
-                                pUSBHS_Descr = MouseRepDesc;
-                                len = DEF_USBD_REPORT_DESC_LEN_MS;
+                                pUSBHS_Descr = hid_mouse_report_desc;
+                                len = HID_MOUSE_REPORT_DESC_SIZE;
                             }
                             else if( USBHS_SetupReqIndex == 0x02 )
                             {
-                                pUSBHS_Descr = HidRepDesc;
-                                len = DEF_USBD_REPORT_DESC_LEN_RAW;
+                                pUSBHS_Descr = hid_raw_report_desc;
+                                len = HID_RAW_REPORT_DESC_SIZE;
                             }
                             else
                             {
@@ -650,26 +650,26 @@ void USBHS_IRQHandler( void )
                             {
                                 /* Descriptor 0, Language descriptor */
                                 case DEF_STRING_DESC_LANG:
-                                    pUSBHS_Descr = MyLangDescr;
-                                    len = DEF_USBD_LANG_DESC_LEN;
+                                    pUSBHS_Descr = usb_string0_descriptor;
+                                    len = usb_string0_descriptor_length;
                                     break;
 
                                 /* Descriptor 1, Manufacturers String descriptor */
                                 case DEF_STRING_DESC_MANU:
-                                    pUSBHS_Descr = MyManuInfo;
-                                    len = DEF_USBD_MANU_DESC_LEN;
+                                    pUSBHS_Descr = usb_string1_descriptor;
+                                    len = usb_string1_descriptor_length;
                                     break;
 
                                 /* Descriptor 2, Product String descriptor */
                                 case DEF_STRING_DESC_PROD:
-                                    pUSBHS_Descr = MyProdInfo;
-                                    len = DEF_USBD_PROD_DESC_LEN;
+                                    pUSBHS_Descr = usb_string2_descriptor;
+                                    len = usb_string2_descriptor_length;
                                     break;
 
                                 /* Descriptor 3, Serial-number String descriptor */
                                 case DEF_STRING_DESC_SERN:
-                                    pUSBHS_Descr = MySerNumInfo;
-                                    len = DEF_USBD_SN_DESC_LEN;
+                                    pUSBHS_Descr = usb_serial_descriptor;
+                                    len = usb_serial_descriptor_length;
                                     break;
 
                                 default:
@@ -680,8 +680,8 @@ void USBHS_IRQHandler( void )
 
                         /* get usb qualifier descriptor */
                         case USB_DESCR_TYP_QUALIF:
-                            pUSBHS_Descr = MyQuaDesc;
-                            len =  DEF_USBD_QUALFY_DESC_LEN;
+                            pUSBHS_Descr = usb_qua_descriptor;
+                            len =  usb_qua_descriptor_length;
                             break;
 
                         default :
@@ -773,7 +773,7 @@ void USBHS_IRQHandler( void )
                         /* Set Device Feature */
                         if( (uint8_t)( USBHS_SetupReqValue & 0xFF ) == USB_REQ_FEAT_REMOTE_WAKEUP )
                         {
-                            if( MyCfgDescr[ 7 ] & 0x20 )
+                            if( hid_descriptor[ 7+18 ] & 0x20 )
                             {
                                 /* Set Wake-up flag, device prepare to sleep */
                                 USBHS_DevSleepStatus |= 0x01;
