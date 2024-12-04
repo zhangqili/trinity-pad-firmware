@@ -840,12 +840,16 @@ void TIM7_IRQHandler(void)
         
         if (g_debug_enable)
         {
-            memcpy(buffer + 2 + 4 * 0, &g_keyboard_advanced_keys[0].raw, sizeof(float));
-            memcpy(buffer + 2 + 4 * 1, &g_keyboard_advanced_keys[1].raw, sizeof(float));
-            memcpy(buffer + 2 + 4 * 2, &g_keyboard_advanced_keys[2].raw, sizeof(float));
-            memcpy(buffer + 2 + 4 * 3, &g_keyboard_advanced_keys[3].raw, sizeof(float));
-            buffer[1] = 0xFF;
             buffer[0] = 0x02;
+            buffer[1] = 0xFF;
+            for (int i = 0; i < 4; i++)
+            {
+                buffer[2 + 10 * i] = i;
+                buffer[3 + 10 * i] = g_keyboard_advanced_keys[i].key.state;
+                memcpy(buffer + 4 + 10 * i, &g_keyboard_advanced_keys[i].raw, sizeof(float));
+                memcpy(buffer + 4 + 10 * i + 4, &g_keyboard_advanced_keys[i].value, sizeof(float));
+
+            }
             #ifdef CONFIG_CHERRYUSB
             void hid_raw_send(uint8_t *buffer, int size);
             hid_raw_send(buffer, 18);
