@@ -81,6 +81,7 @@ static uint8_t u8log_buffer[U8LOG_WIDTH * U8LOG_HEIGHT];
 void fezui_input(uint16_t in)
 {
     fezui_frame_input(&g_mainframe, (void *)&in);
+    fezui.screensaver_countdown = fezui.screensaver_timeout;
 }
 
 static void key_up_cb()
@@ -182,14 +183,14 @@ void fezui_render_handler()
     if (fezui.screensaver_timeout)
     {
         fezui_veil_full_screen(&(fezui), (screensaver_countdown) < 7 ? 7 - screensaver_countdown : 0);
-        u8g2_SetPowerSave(&(fezui.u8g2), !fezui.screensaver_countdown);
+        u8g2_SetPowerSave(&(fezui.u8g2), (screensaver_countdown<1));
     }
 #ifdef SHOW_FPS
     u8g2_SetDrawColor(&(fezui.u8g2), 1);
     u8g2_DrawBox(&fezui.u8g2, 95 + 14, 0, WIDTH - 95 - 14, 11);
     u8g2_SetDrawColor(&(fezui.u8g2), 2);
     u8g2_SetFont(&(fezui.u8g2), fez_font_6x10_m);
-    u8g2_DrawStr(&(fezui.u8g2), 95 + 15, 10, g_fpsstr);
+    u8g2_DrawUTF8(&(fezui.u8g2), 95 + 15, 10, g_fpsstr);
 #endif
     u8g2_SendBuffer(&(fezui.u8g2));
     g_fezui_fps++;
@@ -200,19 +201,19 @@ void fezui_render_handler()
 void fezui_POST()
 {
     u8g2_SetFont(&fezui.u8g2, u8g2_font_5x7_tf);
-    u8g2_DrawStr(&fezui.u8g2, 0, CHAR_HEIGHT - 1, "FEZUI");
+    u8g2_DrawUTF8(&fezui.u8g2, 0, CHAR_HEIGHT - 1, "FEZUI");
     u8g2_DrawHLine(&fezui.u8g2, 0, CHAR_HEIGHT, WIDTH);
     u8log_WriteString(&u8log, "Mounting Flash...");
     u8g2_DrawLog(&fezui.u8g2, 0, CHAR_HEIGHT * 2, &u8log);
     u8g2_SendBuffer(&fezui.u8g2);
     // mount the filesystem
-    int err = lfs_mount(&lfs_w25qxx, &cfg);
+    int err = lfs_mount(&lfs_w25qxx, &lfs_cfg);
     // reformat if we can't mount the filesystem
     // this should only happen on the first boot
     if (err)
     {
-        err = lfs_format(&lfs_w25qxx, &cfg);
-        lfs_mount(&lfs_w25qxx, &cfg);
+        err = lfs_format(&lfs_w25qxx, &lfs_cfg);
+        lfs_mount(&lfs_w25qxx, &lfs_cfg);
         u8log_WriteString(&u8log, " [Failed]\n");
         u8log_WriteString(&u8log, "Formating Flash...");
         u8g2_DrawLog(&fezui.u8g2, 0, CHAR_HEIGHT * 2, &u8log);
@@ -310,13 +311,13 @@ void fezui_reset()
 void fezui_save()
 {
     // mount the filesystem
-    int err = lfs_mount(&lfs_w25qxx, &cfg);
+    int err = lfs_mount(&lfs_w25qxx, &lfs_cfg);
     // reformat if we can't mount the filesystem
     // this should only happen on the first boot
     if (err)
     {
-        lfs_format(&lfs_w25qxx, &cfg);
-        lfs_mount(&lfs_w25qxx, &cfg);
+        lfs_format(&lfs_w25qxx, &lfs_cfg);
+        lfs_mount(&lfs_w25qxx, &lfs_cfg);
     }
     // read current count
     lfs_file_open(&lfs_w25qxx, &lfs_file_w25qxx, "fezui.dat", LFS_O_RDWR | LFS_O_CREAT);
@@ -337,13 +338,13 @@ void fezui_save()
 void fezui_recovery()
 {
     // mount the filesystem
-    int err = lfs_mount(&lfs_w25qxx, &cfg);
+    int err = lfs_mount(&lfs_w25qxx, &lfs_cfg);
     // reformat if we can't mount the filesystem
     // this should only happen on the first boot
     if (err)
     {
-        lfs_format(&lfs_w25qxx, &cfg);
-        lfs_mount(&lfs_w25qxx, &cfg);
+        lfs_format(&lfs_w25qxx, &lfs_cfg);
+        lfs_mount(&lfs_w25qxx, &lfs_cfg);
     }
     lfs_file_open(&lfs_w25qxx, &lfs_file_w25qxx, "fezui.dat", LFS_O_RDWR | LFS_O_CREAT);
     lfs_file_rewind(&lfs_w25qxx, &lfs_file_w25qxx);

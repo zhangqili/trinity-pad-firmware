@@ -10,7 +10,7 @@
 #include "fezui.h"
 #include "fezui_var.h"
 #include "rgb.h"
-#ifdef CONFIG_CHERRYUSB_DEVICE
+#ifdef CONFIG_CHERRYUSB
 #include "usbd_user.h"
 #else
 #include "usbd_composite_hid.h"
@@ -89,13 +89,6 @@ static void homepage_tick(void *page)
     fezui_rolling_number_update(&fezui, &kps_num);
     fezui_rolling_number_update(&fezui, &max_kps_num);
     
-    if (g_keybaord_shift_flag && g_keybaord_alpha_flag)
-    {
-        fezui_frame_navigate(&g_mainframe, &menupage);
-        g_keybaord_shift_flag = false;
-        g_keybaord_alpha_flag = false;
-    }
-
 }
 
 static void draw_chart(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g2_uint_t w,
@@ -126,9 +119,9 @@ static void homepage_draw(void *page)
 
     draw_chart(&(fezui), 0, MARGIN_UP, CHART_WIDTH, CHART_HEIGHT, &g_kps_history, g_kps_history_max);
     u8g2_SetFont(&(fezui.u8g2), u8g2_font_micro_tr);
-    u8g2_DrawStr(&(fezui.u8g2), 0, MARGIN_UP - 1, "KPS:");
-    u8g2_DrawStr(&(fezui.u8g2), 32, MARGIN_UP - 1, "MAX:");
-    u8g2_DrawStr(&(fezui.u8g2), 95, MARGIN_UP - 1, "FPS:");
+    u8g2_DrawUTF8(&(fezui.u8g2), 0, MARGIN_UP - 1, "KPS:");
+    u8g2_DrawUTF8(&(fezui.u8g2), 32, MARGIN_UP - 1, "MAX:");
+    u8g2_DrawUTF8(&(fezui.u8g2), 95, MARGIN_UP - 1, "FPS:");
 
     u8g2_SetFont(&(fezui.u8g2), fez_font_6x10_m);
 
@@ -138,7 +131,7 @@ static void homepage_draw(void *page)
     fezui_draw_rolling_number(&fezui, 98, 63, &key4_num);
 
 #ifndef SHOW_FPS
-    u8g2_DrawStr(&(fezui.u8g2), 95 + 15, MARGIN_UP - 1, g_fpsstr);
+    u8g2_DrawUTF8(&(fezui.u8g2), 95 + 15, MARGIN_UP - 1, g_fpsstr);
 #endif
 
     fezui_draw_rolling_number(&fezui, 15, MARGIN_UP - 1, &kps_num);
@@ -152,19 +145,19 @@ static void homepage_draw(void *page)
     u8g2_DrawVLine(&(fezui.u8g2), 32, HEIGHT - MARGIN_DOWN, MARGIN_DOWN);
     u8g2_DrawVLine(&(fezui.u8g2), 96, HEIGHT - MARGIN_DOWN, MARGIN_DOWN);
 
-    u8g2_SetFont(&(fezui.u8g2), u8g2_font_micro_tr);
+    u8g2_SetFont(&(fezui.u8g2), u8g2_font_4x6_mr);
 
-    if (g_keybaord_shift_flag)
+    if (g_keyboard_current_layer == 1)
     {
         u8g2_DrawBox(&(fezui.u8g2), 65, 1, MARGIN_UP - 2, MARGIN_UP - 2);
         u8g2_SetDrawColor(&(fezui.u8g2), 2);
-        u8g2_DrawStr(&(fezui.u8g2), 68, MARGIN_UP - 2, "S");
+        u8g2_DrawUTF8(&(fezui.u8g2), 68, MARGIN_UP - 2, "S");
     }
-    if (g_keybaord_alpha_flag)
+    if (g_keyboard_current_layer == 2)
     {
         u8g2_DrawBox(&(fezui.u8g2), 65 + MARGIN_UP - 2, 1, MARGIN_UP - 2, MARGIN_UP - 2);
         u8g2_SetDrawColor(&(fezui.u8g2), 2);
-        u8g2_DrawStr(&(fezui.u8g2), 68 + MARGIN_UP - 2, MARGIN_UP - 2, "A");
+        u8g2_DrawUTF8(&(fezui.u8g2), 68 + MARGIN_UP - 2, MARGIN_UP - 2, "A");
     }
 
     //fezui_printf(&fezui,66,32,"%ld",g_usb_report_count1);
@@ -178,9 +171,7 @@ static void homepage_load(void *page)
 {
     // fezui_scrolling_text_init(&fezui,&scrolling_text,15,0.1,u8g2_font_4x6_mr,"HELLO!");
     // fezui_scrolling_text_begin_once(&scrolling_text);
-    g_keybaord_send_report_enable = true;
-    g_keybaord_shift_flag = false;
-    g_keybaord_alpha_flag = false;
+    g_keyboard_send_report_enable = true;
 }
 
 fezui_page_t homepage = {homepage_tick, homepage_draw, homepage_load};

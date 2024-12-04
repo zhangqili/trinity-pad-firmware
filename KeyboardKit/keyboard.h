@@ -18,13 +18,17 @@
 #define KEY_KEYCODE(binding) ((binding) & 0xFF)
 #define KEY_MODIFIER(binding) (((binding) >> 8) & 0xFF)
 
-#define KEYBOARD_REPORT_BUFFER_ADD(binding) keyboard_6KRObuffer_add(&g_keyboard_6kro_buffer, (binding))
-
 typedef struct
 {
     uint8_t buffer[8];
     uint8_t keynum;
 } Keyboard_6KROBuffer;
+
+typedef struct
+{
+    uint8_t *buffer;
+    uint8_t length;
+}Keyboard_NKROBuffer;
 
 extern Key g_keyboard_keys[KEY_NUM];
 extern AdvancedKey g_keyboard_advanced_keys[ADVANCED_KEY_NUM];
@@ -33,16 +37,25 @@ extern const uint16_t g_default_keymap[LAYER_NUM][ADVANCED_KEY_NUM + KEY_NUM];
 extern uint16_t g_keymap[LAYER_NUM][ADVANCED_KEY_NUM + KEY_NUM];
 extern Keyboard_6KROBuffer g_keyboard_6kro_buffer;
 
-extern uint8_t g_keyboard_report_buffer[HID_BUFFER_LENGTH];
-
 extern uint8_t g_keyboard_knob_flag;
-extern volatile bool g_keybaord_alpha_flag;
-extern volatile bool g_keybaord_shift_flag;
-extern volatile bool g_keybaord_send_report_enable;
+extern volatile bool g_keyboard_send_report_enable;
+
+extern volatile bool g_debug_enable;
+
+void keyboard_key_add_buffer(Key *k);
+
+void keyboard_buffer_send();
+void keyboard_buffer_clear();
 
 int keyboard_6KRObuffer_add(Keyboard_6KROBuffer *buf, uint16_t key);
 void keyboard_6KRObuffer_send(Keyboard_6KROBuffer *buf);
 void keyboard_6KRObuffer_clear(Keyboard_6KROBuffer *buf);
+
+void keyboard_NKRObuffer_init(Keyboard_NKROBuffer*buf,uint8_t* data_buf,uint8_t length);
+int keyboard_NKRObuffer_add(Keyboard_NKROBuffer*buf,uint16_t key);
+void keyboard_NKRObuffer_send(Keyboard_NKROBuffer*buf);
+void keyboard_NKRObuffer_clear(Keyboard_NKROBuffer*buf);
+
 void keyboard_init();
 void keyboard_system_reset();
 void keyboard_factory_reset();
@@ -51,7 +64,7 @@ void keyboard_send_report();
 void keyboard_post_process();
 void keyboard_recovery();
 void keyboard_save();
-void keyboard_timer();
+void keyboard_task();
 void keyboard_delay();
 void keyboard_hid_send(uint8_t *report, uint16_t len);
 

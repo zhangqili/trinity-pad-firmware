@@ -41,12 +41,7 @@ void unload_cargo(uint8_t *buf)
         //g_keyboard_advanced_keys[command_advanced_key_mapping[buf[1]]].lower_bound = fill_in_float(&buf[2 + 4 * 8]);
         break;
     case 1: // Global LED
-        g_rgb_global_config.mode = buf[1];
-        g_rgb_global_config.rgb.r = buf[2];
-        g_rgb_global_config.rgb.g = buf[3];
-        g_rgb_global_config.rgb.b = buf[4];
-        g_rgb_global_config.speed = buf[5]/100.0;
-        rgb_to_hsv(&g_rgb_global_config.hsv, &g_rgb_global_config.rgb);
+        g_rgb_switch = buf[1];
         break;
     case 2: // LED
         for (uint8_t i = 0; i < RGB_NUM; i++)
@@ -82,6 +77,9 @@ void command_prase(uint8_t *buf, uint8_t len)
         break;
     case 0x82: // Factory Reset
         keyboard_factory_reset();
+        break;
+    case 0xB0: // Set Debug
+        g_debug_enable = buf[1];
         break;
     case 0xFF: // Legacy
         unload_cargo(buf+1);

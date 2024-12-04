@@ -34,8 +34,6 @@
 #define SET_REPORT_WAIT_DEAL          0x01
 /*******************************************************************************/
 /* Global Variable Declaration */
-extern volatile uint8_t  KB_LED_Last_Status;
-extern volatile uint8_t  KB_LED_Cur_Status;
 
 extern uint32_t g_usb_report_count;
 extern uint32_t g_usb_report_count1;

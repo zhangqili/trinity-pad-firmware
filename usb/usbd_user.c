@@ -7,18 +7,8 @@
 
 #define ENABLE_MOUSE
 
-#define USBD_VID           0xffff
-#define USBD_PID           0xffff
-#define USBD_MAX_POWER     300
-#define USBD_LANGID_STRING 1033
 
-
-#define USB_HID_CONFIG_DESC_SIZ       (9+25+25+32)
-#define HID_KEYBOARD_REPORT_DESC_SIZE 63
-#define HID_MOUSE_REPORT_DESC_SIZE 74
-#define HID_RAW_REPORT_DESC_SIZE 38
-
-static const uint8_t hid_descriptor[] = {
+const uint8_t hid_descriptor[] = {
     USB_DEVICE_DESCRIPTOR_INIT(USB_2_0, 0x00, 0x00, 0x00, USBD_VID, USBD_PID, 0x0002, 0x01),
     USB_CONFIG_DESCRIPTOR_INIT(USB_HID_CONFIG_DESC_SIZ, 0x03, 0x01, USB_CONFIG_BUS_POWERED, USBD_MAX_POWER),
     //Keyboard
@@ -198,7 +188,7 @@ static const uint8_t hid_descriptor[] = {
     0x00
 };
 
-static const uint8_t hid_keyboard_report_desc[HID_KEYBOARD_REPORT_DESC_SIZE] = {
+const uint8_t hid_keyboard_report_desc[HID_KEYBOARD_REPORT_DESC_SIZE] = {
     0x05, 0x01, // USAGE_PAGE (Generic Desktop)
     0x09, 0x06, // USAGE (Keyboard)
     0xa1, 0x01, // COLLECTION (Application)
@@ -235,7 +225,7 @@ static const uint8_t hid_keyboard_report_desc[HID_KEYBOARD_REPORT_DESC_SIZE] = {
 
 #ifdef ENABLE_MOUSE
 /*!< hid mouse report descriptor */
-static const uint8_t hid_mouse_report_desc[HID_MOUSE_REPORT_DESC_SIZE] = {
+const uint8_t hid_mouse_report_desc[HID_MOUSE_REPORT_DESC_SIZE] = {
 
     0x05, 0x01, // USAGE_PAGE (Generic Desktop)
     0x09, 0x02, // USAGE (Mouse)
@@ -286,7 +276,7 @@ static const uint8_t hid_mouse_report_desc[HID_MOUSE_REPORT_DESC_SIZE] = {
 };
 #endif
 /*!< custom hid report descriptor */
-static const uint8_t hid_raw_report_desc[HID_RAW_REPORT_DESC_SIZE] = {
+const uint8_t hid_raw_report_desc[HID_RAW_REPORT_DESC_SIZE] = {
     /* USER CODE BEGIN 0 */
     0x06, 0x00, 0xff, /* USAGE_PAGE (Vendor Defined Page 1) */
     0x09, 0x01,       /* USAGE (Vendor Usage 1) */

@@ -30,11 +30,11 @@
 #include "record.h"
 #include "mouse.h"
 #include "keyboard.h"
-#ifdef CONFIG_CHERRYUSB_DEVICE
 #include "usbd_user.h"
+#ifdef CONFIG_CHERRYUSB
 #else
 #include "ch32v30x_usbhs_device.h"
-#include "usbd_composite_hid.h"
+//#include "usbd_composite_hid.h"
 #endif
 
 /* Global typedef */
@@ -735,31 +735,34 @@ int main(void)
     rgb_init();
     TIM1_Init();
     DMA_TIM1_Init();
-    rgb_recovery();
+    rgb_factory_reset();
     EXTI_INT_INIT();
     DMA_Cmd(DMA1_Channel5, ENABLE);
 
-    DMA1_Tx_Init(DMA1_Channel1, (u32)&ADC1->RDATAR, (u32)g_ADC_Buffer, ANALOG_BUFFER_LENGTH * ADVANCED_KEY_NUM);
+    DMA1_Tx_Init(DMA1_Channel1, (u32)&ADC1->RDATAR, (u32)g_ADC_Buffer, ANALOG_BUFFER_LENGTH);
     DMA_Cmd(DMA1_Channel1, ENABLE);
     ADC_SoftwareStartConvCmd(ADC1, ENABLE);
-#ifdef CONFIG_CHERRYUSB_DEVICE
+#ifdef CONFIG_CHERRYUSB
     hid_init();
 #else
 	USBHS_RCC_Init( );
 	USBHS_Device_Init( ENABLE );
 	//USB_Sleep_Wakeup_CFG( );
 #endif
-    rgb_flash();
     
     keyboard_recovery();
     Delay_Ms(100);
-    // analog_reset_range();
     fram_read_bytes(0x400, g_key_counts, sizeof(g_key_counts));
     memcpy(g_key_init_counts, g_key_counts, sizeof(g_key_counts));
 
     TIM6_INT_Init(14400 / 144 - 1, 10000 - 1);
     TIM7_INT_Init(14400 / 8 - 1, 10 - 1);
+    rgb_init_flash();
+    analog_reset_range();
+#ifdef CONFIG_CHERRYUSB
+#else
     USBHSD->UEP1_RX_CTRL = (USBHSD->UEP1_RX_CTRL & ~USBHS_UEP_R_RES_MASK) | USBHS_UEP_R_RES_ACK;
+#endif
     while (1)
     {
         // extern void hid_keyboard_test(void);
@@ -814,7 +817,7 @@ void TIM7_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 void TIM7_IRQHandler(void)
 {
     static uint8_t count = 0;
-    //static uint8_t buffer[64];
+    static uint8_t buffer[64];
     //static bool flag = true;
     if (TIM_GetITStatus(TIM7, TIM_IT_Update) != RESET)
     {
@@ -827,25 +830,33 @@ void TIM7_IRQHandler(void)
         }
         TIM_ClearITPendingBit(TIM7, TIM_IT_Update);
         // if(!HAL_GPIO_ReadPin(MENU_GPIO_Port, MENU_Pin))
-        keyboard_timer();
+        keyboard_task();
         //if (flag)
         //{
         //    flag = false;
         //    keyboard_6KRObuffer_send(&g_keyboard_6kro_buffer);
         //    mouse_buffer_send(&g_mouse);
         //}
-        /*
         
-        memcpy(buffer + 2 + 4 * 0, &g_keyboard_advanced_keys[0].raw, sizeof(float));
-        memcpy(buffer + 2 + 4 * 1, &g_keyboard_advanced_keys[1].raw, sizeof(float));
-        memcpy(buffer + 2 + 4 * 2, &g_keyboard_advanced_keys[2].raw, sizeof(float));
-        memcpy(buffer + 2 + 4 * 3, &g_keyboard_advanced_keys[3].raw, sizeof(float));
-        buffer[1] = 0xFF;
-        buffer[0] = 0x02;
-        //void hid_raw_send(uint8_t *buffer, int size);
-        //hid_raw_send(buffer, 18);
-        USBHS_Endp_DataUp(DEF_UEP3,&buffer, 64,DEF_UEP_CPY_LOAD);
-        */
+        if (g_debug_enable)
+        {
+            buffer[0] = 0x02;
+            buffer[1] = 0xFF;
+            for (int i = 0; i < 4; i++)
+            {
+                buffer[2 + 10 * i] = i;
+                buffer[3 + 10 * i] = g_keyboard_advanced_keys[i].key.state;
+                memcpy(buffer + 4 + 10 * i, &g_keyboard_advanced_keys[i].raw, sizeof(float));
+                memcpy(buffer + 4 + 10 * i + 4, &g_keyboard_advanced_keys[i].value, sizeof(float));
+
+            }
+            #ifdef CONFIG_CHERRYUSB
+            void hid_raw_send(uint8_t *buffer, int size);
+            hid_raw_send(buffer, 18);
+            #else
+            USBHS_Endp_DataUp(HIDRAW_IN_EP, buffer, 64, DEF_UEP_CPY_LOAD);
+            #endif
+        }
     }
 }
 

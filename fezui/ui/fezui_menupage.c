@@ -37,7 +37,7 @@ static void menupage_draw(void *page)
         u8g2_SetFont(&(fezui.u8g2), u8g2_font_6x13_mr);
         break;
     case LANG_ZH:
-        u8g2_SetFont(&(fezui.u8g2), u8g2_font_wqy13_t_gb2312a);
+        u8g2_SetFont(&(fezui.u8g2), u8g2_font_wqy13_t_gb2312b);
         break;
     default:
         break;
@@ -70,7 +70,8 @@ static void main_menu_cb(void *menu)
 
 static void menupage_load(void *page)
 {
-    g_keybaord_send_report_enable=false;
+    g_keyboard_send_report_enable=false;
+    g_keyboard_current_layer = 0;
     fezui_animated_listbox_begin(&mainmenu);
 }
 

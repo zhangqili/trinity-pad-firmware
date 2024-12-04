@@ -342,7 +342,7 @@ void fezui_draw_scrolling_text(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y,
     u8g2_SetFont(&(fezui_ptr->u8g2), text->font);
     // uint8_t font_height = u8g2_GetMaxCharHeight(&(fezui_ptr->u8g2));
     u8g2_SetClipWindow(&(fezui_ptr->u8g2), x, 0, x + text->width, y + 1);
-    u8g2_DrawStr(&(fezui_ptr->u8g2), x + (u8g2_int_t)(text->offset), y, text->text);
+    u8g2_DrawUTF8(&(fezui_ptr->u8g2), x + (u8g2_int_t)(text->offset), y, text->text);
     u8g2_SetMaxClipWindow(&(fezui_ptr->u8g2));
     u8g2_SetFont(&(fezui_ptr->u8g2), temp_font);
 }

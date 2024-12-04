@@ -7,7 +7,7 @@
 #include "fezui.h"
 #include "fezui_var.h"
 #include "main.h"
-#ifdef CONFIG_CHERRYUSB_DEVICE
+#ifdef CONFIG_CHERRYUSB
 #include "usbd_user.h"
 #else
 #include "usbd_composite_hid.h"
@@ -53,12 +53,10 @@ static void debugpage_draw(void *page)
 {
     //fezui_printf(&fezui, 64, 16, "%#lx", g_fezui_debug);
 
-    // u8g2_SetFont(&fezui.u8g2, u8g2_font_8x13B_mf);
-
     u8g2_SetFont(&(fezui.u8g2), u8g2_font_5x8_mr);
     // fezui_draw_animated_listbox(&fezui, 0, 0, WIDTH, HEIGHT, &listbox, 8, 1);
     // fezui_animated_listbox_get_cursor(&fezui, 0, 0, WIDTH, HEIGHT, &listbox, 8, &g_target_cursor);
-    u8g2_DrawStr(&(fezui.u8g2), 0, 64, (char *)read_buffer + 1);
+    u8g2_DrawUTF8(&(fezui.u8g2), 0, 64, (char *)read_buffer + 1);
     fezui_printf(&fezui,32,8,"%d",fezui.contrast);
     fezui_printf(&fezui, 64, 8, "%f", (-1)*(&rangebase)->interval);
     fezui_printf(&fezui, 64, 8, "%d", (int16_t)((-1)*(&rangebase)->interval));
@@ -84,7 +82,7 @@ static void debugpage_draw(void *page)
 
 static void debugpage_load(void *page)
 {
-    g_keybaord_send_report_enable=true;
+    g_keyboard_send_report_enable=true;
     fezui_flyout_numberic_dialog_init(&dialog, &targetnum, FEZUI_TYPE_FLOAT, 0, 100, 0.1, "NUMBER");
     fezui_flyout_numberic_dialog_show(&dialog);
 }
@@ -104,7 +102,7 @@ static void debugpage_event_handler(void *e)
         fezui_frame_go_back(&g_mainframe);
         break;
     case KEY_ESC:
-        g_keybaord_send_report_enable=false;
+        g_keyboard_send_report_enable=false;
         fezui_frame_go_back(&g_mainframe);
         break;
     default:

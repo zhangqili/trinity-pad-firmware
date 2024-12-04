@@ -42,7 +42,7 @@ static void panelpage_draw(void *page)
     u8g2_SetFont(&(fezui.u8g2), u8g2_font_5x8_mr);
     for (uint8_t i = 0; i < ADVANCED_KEY_NUM; i++)
     {
-        u8g2_DrawStr(&fezui.u8g2, i * WIDTH / 4 + 2, 10, panelmenu.items[i]);
+        u8g2_DrawUTF8(&fezui.u8g2, i * WIDTH / 4 + 2, 10, panelmenu.items[i]);
         bars[i].value = g_keyboard_advanced_keys[i].value;
         fezui_draw_progressbar(&fezui, i * WIDTH / 4 + 2, 20, WIDTH / 4 - 2 * 2, 36, bars + i);
     }

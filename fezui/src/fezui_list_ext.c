@@ -120,12 +120,12 @@ static void menu_item_draw(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g
     if(_Format)
     {
         memcpy(g_fezui_printf_buffer,item->header+1,_Format-item->header-1);
-        u8g2_DrawStr(&(fezui_ptr->u8g2), x, y+h, g_fezui_printf_buffer);
+        u8g2_DrawUTF8(&(fezui_ptr->u8g2), x, y+h, g_fezui_printf_buffer);
         sprintf(_FormatStr,"[%s]",_Format);
     }
     else
     {
-        u8g2_DrawStr(&(fezui_ptr->u8g2), x+1, y+h, item->header + 1);
+        u8g2_DrawUTF8(&(fezui_ptr->u8g2), x+1, y+h, item->header + 1);
     }
     switch (*(item->header))
     {
@@ -250,12 +250,12 @@ void fezui_draw_animated_menu(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, 
         if(_Format)
         {
             memcpy(g_fezui_printf_buffer,menu->items[i].header+1,_Format-menu->items[i].header-1);
-            u8g2_DrawStr(&(fezui_ptr->u8g2), x + 1, (u8g2_int_t)floorf(y+(item_height * (i + 1) - (u8g2_int_t)menu->offset - adjust) * menu->animation + 0.5), g_fezui_printf_buffer);
+            u8g2_DrawUTF8(&(fezui_ptr->u8g2), x + 1, (u8g2_int_t)floorf(y+(item_height * (i + 1) - (u8g2_int_t)menu->offset - adjust) * menu->animation + 0.5), g_fezui_printf_buffer);
             sprintf(_FormatStr,"[%s]",_Format);
         }
         else
         {
-            u8g2_DrawStr(&(fezui_ptr->u8g2), x + 1, (u8g2_int_t)floorf(y+(item_height * (i + 1) - (u8g2_int_t)menu->offset - adjust) * menu->animation + 0.5), menu->items[i].header + 1);
+            u8g2_DrawUTF8(&(fezui_ptr->u8g2), x + 1, (u8g2_int_t)floorf(y+(item_height * (i + 1) - (u8g2_int_t)menu->offset - adjust) * menu->animation + 0.5), menu->items[i].header + 1);
         }
         switch (*(menu->items[i].header))
         {

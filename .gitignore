@@ -220,3 +220,4 @@ obj/*
 /build
 /.cmake
 /.idea
+fezui/ui/compile_time.h

@@ -80,7 +80,7 @@ void fezui_draw_numberic_dialog(fezui_t *fezui_ptr, u8g2_int_t x, u8g2_int_t y, 
     uint8_t char_height = u8g2_GetMaxCharHeight(&fezui_ptr->u8g2);
     float temp = fezui_generics_convert_to_float(dialog->rangebase.target,dialog->rangebase.type);
 
-    u8g2_DrawStr(&fezui_ptr->u8g2,x+2,y+char_height,dialog->title);
+    u8g2_DrawUTF8(&fezui_ptr->u8g2,x+2,y+char_height,dialog->title);
 
     switch (dialog->rangebase.type)
     {
@@ -96,7 +96,7 @@ void fezui_draw_numberic_dialog(fezui_t *fezui_ptr, u8g2_int_t x, u8g2_int_t y, 
             break;
     }
     uint8_t width = u8g2_GetStrWidth(&fezui_ptr->u8g2,g_fezui_printf_buffer);
-    u8g2_DrawStr(&fezui_ptr->u8g2,x+w-2-width,y+char_height,g_fezui_printf_buffer);
+    u8g2_DrawUTF8(&fezui_ptr->u8g2,x+w-2-width,y+char_height,g_fezui_printf_buffer);
 
     fezui_draw_slider(fezui_ptr, x + 2, y + h - 7, w - 4, 5, &dialog->rangebase, ORIENTATION_HORIZAIONTAL);
 
