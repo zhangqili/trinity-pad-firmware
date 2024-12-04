@@ -23,7 +23,6 @@ typedef struct
 {
     uint16_t datas[RING_BUF_LEN];
     uint16_t pointer;
-    //uint32_t state;
 }RingBuf;
 
 
@@ -32,6 +31,10 @@ extern uint16_t g_ADC_Buffer[ADVANCED_KEY_NUM*ANALOG_BUFFER_LENGTH];
 extern float g_ADC_Averages[ADVANCED_KEY_NUM];
 
 extern AdaptiveSchimidtFilter g_analog_filters[ADVANCED_KEY_NUM];
+
+extern RingBuf adc_ringbuf[ADVANCED_KEY_NUM];
+
+extern uint8_t g_analog_active_channel;
 
 void analog_init();
 void analog_channel_select(uint8_t x);

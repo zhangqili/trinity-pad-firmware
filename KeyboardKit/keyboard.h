@@ -18,8 +18,6 @@
 #define KEY_KEYCODE(binding) ((binding) & 0xFF)
 #define KEY_MODIFIER(binding) (((binding) >> 8) & 0xFF)
 
-#define KEYBOARD_REPORT_BUFFER_ADD(binding) keyboard_6KRObuffer_add(&g_keyboard_6kro_buffer, (binding))
-
 typedef struct
 {
     uint8_t buffer[8];
@@ -39,12 +37,12 @@ extern const uint16_t g_default_keymap[LAYER_NUM][ADVANCED_KEY_NUM + KEY_NUM];
 extern uint16_t g_keymap[LAYER_NUM][ADVANCED_KEY_NUM + KEY_NUM];
 extern Keyboard_6KROBuffer g_keyboard_6kro_buffer;
 
-extern uint8_t g_keyboard_report_buffer[HID_BUFFER_LENGTH];
-
 extern uint8_t g_keyboard_knob_flag;
 extern volatile bool g_keyboard_send_report_enable;
 
 extern volatile bool g_debug_enable;
+
+void keyboard_key_add_buffer(Key *k);
 
 int keyboard_6KRObuffer_add(Keyboard_6KROBuffer *buf, uint16_t key);
 void keyboard_6KRObuffer_send(Keyboard_6KROBuffer *buf);

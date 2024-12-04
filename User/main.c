@@ -749,16 +749,16 @@ int main(void)
 	USBHS_Device_Init( ENABLE );
 	//USB_Sleep_Wakeup_CFG( );
 #endif
-    rgb_flash();
     
     keyboard_recovery();
     Delay_Ms(100);
-    // analog_reset_range();
     fram_read_bytes(0x400, g_key_counts, sizeof(g_key_counts));
     memcpy(g_key_init_counts, g_key_counts, sizeof(g_key_counts));
 
     TIM6_INT_Init(14400 / 144 - 1, 10000 - 1);
     TIM7_INT_Init(14400 / 8 - 1, 10 - 1);
+    rgb_init_flash();
+    analog_reset_range();
 #ifdef CONFIG_CHERRYUSB
 #else
     USBHSD->UEP1_RX_CTRL = (USBHSD->UEP1_RX_CTRL & ~USBHS_UEP_R_RES_MASK) | USBHS_UEP_R_RES_ACK;

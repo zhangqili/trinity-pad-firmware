@@ -206,6 +206,47 @@ void rgb_set(uint8_t r, uint8_t g, uint8_t b, uint16_t index)
     }
 }
 
+void rgb_init_flash()
+{
+    float intensity;
+    ColorRGB temp_rgb;
+    uint32_t begin_time = RGB_Tick;
+    RGBLocation location = {1.5, 3};
+    while (RGB_Tick - begin_time < 1000)
+    {
+        float distance = (RGB_Tick - begin_time) * 0.03;
+        memset(g_rgb_colors, 0, sizeof(g_rgb_colors));
+        for (int8_t i = 0; i < RGB_NUM; i++)
+        {
+            //rgb_flash();
+            
+            intensity = (distance - sqrtf((location.x - g_rgb_locations[i].x) * (location.x - g_rgb_locations[i].x) +
+                                          (location.y - g_rgb_locations[i].y) * (location.y - g_rgb_locations[i].y)));
+                                          
+            //intensity = (distance - MANHATTAN_DISTANCE(&location, g_rgb_locations+i));
+            if (intensity > 0)
+            {
+                intensity = 10 - intensity > 0 ? 10 - intensity : 0;
+                intensity /= 10;
+            }
+            else
+            {
+                intensity = 1.0f + intensity > 0 ? 1.0f + intensity : 0;
+            }
+            temp_rgb.r = ((uint8_t)(intensity * 255));
+            temp_rgb.g = ((uint8_t)(intensity * 255));
+            temp_rgb.b = ((uint8_t)(intensity * 255));
+            color_mix(&g_rgb_colors[i], &temp_rgb);
+        }
+        for (uint8_t i = 0; i < ADVANCED_KEY_NUM; i++)
+        {
+            rgb_set(g_rgb_colors[i].r, g_rgb_colors[i].g, g_rgb_colors[i].b, i);
+        }
+        //keyboard_delay(1);
+    }
+    rgb_turn_off();
+}
+
 void rgb_flash()
 {
     for (uint8_t i = 1; i < 128; i++)
@@ -214,7 +255,7 @@ void rgb_flash()
         {
             rgb_set(i, i, i, j);
         }
-        keyboard_delay(2);
+        keyboard_delay(1);
     }
     for (uint8_t i = 128; i > 0; i--)
     {
@@ -222,7 +263,7 @@ void rgb_flash()
         {
             rgb_set(i, i, i, j);
         }
-        keyboard_delay(2);
+        keyboard_delay(1);
     }
     rgb_turn_off();
 }

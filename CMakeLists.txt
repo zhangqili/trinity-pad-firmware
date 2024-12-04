@@ -93,7 +93,7 @@ file(GLOB_RECURSE SOURCES ${SOURCES} "wch_usb/*.c")
 endif()
 
 # Set the output path for compile_time.h
-set(COMPILE_TIME_HEADER "${CMAKE_BINARY_DIR}/fezui/ui/compile_time.h")
+set(COMPILE_TIME_HEADER "${CMAKE_SOURCE_DIR}/fezui/ui/compile_time.h")
 
 # Get the current date and time using CMake's built-in functionality
 string(TIMESTAMP CURRENT_DATE "%Y-%m-%d")

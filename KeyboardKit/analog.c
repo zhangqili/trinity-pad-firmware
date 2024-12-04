@@ -17,6 +17,10 @@ float g_ADC_Averages[ADVANCED_KEY_NUM];
 
 AdaptiveSchimidtFilter g_analog_filters[ADVANCED_KEY_NUM];
 
+RingBuf adc_ringbuf[ADVANCED_KEY_NUM];
+
+uint8_t g_analog_active_channel;
+
 void analog_init()
 {
 }

@@ -82,6 +82,7 @@ extern bool g_rgb_switch;
 void rgb_init();
 void rgb_update();
 void rgb_set(uint8_t r,uint8_t g,uint8_t b,uint16_t index);
+void rgb_init_flash();
 void rgb_flash();
 void rgb_turn_off();
 void rgb_factory_reset();

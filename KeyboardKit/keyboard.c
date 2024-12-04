@@ -22,7 +22,12 @@ Action *g_keyboard_actions[LAYER_NUM][ADVANCED_KEY_NUM + KEY_NUM];
 
 uint8_t g_keyboard_current_layer;
 uint16_t g_keymap[LAYER_NUM][ADVANCED_KEY_NUM + KEY_NUM];
+
+#ifdef NKRO_ENABLE
+Keyboard_NKROBuffer g_keyboard_nkro_buffer;
+#else
 Keyboard_6KROBuffer g_keyboard_6kro_buffer;
+#endif
 
 uint8_t g_keyboard_knob_flag;
 volatile bool g_keyboard_send_report_enable = true;
@@ -39,7 +44,11 @@ void keyboard_key_add_buffer(Key *k)
     {
         if ((g_keymap[g_keyboard_current_layer][k->id] & 0xFF) <= KEY_EXSEL)
         {
-            KEYBOARD_REPORT_BUFFER_ADD(g_keymap[g_keyboard_current_layer][k->id]);
+#ifdef NKRO_ENABLE
+            keyboard_NKRObuffer_add(&g_keyboard_nkro_buffer, (g_keymap[g_keyboard_current_layer][k->id]));
+#else
+            keyboard_6KRObuffer_add(&g_keyboard_6kro_buffer, (g_keymap[g_keyboard_current_layer][k->id]));
+#endif
         }
         else
         {
@@ -73,6 +82,24 @@ void keyboard_key_add_buffer(Key *k)
     }
 }
 
+void keyboard_buffer_send()
+{
+#ifdef NKRO_ENABLE
+    keyboard_NKRObuffer_send(&g_keyboard_nkro_buffer);
+#else
+    keyboard_6KRObuffer_send(&g_keyboard_6kro_buffer);
+#endif
+}
+
+void keyboard_buffer_clear()
+{
+#ifdef NKRO_ENABLE
+    keyboard_NKRObuffer_send(&g_keyboard_nkro_buffer);
+#else
+    keyboard_6KRObuffer_send(&g_keyboard_6kro_buffer);
+#endif
+}
+
 int keyboard_6KRObuffer_add(Keyboard_6KROBuffer *buf, uint16_t key)
 {
     buf->buffer[0] |= KEY_MODIFIER(key);
@@ -88,12 +115,12 @@ int keyboard_6KRObuffer_add(Keyboard_6KROBuffer *buf, uint16_t key)
     }
 }
 
-void keyboard_6KRObuffer_send(Keyboard_6KROBuffer *buf)
+void keyboard_6KRObuffer_send(Keyboard_6KROBuffer* buf)
 {
     keyboard_hid_send(buf->buffer, sizeof(buf->buffer));
 }
 
-void keyboard_6KRObuffer_clear(Keyboard_6KROBuffer *buf)
+void keyboard_6KRObuffer_clear(Keyboard_6KROBuffer* buf)
 {
     memset(buf, 0, sizeof(Keyboard_6KROBuffer));
 }
@@ -106,8 +133,12 @@ void keyboard_NKRObuffer_init(Keyboard_NKROBuffer*buf,uint8_t* data_buf,uint8_t 
 
 int keyboard_NKRObuffer_add(Keyboard_NKROBuffer*buf,uint16_t key)
 {
+    uint8_t index = KEY_KEYCODE(key)/8+1;
+    if (index<buf->length)
+    {
+        buf->buffer[KEY_KEYCODE(key)/8+1] |= (1 << KEY_KEYCODE(key));
+    }
     buf->buffer[0] |= KEY_MODIFIER(key);
-    buf->buffer[KEY_KEYCODE(key)/8+1] |= (1 << KEY_KEYCODE(key));
     return 0;
 }
 
@@ -118,12 +149,15 @@ void keyboard_NKRObuffer_send(Keyboard_NKROBuffer*buf)
 
 void keyboard_NKRObuffer_clear(Keyboard_NKROBuffer*buf)
 {
-    memset(buf, 0, sizeof(Keyboard_6KROBuffer));
+    memset(buf->buffer, 0, buf->length);
 }
 
 void keyboard_init()
 {
-    memcpy(g_keymap, g_default_keymap, sizeof(g_keymap));
+#ifdef NKRO_ENABLE
+    static uint8_t buffer[64];
+    keyboard_NKRObuffer_init(&g_keyboard_nkro_buffer, buffer, sizeof(buffer));
+#endif
 }
 
 void keyboard_factory_reset()
@@ -134,7 +168,9 @@ void keyboard_factory_reset()
         g_keyboard_advanced_keys[i].mode = DEFAULT_ADVANCED_KEY_MODE;
         g_keyboard_advanced_keys[i].trigger_distance = DEFAULT_TRIGGER_DISTANCE;
         g_keyboard_advanced_keys[i].release_distance = DEFAULT_RELEASE_DISTANCE;
+        g_keyboard_advanced_keys[i].schmitt_parameter = DEFAULT_SCHMITT_PARAMETER;
         g_keyboard_advanced_keys[i].calibration_mode = KEY_AUTO_CALIBRATION_NEGATIVE;
+        g_keyboard_advanced_keys[i].activation_value = 0.5;
         // Keyboard_AdvancedKeys[i].lower_deadzone = 0.32;
         advanced_key_set_deadzone(g_keyboard_advanced_keys + i, DEFAULT_UPPER_DEADZONE, DEFAULT_LOWER_DEADZONE);
         // Keyboard_AdvancedKeys[i].phantom_lower_deadzone = 0.32;
@@ -219,7 +255,7 @@ void keyboard_save()
 void keyboard_send_report()
 {
     static uint32_t mouse_value;
-    keyboard_6KRObuffer_clear(&g_keyboard_6kro_buffer);
+    keyboard_buffer_clear();
     mouse_buffer_clear(&g_mouse);
     // keyboard_6KRObuffer_add(&Keyboard_ReportBuffer,(KeyBinding){KEY_E,KEY_NO_MODIFIER});
     for (int i = 0; i < ADVANCED_KEY_NUM; i++)
@@ -232,7 +268,7 @@ void keyboard_send_report()
     }
     if (g_keyboard_send_report_enable)
     {
-        keyboard_6KRObuffer_send(&g_keyboard_6kro_buffer);
+        keyboard_buffer_send();
         if ((*(uint32_t*)&g_mouse)!=mouse_value)
         {
             mouse_buffer_send(&g_mouse);
