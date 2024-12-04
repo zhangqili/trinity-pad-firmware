@@ -18,7 +18,9 @@ Compile.
 ```bash
 git submodule init
 git submodule update
-cmake -G"Ninja"
+mkdir build
+cd build
+cmake .. -G"Ninja"
 ninja
 ```
 
