@@ -1,7 +1,7 @@
 /*
  * analog.c
  *
- *  Created on: 2023骞�5鏈�21鏃�
+ *  Created on: 2023年5月21日
  *      Author: xq123
  */
 #include "stdlib.h"
@@ -12,7 +12,6 @@
 #include "advanced_key.h"
 
 uint16_t g_ADC_Conversion_Count;
-uint16_t g_ADC_Buffer[ANALOG_BUFFER_LENGTH];
 AnalogValue g_ADC_Averages[ADVANCED_KEY_NUM];
 
 AdaptiveSchimidtFilter g_analog_filters[ADVANCED_KEY_NUM];
@@ -27,11 +26,6 @@ void analog_init()
 
 __WEAK void analog_channel_select(uint8_t x)
 {
-    //x=BCD_TO_GRAY(x);
-    //HAL_GPIO_WritePin(A_GPIO_Port, A_Pin, x&0x01);
-    //HAL_GPIO_WritePin(B_GPIO_Port, B_Pin, x&0x02);
-    //HAL_GPIO_WritePin(C_GPIO_Port, C_Pin, x&0x04);
-    //HAL_GPIO_WritePin(D_GPIO_Port, D_Pin, x&0x08);
 }
 
 void analog_scan()
@@ -61,6 +55,10 @@ void analog_check()
         }
         if (g_keyboard_advanced_keys[i].key.state && !state)
         {
+            
+#ifdef ENABLE_RGB
+            rgb_activate(&g_keyboard_advanced_keys[i].key);
+#endif
 #ifdef ENABLE_KPS
             record_kps_tick();
 #endif

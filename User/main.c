@@ -48,6 +48,7 @@ sfud_flash sfud_norflash0 = {
     .spi.name = "SPI2",
     .chip = {"W25Q128JV", SFUD_MF_ID_WINBOND, 0x40, 0x18, 16L * 1024L * 1024L, SFUD_WM_PAGE_256B, 4096, 0x20},
 };
+static uint16_t ADC_Buffer[ADVANCED_KEY_NUM*64];
 
 void User_GPIO_Init(void)
 {
@@ -739,7 +740,7 @@ int main(void)
     EXTI_INT_INIT();
     DMA_Cmd(DMA1_Channel5, ENABLE);
 
-    DMA1_Tx_Init(DMA1_Channel1, (u32)&ADC1->RDATAR, (u32)g_ADC_Buffer, ANALOG_BUFFER_LENGTH);
+    DMA1_Tx_Init(DMA1_Channel1, (u32)&ADC1->RDATAR, (u32)ADC_Buffer, ANALOG_BUFFER_LENGTH);
     DMA_Cmd(DMA1_Channel1, ENABLE);
     ADC_SoftwareStartConvCmd(ADC1, ENABLE);
 #ifdef CONFIG_CHERRYUSB
@@ -834,7 +835,7 @@ void TIM7_IRQHandler(void)
         {
             for (uint8_t j = 0; j < 64; j++)
             {
-                ringbuf_push(&adc_ringbuf[i], g_ADC_Buffer[i + j * ADVANCED_KEY_NUM]);
+                ringbuf_push(&adc_ringbuf[i], ADC_Buffer[i + j * ADVANCED_KEY_NUM]);
             }
         }        
         keyboard_task();

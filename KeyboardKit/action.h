@@ -36,7 +36,7 @@ typedef struct __ActionToggleKey
     bool state;
 } ActionToggleKey;
 
-typedef struct __ActionRappySnappy
+typedef struct __attribute__((packed))  __ActionRappySnappy
 {
     Action type;
     uint16_t key1_id;

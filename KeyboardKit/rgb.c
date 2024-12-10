@@ -28,10 +28,6 @@ static RGBLoopQueueElm RGB_Argument_Buffer[ARGUMENT_BUFFER_LENGTH];
 void rgb_init()
 {
     rgb_loop_queue_init(&g_rgb_argument_queue, RGB_Argument_Buffer, ARGUMENT_BUFFER_LENGTH);
-    for (uint8_t i = 0; i < ADVANCED_KEY_NUM; i++)
-    {
-        key_attach(&g_keyboard_advanced_keys[i].key, KEY_EVENT_DOWN, rgb_activate);
-    }
     for (uint16_t i = 0; i < RGB_BUFFER_LENGTH; i++)
     {
         g_rgb_buffer[i] = NONE_PULSE;

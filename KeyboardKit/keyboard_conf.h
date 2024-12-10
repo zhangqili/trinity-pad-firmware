@@ -31,12 +31,12 @@
 /* Analog */
 /**********/
 #define RING_BUF_LEN            64
-#define DMA_BUF_LEN             10
 #define ANALOG_BUFFER_LENGTH    (ADVANCED_KEY_NUM*64)
 
 /*******/
 /* RGB */
 /*******/
+#define ENABLE_RGB              
 #define RGB_NUM                 (ADVANCED_KEY_NUM)
 #define ONE_PULSE               (7)
 #define ZERO_PULSE              (3)
