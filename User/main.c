@@ -830,6 +830,13 @@ void TIM7_IRQHandler(void)
         }
         TIM_ClearITPendingBit(TIM7, TIM_IT_Update);
         // if(!HAL_GPIO_ReadPin(MENU_GPIO_Port, MENU_Pin))
+        for (uint8_t i = 0; i < ADVANCED_KEY_NUM; i++)
+        {
+            for (uint8_t j = 0; j < 64; j++)
+            {
+                ringbuf_push(&adc_ringbuf[i], g_ADC_Buffer[i + j * ADVANCED_KEY_NUM]);
+            }
+        }        
         keyboard_task();
         //if (flag)
         //{

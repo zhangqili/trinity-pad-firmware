@@ -50,7 +50,7 @@ void unload_cargo(uint8_t *buf)
             g_rgb_configs[command_rgb_mapping[i]].rgb.r = buf[1 + 8 * i + 1];
             g_rgb_configs[command_rgb_mapping[i]].rgb.g = buf[1 + 8 * i + 2];
             g_rgb_configs[command_rgb_mapping[i]].rgb.b = buf[1 + 8 * i + 3];
-            g_rgb_configs[command_rgb_mapping[i]].speed = buf[1 + 8 * i + 4]/100.0;
+            g_rgb_configs[command_rgb_mapping[i]].speed = fill_in_float(&buf[1 + 8 * i + 4]);
             rgb_to_hsv(&g_rgb_configs[command_rgb_mapping[i]].hsv, &g_rgb_configs[command_rgb_mapping[i]].rgb);
         }
         break;

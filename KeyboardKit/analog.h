@@ -14,9 +14,17 @@
 #define ADDRESS BCD_TO_GRAY(Analog_ActiveChannel)
 #define BCD_TO_GRAY(x) (x^(x>>1))
 
+#ifndef RING_BUF_LEN
 #define RING_BUF_LEN 8
+#endif
+
+#ifndef DMA_BUF_LEN
 #define DMA_BUF_LEN 10
+#endif
+
+#ifndef ANALOG_BUFFER_LENGTH
 #define ANALOG_BUFFER_LENGTH (ADVANCED_KEY_NUM*64)
+#endif
 
 typedef struct
 {
@@ -26,7 +34,7 @@ typedef struct
 
 extern uint16_t g_ADC_Conversion_Count;
 extern uint16_t g_ADC_Buffer[ANALOG_BUFFER_LENGTH];
-extern float g_ADC_Averages[ADVANCED_KEY_NUM];
+extern AnalogValue g_ADC_Averages[ADVANCED_KEY_NUM];
 
 extern AdaptiveSchimidtFilter g_analog_filters[ADVANCED_KEY_NUM];
 
@@ -41,7 +49,7 @@ void analog_average();
 void analog_check();
 void analog_reset_range();
 
-void ringbuf_push(RingBuf *ringbuf, uint32_t data);
-float ringbuf_avg(RingBuf *ringbuf);
+void ringbuf_push(RingBuf *ringbuf, AnalogValue data);
+AnalogValue ringbuf_avg(RingBuf *ringbuf);
 
 #endif /* ANALOG_H_ */

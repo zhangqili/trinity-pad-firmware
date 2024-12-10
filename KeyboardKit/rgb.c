@@ -5,6 +5,7 @@
  *      Author: xq123
  */
 #include "rgb.h"
+#include "keyboard_def.h"
 #include "string.h"
 #include "math.h"
 
@@ -186,10 +187,16 @@ void rgb_update()
             break;
         }
     }
+    rgb_update_callback();
     for (uint8_t i = 0; i < ADVANCED_KEY_NUM; i++)
     {
         rgb_set(g_rgb_colors[i].r, g_rgb_colors[i].g, g_rgb_colors[i].b, i);
     }
+}
+
+__WEAK void rgb_update_callback()
+{
+
 }
 
 void rgb_set(uint8_t r, uint8_t g, uint8_t b, uint16_t index)
