@@ -172,7 +172,7 @@ void fezui_animation_init(fezui_animation_base_t *a,
                           fezui_animation_float_t (*easing_func)(fezui_animation_base_t *a, fezui_animation_float_t f),
                           fezui_animation_mode_t mode);
 void fezui_animation_bind(fezui_animation_base_t *a, fezui_animation_float_t *f);
-void fezui_animation_begin(fezui_animation_base_t *a);
+void fezui_animation_begin(fezui_animation_base_t *a, int32_t offset);
 fezui_animation_float_t fezui_animation_calculate(fezui_animation_base_t *a);
 #define FEZUI_ANIMATION_GET_VALUE(animation,from,to) ((animation)->value*(((fezui_animation_float_t)(to))-((fezui_animation_float_t)(from)))+((fezui_animation_float_t)(from)))
 

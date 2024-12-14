@@ -47,7 +47,7 @@ void fezui_animated_listbox_init(fezui_animated_listbox_t *listbox, void **items
 }
 void fezui_animated_listbox_index_increase(fezui_animated_listbox_t *listbox, int8_t delta)
 {
-    fezui_animation_begin(&listbox->scroll_animation);
+    fezui_animation_begin(&listbox->scroll_animation, 0);
     listbox->listbox.offset = FEZUI_ANIMATION_GET_VALUE(&listbox->scroll_animation,listbox->listbox.offset,listbox->targetoffset);
     fezui_listbox_index_increase(&listbox->listbox,delta);
 }

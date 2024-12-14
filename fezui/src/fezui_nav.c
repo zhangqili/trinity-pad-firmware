@@ -8,7 +8,7 @@ void fezui_frame_init(fezui_frame_t *frame, fezui_page_t *page, fezui_animation_
     frame->animation = animation;
     frame->old_page_index = -1;
     if (frame->animation)
-        fezui_animation_begin(frame->animation);
+        fezui_animation_begin(frame->animation, 0);
 }
 
 void fezui_frame_go_home(fezui_frame_t *frame)
@@ -27,7 +27,7 @@ void fezui_frame_go_forward(fezui_frame_t *frame)
     if (frame->pages[frame->current_page_index]->page_load_cb)
         frame->pages[frame->current_page_index]->page_load_cb(frame->pages[frame->current_page_index]);
     if (frame->animation)
-        fezui_animation_begin(frame->animation);
+        fezui_animation_begin(frame->animation, 0);
 }
 
 void fezui_frame_go_back(fezui_frame_t *frame)
@@ -40,7 +40,7 @@ void fezui_frame_go_back(fezui_frame_t *frame)
     if (frame->pages[frame->current_page_index]->page_load_cb)
         frame->pages[frame->current_page_index]->page_load_cb(frame->pages[frame->current_page_index]);
     if (frame->animation)
-        fezui_animation_begin(frame->animation);
+        fezui_animation_begin(frame->animation, 0);
 }
 
 void fezui_frame_show_dialog(fezui_frame_t *frame, fezui_page_t *dialog)
@@ -68,7 +68,7 @@ void fezui_frame_navigate(fezui_frame_t *frame, fezui_page_t *page)
     if (frame->pages[frame->current_page_index]->page_load_cb)
         frame->pages[frame->current_page_index]->page_load_cb(frame->pages[frame->current_page_index]);
     if (frame->animation)
-        fezui_animation_begin(frame->animation);
+        fezui_animation_begin(frame->animation, 0);
 }
 
 void fezui_frame_tick(fezui_frame_t *frame)

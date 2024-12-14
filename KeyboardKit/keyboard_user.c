@@ -1080,7 +1080,7 @@ hid_keyboard_send(report);
 USBHS_Endp_DataUp(HID_KEYBOARD_INT_EP,report,len,DEF_UEP_CPY_LOAD);
 #endif
 }
-
+void launcherpage_open_menu();
 void key_update1(Key* key, bool state)
 {
     if ((!(key->state)) && state)
@@ -1089,7 +1089,8 @@ void key_update1(Key* key, bool state)
         {   
             if (g_keyboard_current_layer == 1)
             {
-                fezui_frame_navigate(&g_mainframe, &menupage);
+                launcherpage_open_menu();
+                //fezui_frame_navigate(&g_mainframe, &launcherpage);
             }
             else
             {
@@ -1117,7 +1118,8 @@ void key_update2(Key* key, bool state)
         {
             if (g_keyboard_current_layer == 2)
             {
-                fezui_frame_navigate(&g_mainframe, &menupage);
+                launcherpage_open_menu();
+                //fezui_frame_navigate(&g_mainframe, &launcherpage);
             }
             else
             {

@@ -115,12 +115,14 @@ void fezui_init()
     u8g2_SetFontMode(&(fezui.u8g2), 1);
     u8g2_SetFont(&(fezui.u8g2), u8g2_font_tom_thumb_4x6_mf);
     u8g2_SetFontPosBottom(&fezui.u8g2);
+    u8g2_SetBitmapMode(&fezui.u8g2, 1);
     u8log_Init(&u8log, U8LOG_WIDTH, U8LOG_HEIGHT, u8log_buffer);
 
     fezui_POST();
 
     debugpage_init();
     menupage_init();
+    launcherpage_init();
     settingspage_init();
     calibrationpage_init();
     advancedconfigpage_init();
@@ -131,7 +133,7 @@ void fezui_init()
     panelpage_init();
     advancedsettingspage_init();
 
-    fezui_frame_init(&g_mainframe, &homepage, &frame_animation);
+    fezui_frame_init(&g_mainframe, &launcherpage, &frame_animation);
     key_attach(&KEY_KNOB, KEY_EVENT_DOWN, key_enter_cb);
     key_attach(&KEY_KNOB_CLOCKWISE, KEY_EVENT_DOWN, key_up_cb);
     key_attach(&KEY_KNOB_ANTICLOCKWISE, KEY_EVENT_DOWN, key_down_cb);

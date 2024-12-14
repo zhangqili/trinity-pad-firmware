@@ -24,9 +24,14 @@ void menupage_init()
     fezui_animated_listbox_init(&mainmenu, (void**)mainmenu_items, 4, main_menu_cb, i18n_item_draw, i18n_item_get_cursor);
 }
 
+typedef struct {
+    float x;
+    float y;
+} Point;
+
+
 static void menupage_tick(void *page)
 {
-    
 }
 
 static void menupage_draw(void *page)
@@ -42,6 +47,8 @@ static void menupage_draw(void *page)
     default:
         break;
     }
+    //u8g2_DrawTriangle(&fezui.u8g2, points[0].x, points[0].y, points[1].x, points[1].y, points[2].x, points[2].y);
+    //u8g2_DrawTriangle(&fezui.u8g2, points[1].x, points[1].y, points[2].x, points[2].y, points[3].x, points[3].y);
     fezui_draw_animated_listbox(&fezui,0,0,WIDTH,HEIGHT,&mainmenu,HEIGHT/4);
     fezui_animated_listbox_get_cursor(&fezui,0,0,WIDTH,HEIGHT,&mainmenu,HEIGHT/4,&g_target_cursor);
     fezui_draw_cursor(&fezui, &g_fezui_cursor);
@@ -70,6 +77,8 @@ static void main_menu_cb(void *menu)
 
 static void menupage_load(void *page)
 {
+#define LEFT 16
+#define UP 16
     g_keyboard_send_report_enable=false;
     g_keyboard_current_layer = 0;
     fezui_animated_listbox_begin(&mainmenu);

@@ -31,6 +31,9 @@ extern fezui_page_t homepage;
 extern fezui_page_t menupage;
 void menupage_init();
 
+extern fezui_page_t launcherpage;
+void launcherpage_init();
+
 extern fezui_page_t settingspage;
 void settingspage_init();
 
