@@ -813,6 +813,22 @@ void TIM6_IRQHandler(void)
         record_kps_timer();
     }
 }
+void analog_average()
+{
+    uint32_t ADC_sum;
+    for (uint8_t i = 0; i < ADVANCED_KEY_NUM; i++)
+    {
+        ADC_sum = 0;
+        for (uint8_t j = 0; j < 64; j++)
+        {
+            ADC_sum += ADC_Buffer[i + j * ADVANCED_KEY_NUM];
+        }
+        g_ADC_Averages[i] = ADC_sum/64.0f;
+#ifdef ENABLE_FILTER
+        g_ADC_Averages[i] = adaptive_schimidt_filter(g_analog_filters+i,g_ADC_Averages[i]);
+#endif
+    }
+}
 
 void TIM7_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 void TIM7_IRQHandler(void)
@@ -831,13 +847,13 @@ void TIM7_IRQHandler(void)
         }
         TIM_ClearITPendingBit(TIM7, TIM_IT_Update);
         // if(!HAL_GPIO_ReadPin(MENU_GPIO_Port, MENU_Pin))
-        for (uint8_t i = 0; i < ADVANCED_KEY_NUM; i++)
-        {
-            for (uint8_t j = 0; j < 64; j++)
-            {
-                ringbuf_push(&adc_ringbuf[i], ADC_Buffer[i + j * ADVANCED_KEY_NUM]);
-            }
-        }        
+        //for (uint8_t i = 0; i < ADVANCED_KEY_NUM; i++)
+        //{
+        //    for (uint8_t j = 0; j < 64; j++)
+        //    {
+        //        ringbuf_push(&adc_ringbuf[i], ADC_Buffer[i + j * ADVANCED_KEY_NUM]);
+        //    }
+        //}        
         keyboard_task();
         //if (flag)
         //{
