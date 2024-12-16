@@ -50,6 +50,11 @@ sfud_flash sfud_norflash0 = {
 };
 static uint16_t ADC_Buffer[ADVANCED_KEY_NUM*64];
 
+#define U8LOG_WIDTH 24
+#define U8LOG_HEIGHT 30
+u8log_t g_u8log;
+static uint8_t u8log_buffer[U8LOG_WIDTH * U8LOG_HEIGHT];
+
 void User_GPIO_Init(void)
 {
     GPIO_InitTypeDef GPIO_InitStructure = {0};
@@ -706,6 +711,7 @@ void JumpToBootloader(void)
     {
     }
 }
+
 /*********************************************************************
  * @fn      main
  *
@@ -715,13 +721,14 @@ void JumpToBootloader(void)
  */
 int main(void)
 {
+    u8log_Init(&g_u8log, U8LOG_WIDTH, U8LOG_HEIGHT, u8log_buffer);
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
     SystemCoreClockUpdate();
     Delay_Init();
     USART_Printf_Init(115200);
-    // printf("SystemClk:%ld\r\n", SystemCoreClock);
-    // printf("ChipID:%08lx\r\n", DBGMCU_GetCHIPID());
-    // printf("This is printf example\r\n");
+    printf("SystemClk:%ld\r\n", SystemCoreClock);
+    printf("ChipID:%08lx\r\n", DBGMCU_GetCHIPID());
+    //prizntf("This is printf example\r\n");
     // SYSTICK_Init_Config(SystemCoreClock-1);
     User_GPIO_Init();
     SPI1_Init();
@@ -746,13 +753,13 @@ int main(void)
 #ifdef CONFIG_CHERRYUSB
     hid_init();
 #else
-	USBHS_RCC_Init( );
-	USBHS_Device_Init( ENABLE );
+	USBHS_RCC_Init();
+	USBHS_Device_Init(ENABLE);
 	//USB_Sleep_Wakeup_CFG( );
 #endif
     
     keyboard_recovery();
-    Delay_Ms(100);
+    Delay_Ms(100);//Delete this line forbidden!!!
     fram_read_bytes(0x400, g_key_counts, sizeof(g_key_counts));
     memcpy(g_key_init_counts, g_key_counts, sizeof(g_key_counts));
 
@@ -838,6 +845,7 @@ void TIM7_IRQHandler(void)
     //static bool flag = true;
     if (TIM_GetITStatus(TIM7, TIM_IT_Update) != RESET)
     {
+        TIM_ClearITPendingBit(TIM7, TIM_IT_Update);
         count++;
         if (count == 8)
         {
@@ -845,7 +853,6 @@ void TIM7_IRQHandler(void)
             fezui_tick++;
             RGB_Tick++;
         }
-        TIM_ClearITPendingBit(TIM7, TIM_IT_Update);
         // if(!HAL_GPIO_ReadPin(MENU_GPIO_Port, MENU_Pin))
         //for (uint8_t i = 0; i < ADVANCED_KEY_NUM; i++)
         //{

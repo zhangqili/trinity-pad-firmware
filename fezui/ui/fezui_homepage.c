@@ -132,9 +132,10 @@ static void homepage_draw(void *page)
     fezui_draw_rolling_number(&fezui, 66, 63, &key3_num);
     fezui_draw_rolling_number(&fezui, 98, 63, &key4_num);
 
-#ifndef SHOW_FPS
-    u8g2_DrawUTF8(&(fezui.u8g2), 95 + 15, MARGIN_UP - 1, g_fpsstr);
-#endif
+    if (!fezui.show_fps)
+    {
+        u8g2_DrawUTF8(&(fezui.u8g2), 95 + 15, MARGIN_UP - 1, g_fpsstr);
+    }
 
     fezui_draw_rolling_number(&fezui, 15, MARGIN_UP - 1, &kps_num);
     fezui_draw_rolling_number(&fezui, 15 + 32, MARGIN_UP - 1, &max_kps_num);

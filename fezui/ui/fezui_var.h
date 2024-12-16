@@ -13,6 +13,8 @@
 extern const uint8_t fez_font_6x10_m[204] U8G2_FONT_SECTION("fez_font_6x10_m");
 extern fezui_t fezui;
 
+extern u8log_t g_u8log;
+
 extern uint32_t g_fezui_fps;
 extern uint8_t g_kps_history_max;
 extern char g_fpsstr[8];
@@ -76,5 +78,6 @@ extern fezui_page_t aboutpage;
 extern fezui_page_t calibrationpage;
 void calibrationpage_init();
 
+extern fezui_page_t logpage;
 
 #endif /* FEZUI_VAR_H_ */

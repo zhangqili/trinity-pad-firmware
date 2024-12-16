@@ -52,6 +52,7 @@ typedef struct __fezui_t
     uint8_t lang;
     uint16_t screensaver_timeout;
     uint16_t screensaver_countdown;
+    bool show_fps;
 } fezui_t;
 
 // #define FEZUI_CREATE(name) fezui_t name;

@@ -6,7 +6,6 @@
  */
 #include "fezui.h"
 #include "fezui_var.h"
-#include "compile_time.h"
 
 #define PROJECT_URL "github.com/zhangqili/trinity-pad-firmware"
 
@@ -83,26 +82,24 @@ static const char* device_version = "Version: 1.0.0";
 static float device_version_offsets[14] = {WIDTH,WIDTH,WIDTH,WIDTH,WIDTH,WIDTH,WIDTH,WIDTH,WIDTH,WIDTH,WIDTH,WIDTH,WIDTH,WIDTH};
 
 static const char* device_information[]={
-        "Copyright (c) 2023",
+        "Copyright (c) 2023-2024",
         "Lzq12345",
-        "Powered by FEZUI",
+        "",
         "",
         "MCU: CH32V307WCU6",
-        //"Date:" __DATE__,
-        //"Time:" __TIME__,
-        "Date:" COMPILE_DATE,
-        "Time:" COMPILE_TIME,
+        "Date:" __DATE__,
+        "Time:" __TIME__,
 };
 
-static const char* device_project_url[]={
-        "For more information, view"
-        
-};
+//static const char* device_project_url[]={
+//        "For more information, view"
+//        
+//};
 
 #define target_icon_x 0
 static float icon_x=WIDTH;
 
-#define target_url_y 50
+#define target_url_y 23
 static float url_y=WIDTH;
 
 static float text_box_height=(HEIGHT-18-12);
@@ -134,17 +131,17 @@ void draw_gemini()
 
 static void aboutpage_tick(void *page)
 {
-    CONVERGE_TO(icon_x,target_icon_x,fezui.speed);
-    CONVERGE_TO(url_y,target_url_y,fezui.speed);
-    CONVERGE_TO_ROUNDED(device_name_offsets[0],icon_x,fezui.speed);
-    CONVERGE_TO_ROUNDED(device_version_offsets[0],icon_x,fezui.speed);
+    CONVERGE_TO(icon_x,target_icon_x,0.05);
+    CONVERGE_TO(url_y,target_url_y,0.05);
+    CONVERGE_TO_ROUNDED(device_name_offsets[0],target_icon_x,0.2);
+    CONVERGE_TO_ROUNDED(device_version_offsets[0],target_icon_x,0.2);
     for (uint8_t i = 1; i < 11; i++)
     {
-        CONVERGE_TO(device_name_offsets[i],device_name_offsets[i-1]+device_name_width[i-1],fezui.speed);
+        CONVERGE_TO(device_name_offsets[i],device_name_offsets[i-1]+device_name_width[i-1],0.2);
     }
     for (uint8_t i = 1; i < 14; i++)
     {
-        CONVERGE_TO(device_version_offsets[i],device_version_offsets[i-1]+4,fezui.speed);
+        CONVERGE_TO(device_version_offsets[i],device_version_offsets[i-1]+4,0.2);
     }
     target_ordinate+=0.1;
     CONVERGE_TO(ordinate,target_ordinate,fezui.speed);
@@ -169,20 +166,35 @@ static void aboutpage_draw(void *page)
         single_char[0]=device_version[i];
         u8g2_DrawUTF8(&(fezui.u8g2), 34+device_version_offsets[i], 23, single_char);
     }
-    for (uint8_t i = 0; i < sizeof(device_project_url)/sizeof(char*); i++)
-    {
-        u8g2_DrawUTF8(&(fezui.u8g2), 0, url_y+6*(i+1), device_project_url[i]);
-    }
-    fezui_draw_scrolling_text(&fezui,0,url_y+6*2,&url_text);
+
+    //for (uint8_t i = 0; i < sizeof(device_project_url)/sizeof(char*); i++)
+    //{
+    //    u8g2_DrawUTF8(&(fezui.u8g2), 0, url_y+6*(i+1), device_project_url[i]);
+    //}
+    //fezui_draw_scrolling_text(&fezui,0,url_y+6*2,&url_text);
+    
     //draw_gemini();
-    u8g2_SetClipWindow(&(fezui.u8g2),34,23,WIDTH,50);
+    //u8g2_SetClipWindow(&(fezui.u8g2),34,23,WIDTH,52);
+    //for (uint8_t i = 0; i < sizeof(device_information)/sizeof(char*); i++)
+    //{
+    //    u8g2_DrawUTF8(&(fezui.u8g2), 34, 18+ROW_HEIGHT*(i+1)-(u8g2_int_t)ordinate, device_information[i]);
+    //}
+    //u8g2_SetMaxClipWindow(&(fezui.u8g2));
+
+    //u8g2_SetClipWindow(&(fezui.u8g2),34,23,WIDTH,HEIGHT);
     for (uint8_t i = 0; i < sizeof(device_information)/sizeof(char*); i++)
     {
-        u8g2_DrawUTF8(&(fezui.u8g2), 34, 18+ROW_HEIGHT*(i+1)-(u8g2_int_t)ordinate, device_information[i]);
+        u8g2_DrawUTF8(&(fezui.u8g2), 34, ROW_HEIGHT*(i+1)+url_y, device_information[i]);
     }
-    u8g2_SetMaxClipWindow(&(fezui.u8g2));
+    //u8g2_SetMaxClipWindow(&(fezui.u8g2));
 
-    u8g2_DrawXBMP(&fezui.u8g2,((u8g2_int_t)icon_x),0,33,33,qr_code);
+    u8g2_DrawXBMP(&fezui.u8g2,0,((u8g2_int_t)icon_x),33,33,qr_code);
+    
+    u8g2_DrawUTF8(&(fezui.u8g2), ((u8g2_int_t)icon_x+0), 42 + 6, "Powered");
+    u8g2_DrawUTF8(&(fezui.u8g2), ((u8g2_int_t)icon_x+0), 42 + 6*2, "by");
+    u8g2_SetFont(&fezui.u8g2, u8g2_font_3x3basic_tr);
+    u8g2_DrawUTF8X2(&fezui.u8g2, ((u8g2_int_t)icon_x+11), 48 + 8, "FEZ");
+    u8g2_DrawUTF8X2(&fezui.u8g2, ((u8g2_int_t)icon_x+19), 48 + 8 + 8, "UI");
 }
 
 static void aboutpage_event_handler(void *e)

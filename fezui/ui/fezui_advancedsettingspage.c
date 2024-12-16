@@ -2,9 +2,10 @@
 #include "fezui_var.h"
 #include "main.h"
 static fezui_animated_listbox_t advancedsettingsmenu;
-static const char* advancedsettingsmenu_items[5][LANG_NUM] =
+static const char* advancedsettingsmenu_items[6][LANG_NUM] =
 {
     {"Debug","调试"},
+    {"Log","日志"},
     {"Save","保存"},
     {"Reboot","重启"},
     {"Factory Reset","恢复出厂设置"},
@@ -21,19 +22,22 @@ static void advancedsettings_menu_cb(void* menu)
             fezui_frame_navigate(&g_mainframe, &debugpage);
             break;
         case 1:
+            fezui_frame_navigate(&g_mainframe, &logpage);
+            break;
+        case 2:
             fezui_save();
             keyboard_save();
             fezui_notification_begin(&fezui, &fezui_notification, "Configuration saved!", 500, 0.1);
             break;
-        case 2:
+        case 3:
             keyboard_system_reset();
             break;
-        case 3:
+        case 4:
             fezui_reset();
             fezui_save();
             keyboard_factory_reset();
             break;
-        case 4:
+        case 5:
             JumpToBootloader();
             break;
         default:
@@ -44,7 +48,7 @@ static void advancedsettings_menu_cb(void* menu)
 void advancedsettingspage_init()
 {
     fezui_animated_listbox_init(&advancedsettingsmenu, (void**)advancedsettingsmenu_items,
-                                5, advancedsettings_menu_cb,i18n_item_draw,i18n_item_get_cursor);
+                                6, advancedsettings_menu_cb,i18n_item_draw,i18n_item_get_cursor);
     advancedsettingsmenu.listbox.show_scrollbar = true;
 }
 

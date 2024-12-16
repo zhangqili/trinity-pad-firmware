@@ -92,30 +92,6 @@ include_directories(wch_usb)
 file(GLOB_RECURSE SOURCES ${SOURCES} "wch_usb/*.c")
 endif()
 
-# Set the output path for compile_time.h
-set(COMPILE_TIME_HEADER "${CMAKE_SOURCE_DIR}/fezui/ui/compile_time.h")
-
-# Get the current date and time using CMake's built-in functionality
-string(TIMESTAMP CURRENT_DATE "%Y-%m-%d")
-string(TIMESTAMP CURRENT_TIME "%H:%M:%S")
-
-# Generate the header file with real-time date and time
-add_custom_command(
-    OUTPUT ${COMPILE_TIME_HEADER}
-    COMMAND ${CMAKE_COMMAND} -E echo "/* Auto-generated compile time header */" > ${COMPILE_TIME_HEADER}
-    COMMAND ${CMAKE_COMMAND} -E echo "#ifndef COMPILE_TIME_H" >> ${COMPILE_TIME_HEADER}
-    COMMAND ${CMAKE_COMMAND} -E echo "#define COMPILE_TIME_H" >> ${COMPILE_TIME_HEADER}
-    COMMAND ${CMAKE_COMMAND} -E echo "#define COMPILE_DATE ""\\\""${CURRENT_DATE}"\\\"" >> ${COMPILE_TIME_HEADER}
-    COMMAND ${CMAKE_COMMAND} -E echo "#define COMPILE_TIME ""\\\""${CURRENT_TIME}"\\\"" >> ${COMPILE_TIME_HEADER}
-    COMMAND ${CMAKE_COMMAND} -E echo "#endif // COMPILE_TIME_H" >> ${COMPILE_TIME_HEADER}
-    COMMENT "Generating compile_time.h with current date and time"
-)
-
-# Ensure the header is generated before building
-add_custom_target(generate_compile_time_header ALL DEPENDS ${COMPILE_TIME_HEADER})
-
-
-
 # 链接参数
 set(LINKER_SCRIPT  ${CMAKE_SOURCE_DIR}/Ld/Link.ld)
 add_link_options(
@@ -137,8 +113,6 @@ add_subdirectory(u8g2)
 add_subdirectory(sfud)
 add_subdirectory(cherryusb)
 add_executable(${PROJECT_NAME}.elf ${SOURCES} ${LINKER_SCRIPT})
-# Add dependencies to your main target to ensure it's built in the correct order
-add_dependencies(${PROJECT_NAME}.elf generate_compile_time_header)
 
 # 链接静态库
 target_link_libraries(${PROJECT_NAME}.elf u8g2)
