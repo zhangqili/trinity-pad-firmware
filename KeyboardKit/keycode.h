@@ -1,12 +1,12 @@
 /*
- * usb_hid_keys.h
+ * keycode.h
  *
  *  Created on: 2023年6月11日
  *      Author: xq123
  */
 
-#ifndef USB_HID_KEYS_H_
-#define USB_HID_KEYS_H_
+#ifndef KEYCODE_H_
+#define KEYCODE_H_
 
 enum USB_HID_MODIFIER
 {
@@ -184,14 +184,18 @@ enum USB_HID_KEYCODES {
   KEY_CRSEL_PROPS              = 0xa3,   // Keyboard CrSel/Props
   KEY_EXSEL                    = 0xa4,   // Keyboard ExSel
   //Reserved b5-DF
-  MOUSE_LBUTTON = 0xa5,
-  MOUSE_RBUTTON = 0xa6,
-  MOUSE_MBUTTON = 0xa7,
-  MOUSE_FORWARD = 0xa8,
-  MOUSE_BACK = 0xa9,
-  MOUSE_WHEEL_UP = 0xaa,
-  MOUSE_WHEEL_DOWN = 0xab,
+  MOUSE_COLLECTION = 0xa5,
   FN = 0xB0,
 } ;
+
+enum USB_HID_MOUSE_KEYCODES {
+  MOUSE_LBUTTON = 0x00,
+  MOUSE_RBUTTON = 0x01,
+  MOUSE_MBUTTON = 0x02,
+  MOUSE_FORWARD = 0x03,
+  MOUSE_BACK = 0x04,
+  MOUSE_WHEEL_UP = 0x05,
+  MOUSE_WHEEL_DOWN = 0x06,
+};
 
 #endif /* USB_HID_KEYS_H_ */

@@ -256,42 +256,56 @@ void keyid_prase(uint16_t id, char *str, uint16_t str_len)
 {
     bool key_found = false;
     memset(str, 0, str_len);
-    for (uint8_t i = 0; i < 8; i++)
+    switch (id & 0xFF)
     {
-        if ((id >> 8) & BIT(i))
+    case MOUSE_COLLECTION:
+        if (key_found)
+        {
+            strcat(str, " + ");
+            strcat(str, g_hid_usage_names[MOUSE_COLLECTION + 8 + KEY_MODIFIER(id)]);
+        }
+        else
+        {
+            strcat(str, g_hid_usage_names[MOUSE_COLLECTION + 8 + KEY_MODIFIER(id)]);
+            key_found = true;
+        }
+        break;
+    default:
+        for (uint8_t i = 0; i < 8; i++)
+        {
+            if ((id >> 8) & BIT(i))
+            {
+                if (key_found)
+                {
+                    strcat(str, " + ");
+                    strcat(str, g_hid_usage_names[i]);
+                }
+                else
+                {
+                    strcat(str, g_hid_usage_names[i]);
+                    key_found = true;
+                }
+            }
+        }
+        if (id & 0xFF)
         {
             if (key_found)
             {
                 strcat(str, " + ");
-                strcat(str, g_hid_usage_names[i]);
+                strcat(str, g_hid_usage_names[(id & 0xFF) + 8]);
             }
             else
             {
-                strcat(str, g_hid_usage_names[i]);
+                strcat(str, g_hid_usage_names[(id & 0xFF) + 8]);
                 key_found = true;
             }
         }
+        break;
     }
 
-    if (id & 0xFF)
+    if (!key_found)
     {
-        if (key_found)
-        {
-            strcat(str, " + ");
-            strcat(str, g_hid_usage_names[(id & 0xFF) + 8]);
-        }
-        else
-        {
-            strcat(str, g_hid_usage_names[(id & 0xFF) + 8]);
-            key_found = true;
-        }
-    }
-    else
-    {
-        if (!key_found)
-        {
-            strcat(str, "None");
-        }
+        strcat(str, "None");
     }
 }
 

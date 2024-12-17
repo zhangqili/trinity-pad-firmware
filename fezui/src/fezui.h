@@ -17,7 +17,7 @@
 #include "fezui_util.h"
 #include "fezui_config.h"
 #include "fezui_interface.h"
-#include "usb_hid_keys.h"
+#include "keycode.h"
 
 #ifndef DEFAULT_ANIMATION_EASE_FUNCTION
 #define DEFAULT_ANIMATION_EASE_FUNCTION fezui_animation_cubic_ease
