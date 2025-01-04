@@ -18,7 +18,7 @@ extern "C" {
 #define HID_KEYBOARD_INT_EP_INTERVAL 1
 
 #define HID_MOUSE_INT_EP          0x82
-#define HID_MOUSE_INT_EP_SIZE     4
+#define HID_MOUSE_INT_EP_SIZE     64
 #define HID_MOUSE_INT_EP_INTERVAL 1
 
 /*!< hidraw in endpoint */
@@ -32,7 +32,7 @@ extern "C" {
 #define HIDRAW_OUT_EP_INTERVAL 1
 
 #define HID_KEYBOARD_REPORT_DESC_SIZE 63
-#define HID_MOUSE_REPORT_DESC_SIZE 74
+#define HID_MOUSE_REPORT_DESC_SIZE 52
 #define HID_RAW_REPORT_DESC_SIZE 38
 
 #define USB_HID_CONFIG_DESC_SIZ       (9+25+25+32)

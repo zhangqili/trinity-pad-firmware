@@ -230,6 +230,7 @@ const uint8_t hid_mouse_report_desc[HID_MOUSE_REPORT_DESC_SIZE] = {
     0x05, 0x01, // USAGE_PAGE (Generic Desktop)
     0x09, 0x02, // USAGE (Mouse)
     0xA1, 0x01, // COLLECTION (Application)
+    //0x85, 0x01, //   REPORT ID (0x01)
     0x09, 0x01, //   USAGE (Pointer)
 
     0xA1, 0x00, //   COLLECTION (Physical)
@@ -258,21 +259,7 @@ const uint8_t hid_mouse_report_desc[HID_MOUSE_REPORT_DESC_SIZE] = {
     0x95, 0x03, //     REPORT_COUNT (2)
 
     0x81, 0x06, //     INPUT (Data,Var,Rel)
-    0xC0, 0x09,
-    0x3c, 0x05,
-    0xff, 0x09,
-
-    0x01, 0x15,
-    0x00, 0x25,
-    0x01, 0x75,
-    0x01, 0x95,
-
-    0x02, 0xb1,
-    0x22, 0x75,
-    0x06, 0x95,
-    0x01, 0xb1,
-
-    0x01, 0xc0 //   END_COLLECTION
+    0xC0, 0xc0 //   END_COLLECTION
 };
 #endif
 /*!< custom hid report descriptor */
@@ -371,7 +358,6 @@ void usbd_hid_kayboard_int_callback(uint8_t ep, uint32_t nbytes)
 void usbd_hid_mouse_int_callback(uint8_t ep, uint32_t nbytes)
 {
     hid_mouse_state = HID_STATE_IDLE;
-    g_usb_mouse_report_count++;
     //usbd_ep_start_write(HID_MOUSE_INT_EP, (uint8_t*)&g_mouse, 4);
     //usbd_ep_start_write(HID_KEYBOARD_INT_EP, g_keyboard_6kro_buffer.buffer, 8);
 }
@@ -379,6 +365,7 @@ void usbd_hid_mouse_int_callback(uint8_t ep, uint32_t nbytes)
 static void usbd_hid_custom_in_callback(uint8_t ep, uint32_t nbytes)
 {
     //USB_LOG_RAW("actual in len:%ld\r\n", nbytes);
+    g_usb_raw_report_count++;
     custom_state = HID_STATE_IDLE;
 }
 
@@ -456,10 +443,8 @@ void hid_mouse_send(uint8_t*buffer)
 {
     //static uint8_t hid_mouse_buzy_count = 0;
     if (hid_mouse_state == HID_STATE_BUSY) {
+        g_usb_mouse_report_count++;
         return;
-    }
-    else
-    {
     }
     memcpy(mouse_write_buffer, buffer, 4);
     int ret = usbd_ep_start_write(HID_MOUSE_INT_EP, mouse_write_buffer, 4);

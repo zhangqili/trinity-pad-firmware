@@ -1176,8 +1176,16 @@ void keyboard_delay(uint32_t ms)
 void mouse_hid_send(uint8_t *report, uint16_t len)
 {
 #ifdef CONFIG_CHERRYUSB
-hid_mouse_send(report);
+    hid_mouse_send(report);
 #else
-USBHS_Endp_DataUp(HID_MOUSE_INT_EP,report,len,DEF_UEP_CPY_LOAD);
+    //static uint8_t mouse_write_buffer[64];
+    //memcpy(mouse_write_buffer+1, report, 4);
+    //mouse_write_buffer[0]=1;
+    //mouse_write_buffer[1]=0;
+    //mouse_write_buffer[2]=0;
+    //mouse_write_buffer[3]=0;
+    //mouse_write_buffer[4]=0;
+    //USBHS_Endp_DataUp(HID_MOUSE_INT_EP,mouse_write_buffer,64,DEF_UEP_CPY_LOAD);
+    USBHS_Endp_DataUp(HID_MOUSE_INT_EP,report,len,DEF_UEP_CPY_LOAD);
 #endif
 }

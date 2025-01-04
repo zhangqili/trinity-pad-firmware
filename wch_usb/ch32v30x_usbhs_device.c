@@ -186,7 +186,7 @@ void USBHS_Device_Init( FunctionalState sta )
         USBHSD->INT_EN = USBHS_UIE_SETUP_ACT | USBHS_UIE_TRANSFER | USBHS_UIE_DETECT | USBHS_UIE_SUSPEND;
         USBHS_Device_Endp_Init( );
         USBHSD->CONTROL |= USBHS_UC_DEV_PU_EN;
-        NVIC_SetPriority(USBHS_IRQn, 0xC0);
+        NVIC_SetPriority(USBHS_IRQn, 0x00);
         NVIC_EnableIRQ( USBHS_IRQn );
     }
     else
