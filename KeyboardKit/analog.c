@@ -1,8 +1,7 @@
 /*
- * analog.c
+ * Copyright (c) 2024 Zhangqi Li (@zhangqili)
  *
- *  Created on: 2023骞�5鏈�21鏃�
- *      Author: xq123
+ * SPDX-License-Identifier: GPL-3.0-or-later
  */
 #include "stdlib.h"
 #include "stdio.h"
@@ -12,8 +11,7 @@
 #include "advanced_key.h"
 
 uint16_t g_ADC_Conversion_Count;
-uint16_t g_ADC_Buffer[ANALOG_BUFFER_LENGTH];
-float g_ADC_Averages[ADVANCED_KEY_NUM];
+AnalogValue g_ADC_Averages[ADVANCED_KEY_NUM];
 
 AdaptiveSchimidtFilter g_analog_filters[ADVANCED_KEY_NUM];
 
@@ -21,41 +19,31 @@ RingBuf adc_ringbuf[ADVANCED_KEY_NUM];
 
 uint8_t g_analog_active_channel;
 
-void analog_init()
+void analog_init(void)
 {
 }
 
 __WEAK void analog_channel_select(uint8_t x)
 {
-    //x=BCD_TO_GRAY(x);
-    //HAL_GPIO_WritePin(A_GPIO_Port, A_Pin, x&0x01);
-    //HAL_GPIO_WritePin(B_GPIO_Port, B_Pin, x&0x02);
-    //HAL_GPIO_WritePin(C_GPIO_Port, C_Pin, x&0x04);
-    //HAL_GPIO_WritePin(D_GPIO_Port, D_Pin, x&0x08);
+    UNUSED(x);
 }
 
-void analog_scan()
+void analog_scan(void)
 {
 }
 
-void analog_average()
+__WEAK void analog_average(void)
 {
-    uint32_t ADC_sum;
     for (uint8_t i = 0; i < ADVANCED_KEY_NUM; i++)
     {
-        ADC_sum = 0;
-        for (uint8_t j = 0; j < 64; j++)
-        {
-            ADC_sum += g_ADC_Buffer[i + j * ADVANCED_KEY_NUM];
-        }
-        g_ADC_Averages[i] = ADC_sum/64.0f;
+        g_ADC_Averages[i] = ringbuf_avg(&adc_ringbuf[i]);
 #ifdef ENABLE_FILTER
         g_ADC_Averages[i] = adaptive_schimidt_filter(g_analog_filters+i,g_ADC_Averages[i]);
 #endif
     }
 }
 
-void analog_check()
+void analog_check(void)
 {
     bool state;
     for (uint8_t i = 0; i < ADVANCED_KEY_NUM; i++)
@@ -67,6 +55,10 @@ void analog_check()
         }
         if (g_keyboard_advanced_keys[i].key.state && !state)
         {
+            
+#ifdef ENABLE_RGB
+            rgb_activate(&g_keyboard_advanced_keys[i].key);
+#endif
 #ifdef ENABLE_KPS
             record_kps_tick();
 #endif
@@ -77,7 +69,7 @@ void analog_check()
     }
 }
 
-void analog_reset_range()
+void analog_reset_range(void)
 {
     analog_average();
     for (uint8_t i = 0; i < ADVANCED_KEY_NUM; i++)
@@ -86,20 +78,26 @@ void analog_reset_range()
     }
 }
 
-void ringbuf_push(RingBuf* ringbuf, uint32_t data)
+void ringbuf_push(RingBuf* ringbuf, AnalogValue data)
 {
     ringbuf->pointer++;
-    if (ringbuf->pointer >= RING_BUF_LEN)ringbuf->pointer = 0;
+    if (ringbuf->pointer >= RING_BUF_LEN)
+    {
+        ringbuf->pointer = 0;
+    }
     ringbuf->datas[ringbuf->pointer] = data;
 }
 
-float ringbuf_avg(RingBuf* ringbuf)
+AnalogValue ringbuf_avg(RingBuf* ringbuf)
 {
     uint32_t avg = 0;
     for (int i = 0; i < RING_BUF_LEN; i++)
+    {
         avg += ringbuf->datas[i];
+    }
 
-    avg = ((avg >> 2) & 0x01) + (avg >> 3);
+    avg /= RING_BUF_LEN;
+    //avg = ((avg >> 2) & 0x01) + (avg >> 3);
 
-    return (float)avg;
+    return (AnalogValue)avg;
 }

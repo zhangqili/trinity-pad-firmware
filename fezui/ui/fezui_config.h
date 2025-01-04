@@ -13,8 +13,6 @@
 #define PRINTF_BUFFER_LENGTH 64
 #define REFRESH_RATE          144
 
-//#define SHOW_FPS
-
 #define roll()                rand()%2;
 
 void keyid_prase(uint16_t id,char* str,uint16_t str_len);

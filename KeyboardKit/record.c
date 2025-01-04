@@ -1,5 +1,9 @@
+/*
+ * Copyright (c) 2024 Zhangqi Li (@zhangqili)
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 #include "record.h"
-
 
 #ifdef ENABLE_ANALOG_HISTORY
 LoopArray g_analog_historys[ADVANCED_KEY_NUM];
@@ -126,6 +130,7 @@ void record_analog_register(AdvancedKey*k)
 }
 */
 
+#ifdef ENABLE_BIT_STREAM
 void record_bit_stream_timer()
 {
     for (uint8_t i = 0; i < ADVANCED_KEY_NUM; i++)
@@ -139,7 +144,9 @@ void record_bit_stream_timer()
         g_bit_stream_datas[i][0] |= g_keyboard_advanced_keys[i].key.state;
     }
 }
+#endif
 
+#ifdef ENABLE_ANALOG_HISTORY
 void record_analog_timer()
 {
     for (int i = 0; i < ADVANCED_KEY_NUM; i++)
@@ -148,7 +155,9 @@ void record_analog_timer()
     }
     
 }
+#endif
 
+#ifdef ENABLE_KPS_HISTORY
 void record_kps_history_timer()
 {
     loop_array_push_back(&g_kps_history,g_kps_max);
@@ -165,7 +174,9 @@ void record_kps_timer()
     }
     kps_buf=0;
 }
+#endif
 
+#ifdef ENABLE_KPS
 void record_kps_tick()
 {
     kps_buf++;
@@ -180,3 +191,4 @@ uint16_t record_get_kps()
     }
     return kps;
 }
+#endif

@@ -52,9 +52,9 @@ void fezui_animation_bind(fezui_animation_base_t *a, fezui_animation_float_t *f)
 {
     //a->target = f;
 }
-void fezui_animation_begin(fezui_animation_base_t *a)
+void fezui_animation_begin(fezui_animation_base_t *a, int32_t offset)
 {
-    a->begin_time = fezui_tick;
+    a->begin_time = fezui_tick + offset;
 }
 fezui_animation_float_t fezui_animation_calculate(fezui_animation_base_t *a)
 {
@@ -62,7 +62,16 @@ fezui_animation_float_t fezui_animation_calculate(fezui_animation_base_t *a)
     {
         return a->value = 1.0;
     }
+    if (fezui_tick < a->begin_time)
+    {
+        return  a->value = 0.0;
+    }
+    
     fezui_animation_float_t normalized_time = (fezui_animation_float_t)(fezui_tick - a->begin_time) / (fezui_animation_float_t)a->duration;
+    if (a->easing_func == NULL)
+    {
+        a->easing_func = fezui_animation_linear_ease;
+    }
     switch (a->mode)
     {
     case EASE_IN:
@@ -78,7 +87,6 @@ fezui_animation_float_t fezui_animation_calculate(fezui_animation_base_t *a)
         return a->value = ((normalized_time < 0.5f) ? a->easing_func(a,normalized_time * 2.0f) * 0.5f : (1.0f - a->easing_func(a,(1.0f - normalized_time) * 2.0f)) * 0.5f + 0.5f);
         break;
     }
-    return  a->value = 0.0;
 }
 
 

@@ -5,7 +5,6 @@
 #include "fezui.h"
 #include "fezui_var.h"
 
-static const uint8_t command_advanced_key_mapping[] = {0, 1, 2, 3};
 static const uint8_t command_rgb_mapping[] = {0, 1, 2, 3};
 
 //static inline float fill_in_float(uint8_t *buf) __attribute__((optimize("O0")));
@@ -29,14 +28,13 @@ void unload_cargo(uint8_t *buf)
     case 0: // Advanced Key
         g_keyboard_advanced_keys[command_advanced_key_mapping[buf[1]]].mode = buf[2];
         g_keyboard_advanced_keys[command_advanced_key_mapping[buf[1]]].activation_value = fill_in_float(&buf[3 + 4 * 0]);
-        g_keyboard_advanced_keys[command_advanced_key_mapping[buf[1]]].phantom_lower_deadzone = fill_in_float(&buf[3 + 4 * 1]);
+        g_keyboard_advanced_keys[command_advanced_key_mapping[buf[1]]].deactivation_value = fill_in_float(&buf[3 + 4 * 1]);
         g_keyboard_advanced_keys[command_advanced_key_mapping[buf[1]]].trigger_distance = fill_in_float(&buf[3 + 4 * 2]);
         g_keyboard_advanced_keys[command_advanced_key_mapping[buf[1]]].release_distance = fill_in_float(&buf[3 + 4 * 3]);
-        g_keyboard_advanced_keys[command_advanced_key_mapping[buf[1]]].schmitt_parameter = fill_in_float(&buf[3 + 4 * 4]);
-        g_keyboard_advanced_keys[command_advanced_key_mapping[buf[1]]].trigger_speed = fill_in_float(&buf[3 + 4 * 5]);
-        g_keyboard_advanced_keys[command_advanced_key_mapping[buf[1]]].release_speed = fill_in_float(&buf[3 + 4 * 6]);
-        g_keyboard_advanced_keys[command_advanced_key_mapping[buf[1]]].upper_deadzone = fill_in_float(&buf[3 + 4 * 7]);
-        g_keyboard_advanced_keys[command_advanced_key_mapping[buf[1]]].lower_deadzone = fill_in_float(&buf[3 + 4 * 8]);
+        g_keyboard_advanced_keys[command_advanced_key_mapping[buf[1]]].trigger_speed = fill_in_float(&buf[3 + 4 * 4]);
+        g_keyboard_advanced_keys[command_advanced_key_mapping[buf[1]]].release_speed = fill_in_float(&buf[3 + 4 * 5]);
+        g_keyboard_advanced_keys[command_advanced_key_mapping[buf[1]]].upper_deadzone = fill_in_float(&buf[3 + 4 * 6]);
+        g_keyboard_advanced_keys[command_advanced_key_mapping[buf[1]]].lower_deadzone = fill_in_float(&buf[3 + 4 * 7]);
         //g_keyboard_advanced_keys[command_advanced_key_mapping[buf[1]]].upper_bound = fill_in_float(&buf[2 + 4 * 7]);
         //g_keyboard_advanced_keys[command_advanced_key_mapping[buf[1]]].lower_bound = fill_in_float(&buf[2 + 4 * 8]);
         break;
@@ -50,7 +48,7 @@ void unload_cargo(uint8_t *buf)
             g_rgb_configs[command_rgb_mapping[i]].rgb.r = buf[1 + 8 * i + 1];
             g_rgb_configs[command_rgb_mapping[i]].rgb.g = buf[1 + 8 * i + 2];
             g_rgb_configs[command_rgb_mapping[i]].rgb.b = buf[1 + 8 * i + 3];
-            g_rgb_configs[command_rgb_mapping[i]].speed = buf[1 + 8 * i + 4]/100.0;
+            g_rgb_configs[command_rgb_mapping[i]].speed = fill_in_float(&buf[1 + 8 * i + 4]);
             rgb_to_hsv(&g_rgb_configs[command_rgb_mapping[i]].hsv, &g_rgb_configs[command_rgb_mapping[i]].rgb);
         }
         break;

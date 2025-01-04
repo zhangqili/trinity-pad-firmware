@@ -1,33 +1,74 @@
 /*
- * rgb.h
+ * Copyright (c) 2024 Zhangqi Li (@zhangqili)
  *
- *  Created on: May 21, 2023
- *      Author: xq123
+ * SPDX-License-Identifier: GPL-3.0-or-later
  */
-
 #ifndef RGB_H_
 #define RGB_H_
 
 #include "color.h"
 #include "keyboard.h"
+#include "keyboard_conf.h"
 
+#ifndef RGB_NUM
 #define RGB_NUM                 (ADVANCED_KEY_NUM)
+#endif
+
+#ifndef ONE_PULSE
 #define ONE_PULSE               (7)
+#endif
+
+#ifndef ZERO_PULSE
 #define ZERO_PULSE              (3)
+#endif
+
+#ifndef NONE_PULSE
 #define NONE_PULSE              (0)
+#endif
+
+#ifndef RGB_RESET_LENGTH
 #define RGB_RESET_LENGTH        (60)
+#endif
+
+#ifndef RGB_BUFFER_LENGTH
 #define RGB_BUFFER_LENGTH       (((RGB_NUM)*(3*8))+RGB_RESET_LENGTH)
+#endif
 
+#ifndef RGB_MAX_DURATION
 #define RGB_MAX_DURATION 1000
-#define FADING_DISTANCE 5.0f
-#define JELLY_DISTANCE 10.0f
-#define PORT_LOCATION {1, 4.5}
-#define RGB_FLASH_MAX_DURATION 1000
-#define RGB_FLASH_RIPPLE_SPEED 0.03
+#endif
 
+#ifndef FADING_DISTANCE
+#define FADING_DISTANCE 5.0f
+#endif
+
+#ifndef JELLY_DISTANCE
+#define JELLY_DISTANCE 10.0f
+#endif
+
+#ifndef PORT_LOCATION
+#define PORT_LOCATION {0, 0}
+#endif
+
+#ifndef RGB_FLASH_MAX_DURATION
+#define RGB_FLASH_MAX_DURATION 1000
+#endif
+
+#ifndef RGB_FLASH_RIPPLE_SPEED
+#define RGB_FLASH_RIPPLE_SPEED 0.03
+#endif
+
+#ifndef RGB_DEFAULT_MODE
 #define RGB_DEFAULT_MODE RGB_MODE_LINEAR
+#endif
+
+#ifndef RGB_DEFAULT_SPEED
 #define RGB_DEFAULT_SPEED 0.015
+#endif
+
+#ifndef RGB_DEFAULT_COLOR_HSV
 #define RGB_DEFAULT_COLOR_HSV {273, 78, 99}
+#endif
 
 typedef enum __RGBMode
 {
@@ -89,14 +130,15 @@ extern const uint8_t g_rgb_mapping[ADVANCED_KEY_NUM];
 extern const RGBLocation g_rgb_locations[RGB_NUM];
 extern bool g_rgb_switch;
 
-void rgb_init();
-void rgb_update();
-void rgb_set(uint8_t r,uint8_t g,uint8_t b,uint16_t index);
-void rgb_init_flash();
-void rgb_flash();
-void rgb_turn_off();
-void rgb_factory_reset();
-void rgb_save();
+void rgb_init(void);
+void rgb_update(void);
+void rgb_update_callback(void);
+void rgb_set(uint16_t index, uint8_t r, uint8_t g, uint8_t b);
+void rgb_init_flash(void);
+void rgb_flash(void);
+void rgb_turn_off(void);
+void rgb_factory_reset(void);
+void rgb_save(void);
 void rgb_activate(void * key);
 
 #endif /* RGB_H_ */

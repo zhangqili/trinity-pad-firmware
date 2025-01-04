@@ -73,11 +73,6 @@ uint8_t u8x8_riscv_gpio_and_delay(U8X8_UNUSED u8x8_t *u8x8,
     return 1;
 }
 
-#define U8LOG_WIDTH 32
-#define U8LOG_HEIGHT 10
-static u8log_t u8log;
-static uint8_t u8log_buffer[U8LOG_WIDTH * U8LOG_HEIGHT];
-
 void fezui_input(uint16_t in)
 {
     fezui_frame_input(&g_mainframe, (void *)&in);
@@ -115,12 +110,13 @@ void fezui_init()
     u8g2_SetFontMode(&(fezui.u8g2), 1);
     u8g2_SetFont(&(fezui.u8g2), u8g2_font_tom_thumb_4x6_mf);
     u8g2_SetFontPosBottom(&fezui.u8g2);
-    u8log_Init(&u8log, U8LOG_WIDTH, U8LOG_HEIGHT, u8log_buffer);
+    u8g2_SetBitmapMode(&fezui.u8g2, 1);
 
     fezui_POST();
 
     debugpage_init();
     menupage_init();
+    launcherpage_init();
     settingspage_init();
     calibrationpage_init();
     advancedconfigpage_init();
@@ -131,7 +127,7 @@ void fezui_init()
     panelpage_init();
     advancedsettingspage_init();
 
-    fezui_frame_init(&g_mainframe, &homepage, &frame_animation);
+    fezui_frame_init(&g_mainframe, &launcherpage, &frame_animation);
     key_attach(&KEY_KNOB, KEY_EVENT_DOWN, key_enter_cb);
     key_attach(&KEY_KNOB_CLOCKWISE, KEY_EVENT_DOWN, key_up_cb);
     key_attach(&KEY_KNOB_ANTICLOCKWISE, KEY_EVENT_DOWN, key_down_cb);
@@ -185,13 +181,14 @@ void fezui_render_handler()
         fezui_veil_full_screen(&(fezui), (screensaver_countdown) < 7 ? 7 - screensaver_countdown : 0);
         u8g2_SetPowerSave(&(fezui.u8g2), (screensaver_countdown<1));
     }
-#ifdef SHOW_FPS
-    u8g2_SetDrawColor(&(fezui.u8g2), 1);
-    u8g2_DrawBox(&fezui.u8g2, 95 + 14, 0, WIDTH - 95 - 14, 11);
-    u8g2_SetDrawColor(&(fezui.u8g2), 2);
-    u8g2_SetFont(&(fezui.u8g2), fez_font_6x10_m);
-    u8g2_DrawUTF8(&(fezui.u8g2), 95 + 15, 10, g_fpsstr);
-#endif
+    if (fezui.show_fps)
+    {
+        u8g2_SetDrawColor(&(fezui.u8g2), 1);
+        u8g2_DrawBox(&fezui.u8g2, 95 + 14, 0, WIDTH - 95 - 14, 11);
+        u8g2_SetDrawColor(&(fezui.u8g2), 2);
+        u8g2_SetFont(&(fezui.u8g2), fez_font_6x10_m);
+        u8g2_DrawUTF8(&(fezui.u8g2), 95 + 15, 10, g_fpsstr);
+    }
     u8g2_SendBuffer(&(fezui.u8g2));
     g_fezui_fps++;
 }
@@ -200,11 +197,12 @@ void fezui_render_handler()
 #define CHAR_WIDTH 5
 void fezui_POST()
 {
+    u8g2_SetFont(&fezui.u8g2, u8g2_font_3x3basic_tr);
+    u8g2_DrawUTF8X2(&fezui.u8g2, 0, CHAR_HEIGHT, "FEZUI");
     u8g2_SetFont(&fezui.u8g2, u8g2_font_5x7_tf);
-    u8g2_DrawUTF8(&fezui.u8g2, 0, CHAR_HEIGHT - 1, "FEZUI");
     u8g2_DrawHLine(&fezui.u8g2, 0, CHAR_HEIGHT, WIDTH);
-    u8log_WriteString(&u8log, "Mounting Flash...");
-    u8g2_DrawLog(&fezui.u8g2, 0, CHAR_HEIGHT * 2, &u8log);
+    u8log_WriteString(&g_u8log, "Mounting Flash...");
+    u8g2_DrawLog(&fezui.u8g2, 0, CHAR_HEIGHT * 2, &g_u8log);
     u8g2_SendBuffer(&fezui.u8g2);
     // mount the filesystem
     int err = lfs_mount(&lfs_w25qxx, &lfs_cfg);
@@ -214,86 +212,100 @@ void fezui_POST()
     {
         err = lfs_format(&lfs_w25qxx, &lfs_cfg);
         lfs_mount(&lfs_w25qxx, &lfs_cfg);
-        u8log_WriteString(&u8log, " [Failed]\n");
-        u8log_WriteString(&u8log, "Formating Flash...");
-        u8g2_DrawLog(&fezui.u8g2, 0, CHAR_HEIGHT * 2, &u8log);
+        u8log_WriteString(&g_u8log, " [Failed]\n");
+        u8log_WriteString(&g_u8log, "Formating Flash...");
+        u8g2_DrawLog(&fezui.u8g2, 0, CHAR_HEIGHT * 2, &g_u8log);
         u8g2_SendBuffer(&fezui.u8g2);
         if (err)
         {
-            u8log_WriteString(&u8log, " [Failed]\n");
+            u8log_WriteString(&g_u8log, " [Failed]\n");
         }
         else
         {
-            u8log_WriteString(&u8log, " [OK]\n");
+            u8log_WriteString(&g_u8log, " [OK]\n");
         }
     }
     else
     {
-        u8log_WriteString(&u8log, " [OK]\n");
+        u8log_WriteString(&g_u8log, " [OK]\n");
     }
-    u8g2_DrawLog(&fezui.u8g2, 0, CHAR_HEIGHT * 2, &u8log);
+    u8g2_DrawLog(&fezui.u8g2, 0, CHAR_HEIGHT * 2, &g_u8log);
     u8g2_SendBuffer(&fezui.u8g2);
     // remember the storage is not updated until the file is closed successfully
     lfs_file_close(&lfs_w25qxx, &lfs_file_w25qxx);
     // release any resources we were using
     lfs_unmount(&lfs_w25qxx);
-    u8log_WriteString(&u8log, "Testing FRAM...");
+    u8log_WriteString(&g_u8log, "Testing FRAM...");
     u8g2_SendBuffer(&fezui.u8g2);
     uint32_t fram_id = fram_read_device_id();
     if ((fram_id) && (~fram_id))
     {
-        u8log_WriteString(&u8log, " [OK]\n");
+        u8log_WriteString(&g_u8log, " [OK]\n");
     }
-    u8log_WriteString(&u8log, "Recoverying data...");
+    u8log_WriteString(&g_u8log, "Recoverying data...");
     u8g2_SendBuffer(&fezui.u8g2);
-    u8g2_DrawLog(&fezui.u8g2, 0, CHAR_HEIGHT * 2, &u8log);
+    u8g2_DrawLog(&fezui.u8g2, 0, CHAR_HEIGHT * 2, &g_u8log);
     fezui_recovery();
     fezui_apply(&fezui);
-    u8log_WriteString(&u8log, " [OK]\n");
+    u8log_WriteString(&g_u8log, " [OK]\n");
     u8g2_SendBuffer(&fezui.u8g2);
-    u8g2_DrawLog(&fezui.u8g2, 0, CHAR_HEIGHT * 2, &u8log);
+    u8g2_DrawLog(&fezui.u8g2, 0, CHAR_HEIGHT * 2, &g_u8log);
 }
 
 void keyid_prase(uint16_t id, char *str, uint16_t str_len)
 {
     bool key_found = false;
     memset(str, 0, str_len);
-    for (uint8_t i = 0; i < 8; i++)
+    switch (id & 0xFF)
     {
-        if ((id >> 8) & BIT(i))
+    case MOUSE_COLLECTION:
+        if (key_found)
+        {
+            strcat(str, " + ");
+            strcat(str, g_hid_usage_names[MOUSE_COLLECTION + 8 + KEY_MODIFIER(id)]);
+        }
+        else
+        {
+            strcat(str, g_hid_usage_names[MOUSE_COLLECTION + 8 + KEY_MODIFIER(id)]);
+            key_found = true;
+        }
+        break;
+    default:
+        for (uint8_t i = 0; i < 8; i++)
+        {
+            if ((id >> 8) & BIT(i))
+            {
+                if (key_found)
+                {
+                    strcat(str, " + ");
+                    strcat(str, g_hid_usage_names[i]);
+                }
+                else
+                {
+                    strcat(str, g_hid_usage_names[i]);
+                    key_found = true;
+                }
+            }
+        }
+        if (id & 0xFF)
         {
             if (key_found)
             {
                 strcat(str, " + ");
-                strcat(str, g_hid_usage_names[i]);
+                strcat(str, g_hid_usage_names[(id & 0xFF) + 8]);
             }
             else
             {
-                strcat(str, g_hid_usage_names[i]);
+                strcat(str, g_hid_usage_names[(id & 0xFF) + 8]);
                 key_found = true;
             }
         }
+        break;
     }
 
-    if (id & 0xFF)
+    if (!key_found)
     {
-        if (key_found)
-        {
-            strcat(str, " + ");
-            strcat(str, g_hid_usage_names[(id & 0xFF) + 8]);
-        }
-        else
-        {
-            strcat(str, g_hid_usage_names[(id & 0xFF) + 8]);
-            key_found = true;
-        }
-    }
-    else
-    {
-        if (!key_found)
-        {
-            strcat(str, "None");
-        }
+        strcat(str, "None");
     }
 }
 
@@ -326,6 +338,7 @@ void fezui_save()
     lfs_file_write(&lfs_w25qxx, &lfs_file_w25qxx, &fezui.invert, sizeof(fezui.invert));
     lfs_file_write(&lfs_w25qxx, &lfs_file_w25qxx, &fezui.speed, sizeof(fezui.speed));
     lfs_file_write(&lfs_w25qxx, &lfs_file_w25qxx, &fezui.screensaver_timeout, sizeof(fezui.screensaver_timeout));
+    lfs_file_write(&lfs_w25qxx, &lfs_file_w25qxx, &fezui.show_fps, sizeof(fezui.show_fps));
     lfs_file_write(&lfs_w25qxx, &lfs_file_w25qxx, &fezui.lang, sizeof(fezui.lang));
     // remember the storage is not updated until the file is closed successfully
     err = lfs_file_close(&lfs_w25qxx, &lfs_file_w25qxx);
@@ -352,6 +365,7 @@ void fezui_recovery()
     lfs_file_read(&lfs_w25qxx, &lfs_file_w25qxx, &fezui.invert, sizeof(fezui.invert));
     lfs_file_read(&lfs_w25qxx, &lfs_file_w25qxx, &fezui.speed, sizeof(fezui.speed));
     lfs_file_read(&lfs_w25qxx, &lfs_file_w25qxx, &fezui.screensaver_timeout, sizeof(fezui.screensaver_timeout));
+    lfs_file_read(&lfs_w25qxx, &lfs_file_w25qxx, &fezui.show_fps, sizeof(fezui.show_fps));
     lfs_file_read(&lfs_w25qxx, &lfs_file_w25qxx, &fezui.lang, sizeof(fezui.lang));
     // remember the storage is not updated until the file is closed successfully
     lfs_file_close(&lfs_w25qxx, &lfs_file_w25qxx);

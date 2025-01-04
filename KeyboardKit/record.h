@@ -1,13 +1,32 @@
+/*
+ * Copyright (c) 2024 Zhangqi Li (@zhangqili)
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 #ifndef RECORD_H_
 #define RECORD_H_
 #include "keyboard.h"
 #include "keyboard_conf.h"
 
+#ifndef KPS_HISTORY_LENGTH
 #define KPS_HISTORY_LENGTH    65
+#endif
+
+#ifndef BIT_STREAM_LENGTH
 #define BIT_STREAM_LENGTH    128
+#endif
+
+#ifndef ANALOG_HISTORY_LENGTH
 #define ANALOG_HISTORY_LENGTH 129
+#endif
+
+#ifndef RECORD_MAX_KEY_NUM
 #define RECORD_MAX_KEY_NUM    8
+#endif
+
+#ifndef KPS_REFRESH_RATE
 #define KPS_REFRESH_RATE      144
+#endif
 
 #define BIT_DATA_LENGTH ((BIT_STREAM_LENGTH - 1) / (sizeof(size_t) * 8) + 1)
 
@@ -48,13 +67,13 @@ LoopArrayElement loop_array_max(LoopArray *arr);
 //void record_kps_register(Key*k);
 //void record_bit_stream_register(Key*k);
 //void record_analog_register(AdvancedKey*k);
-void record_init();
-void record_bit_stream_timer();
-void record_analog_timer();
-void record_kps_timer();
-uint16_t record_get_kps();
-void record_kps_tick();
-void record_kps_timer();
-void record_kps_history_timer();
+void record_init(void);
+void record_bit_stream_timer(void);
+void record_analog_timer(void);
+void record_kps_timer(void);
+uint16_t record_get_kps(void);
+void record_kps_tick(void);
+void record_kps_timer(void);
+void record_kps_history_timer(void);
 
 #endif /* RECORD_H_ */

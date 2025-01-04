@@ -17,7 +17,7 @@
 #include "fezui_util.h"
 #include "fezui_config.h"
 #include "fezui_interface.h"
-#include "usb_hid_keys.h"
+#include "keycode.h"
 
 #ifndef DEFAULT_ANIMATION_EASE_FUNCTION
 #define DEFAULT_ANIMATION_EASE_FUNCTION fezui_animation_cubic_ease
@@ -52,6 +52,7 @@ typedef struct __fezui_t
     uint8_t lang;
     uint16_t screensaver_timeout;
     uint16_t screensaver_countdown;
+    bool show_fps;
 } fezui_t;
 
 // #define FEZUI_CREATE(name) fezui_t name;
@@ -172,7 +173,7 @@ void fezui_animation_init(fezui_animation_base_t *a,
                           fezui_animation_float_t (*easing_func)(fezui_animation_base_t *a, fezui_animation_float_t f),
                           fezui_animation_mode_t mode);
 void fezui_animation_bind(fezui_animation_base_t *a, fezui_animation_float_t *f);
-void fezui_animation_begin(fezui_animation_base_t *a);
+void fezui_animation_begin(fezui_animation_base_t *a, int32_t offset);
 fezui_animation_float_t fezui_animation_calculate(fezui_animation_base_t *a);
 #define FEZUI_ANIMATION_GET_VALUE(animation,from,to) ((animation)->value*(((fezui_animation_float_t)(to))-((fezui_animation_float_t)(from)))+((fezui_animation_float_t)(from)))
 

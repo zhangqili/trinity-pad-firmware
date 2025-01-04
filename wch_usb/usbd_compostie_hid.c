@@ -15,7 +15,7 @@
 /* Header Files */
 #include "usbd_composite_hid.h"
 #include "ch32v30x_usbhs_device.h"
-#include "usb_hid_keys.h"
+#include "keycode.h"
 
 /*********************************************************************
  * @fn      USB_Sleep_Wakeup_CFG

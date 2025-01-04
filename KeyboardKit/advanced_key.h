@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2024 Zhangqi Li (@zhangqili)
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 #ifndef ADVANCED_KEY_H_
 #define ADVANCED_KEY_H_
 
@@ -5,9 +10,9 @@
 #include "keyboard_conf.h"
 
 #ifdef USE_FLOAT_VALUE
-typedef float KeyValueType;
+typedef float AnalogValue;
 #else
-typedef uint KeyValueType;
+typedef uint AnalogValue;
 #endif
 
 typedef enum
@@ -28,34 +33,34 @@ typedef enum
 typedef struct __AdvancedKey
 {
     Key key;
+    AnalogValue value;
+    AnalogValue raw;
+    AnalogValue maximum;
+    AnalogValue minimum;
+    
     uint8_t mode;
     uint8_t calibration_mode;
-    KeyValueType value;
-    KeyValueType raw;
     
-    KeyValueType activation_value;
-    KeyValueType phantom_lower_deadzone;
+    AnalogValue activation_value;
+    AnalogValue deactivation_value;
 
-    KeyValueType trigger_distance;
-    KeyValueType release_distance;
-    KeyValueType schmitt_parameter;
-    KeyValueType maximum;
-    KeyValueType minimum;
-    KeyValueType trigger_speed;
-    KeyValueType release_speed;
-    KeyValueType upper_deadzone;
-    KeyValueType lower_deadzone;
-    KeyValueType upper_bound;
-    KeyValueType lower_bound;
+    AnalogValue trigger_distance;
+    AnalogValue release_distance;
+    AnalogValue trigger_speed;
+    AnalogValue release_speed;
+    AnalogValue upper_deadzone;
+    AnalogValue lower_deadzone;
+    AnalogValue upper_bound;
+    AnalogValue lower_bound;
 } AdvancedKey;
 
 void advanced_key_init(AdvancedKey *key);
-void advanced_key_update(AdvancedKey *key, KeyValueType value);
-void advanced_key_update_raw(AdvancedKey *key, KeyValueType value);
+void advanced_key_update(AdvancedKey *key, AnalogValue value);
+void advanced_key_update_raw(AdvancedKey *key, AnalogValue value);
 void advanced_key_update_state(AdvancedKey *key, bool state);
-KeyValueType advanced_key_normalize(AdvancedKey *key, KeyValueType value);
-void advanced_key_set_range(AdvancedKey *key, KeyValueType upper, KeyValueType lower);
-void advanced_key_reset_range(AdvancedKey* key, KeyValueType value);
-void advanced_key_set_deadzone(AdvancedKey *key, KeyValueType upper, KeyValueType lower);
+AnalogValue advanced_key_normalize(AdvancedKey *key, AnalogValue value);
+void advanced_key_set_range(AdvancedKey *key, AnalogValue upper, AnalogValue lower);
+void advanced_key_reset_range(AdvancedKey* key, AnalogValue value);
+void advanced_key_set_deadzone(AdvancedKey *key, AnalogValue upper, AnalogValue lower);
 
 #endif

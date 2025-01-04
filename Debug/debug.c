@@ -11,6 +11,8 @@
 * microcontroller manufactured by Nanjing Qinheng Microelectronics.
 *******************************************************************************/
 #include "debug.h"
+#include "fezui.h"
+#include "fezui_var.h"
 
 static uint8_t  p_us = 0;
 static uint16_t p_ms = 0;
@@ -214,6 +216,7 @@ __attribute__((used)) int _write(int fd, char *buf, int size)
 #else
     for(i = 0; i < size; i++)
     {
+        u8log_WriteChar(&g_u8log, *buf);
 #if(DEBUG == DEBUG_UART1)
         while(USART_GetFlagStatus(USART1, USART_FLAG_TC) == RESET);
         USART_SendData(USART1, *buf++);
@@ -225,6 +228,7 @@ __attribute__((used)) int _write(int fd, char *buf, int size)
         USART_SendData(USART3, *buf++);
 #endif
     }
+    //u8log_WriteString(&g_u8log,buf);
 #endif
     return size;
 }

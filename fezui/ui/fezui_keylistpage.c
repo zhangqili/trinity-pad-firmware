@@ -28,13 +28,26 @@ static void keylist_cb(void *m)
 {
     if(((fezui_list_base_t*)m)->selected_index<8)
     {
+        if (KEY_KEYCODE_PART == MOUSE_COLLECTION)
+        {
+            return;
+        }
         bool b = !(KEY_MODIFIER_PART&BIT(((fezui_list_base_t*)m)->selected_index));
         KEY_MODIFIER_PART&=(~(1<<((fezui_list_base_t*)m)->selected_index));
         KEY_MODIFIER_PART|=(b<<((fezui_list_base_t*)m)->selected_index);
     }
     else
     {
-        KEY_KEYCODE_PART = ((fezui_list_base_t*)m)->selected_index-8;
+        uint16_t keycode = ((fezui_list_base_t*)m)->selected_index - 8;
+        if (keycode >= MOUSE_COLLECTION && keycode <= (MOUSE_COLLECTION + 6))
+        {
+            KEY_MODIFIER_PART = keycode - MOUSE_COLLECTION;
+            KEY_KEYCODE_PART = MOUSE_COLLECTION;
+        }
+        else
+        {
+            KEY_KEYCODE_PART = keycode;
+        }
     }
 }
 
@@ -56,14 +69,22 @@ static void keylistpage_draw(void *page)
     {
         u8g2_DrawFrame(&(fezui.u8g2),116, (u8g2_int_t)floorf((ROW_HEIGHT * (i) -  FEZUI_ANIMATION_GET_VALUE(&keylist.scroll_animation, keylist.listbox.offset,keylist.targetoffset) + 1) * keylist.start_animation.value + 0.5),6,6);
     }
-    for(uint8_t i=0;i<8;i++)
+    switch (KEY_KEYCODE_PART)
     {
-        if(KEY_MODIFIER_PART&BIT(i))
+    case MOUSE_COLLECTION:
+        u8g2_DrawBox(&(fezui.u8g2),116,(u8g2_int_t)floorf((ROW_HEIGHT*((KEY_MODIFIER_PART+MOUSE_COLLECTION)+8) + 1 -  FEZUI_ANIMATION_GET_VALUE(&keylist.scroll_animation, keylist.listbox.offset,keylist.targetoffset)) * keylist.start_animation.value + 0.5),6,6);
+        break;
+    default:
+        for(uint8_t i=0;i<8;i++)
         {
-            u8g2_DrawBox(&(fezui.u8g2),116,(u8g2_int_t)floorf((ROW_HEIGHT*i + 1 - FEZUI_ANIMATION_GET_VALUE(&keylist.scroll_animation, keylist.listbox.offset,keylist.targetoffset)) * keylist.start_animation.value + 0.5),6,6);
+            if(KEY_MODIFIER_PART&BIT(i))
+            {
+                u8g2_DrawBox(&(fezui.u8g2),116,(u8g2_int_t)floorf((ROW_HEIGHT*i + 1 - FEZUI_ANIMATION_GET_VALUE(&keylist.scroll_animation, keylist.listbox.offset,keylist.targetoffset)) * keylist.start_animation.value + 0.5),6,6);
+            }
         }
+        u8g2_DrawBox(&(fezui.u8g2),116,(u8g2_int_t)floorf((ROW_HEIGHT*((KEY_KEYCODE_PART)+8) + 1 -  FEZUI_ANIMATION_GET_VALUE(&keylist.scroll_animation, keylist.listbox.offset,keylist.targetoffset)) * keylist.start_animation.value + 0.5),6,6);
+        break;
     }
-    u8g2_DrawBox(&(fezui.u8g2),116,(u8g2_int_t)floorf((ROW_HEIGHT*((KEY_KEYCODE_PART)+8) + 1 -  FEZUI_ANIMATION_GET_VALUE(&keylist.scroll_animation, keylist.listbox.offset,keylist.targetoffset)) * keylist.start_animation.value + 0.5),6,6);
     fezui_draw_cursor(&fezui, &g_fezui_cursor);
 }
 

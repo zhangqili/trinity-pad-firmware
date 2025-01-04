@@ -1,7 +1,12 @@
+/*
+ * Copyright (c) 2024 Zhangqi Li (@zhangqili)
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 #include "advanced_key.h"
 #include "keyboard_def.h"
 
-void advanced_key_update(AdvancedKey* advanced_key, KeyValueType value)
+void advanced_key_update(AdvancedKey* advanced_key, AnalogValue value)
 {
     bool state = advanced_key->key.state;
     switch (advanced_key->mode)
@@ -11,11 +16,11 @@ void advanced_key_update(AdvancedKey* advanced_key, KeyValueType value)
             break;
         case KEY_ANALOG_NORMAL_MODE:
             advanced_key->value = value;
-            if(advanced_key->value-advanced_key->schmitt_parameter>advanced_key->activation_value)
+            if(advanced_key->value > advanced_key->activation_value)
             {
                 state=true;
             }
-            if(advanced_key->value+advanced_key->schmitt_parameter<advanced_key->activation_value)
+            if(advanced_key->value < advanced_key->deactivation_value)
             {
                 state=false;
             }
@@ -76,7 +81,7 @@ void advanced_key_update(AdvancedKey* advanced_key, KeyValueType value)
     key_update(&(advanced_key->key), state);
 }
 
-void advanced_key_update_raw(AdvancedKey* key, KeyValueType value)
+void advanced_key_update_raw(AdvancedKey* key, AnalogValue value)
 {
     key->raw = value;
     switch (key->calibration_mode)
@@ -90,13 +95,13 @@ void advanced_key_update_raw(AdvancedKey* key, KeyValueType value)
             key->lower_bound = value;
         break;
     case KEY_AUTO_CALIBRATION_UNDEFINED:
-        if (value - key->upper_bound > 500)
+        if (value - key->upper_bound > DEFAULT_ESTIMATED_RANGE)
         {
             key->calibration_mode = KEY_AUTO_CALIBRATION_POSITIVE;
             key->lower_bound = value;
             break;
         }
-        if (key->upper_bound - value > 500)
+        if (key->upper_bound - value > DEFAULT_ESTIMATED_RANGE)
         {
             key->calibration_mode = KEY_AUTO_CALIBRATION_NEGATIVE;
             key->lower_bound = value;
@@ -117,44 +122,36 @@ void advanced_key_update_state(AdvancedKey* advanced_key, bool state)
     key_update(&(advanced_key->key), state);
 }
 
-__WEAK KeyValueType advanced_key_normalize(AdvancedKey* key, KeyValueType value)
+__WEAK AnalogValue advanced_key_normalize(AdvancedKey* key, AnalogValue value)
 {
     return (key->upper_bound - value) / (key->upper_bound - key->lower_bound);
 }
 
-void advanced_key_set_range(AdvancedKey* key, KeyValueType upper, KeyValueType lower)
+void advanced_key_set_range(AdvancedKey* key, AnalogValue upper, AnalogValue lower)
 {
     key->upper_bound = upper;
     key->lower_bound = lower;
-    //key->range = key->upper_bound - key->lower_bound;
 }
 
-void advanced_key_reset_range(AdvancedKey* key, KeyValueType value)
+void advanced_key_reset_range(AdvancedKey* key, AnalogValue value)
 {
     switch (key->calibration_mode)
     {
     case KEY_AUTO_CALIBRATION_POSITIVE:
-        advanced_key_set_range(key, value, value+500);
+        advanced_key_set_range(key, value, value+DEFAULT_ESTIMATED_RANGE);
         break;
     case KEY_AUTO_CALIBRATION_NEGATIVE:
-        advanced_key_set_range(key, value, value-500);
+        advanced_key_set_range(key, value, value-DEFAULT_ESTIMATED_RANGE);
         break;
     default:
-        advanced_key_set_range(key, value, value-500);
+        advanced_key_set_range(key, value, value-DEFAULT_ESTIMATED_RANGE);
         break;
     }
 }
 
-void advanced_key_set_deadzone(AdvancedKey* key, KeyValueType upper, KeyValueType lower)
+void advanced_key_set_deadzone(AdvancedKey* key, AnalogValue upper, AnalogValue lower)
 {
-    /*
-    key->upper_deadzone = (key->upper_bound - key->lower_bound)*upper;
-    key->lower_deadzone = (key->upper_bound - key->lower_bound)*lower;
-    key->range = (key->upper_bound - key->upper_deadzone) - (key->lower_bound+key->lower_deadzone);
-    */
     key->upper_deadzone = upper;
     key->lower_deadzone = lower;
-    //key->range = (key->upper_bound - (key->upper_bound - key->lower_bound) * key->upper_deadzone) - (
-    //                 key->lower_bound + (key->upper_bound - key->lower_bound) * key->lower_deadzone);
 }
 

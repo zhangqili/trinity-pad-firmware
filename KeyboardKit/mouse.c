@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2024 Zhangqi Li (@zhangqili)
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 #include "keyboard.h"
 #include "mouse.h"
 
@@ -11,5 +16,6 @@ void mouse_buffer_send(Mouse *buf)
 
 __WEAK void mouse_hid_send(uint8_t *report, uint16_t len)
 {
-    
+    UNUSED(report);
+    UNUSED(len);
 }

@@ -110,6 +110,8 @@ static void draw_chart(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g2_ui
 }
 static void homepage_draw(void *page)
 {
+    //fezui.invert = false;
+    //fezui.speed = 0.005;
     uint8_t color = u8g2_GetDrawColor(&(fezui.u8g2));
 
     fezui_draw_flowingwater(&(fezui), MARGIN_LEFT, TILE1 + MARGIN_UP, HALF_WIDTH, TILE_WIDTH, (uint8_t *)g_bit_stream_datas[0]);
@@ -130,9 +132,10 @@ static void homepage_draw(void *page)
     fezui_draw_rolling_number(&fezui, 66, 63, &key3_num);
     fezui_draw_rolling_number(&fezui, 98, 63, &key4_num);
 
-#ifndef SHOW_FPS
-    u8g2_DrawUTF8(&(fezui.u8g2), 95 + 15, MARGIN_UP - 1, g_fpsstr);
-#endif
+    if (!fezui.show_fps)
+    {
+        u8g2_DrawUTF8(&(fezui.u8g2), 95 + 15, MARGIN_UP - 1, g_fpsstr);
+    }
 
     fezui_draw_rolling_number(&fezui, 15, MARGIN_UP - 1, &kps_num);
     fezui_draw_rolling_number(&fezui, 15 + 32, MARGIN_UP - 1, &max_kps_num);
@@ -174,4 +177,21 @@ static void homepage_load(void *page)
     g_keyboard_send_report_enable = true;
 }
 
-fezui_page_t homepage = {homepage_tick, homepage_draw, homepage_load};
+static void homepage_event_handler(void *e)
+{
+    switch (*(uint16_t *)e)
+    {
+    case KEY_UP_ARROW:
+        break;
+    case KEY_DOWN_ARROW:
+        break;
+    case KEY_ENTER:
+        break;
+    case KEY_ESC:
+        break;
+    default:
+        break;
+    }
+}
+
+fezui_page_t homepage = {homepage_tick, homepage_draw, homepage_load, homepage_event_handler};

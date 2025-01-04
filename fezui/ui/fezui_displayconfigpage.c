@@ -23,6 +23,7 @@ static const fezui_i18n_menuitem_t *displayconfig_menu_ptr_items[] =
     &(fezui_i18n_menuitem_t){{"8Contrast","8对比度"}, &fezui.contrast},
     &(fezui_i18n_menuitem_t){{"uSpeed","u动画速度"}, &speed},
     &(fezui_i18n_menuitem_t){{"uTimeout","u屏幕超时"}, &fezui.screensaver_timeout},
+    &(fezui_i18n_menuitem_t){{"bShow FPS","b显示FPS"}, &fezui.show_fps},
     &(fezui_i18n_menuitem_t){{"8Language","8语言"}, &fezui.lang},
 };
 
@@ -108,7 +109,10 @@ static void displayconfig_menu_cb(void *m)
         sliderdialog_show(&fezui.screensaver_timeout, FEZUI_TYPE_UINT16, 0, 600, 1, displayconfig_menu_ptr_items[3]->header[fezui.lang]+1);
         break;
     case 4:
-        sliderdialog_show(&fezui.lang, FEZUI_TYPE_UINT16, 0, 1, 1, displayconfig_menu_ptr_items[4]->header[fezui.lang]+1);
+        sliderdialog_show(&fezui.show_fps, FEZUI_TYPE_BOOL, 0, 1, 1, displayconfig_menu_ptr_items[4]->header[fezui.lang]+1);
+        break;
+    case 5:
+        sliderdialog_show(&fezui.lang, FEZUI_TYPE_UINT16, 0, 1, 1, displayconfig_menu_ptr_items[5]->header[fezui.lang]+1);
         break;
     default:
         break;
@@ -119,7 +123,7 @@ static void displayconfig_menu_cb(void *m)
 
 void displayconfigpage_init()
 {   
-    fezui_animated_listbox_init(&displayconfig_menu, (void**)displayconfig_menu_ptr_items, 5, displayconfig_menu_cb, menu_item_draw, menu_item_get_cursor);
+    fezui_animated_listbox_init(&displayconfig_menu, (void**)displayconfig_menu_ptr_items, 6, displayconfig_menu_cb, menu_item_draw, menu_item_get_cursor);
     displayconfig_menu.listbox.show_scrollbar = true;
 }
 

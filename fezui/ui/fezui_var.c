@@ -15,7 +15,7 @@ uint32_t g_fezui_fps;
 uint32_t g_fezui_debug;
 uint32_t g_fezui_run_time;
 
-fezui_notification_t fezui_notification={.text.font=u8g2_font_5x8_mn};
+fezui_notification_t fezui_notification={.text.font=u8g2_font_5x8_mr};
 /*
   Fontname: fez_font_6x10
   Copyright: Created with Fony 1.4.6

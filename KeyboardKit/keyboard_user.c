@@ -1,6 +1,8 @@
-//
-// Created by xq123 on 24-3-17.
-//
+/*
+ * Copyright (c) 2024 Zhangqi Li (@zhangqili)
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 #include "main.h"
 #include "keyboard.h"
 #include "rgb.h"
@@ -26,13 +28,13 @@ const uint16_t g_default_keymap[LAYER_NUM][ADVANCED_KEY_NUM + KEY_NUM] = {
         KEYBINDING(KEY_NO_EVENT, KEY_NO_MODIFIER),
         KEYBINDING(KEY_NO_EVENT, KEY_NO_MODIFIER),
         KEYBINDING(KEY_ESC, KEY_NO_MODIFIER),
-        KEYBINDING(MOUSE_WHEEL_UP, KEY_NO_MODIFIER),
-        KEYBINDING(MOUSE_WHEEL_DOWN, KEY_NO_MODIFIER),
+        KEYBINDING(MOUSE_COLLECTION, MOUSE_WHEEL_UP),
+        KEYBINDING(MOUSE_COLLECTION, MOUSE_WHEEL_DOWN),
     },
 };
 const uint8_t g_rgb_mapping[ADVANCED_KEY_NUM] = {0, 1, 2, 3};
 const RGBLocation g_rgb_locations[RGB_NUM] = {{0, 0}, {1, 0}, {2, 0}, {3, 0}};
-
+const uint8_t command_advanced_key_mapping[] = {0, 1, 2, 3};
 AdvancedKey g_keyboard_advanced_keys[ADVANCED_KEY_NUM] =
 {
     {.key.id = 0},
@@ -54,7 +56,7 @@ Key g_keyboard_keys[KEY_NUM] =
     {.id = 12},
 };
 
-static const float table[] =
+static const AnalogValue table[] =
 {
     -0.002425,
     0.000880,
@@ -1059,16 +1061,16 @@ static const float table[] =
     1.002575,
 };
 
-float advanced_key_normalize(AdvancedKey* key, float value)
+AnalogValue advanced_key_normalize(AdvancedKey* key, AnalogValue value)
 {
-    float x;
+    AnalogValue x;
     x = (key->upper_bound - value) / (key->upper_bound - key->lower_bound);
     uint16_t index = x / 0.001;
     if (index < 1000)
         return table[index];
     if (index > 5000)
         return 0;
-    return 1.1;
+    return 1.002575;
 }
 
 
@@ -1080,7 +1082,7 @@ hid_keyboard_send(report);
 USBHS_Endp_DataUp(HID_KEYBOARD_INT_EP,report,len,DEF_UEP_CPY_LOAD);
 #endif
 }
-
+void launcherpage_open_menu();
 void key_update1(Key* key, bool state)
 {
     if ((!(key->state)) && state)
@@ -1089,7 +1091,8 @@ void key_update1(Key* key, bool state)
         {   
             if (g_keyboard_current_layer == 1)
             {
-                fezui_frame_navigate(&g_mainframe, &menupage);
+                launcherpage_open_menu();
+                //fezui_frame_navigate(&g_mainframe, &launcherpage);
             }
             else
             {
@@ -1117,7 +1120,8 @@ void key_update2(Key* key, bool state)
         {
             if (g_keyboard_current_layer == 2)
             {
-                fezui_frame_navigate(&g_mainframe, &menupage);
+                launcherpage_open_menu();
+                //fezui_frame_navigate(&g_mainframe, &launcherpage);
             }
             else
             {
@@ -1174,8 +1178,16 @@ void keyboard_delay(uint32_t ms)
 void mouse_hid_send(uint8_t *report, uint16_t len)
 {
 #ifdef CONFIG_CHERRYUSB
-hid_mouse_send(report);
+    hid_mouse_send(report);
 #else
-USBHS_Endp_DataUp(HID_MOUSE_INT_EP,report,len,DEF_UEP_CPY_LOAD);
+    //static uint8_t mouse_write_buffer[64];
+    //memcpy(mouse_write_buffer+1, report, 4);
+    //mouse_write_buffer[0]=1;
+    //mouse_write_buffer[1]=0;
+    //mouse_write_buffer[2]=0;
+    //mouse_write_buffer[3]=0;
+    //mouse_write_buffer[4]=0;
+    //USBHS_Endp_DataUp(HID_MOUSE_INT_EP,mouse_write_buffer,64,DEF_UEP_CPY_LOAD);
+    USBHS_Endp_DataUp(HID_MOUSE_INT_EP,report,len,DEF_UEP_CPY_LOAD);
 #endif
 }

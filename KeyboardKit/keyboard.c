@@ -1,8 +1,7 @@
 /*
- * keyboard.c
+ * Copyright (c) 2024 Zhangqi Li (@zhangqili)
  *
- *  Created on: May 21, 2023
- *      Author: xq123
+ * SPDX-License-Identifier: GPL-3.0-or-later
  */
 #include "keyboard.h"
 #include "analog.h"
@@ -52,28 +51,35 @@ void keyboard_key_add_buffer(Key *k)
         }
         else
         {
-            switch (g_keymap[g_keyboard_current_layer][k->id])
+            switch (g_keymap[g_keyboard_current_layer][k->id] & 0xFF)
             {
-            case MOUSE_LBUTTON:
-                g_mouse.buttons |= 0x01;
-                break;
-            case MOUSE_RBUTTON:
-                g_mouse.buttons |= 0x02;
-                break;
-            case MOUSE_MBUTTON:
-                g_mouse.buttons |= 0x04;
-                break;
-            case MOUSE_FORWARD:
-                g_mouse.buttons |= 0x08;
-                break;
-            case MOUSE_BACK:
-                g_mouse.buttons |= 0x10;
-                break;
-            case MOUSE_WHEEL_UP:
-                g_mouse.wheel = 1;
-                break;
-            case MOUSE_WHEEL_DOWN:
-                g_mouse.wheel = -1;
+            case MOUSE_COLLECTION:
+                switch ((g_keymap[g_keyboard_current_layer][k->id] >> 8) & 0xFF)
+                {
+                case MOUSE_LBUTTON:
+                    g_mouse.buttons |= 0x01;
+                    break;
+                case MOUSE_RBUTTON:
+                    g_mouse.buttons |= 0x02;
+                    break;
+                case MOUSE_MBUTTON:
+                    g_mouse.buttons |= 0x04;
+                    break;
+                case MOUSE_FORWARD:
+                    g_mouse.buttons |= 0x08;
+                    break;
+                case MOUSE_BACK:
+                    g_mouse.buttons |= 0x10;
+                    break;
+                case MOUSE_WHEEL_UP:
+                    g_mouse.wheel = 1;
+                    break;
+                case MOUSE_WHEEL_DOWN:
+                    g_mouse.wheel = -1;
+                    break;
+                default:
+                    break;
+                }
                 break;
             default:
                 break;
@@ -82,7 +88,7 @@ void keyboard_key_add_buffer(Key *k)
     }
 }
 
-void keyboard_buffer_send()
+void keyboard_buffer_send(void)
 {
 #ifdef NKRO_ENABLE
     keyboard_NKRObuffer_send(&g_keyboard_nkro_buffer);
@@ -91,7 +97,7 @@ void keyboard_buffer_send()
 #endif
 }
 
-void keyboard_buffer_clear()
+void keyboard_buffer_clear(void)
 {
 #ifdef NKRO_ENABLE
     keyboard_NKRObuffer_clear(&g_keyboard_nkro_buffer);
@@ -152,7 +158,7 @@ void keyboard_NKRObuffer_clear(Keyboard_NKROBuffer*buf)
     memset(buf->buffer, 0, buf->length);
 }
 
-void keyboard_init()
+void keyboard_init(void)
 {
 #ifdef NKRO_ENABLE
     static uint8_t buffer[64];
@@ -160,7 +166,7 @@ void keyboard_init()
 #endif
 }
 
-void keyboard_factory_reset()
+void keyboard_factory_reset(void)
 {
     memcpy(g_keymap, g_default_keymap, sizeof(g_keymap));
     for (uint8_t i = 0; i < ADVANCED_KEY_NUM; i++)
@@ -168,28 +174,25 @@ void keyboard_factory_reset()
         g_keyboard_advanced_keys[i].mode = DEFAULT_ADVANCED_KEY_MODE;
         g_keyboard_advanced_keys[i].trigger_distance = DEFAULT_TRIGGER_DISTANCE;
         g_keyboard_advanced_keys[i].release_distance = DEFAULT_RELEASE_DISTANCE;
-        g_keyboard_advanced_keys[i].schmitt_parameter = DEFAULT_SCHMITT_PARAMETER;
-        g_keyboard_advanced_keys[i].calibration_mode = KEY_AUTO_CALIBRATION_NEGATIVE;
-        g_keyboard_advanced_keys[i].activation_value = 0.5;
-        // Keyboard_AdvancedKeys[i].lower_deadzone = 0.32;
+        g_keyboard_advanced_keys[i].activation_value = DEFAULT_ACTIVATION_VALUE;
+        g_keyboard_advanced_keys[i].deactivation_value = DEFAULT_DEACTIVATION_VALUE;
+        g_keyboard_advanced_keys[i].calibration_mode = DEFAULT_CALIBRATION_MODE;
         advanced_key_set_deadzone(g_keyboard_advanced_keys + i, DEFAULT_UPPER_DEADZONE, DEFAULT_LOWER_DEADZONE);
-        // Keyboard_AdvancedKeys[i].phantom_lower_deadzone = 0.32;
-        // Keyboard_AdvancedKeys[i].key.keycode = default_keymap[0][Keyboard_AdvancedKeys[i].key.id];
     }
     rgb_factory_reset();
     keyboard_save();
     //keyboard_system_reset();
 }
 
-__WEAK void keyboard_system_reset()
+__WEAK void keyboard_system_reset(void)
 {
 }
 
-__WEAK void keyboard_scan()
+__WEAK void keyboard_scan(void)
 {
 }
 
-void keyboard_recovery()
+void keyboard_recovery(void)
 {
     // mount the filesystem
     int err = lfs_mount(&lfs_w25qxx, &lfs_cfg);
@@ -206,8 +209,8 @@ void keyboard_recovery()
     {
         //lfs_file_read(&lfs_w25qxx, &lfs_file_w25qxx, &(g_keyboard_advanced_keys[i].key.id),
         //              sizeof(g_keyboard_advanced_keys[i].key.id));
-        lfs_file_read(&lfs_w25qxx, &lfs_file_w25qxx, ((void *)(&g_keyboard_advanced_keys[i])) + sizeof(Key),
-                      sizeof(AdvancedKey) - sizeof(Key));
+        lfs_file_read(&lfs_w25qxx, &lfs_file_w25qxx, ((void *)(&g_keyboard_advanced_keys[i])) + sizeof(Key) + 4*sizeof(AnalogValue),
+                      sizeof(AdvancedKey) - sizeof(Key) - 4*sizeof(AnalogValue));
     }
     lfs_file_read(&lfs_w25qxx, &lfs_file_w25qxx, g_keymap, sizeof(g_keymap));
     lfs_file_read(&lfs_w25qxx, &lfs_file_w25qxx, &g_rgb_switch, sizeof(g_rgb_switch));
@@ -220,7 +223,7 @@ void keyboard_recovery()
     // print the boot count
 }
 
-void keyboard_save()
+void keyboard_save(void)
 {
     // mount the filesystem
     int err = lfs_mount(&lfs_w25qxx, &lfs_cfg);
@@ -238,8 +241,8 @@ void keyboard_save()
     {
         //lfs_file_write(&lfs_w25qxx, &lfs_file_w25qxx, &(g_keyboard_advanced_keys[i].key.id),
         //               sizeof(g_keyboard_advanced_keys[i].key.id));
-        lfs_file_write(&lfs_w25qxx, &lfs_file_w25qxx, ((void *)(&g_keyboard_advanced_keys[i])) + sizeof(Key),
-                       sizeof(AdvancedKey) - sizeof(Key));
+        lfs_file_write(&lfs_w25qxx, &lfs_file_w25qxx, ((void *)(&g_keyboard_advanced_keys[i])) + sizeof(Key) + 4*sizeof(AnalogValue),
+                       sizeof(AdvancedKey) - sizeof(Key) - 4*sizeof(AnalogValue));
     }
     lfs_file_write(&lfs_w25qxx, &lfs_file_w25qxx, g_keymap, sizeof(g_keymap));
     lfs_file_write(&lfs_w25qxx, &lfs_file_w25qxx, &g_rgb_switch, sizeof(g_rgb_switch));
@@ -252,7 +255,7 @@ void keyboard_save()
     // print the boot count
 }
 
-void keyboard_send_report()
+void keyboard_send_report(void)
 {
     static uint32_t mouse_value;
     keyboard_buffer_clear();
@@ -277,7 +280,7 @@ void keyboard_send_report()
     mouse_value = *(uint32_t*)&g_mouse;
 }
 
-__WEAK void keyboard_task()
+__WEAK void keyboard_task(void)
 {
     keyboard_scan();
     analog_average();
@@ -288,10 +291,13 @@ __WEAK void keyboard_task()
 
 __WEAK void keyboard_hid_send(uint8_t *report, uint16_t len)
 {
+    UNUSED(report);
+    UNUSED(len);
 }
 __WEAK void keyboard_delay(uint32_t ms)
 {
+    UNUSED(ms);
 }
-__WEAK void keyboard_post_process()
+__WEAK void keyboard_post_process(void)
 {
 }

@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2024 Zhangqi Li (@zhangqili)
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 #ifndef ACTION_H_
 #define ACTION_H_
 
@@ -21,7 +26,7 @@ typedef struct __ActionDynamicKeyStroke4x4
 {
     Action type;
     uint16_t key_binding[4];
-    float distance[4];
+    AnalogValue distance[4];
 } ActionDynamicKeyStroke4x4;
 
 typedef struct __ActionModTap
@@ -36,7 +41,7 @@ typedef struct __ActionToggleKey
     bool state;
 } ActionToggleKey;
 
-typedef struct __ActionRappySnappy
+typedef struct __attribute__((packed))  __ActionRappySnappy
 {
     Action type;
     uint16_t key1_id;

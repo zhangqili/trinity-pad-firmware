@@ -48,6 +48,12 @@ sfud_flash sfud_norflash0 = {
     .spi.name = "SPI2",
     .chip = {"W25Q128JV", SFUD_MF_ID_WINBOND, 0x40, 0x18, 16L * 1024L * 1024L, SFUD_WM_PAGE_256B, 4096, 0x20},
 };
+static uint16_t ADC_Buffer[ADVANCED_KEY_NUM*64];
+
+#define U8LOG_WIDTH 24
+#define U8LOG_HEIGHT 30
+u8log_t g_u8log;
+static uint8_t u8log_buffer[U8LOG_WIDTH * U8LOG_HEIGHT];
 
 void User_GPIO_Init(void)
 {
@@ -418,7 +424,7 @@ void TIM6_INT_Init(u16 arr, u16 psc)
 
     // 初始化TIM NVIC，设置中断优先级分组
     NVIC_InitStructure.NVIC_IRQChannel = TIM6_IRQn;           // TIM6中断
-    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0; // 设置抢占优先级0
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 3; // 设置抢占优先级0
     NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;        // 设置响应优先级3
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;           // 使能通道1中断
     NVIC_Init(&NVIC_InitStructure);                           // 初始化NVIC
@@ -515,7 +521,7 @@ void EXTI0_INT_INIT(void)
     EXTI_Init(&EXTI_InitStructure);
 
     NVIC_InitStructure.NVIC_IRQChannel = EXTI0_IRQn;
-    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
+    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;
     NVIC_InitStructure.NVIC_IRQChannelSubPriority = 2;
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&NVIC_InitStructure);
@@ -529,7 +535,7 @@ void usb_dc_low_level_init(void)
     RCC_USBHSPLLCKREFCLKConfig(RCC_USBHSPLLCKREFCLK_4M);
     RCC_USBHSPHYPLLALIVEcmd(ENABLE);
     RCC_AHBPeriphClockCmd(RCC_AHBPeriph_USBHS, ENABLE);
-    NVIC_SetPriority(USBHS_IRQn, 0xC0);
+    NVIC_SetPriority(USBHS_IRQn, 0x00);
     NVIC_EnableIRQ(USBHS_IRQn);
 
     Delay_Us(100);
@@ -705,6 +711,7 @@ void JumpToBootloader(void)
     {
     }
 }
+
 /*********************************************************************
  * @fn      main
  *
@@ -714,13 +721,14 @@ void JumpToBootloader(void)
  */
 int main(void)
 {
+    u8log_Init(&g_u8log, U8LOG_WIDTH, U8LOG_HEIGHT, u8log_buffer);
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
     SystemCoreClockUpdate();
     Delay_Init();
     USART_Printf_Init(115200);
-    // printf("SystemClk:%ld\r\n", SystemCoreClock);
-    // printf("ChipID:%08lx\r\n", DBGMCU_GetCHIPID());
-    // printf("This is printf example\r\n");
+    printf("SystemClk:%ld\r\n", SystemCoreClock);
+    printf("ChipID:%08lx\r\n", DBGMCU_GetCHIPID());
+    //prizntf("This is printf example\r\n");
     // SYSTICK_Init_Config(SystemCoreClock-1);
     User_GPIO_Init();
     SPI1_Init();
@@ -739,19 +747,19 @@ int main(void)
     EXTI_INT_INIT();
     DMA_Cmd(DMA1_Channel5, ENABLE);
 
-    DMA1_Tx_Init(DMA1_Channel1, (u32)&ADC1->RDATAR, (u32)g_ADC_Buffer, ANALOG_BUFFER_LENGTH);
+    DMA1_Tx_Init(DMA1_Channel1, (u32)&ADC1->RDATAR, (u32)ADC_Buffer, ADVANCED_KEY_NUM*64);
     DMA_Cmd(DMA1_Channel1, ENABLE);
     ADC_SoftwareStartConvCmd(ADC1, ENABLE);
 #ifdef CONFIG_CHERRYUSB
     hid_init();
 #else
-	USBHS_RCC_Init( );
-	USBHS_Device_Init( ENABLE );
+	USBHS_RCC_Init();
+	USBHS_Device_Init(ENABLE);
 	//USB_Sleep_Wakeup_CFG( );
 #endif
     
     keyboard_recovery();
-    Delay_Ms(100);
+    Delay_Ms(100);//Delete this line forbidden!!!
     fram_read_bytes(0x400, g_key_counts, sizeof(g_key_counts));
     memcpy(g_key_init_counts, g_key_counts, sizeof(g_key_counts));
 
@@ -812,6 +820,22 @@ void TIM6_IRQHandler(void)
         record_kps_timer();
     }
 }
+void analog_average()
+{
+    uint32_t ADC_sum;
+    for (uint8_t i = 0; i < ADVANCED_KEY_NUM; i++)
+    {
+        ADC_sum = 0;
+        for (uint8_t j = 0; j < 64; j++)
+        {
+            ADC_sum += ADC_Buffer[i + j * ADVANCED_KEY_NUM];
+        }
+        g_ADC_Averages[i] = ADC_sum/64.0f;
+#ifdef ENABLE_FILTER
+        g_ADC_Averages[i] = adaptive_schimidt_filter(g_analog_filters+i,g_ADC_Averages[i]);
+#endif
+    }
+}
 
 void TIM7_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 void TIM7_IRQHandler(void)
@@ -821,6 +845,7 @@ void TIM7_IRQHandler(void)
     //static bool flag = true;
     if (TIM_GetITStatus(TIM7, TIM_IT_Update) != RESET)
     {
+        TIM_ClearITPendingBit(TIM7, TIM_IT_Update);
         count++;
         if (count == 8)
         {
@@ -828,8 +853,14 @@ void TIM7_IRQHandler(void)
             fezui_tick++;
             RGB_Tick++;
         }
-        TIM_ClearITPendingBit(TIM7, TIM_IT_Update);
         // if(!HAL_GPIO_ReadPin(MENU_GPIO_Port, MENU_Pin))
+        //for (uint8_t i = 0; i < ADVANCED_KEY_NUM; i++)
+        //{
+        //    for (uint8_t j = 0; j < 64; j++)
+        //    {
+        //        ringbuf_push(&adc_ringbuf[i], ADC_Buffer[i + j * ADVANCED_KEY_NUM]);
+        //    }
+        //}        
         keyboard_task();
         //if (flag)
         //{

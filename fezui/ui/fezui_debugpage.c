@@ -99,11 +99,13 @@ static void debugpage_event_handler(void *e)
         targetnum+=(uint16_t)((-1)*(&rangebase)->interval);
         break;
     case KEY_ENTER:
+        g_keyboard_send_report_enable=false;
+        g_keyboard_current_layer = 0;
         fezui_frame_go_back(&g_mainframe);
         break;
     case KEY_ESC:
-        g_keyboard_send_report_enable=false;
-        fezui_frame_go_back(&g_mainframe);
+        //fezui_frame_go_back(&g_mainframe);
+        //g_keyboard_send_report_enable=false;
         break;
     default:
         break;
