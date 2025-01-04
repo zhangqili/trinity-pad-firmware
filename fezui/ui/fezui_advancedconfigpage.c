@@ -37,7 +37,7 @@ static fezui_animated_listbox_t keyconfig_digital_mode_menu;
 static const char *keyconfig_digital_mode_menu_items[] = {"Mode"};
 
 static fezui_animated_listbox_t keyconfig_analog_normal_mode_menu;
-static const char *keyconfig_analog_normal_mode_menu_items[] = {"Mode", "Calibration Mode", "Upper bound", "Lower bound", "Activation distance", "Schmitt parameter"};
+static const char *keyconfig_analog_normal_mode_menu_items[] = {"Mode", "Calibration Mode", "Upper bound", "Lower bound", "Activation distance", "Deactivation distance"};
 
 static fezui_animated_listbox_t keyconfig_analog_rapid_mode_menu;
 static const char *keyconfig_analog_rapid_mode_menu_items[] = {"Mode", "Calibration Mode", "Upper bound", "Lower bound", "Trigger distance", "Release distance", "Upper deadzone", "Lower deadzone"};
@@ -135,7 +135,7 @@ static void keyconfig_analog_normal_mode_menu_cb(void *m)
         advancedconfigpage_interval = 0.001;
         break;
     case 5:
-        target_property = &(current_config_advanced_key->schmitt_parameter);
+        target_property = &(current_config_advanced_key->deactivation_value);
         advancedconfigpage_interval = 0.001;
         break;
     default:
@@ -166,7 +166,7 @@ static void keyconfig_analog_normal_mode_menu_draw_cb(fezui_t *fezui_ptr, u8g2_u
         fezui_printf_right_aligned(fezui_ptr, x + w, y + h, "%6.1f%%", (current_config_advanced_key->activation_value) * 100);
         break;
     case 5:
-        fezui_printf_right_aligned(fezui_ptr, x + w, y + h, "%6.1f%%", (current_config_advanced_key->schmitt_parameter) * 100);
+        fezui_printf_right_aligned(fezui_ptr, x + w, y + h, "%6.1f%%", (current_config_advanced_key->deactivation_value) * 100);
         break;
     }
     u8g2_SetFont(&(fezui_ptr->u8g2), font_bk);

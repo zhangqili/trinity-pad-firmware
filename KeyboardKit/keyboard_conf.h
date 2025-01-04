@@ -1,10 +1,8 @@
 /*
- * keyboard_conf.h
+ * Copyright (c) 2024 Zhangqi Li (@zhangqili)
  *
- *  Created on: Oct 29, 2023
- *      Author: xq123
+ * SPDX-License-Identifier: GPL-3.0-or-later
  */
-
 #ifndef KEYBOARD_CONF_H_
 #define KEYBOARD_CONF_H_
 
@@ -21,17 +19,20 @@
 /* Keyboard Default */
 /********************/
 #define DEFAULT_ADVANCED_KEY_MODE   KEY_ANALOG_RAPID_MODE
+#define DEFAULT_CALIBRATION_MODE    KEY_AUTO_CALIBRATION_UNDEFINED
 #define DEFAULT_TRIGGER_DISTANCE    0.08
 #define DEFAULT_RELEASE_DISTANCE    0.08
 #define DEFAULT_UPPER_DEADZONE      0.04
 #define DEFAULT_LOWER_DEADZONE      0.2
-#define DEFAULT_SCHMITT_PARAMETER   0.01
+#define DEFAULT_ACTIVATION_VALUE    0.5
+#define DEFAULT_DEACTIVATION_VALUE  0.49
+#define DEFAULT_ESTIMATED_RANGE     500
+
 
 /**********/
 /* Analog */
 /**********/
 #define RING_BUF_LEN            64
-#define ANALOG_BUFFER_LENGTH    (ADVANCED_KEY_NUM*64)
 
 /*******/
 /* RGB */

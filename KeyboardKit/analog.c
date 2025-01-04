@@ -1,8 +1,7 @@
 /*
- * analog.c
+ * Copyright (c) 2024 Zhangqi Li (@zhangqili)
  *
- *  Created on: 2023年5月21日
- *      Author: xq123
+ * SPDX-License-Identifier: GPL-3.0-or-later
  */
 #include "stdlib.h"
 #include "stdio.h"
@@ -20,19 +19,20 @@ RingBuf adc_ringbuf[ADVANCED_KEY_NUM];
 
 uint8_t g_analog_active_channel;
 
-void analog_init()
+void analog_init(void)
 {
 }
 
 __WEAK void analog_channel_select(uint8_t x)
 {
+    UNUSED(x);
 }
 
-void analog_scan()
+void analog_scan(void)
 {
 }
 
-__WEAK void analog_average()
+__WEAK void analog_average(void)
 {
     for (uint8_t i = 0; i < ADVANCED_KEY_NUM; i++)
     {
@@ -43,7 +43,7 @@ __WEAK void analog_average()
     }
 }
 
-void analog_check()
+void analog_check(void)
 {
     bool state;
     for (uint8_t i = 0; i < ADVANCED_KEY_NUM; i++)
@@ -69,7 +69,7 @@ void analog_check()
     }
 }
 
-void analog_reset_range()
+void analog_reset_range(void)
 {
     analog_average();
     for (uint8_t i = 0; i < ADVANCED_KEY_NUM; i++)

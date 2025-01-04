@@ -1,6 +1,8 @@
-//
-// Created by xq123 on 24-3-17.
-//
+/*
+ * Copyright (c) 2024 Zhangqi Li (@zhangqili)
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 #include "main.h"
 #include "keyboard.h"
 #include "rgb.h"
@@ -32,7 +34,7 @@ const uint16_t g_default_keymap[LAYER_NUM][ADVANCED_KEY_NUM + KEY_NUM] = {
 };
 const uint8_t g_rgb_mapping[ADVANCED_KEY_NUM] = {0, 1, 2, 3};
 const RGBLocation g_rgb_locations[RGB_NUM] = {{0, 0}, {1, 0}, {2, 0}, {3, 0}};
-
+const uint8_t command_advanced_key_mapping[] = {0, 1, 2, 3};
 AdvancedKey g_keyboard_advanced_keys[ADVANCED_KEY_NUM] =
 {
     {.key.id = 0},

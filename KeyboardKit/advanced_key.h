@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2024 Zhangqi Li (@zhangqili)
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 #ifndef ADVANCED_KEY_H_
 #define ADVANCED_KEY_H_
 
@@ -28,19 +33,19 @@ typedef enum
 typedef struct __AdvancedKey
 {
     Key key;
-    uint8_t mode;
-    uint8_t calibration_mode;
     AnalogValue value;
     AnalogValue raw;
+    AnalogValue maximum;
+    AnalogValue minimum;
+    
+    uint8_t mode;
+    uint8_t calibration_mode;
     
     AnalogValue activation_value;
-    AnalogValue phantom_lower_deadzone;
+    AnalogValue deactivation_value;
 
     AnalogValue trigger_distance;
     AnalogValue release_distance;
-    AnalogValue schmitt_parameter;
-    AnalogValue maximum;
-    AnalogValue minimum;
     AnalogValue trigger_speed;
     AnalogValue release_speed;
     AnalogValue upper_deadzone;

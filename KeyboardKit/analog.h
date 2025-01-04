@@ -1,10 +1,8 @@
 /*
- * analog.h
+ * Copyright (c) 2024 Zhangqi Li (@zhangqili)
  *
- *  Created on: 2023骞�5鏈�21鏃�
- *      Author: xq123
+ * SPDX-License-Identifier: GPL-3.0-or-later
  */
-
 #ifndef ANALOG_H_
 #define ANALOG_H_
 #include "keyboard.h"
@@ -15,10 +13,6 @@
 
 #ifndef RING_BUF_LEN
 #define RING_BUF_LEN 8
-#endif
-
-#ifndef ANALOG_BUFFER_LENGTH
-#define ANALOG_BUFFER_LENGTH (ADVANCED_KEY_NUM*64)
 #endif
 
 typedef struct
@@ -36,12 +30,12 @@ extern RingBuf adc_ringbuf[ADVANCED_KEY_NUM];
 
 extern uint8_t g_analog_active_channel;
 
-void analog_init();
+void analog_init(void);
 void analog_channel_select(uint8_t x);
-void analog_scan();
-void analog_average();
-void analog_check();
-void analog_reset_range();
+void analog_scan(void);
+void analog_average(void);
+void analog_check(void);
+void analog_reset_range(void);
 
 void ringbuf_push(RingBuf *ringbuf, AnalogValue data);
 AnalogValue ringbuf_avg(RingBuf *ringbuf);
