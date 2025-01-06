@@ -25,11 +25,41 @@ const uint16_t g_default_keymap[LAYER_NUM][ADVANCED_KEY_NUM + KEY_NUM] = {
         KEYBINDING(KEY_F12, KEY_NO_MODIFIER),
         KEYBINDING(KEY_F2, KEY_LEFT_SHIFT),
         KEYBINDING(KEY_F2, KEY_NO_MODIFIER),
-        KEYBINDING(KEY_NO_EVENT, KEY_NO_MODIFIER),
-        KEYBINDING(KEY_NO_EVENT, KEY_NO_MODIFIER),
+        LAYER(LAYER_TOGGLE, 2),
+        LAYER(LAYER_TOGGLE, 1),
         KEYBINDING(KEY_ESC, KEY_NO_MODIFIER),
         KEYBINDING(MOUSE_COLLECTION, MOUSE_WHEEL_UP),
         KEYBINDING(MOUSE_COLLECTION, MOUSE_WHEEL_DOWN),
+    },
+    {
+        KEY_TRANSPARENT,
+        KEY_TRANSPARENT,
+        KEY_TRANSPARENT,
+        KEY_TRANSPARENT,
+        KEY_TRANSPARENT,
+        KEY_TRANSPARENT,
+        KEY_TRANSPARENT,
+        KEY_TRANSPARENT,
+        KEY_USER | (USER_OPENMENU << 8),
+        LAYER(LAYER_TOGGLE, 1),
+        KEY_TRANSPARENT,
+        KEY_TRANSPARENT,
+        KEY_TRANSPARENT,
+    },
+    {
+        KEY_TRANSPARENT,
+        KEY_TRANSPARENT,
+        KEY_TRANSPARENT,
+        KEY_TRANSPARENT,
+        KEY_TRANSPARENT,
+        KEY_TRANSPARENT,
+        KEY_TRANSPARENT,
+        KEY_TRANSPARENT,
+        LAYER(LAYER_TOGGLE, 2),
+        KEY_USER | (USER_OPENMENU << 8),
+        KEY_TRANSPARENT,
+        KEY_TRANSPARENT,
+        KEY_TRANSPARENT,
     },
 };
 const uint8_t g_rgb_mapping[ADVANCED_KEY_NUM] = {0, 1, 2, 3};
@@ -1089,14 +1119,14 @@ void key_update1(Key* key, bool state)
     {
         if (g_keyboard_send_report_enable)
         {   
-            if (g_keyboard_current_layer == 1)
+            if (g_current_layer == 1)
             {
                 launcherpage_open_menu();
                 //fezui_frame_navigate(&g_mainframe, &launcherpage);
             }
             else
             {
-                g_keyboard_current_layer = g_keyboard_current_layer == 2 ? 0 : 2;
+                g_current_layer = g_current_layer == 2 ? 0 : 2;
             }
         }
         else if (key->key_cb[KEY_EVENT_DOWN])
@@ -1118,14 +1148,14 @@ void key_update2(Key* key, bool state)
     {
         if (g_keyboard_send_report_enable)
         {
-            if (g_keyboard_current_layer == 2)
+            if (g_current_layer == 2)
             {
                 launcherpage_open_menu();
                 //fezui_frame_navigate(&g_mainframe, &launcherpage);
             }
             else
             {
-                g_keyboard_current_layer = g_keyboard_current_layer == 1 ? 0 : 1;
+                g_current_layer = g_current_layer == 1 ? 0 : 1;
             }
         }
         else if (key->key_cb[KEY_EVENT_DOWN])
@@ -1140,23 +1170,30 @@ void key_update2(Key* key, bool state)
     }
     key->state = state;
 }
+
+#define KEY_SCAN(key, pin_state) {\
+bool state = (*(key)).state;\
+key_update((key), (pin_state));\
+if ((*(key)).state && !state) { keyboard_event_handler(MK_EVENT((*(key)).id,KEY_EVENT_DOWN)); }\
+}
+
 void keyboard_scan()
 {
-    key_update(&KEY_FN_K1, FN_K1_READ);
-    key_update(&KEY_FN_K2, FN_K2_READ);
-    key_update(&KEY_FN_K3, FN_K3_READ);
-    key_update(&KEY_FN_K4, FN_K4_READ);
-    key_update1(&KEY_FN_K5, FN_K5_READ);
-    key_update2(&KEY_FN_K6, FN_K6_READ);
-    key_update(&KEY_KNOB, KNOB_READ);
+    KEY_SCAN(&KEY_FN_K1, FN_K1_READ);
+    KEY_SCAN(&KEY_FN_K2, FN_K2_READ);
+    KEY_SCAN(&KEY_FN_K3, FN_K3_READ);
+    KEY_SCAN(&KEY_FN_K4, FN_K4_READ);
+    KEY_SCAN(&KEY_FN_K5, FN_K5_READ);
+    KEY_SCAN(&KEY_FN_K6, FN_K6_READ);
+    KEY_SCAN(&KEY_KNOB, KNOB_READ);
     if (g_keyboard_knob_flag)
     {
         g_keyboard_knob_flag--;
     }
     if (!g_keyboard_knob_flag)
     {
-        key_update(&KEY_KNOB_CLOCKWISE, false);
-        key_update(&KEY_KNOB_ANTICLOCKWISE, false);
+        KEY_SCAN(&KEY_KNOB_CLOCKWISE, false);
+        KEY_SCAN(&KEY_KNOB_ANTICLOCKWISE, false);
     }
 }
 void keyboard_system_reset()
@@ -1190,4 +1227,23 @@ void mouse_hid_send(uint8_t *report, uint16_t len)
     //USBHS_Endp_DataUp(HID_MOUSE_INT_EP,mouse_write_buffer,64,DEF_UEP_CPY_LOAD);
     USBHS_Endp_DataUp(HID_MOUSE_INT_EP,report,len,DEF_UEP_CPY_LOAD);
 #endif
+}
+
+void keyboard_user_handler(uint8_t code)
+{
+    switch (code)
+    {
+    case USER_OPENMENU:
+        void launcherpage_open_menu();
+        if (g_mainframe.pages[g_mainframe.current_page_index] == &launcherpage)
+        {
+            launcherpage_open_menu();
+            layer_reset(0);
+            layer_reset(1);
+            layer_reset(2);
+        }
+        break;
+    default:
+        break;
+    }
 }

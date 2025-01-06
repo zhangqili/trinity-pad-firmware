@@ -345,7 +345,7 @@ static void launcherpage_draw(void *page)
     if (!isPageOpen)
     {
         g_keyboard_send_report_enable = false;
-        g_keyboard_current_layer = 0;
+        g_current_layer = 0;
         // fezui_animated_listbox_begin(&mainmenu);
     }
 
@@ -466,7 +466,7 @@ static void main_menu_cb(void *menu)
 static void launcherpage_load(void *page)
 {
     g_keyboard_send_report_enable = false;
-    g_keyboard_current_layer = 0;
+    g_current_layer = 0;
     fezui_animated_listbox_begin(&mainmenu);
 }
 
@@ -541,7 +541,10 @@ static void launcherpage_event_handler(void *e)
     case KEY_ESC:
         if (isPageOpen)
         {
-            launcherpage_open_menu();
+            if (pages[mainmenu.listbox.list.selected_index] != &homepage)
+            {
+                launcherpage_open_menu();
+            }   
         }
         else
         {

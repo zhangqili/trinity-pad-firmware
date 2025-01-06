@@ -5,7 +5,7 @@
 #include "fezui.h"
 #include "fezui_var.h"
 
-static const uint8_t command_rgb_mapping[] = {0, 1, 2, 3};
+__WEAK const uint8_t command_advanced_key_mapping[ADVANCED_KEY_NUM];
 
 //static inline float fill_in_float(uint8_t *buf) __attribute__((optimize("O0")));
 static inline float fill_in_float(uint8_t *buf)
@@ -44,12 +44,12 @@ void unload_cargo(uint8_t *buf)
     case 2: // LED
         for (uint8_t i = 0; i < RGB_NUM; i++)
         {
-            g_rgb_configs[command_rgb_mapping[i]].mode = buf[1 + 8 * i + 0];
-            g_rgb_configs[command_rgb_mapping[i]].rgb.r = buf[1 + 8 * i + 1];
-            g_rgb_configs[command_rgb_mapping[i]].rgb.g = buf[1 + 8 * i + 2];
-            g_rgb_configs[command_rgb_mapping[i]].rgb.b = buf[1 + 8 * i + 3];
-            g_rgb_configs[command_rgb_mapping[i]].speed = fill_in_float(&buf[1 + 8 * i + 4]);
-            rgb_to_hsv(&g_rgb_configs[command_rgb_mapping[i]].hsv, &g_rgb_configs[command_rgb_mapping[i]].rgb);
+            g_rgb_configs[i].mode = buf[1 + 8 * i + 0];
+            g_rgb_configs[i].rgb.r = buf[1 + 8 * i + 1];
+            g_rgb_configs[i].rgb.g = buf[1 + 8 * i + 2];
+            g_rgb_configs[i].rgb.b = buf[1 + 8 * i + 3];
+            g_rgb_configs[i].speed = fill_in_float(&buf[1 + 8 * i + 4]);
+            rgb_to_hsv(&g_rgb_configs[i].hsv, &g_rgb_configs[i].rgb);
         }
         break;
     case 3: // Keymap

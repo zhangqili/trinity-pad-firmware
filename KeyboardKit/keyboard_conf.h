@@ -115,4 +115,8 @@
 #define KEY_KNOB_CLOCKWISE_INDEX      7
 #define KEY_KNOB_ANTICLOCKWISE_INDEX  8
 
+enum USER_KEYCODE {
+    USER_OPENMENU = 0,
+};
+
 #endif /* KEYBOARD_CONF_H_ */

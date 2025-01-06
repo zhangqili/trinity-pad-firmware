@@ -6,6 +6,15 @@
 #ifndef KEYCODE_H_
 #define KEYCODE_H_
 
+enum LAYER_CONTROL_KEYCODE {
+  LAYER_MOMENTARY = 0x00,
+  LAYER_TURN_ON = 0x01,
+  LAYER_TURN_OFF = 0x02,
+  LAYER_TOGGLE = 0x03,
+};
+
+#define LAYER(code,layer) (((code) << 12) | ((layer) << 8) | LAYER_CONTROL)
+
 enum USB_HID_MODIFIER
 {
     /*------------------------- HID report data -------------------------*/
@@ -16,7 +25,7 @@ enum USB_HID_MODIFIER
 };
 
 enum USB_HID_KEYCODES {
-  KEY_NO_EVENT                 = 0x00,   // Keyboard ErrorRollOver
+  KEY_NO_EVENT                 = 0x00,   // Keyboard NoEvent
   KEY_ERR_OVF                  = 0x01,   // Keyboard ErrorRollOver
   KEY_POST_FAIL                = 0x02,   // Keyboard POSTFail
   KEY_ERR_UNDEF                = 0x03,   // Keyboard ErrorUndefined
@@ -183,8 +192,12 @@ enum USB_HID_KEYCODES {
   KEY_EXSEL                    = 0xa4,   // Keyboard ExSel
   //Reserved b5-DF
   MOUSE_COLLECTION = 0xa5,
+  LAYER_CONTROL = 0xa6,
   FN = 0xB0,
-} ;
+  KEY_USER = 0xFD,
+  KEY_SYSTEM = 0xFE,
+  KEY_TRANSPARENT = 0xFF,
+};
 
 enum USB_HID_MOUSE_KEYCODES {
   MOUSE_LBUTTON = 0x00,
@@ -196,4 +209,12 @@ enum USB_HID_MOUSE_KEYCODES {
   MOUSE_WHEEL_DOWN = 0x06,
 };
 
-#endif /* USB_HID_KEYS_H_ */
+enum SYSTEM_KEYCODES {
+  SYSTEM_RESET = 0x00,
+  SYSTEM_FACTORY_RESET = 0x01,
+  SYSTEM_SAVE = 0x02,
+  SYSTEM_BOOTLOADER = 0x03,
+  SYSTEM_DEBUG = 0x04,
+};
+
+#endif /* KEYCODE_H_ */

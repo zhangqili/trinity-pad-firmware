@@ -12,6 +12,7 @@
 #include "action.h"
 #include "filter.h"
 #include "mouse.h"
+#include "record.h"
 
 __WEAK const uint16_t g_default_keymap[LAYER_NUM][ADVANCED_KEY_NUM + KEY_NUM];
 __WEAK AdvancedKey g_keyboard_advanced_keys[ADVANCED_KEY_NUM];
@@ -19,7 +20,6 @@ __WEAK Key g_keyboard_keys[KEY_NUM];
 
 Action *g_keyboard_actions[LAYER_NUM][ADVANCED_KEY_NUM + KEY_NUM];
 
-uint8_t g_keyboard_current_layer;
 uint16_t g_keymap[LAYER_NUM][ADVANCED_KEY_NUM + KEY_NUM];
 
 #ifdef NKRO_ENABLE
@@ -32,58 +32,126 @@ uint8_t g_keyboard_knob_flag;
 volatile bool g_keyboard_send_report_enable = true;
 
 volatile bool g_debug_enable;
+volatile bool g_keyboard_send_flag;
 
-void keyboard_key_add_buffer(Key *k)
+uint16_t keyboard_get_keycode(uint8_t id)
 {
-    if (g_keyboard_actions[g_keyboard_current_layer][k->id])
+    int8_t layer = layer_cache_get(id);
+    uint16_t keycode = 0;
+    while (layer>=0)
     {
-        action_execute(k, g_keyboard_actions[g_keyboard_current_layer][k->id]);
-    }
-    else if (k->state)
-    {
-        if ((g_keymap[g_keyboard_current_layer][k->id] & 0xFF) <= KEY_EXSEL)
+        keycode = g_keymap[layer][id];
+        if ((keycode & 0xFF ) == KEY_TRANSPARENT)
         {
-#ifdef NKRO_ENABLE
-            keyboard_NKRObuffer_add(&g_keyboard_nkro_buffer, (g_keymap[g_keyboard_current_layer][k->id]));
-#else
-            keyboard_6KRObuffer_add(&g_keyboard_6kro_buffer, (g_keymap[g_keyboard_current_layer][k->id]));
-#endif
+            layer--;
         }
         else
         {
-            switch (g_keymap[g_keyboard_current_layer][k->id] & 0xFF)
+            return keycode;
+        }
+    }
+    return KEY_NO_EVENT;
+}
+
+void keyboard_event_handler(KeyboardEvent event)
+{
+    uint16_t keycode = 0;
+    switch (event.event)
+    {
+    case KEY_EVENT_UP:
+        //layer_cache_set(event.id, g_current_layer);
+        keycode = keyboard_get_keycode(event.id);
+        switch (keycode & 0xFF)
+        {
+        case LAYER_CONTROL:
+            layer_control(keycode,event.event);
+            break;
+        default:
+            break;
+        }
+        break;
+    case KEY_EVENT_DOWN:
+        layer_cache_set(event.id, g_current_layer);
+        keycode = keyboard_get_keycode(event.id);
+        switch (keycode & 0xFF)
+        {
+        case LAYER_CONTROL:
+            layer_control(keycode,event.event);     
+            break;
+        case KEY_SYSTEM:
+            switch ((keycode >> 8) & 0xFF)
             {
-            case MOUSE_COLLECTION:
-                switch ((g_keymap[g_keyboard_current_layer][k->id] >> 8) & 0xFF)
-                {
-                case MOUSE_LBUTTON:
-                    g_mouse.buttons |= 0x01;
-                    break;
-                case MOUSE_RBUTTON:
-                    g_mouse.buttons |= 0x02;
-                    break;
-                case MOUSE_MBUTTON:
-                    g_mouse.buttons |= 0x04;
-                    break;
-                case MOUSE_FORWARD:
-                    g_mouse.buttons |= 0x08;
-                    break;
-                case MOUSE_BACK:
-                    g_mouse.buttons |= 0x10;
-                    break;
-                case MOUSE_WHEEL_UP:
-                    g_mouse.wheel = 1;
-                    break;
-                case MOUSE_WHEEL_DOWN:
-                    g_mouse.wheel = -1;
-                    break;
-                default:
-                    break;
-                }
+            case SYSTEM_RESET:
+                keyboard_system_reset();
+                break;
+            case SYSTEM_FACTORY_RESET:
+                keyboard_factory_reset();
+                break;
+            case SYSTEM_SAVE:
+                keyboard_save();
+                break;
+            case SYSTEM_BOOTLOADER:
+                keyboard_jump_to_bootloader();
+                break;
+            case SYSTEM_DEBUG:
+                g_debug_enable = !g_debug_enable;
                 break;
             default:
                 break;
+            }       
+            break;
+        case KEY_USER:
+            keyboard_user_handler((keycode >> 8) & 0xFF);
+            break;
+        default:
+            break;
+        }
+#ifdef ENABLE_RGB
+            if (event.id < RGB_NUM)
+            {
+                rgb_activate(event.id);
             }
+#endif
+            if (event.id < ADVANCED_KEY_NUM)
+            {
+#ifdef ENABLE_KPS
+                record_kps_tick();
+#endif
+#ifdef ENABLE_COUNTER
+                g_key_counts[event.id]++;
+#endif
+            }
+        break;
+    case KEY_EVENT_TRUE:
+        keycode = keyboard_get_keycode(event.id);
+        keyboard_add_buffer(keycode);
+        break;
+    case KEY_EVENT_FALSE:
+        break;
+    default:
+        break;
+    }
+}
+
+void keyboard_add_buffer(uint16_t keycode)
+{
+    if ((keycode & 0xFF) <= KEY_EXSEL)
+    {
+#ifdef NKRO_ENABLE
+        keyboard_NKRObuffer_add(&g_keyboard_nkro_buffer, keycode);
+#else
+        keyboard_6KRObuffer_add(&g_keyboard_6kro_buffer, keycode);
+#endif
+    }
+    else
+    {
+        switch (keycode & 0xFF)
+        {
+        case MOUSE_COLLECTION:
+            mouse_add_buffer(keycode >> 8);
+            break;
+        default:
+            break;
         }
     }
 }
@@ -188,6 +256,15 @@ __WEAK void keyboard_system_reset(void)
 {
 }
 
+__WEAK void keyboard_jump_to_bootloader(void)
+{
+}
+
+__WEAK void keyboard_user_handler(uint8_t code)
+{
+}
+
+
 __WEAK void keyboard_scan(void)
 {
 }
@@ -263,14 +340,21 @@ void keyboard_send_report(void)
     
     for (int i = 0; i < ADVANCED_KEY_NUM; i++)
     {
-        keyboard_key_add_buffer(&g_keyboard_advanced_keys[i].key);
+        keyboard_event_handler(MK_EVENT(g_keyboard_advanced_keys[i].key.id, g_keyboard_advanced_keys[i].key.state ? KEY_EVENT_TRUE : KEY_EVENT_FALSE));
     }
     for (int i = 0; i < KEY_NUM; i++)
-    {
-        keyboard_key_add_buffer(&g_keyboard_keys[i]);
+    {        
+        keyboard_event_handler(MK_EVENT(g_keyboard_keys[i].id, g_keyboard_keys[i].state ? KEY_EVENT_TRUE : KEY_EVENT_FALSE));
     }
-    if (g_keyboard_send_report_enable)
+    if (g_keyboard_send_report_enable 
+#ifndef CONTINUOUS_POLL
+        && g_keyboard_send_flag
+#endif
+    )
     {
+#ifndef CONTINUOUS_POLL
+        g_keyboard_send_flag = false;
+#endif
         keyboard_buffer_send();
         if ((*(uint32_t*)&g_mouse)!=mouse_value)
         {
