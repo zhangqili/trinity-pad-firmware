@@ -252,58 +252,55 @@ void fezui_POST()
     u8g2_DrawLog(&fezui.u8g2, 0, CHAR_HEIGHT * 2, &g_u8log);
 }
 
+#define ADD_STRING(str) strings[index++] = (str);
 void keyid_prase(uint16_t id, char *str, uint16_t str_len)
 {
-    bool key_found = false;
+    const char *strings[16] = {0};
+    uint8_t index = 0;
     memset(str, 0, str_len);
     switch (id & 0xFF)
     {
     case MOUSE_COLLECTION:
-        if (key_found)
-        {
-            strcat(str, " + ");
-            strcat(str, g_hid_usage_names[MOUSE_COLLECTION + 8 + KEY_MODIFIER(id)]);
-        }
-        else
-        {
-            strcat(str, g_hid_usage_names[MOUSE_COLLECTION + 8 + KEY_MODIFIER(id)]);
-            key_found = true;
-        }
+        ADD_STRING(g_hid_usage_names[MOUSE_COLLECTION + 8 + KEY_MODIFIER(id)]);
+        break;
+    case LAYER_CONTROL:
+        ADD_STRING("Layer Control");
+        break;
+    case KEY_USER:
+        ADD_STRING("User Defined");
+        break;
+    case KEY_SYSTEM:
+        ADD_STRING("System Defined");
+        break;
+    case KEY_TRANSPARENT:
+        ADD_STRING("Transparent");
         break;
     default:
         for (uint8_t i = 0; i < 8; i++)
         {
             if ((id >> 8) & BIT(i))
             {
-                if (key_found)
-                {
-                    strcat(str, " + ");
-                    strcat(str, g_hid_usage_names[i]);
-                }
-                else
-                {
-                    strcat(str, g_hid_usage_names[i]);
-                    key_found = true;
-                }
+                ADD_STRING(g_hid_usage_names[i]);
             }
         }
         if (id & 0xFF)
         {
-            if (key_found)
-            {
-                strcat(str, " + ");
-                strcat(str, g_hid_usage_names[(id & 0xFF) + 8]);
-            }
-            else
-            {
-                strcat(str, g_hid_usage_names[(id & 0xFF) + 8]);
-                key_found = true;
-            }
+            
+            ADD_STRING(g_hid_usage_names[(id & 0xFF) + 8]);
         }
         break;
     }
-
-    if (!key_found)
+    if (index)
+    {
+        strcat(str, strings[0]);
+        for (int i = 1; i < index; i++)
+        {
+            strcat(str, " + ");
+            strcat(str, strings[i]);
+        }
+        
+    }
+    else
     {
         strcat(str, "None");
     }
