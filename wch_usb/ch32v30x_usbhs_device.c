@@ -440,7 +440,6 @@ void USBHS_IRQHandler( void )
                     
                     /* end-point 1 data out interrupt */
                     case USBHS_UIS_TOKEN_OUT | DEF_UEP1:
-                        fezui_notification_begin(&fezui,&fezui_notification,"message received",500,0.1);
                         if ( intst & USBHS_UIS_TOG_OK )
                         {
                             ///* Write In Buffer */
@@ -461,7 +460,7 @@ void USBHS_IRQHandler( void )
                             //char out_buf[32];
                             //sprintf(out_buf,"%x",read_buffer[1]);
                             command_prase(USBHS_EP1_RX_Buf+1,64-1);
-                            fezui_notification_begin(&fezui,&fezui_notification,"message received",500,0.1);
+                            //fezui_notification_begin(&fezui,&fezui_notification,"message received",500,0.1);
                             //read_buffer[0] = 0x02; /* IN: report id */
                             //usbd_ep_start_write(HIDRAW_IN_EP, read_buffer, nbytes);
                             //    RingBuffer_Comm.StopFlag = 1;

@@ -205,13 +205,13 @@ void fezui_POST()
     u8g2_DrawLog(&fezui.u8g2, 0, CHAR_HEIGHT * 2, &g_u8log);
     u8g2_SendBuffer(&fezui.u8g2);
     // mount the filesystem
-    int err = lfs_mount(&lfs_w25qxx, &lfs_cfg);
+    int err = lfs_mount(&g_lfs, &g_lfs_config);
     // reformat if we can't mount the filesystem
     // this should only happen on the first boot
     if (err)
     {
-        err = lfs_format(&lfs_w25qxx, &lfs_cfg);
-        lfs_mount(&lfs_w25qxx, &lfs_cfg);
+        err = lfs_format(&g_lfs, &g_lfs_config);
+        lfs_mount(&g_lfs, &g_lfs_config);
         u8log_WriteString(&g_u8log, " [Failed]\n");
         u8log_WriteString(&g_u8log, "Formating Flash...");
         u8g2_DrawLog(&fezui.u8g2, 0, CHAR_HEIGHT * 2, &g_u8log);
@@ -232,9 +232,9 @@ void fezui_POST()
     u8g2_DrawLog(&fezui.u8g2, 0, CHAR_HEIGHT * 2, &g_u8log);
     u8g2_SendBuffer(&fezui.u8g2);
     // remember the storage is not updated until the file is closed successfully
-    lfs_file_close(&lfs_w25qxx, &lfs_file_w25qxx);
+    lfs_file_close(&g_lfs, &g_lfs_file);
     // release any resources we were using
-    lfs_unmount(&lfs_w25qxx);
+    lfs_unmount(&g_lfs);
     u8log_WriteString(&g_u8log, "Testing FRAM...");
     u8g2_SendBuffer(&fezui.u8g2);
     uint32_t fram_id = fram_read_device_id();
@@ -320,54 +320,54 @@ void fezui_reset()
 void fezui_save()
 {
     // mount the filesystem
-    int err = lfs_mount(&lfs_w25qxx, &lfs_cfg);
+    int err = lfs_mount(&g_lfs, &g_lfs_config);
     // reformat if we can't mount the filesystem
     // this should only happen on the first boot
     if (err)
     {
-        lfs_format(&lfs_w25qxx, &lfs_cfg);
-        lfs_mount(&lfs_w25qxx, &lfs_cfg);
+        lfs_format(&g_lfs, &g_lfs_config);
+        lfs_mount(&g_lfs, &g_lfs_config);
     }
     // read current count
-    lfs_file_open(&lfs_w25qxx, &lfs_file_w25qxx, "fezui.dat", LFS_O_RDWR | LFS_O_CREAT);
-    lfs_file_rewind(&lfs_w25qxx, &lfs_file_w25qxx);
-    lfs_file_write(&lfs_w25qxx, &lfs_file_w25qxx, &fezui.contrast, sizeof(fezui.contrast));
-    lfs_file_write(&lfs_w25qxx, &lfs_file_w25qxx, &fezui.invert, sizeof(fezui.invert));
-    lfs_file_write(&lfs_w25qxx, &lfs_file_w25qxx, &fezui.speed, sizeof(fezui.speed));
-    lfs_file_write(&lfs_w25qxx, &lfs_file_w25qxx, &fezui.screensaver_timeout, sizeof(fezui.screensaver_timeout));
-    lfs_file_write(&lfs_w25qxx, &lfs_file_w25qxx, &fezui.show_fps, sizeof(fezui.show_fps));
-    lfs_file_write(&lfs_w25qxx, &lfs_file_w25qxx, &fezui.lang, sizeof(fezui.lang));
+    lfs_file_open(&g_lfs, &g_lfs_file, "fezui.dat", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_file_rewind(&g_lfs, &g_lfs_file);
+    lfs_file_write(&g_lfs, &g_lfs_file, &fezui.contrast, sizeof(fezui.contrast));
+    lfs_file_write(&g_lfs, &g_lfs_file, &fezui.invert, sizeof(fezui.invert));
+    lfs_file_write(&g_lfs, &g_lfs_file, &fezui.speed, sizeof(fezui.speed));
+    lfs_file_write(&g_lfs, &g_lfs_file, &fezui.screensaver_timeout, sizeof(fezui.screensaver_timeout));
+    lfs_file_write(&g_lfs, &g_lfs_file, &fezui.show_fps, sizeof(fezui.show_fps));
+    lfs_file_write(&g_lfs, &g_lfs_file, &fezui.lang, sizeof(fezui.lang));
     // remember the storage is not updated until the file is closed successfully
-    err = lfs_file_close(&lfs_w25qxx, &lfs_file_w25qxx);
+    err = lfs_file_close(&g_lfs, &g_lfs_file);
     printf("save = %d", err);
     // release any resources we were using
-    lfs_unmount(&lfs_w25qxx);
+    lfs_unmount(&g_lfs);
     // print the boot count
 }
 
 void fezui_recovery()
 {
     // mount the filesystem
-    int err = lfs_mount(&lfs_w25qxx, &lfs_cfg);
+    int err = lfs_mount(&g_lfs, &g_lfs_config);
     // reformat if we can't mount the filesystem
     // this should only happen on the first boot
     if (err)
     {
-        lfs_format(&lfs_w25qxx, &lfs_cfg);
-        lfs_mount(&lfs_w25qxx, &lfs_cfg);
+        lfs_format(&g_lfs, &g_lfs_config);
+        lfs_mount(&g_lfs, &g_lfs_config);
     }
-    lfs_file_open(&lfs_w25qxx, &lfs_file_w25qxx, "fezui.dat", LFS_O_RDWR | LFS_O_CREAT);
-    lfs_file_rewind(&lfs_w25qxx, &lfs_file_w25qxx);
-    lfs_file_read(&lfs_w25qxx, &lfs_file_w25qxx, &fezui.contrast, sizeof(fezui.contrast));
-    lfs_file_read(&lfs_w25qxx, &lfs_file_w25qxx, &fezui.invert, sizeof(fezui.invert));
-    lfs_file_read(&lfs_w25qxx, &lfs_file_w25qxx, &fezui.speed, sizeof(fezui.speed));
-    lfs_file_read(&lfs_w25qxx, &lfs_file_w25qxx, &fezui.screensaver_timeout, sizeof(fezui.screensaver_timeout));
-    lfs_file_read(&lfs_w25qxx, &lfs_file_w25qxx, &fezui.show_fps, sizeof(fezui.show_fps));
-    lfs_file_read(&lfs_w25qxx, &lfs_file_w25qxx, &fezui.lang, sizeof(fezui.lang));
+    lfs_file_open(&g_lfs, &g_lfs_file, "fezui.dat", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_file_rewind(&g_lfs, &g_lfs_file);
+    lfs_file_read(&g_lfs, &g_lfs_file, &fezui.contrast, sizeof(fezui.contrast));
+    lfs_file_read(&g_lfs, &g_lfs_file, &fezui.invert, sizeof(fezui.invert));
+    lfs_file_read(&g_lfs, &g_lfs_file, &fezui.speed, sizeof(fezui.speed));
+    lfs_file_read(&g_lfs, &g_lfs_file, &fezui.screensaver_timeout, sizeof(fezui.screensaver_timeout));
+    lfs_file_read(&g_lfs, &g_lfs_file, &fezui.show_fps, sizeof(fezui.show_fps));
+    lfs_file_read(&g_lfs, &g_lfs_file, &fezui.lang, sizeof(fezui.lang));
     // remember the storage is not updated until the file is closed successfully
-    lfs_file_close(&lfs_w25qxx, &lfs_file_w25qxx);
+    lfs_file_close(&g_lfs, &g_lfs_file);
     printf("recovery = %d", err);
     // release any resources we were using
-    lfs_unmount(&lfs_w25qxx);
+    lfs_unmount(&g_lfs);
     // print the boot count
 }

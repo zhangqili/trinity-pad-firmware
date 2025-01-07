@@ -58,7 +58,7 @@ void keyboard_event_handler(KeyboardEvent event)
     uint16_t keycode = 0;
     switch (event.event)
     {
-    case KEY_EVENT_UP:
+    case KEYBOARD_EVENT_KEY_UP:
         //layer_cache_set(event.id, g_current_layer);
         keycode = keyboard_get_keycode(event.id);
         switch (keycode & 0xFF)
@@ -70,7 +70,7 @@ void keyboard_event_handler(KeyboardEvent event)
             break;
         }
         break;
-    case KEY_EVENT_DOWN:
+    case KEYBOARD_EVENT_KEY_DOWN:
         layer_cache_set(event.id, g_current_layer);
         keycode = keyboard_get_keycode(event.id);
         switch (keycode & 0xFF)
@@ -106,27 +106,12 @@ void keyboard_event_handler(KeyboardEvent event)
         default:
             break;
         }
-#ifdef ENABLE_RGB
-            if (event.id < RGB_NUM)
-            {
-                rgb_activate(event.id);
-            }
-#endif
-            if (event.id < ADVANCED_KEY_NUM)
-            {
-#ifdef ENABLE_KPS
-                record_kps_tick();
-#endif
-#ifdef ENABLE_COUNTER
-                g_key_counts[event.id]++;
-#endif
-            }
         break;
-    case KEY_EVENT_TRUE:
+    case KEYBOARD_EVENT_KEY_TRUE:
         keycode = keyboard_get_keycode(event.id);
         keyboard_add_buffer(keycode);
         break;
-    case KEY_EVENT_FALSE:
+    case KEYBOARD_EVENT_KEY_FALSE:
         break;
     default:
         break;
@@ -262,11 +247,13 @@ __WEAK void keyboard_jump_to_bootloader(void)
 
 __WEAK void keyboard_user_handler(uint8_t code)
 {
+    UNUSED(code);
 }
 
 
 __WEAK void keyboard_scan(void)
 {
+
 }
 
 void keyboard_recovery(void)
@@ -335,17 +322,6 @@ void keyboard_save(void)
 void keyboard_send_report(void)
 {
     static uint32_t mouse_value;
-    keyboard_buffer_clear();
-    mouse_buffer_clear(&g_mouse);
-    
-    for (int i = 0; i < ADVANCED_KEY_NUM; i++)
-    {
-        keyboard_event_handler(MK_EVENT(g_keyboard_advanced_keys[i].key.id, g_keyboard_advanced_keys[i].key.state ? KEY_EVENT_TRUE : KEY_EVENT_FALSE));
-    }
-    for (int i = 0; i < KEY_NUM; i++)
-    {        
-        keyboard_event_handler(MK_EVENT(g_keyboard_keys[i].id, g_keyboard_keys[i].state ? KEY_EVENT_TRUE : KEY_EVENT_FALSE));
-    }
     if (g_keyboard_send_report_enable 
 #ifndef CONTINUOUS_POLL
         && g_keyboard_send_flag
@@ -355,13 +331,24 @@ void keyboard_send_report(void)
 #ifndef CONTINUOUS_POLL
         g_keyboard_send_flag = false;
 #endif
+        keyboard_buffer_clear();
+        mouse_buffer_clear(&g_mouse);
+
+        for (int i = 0; i < ADVANCED_KEY_NUM; i++)
+        {
+            keyboard_event_handler(MK_EVENT(g_keyboard_advanced_keys[i].key.id, g_keyboard_advanced_keys[i].key.state ? KEYBOARD_EVENT_KEY_TRUE : KEYBOARD_EVENT_KEY_FALSE));
+        }
+        for (int i = 0; i < KEY_NUM; i++)
+        {        
+            keyboard_event_handler(MK_EVENT(g_keyboard_keys[i].id, g_keyboard_keys[i].state ? KEYBOARD_EVENT_KEY_TRUE : KEYBOARD_EVENT_KEY_FALSE));
+        }
         keyboard_buffer_send();
         if ((*(uint32_t*)&g_mouse)!=mouse_value)
         {
             mouse_buffer_send(&g_mouse);
         }
+        mouse_value = *(uint32_t*)&g_mouse;
     }
-    mouse_value = *(uint32_t*)&g_mouse;
 }
 
 __WEAK void keyboard_task(void)
@@ -384,4 +371,41 @@ __WEAK void keyboard_delay(uint32_t ms)
 }
 __WEAK void keyboard_post_process(void)
 {
+}
+
+void keyboard_key_update(Key *key, bool state)
+{
+    g_keyboard_send_flag |= (key->state != state);
+    if (!key->state && state)
+    {
+        keyboard_event_handler(MK_EVENT(key->id, KEYBOARD_EVENT_KEY_DOWN));
+    }
+    if (key->state && !state)
+    {
+        keyboard_event_handler(MK_EVENT(key->id, KEYBOARD_EVENT_KEY_UP));
+    }
+    key_update(key, state);
+}
+
+void keyboard_advanced_key_update_state(AdvancedKey *key, bool state)
+{
+    g_keyboard_send_flag |= (key->key.state != state);
+    if (!key->key.state && state)
+    {
+        keyboard_event_handler(MK_EVENT(key->key.id, KEYBOARD_EVENT_KEY_DOWN));
+#ifdef ENABLE_RGB
+        rgb_activate(key->key.id);
+#endif
+#ifdef ENABLE_KPS
+        record_kps_tick();
+#endif
+#ifdef ENABLE_COUNTER
+        g_key_counts[key->key.id]++;
+#endif
+    }
+    if (key->key.state && !state)
+    {
+        keyboard_event_handler(MK_EVENT(key->key.id, KEYBOARD_EVENT_KEY_UP));
+    }
+    advanced_key_update_state(key, state);
 }

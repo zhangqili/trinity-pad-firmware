@@ -787,9 +787,9 @@ int lfs_migrate(lfs_t *lfs, const struct lfs_config *cfg);
 #endif
 #endif
 
-extern lfs_t lfs_w25qxx;
-extern lfs_file_t lfs_file_w25qxx;
-extern const struct lfs_config lfs_cfg;
+extern lfs_t g_lfs;
+extern lfs_file_t g_lfs_file;
+extern const struct lfs_config g_lfs_config;
 
 #ifdef __cplusplus
 } /* extern "C" */

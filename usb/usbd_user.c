@@ -121,40 +121,35 @@ const uint8_t hid_descriptor[] = {
     ///////////////////////////////////////
     /// string1 descriptor
     ///////////////////////////////////////
-    0x14,                       /* bLength */
+    0x12,                       /* bLength */
     USB_DESCRIPTOR_TYPE_STRING, /* bDescriptorType */
-    'C', 0x00,                  /* wcChar0 */
-    'h', 0x00,                  /* wcChar1 */
-    'e', 0x00,                  /* wcChar2 */
-    'r', 0x00,                  /* wcChar3 */
-    'r', 0x00,                  /* wcChar4 */
-    'y', 0x00,                  /* wcChar5 */
-    'U', 0x00,                  /* wcChar6 */
-    'S', 0x00,                  /* wcChar7 */
-    'B', 0x00,                  /* wcChar8 */
+    'L', 0x00,                  /* wcChar0 */
+    'z', 0x00,                  /* wcChar1 */
+    'q', 0x00,                  /* wcChar2 */
+    '1', 0x00,                  /* wcChar3 */
+    '2', 0x00,                  /* wcChar4 */
+    '3', 0x00,                  /* wcChar5 */
+    '4', 0x00,                  /* wcChar6 */
+    '5', 0x00,                  /* wcChar7 */
     ///////////////////////////////////////
     /// string2 descriptor
     ///////////////////////////////////////
-    0x26,                       /* bLength */
+    0x1e,                       /* bLength */
     USB_DESCRIPTOR_TYPE_STRING, /* bDescriptorType */
-    'C', 0x00,                  /* wcChar0 */
-    'h', 0x00,                  /* wcChar1 */
-    'e', 0x00,                  /* wcChar2 */
-    'r', 0x00,                  /* wcChar3 */
-    'r', 0x00,                  /* wcChar4 */
-    'y', 0x00,                  /* wcChar5 */
-    'U', 0x00,                  /* wcChar6 */
-    'S', 0x00,                  /* wcChar7 */
-    'B', 0x00,                  /* wcChar8 */
-    ' ', 0x00,                  /* wcChar9 */
-    'H', 0x00,                  /* wcChar10 */
-    'I', 0x00,                  /* wcChar11 */
-    'D', 0x00,                  /* wcChar12 */
-    ' ', 0x00,                  /* wcChar13 */
-    'D', 0x00,                  /* wcChar14 */
-    'E', 0x00,                  /* wcChar15 */
-    'M', 0x00,                  /* wcChar16 */
-    'O', 0x00,                  /* wcChar17 */
+    'T', 0x00,                  /* wcChar0 */
+    'r', 0x00,                  /* wcChar1 */
+    'i', 0x00,                  /* wcChar2 */
+    'n', 0x00,                  /* wcChar3 */
+    'i', 0x00,                  /* wcChar4 */
+    't', 0x00,                  /* wcChar5 */
+    'y', 0x00,                  /* wcChar6 */
+    ' ', 0x00,                  /* wcChar7 */
+    'K', 0x00,                  /* wcChar8 */
+    'e', 0x00,                  /* wcChar9 */
+    'y', 0x00,                  /* wcChar10 */
+    'p', 0x00,                  /* wcChar11 */
+    'a', 0x00,                  /* wcChar12 */
+    'd', 0x00,                  /* wcChar13 */
     ///////////////////////////////////////
     /// string3 descriptor
     ///////////////////////////////////////

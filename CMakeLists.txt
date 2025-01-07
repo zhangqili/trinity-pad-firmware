@@ -55,7 +55,9 @@ include_directories(User
                     Peripheral/inc
                     fezui/ui
                     fezui/src
-                    KeyboardKit
+                    KeyboardKit/src
+                    KeyboardKit/user
+                    KeyboardKit/littlefs
                     lefl
                     usb
                     littlefs
@@ -72,7 +74,9 @@ file(GLOB_RECURSE SOURCES
                 "User/*.c"
                 "Core/core_riscv.c" 
                 "Debug/debug.c"
-                "KeyboardKit/*.c" 
+                "KeyboardKit/src/*.c" 
+                "KeyboardKit/user/*.c" 
+                "KeyboardKit/littlefs/*.c" 
                 "lefl/*.c" 
                 "fezui/ui/*.c" 
                 "fezui/src/*.c" 
