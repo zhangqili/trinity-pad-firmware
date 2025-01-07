@@ -45,9 +45,6 @@ add_compile_options(-Ofast)
 add_compile_options(-Wall)
 
 set(CONFIG_CHERRYUSB 0)
-set(CONFIG_CHERRYUSB_DEVICE 1)
-set(CONFIG_CHERRYUSB_DEVICE_HID 1)
-
 # 头文件路径
 include_directories(User
                     Core
@@ -62,6 +59,9 @@ include_directories(User
                     usb
                     littlefs
                     fram
+                    CherryUSB/core
+                    CherryUSB/common
+                    CherryUSB/class/hid
                     )
                     
 
@@ -89,7 +89,11 @@ file(GLOB_RECURSE SOURCES
 
 if(CONFIG_CHERRYUSB)
 include_directories(CherryUSB/port/ch32)
-file(GLOB_RECURSE SOURCES ${SOURCES} "CherryUSB/port/ch32/usb_dc_usbhs.c")
+file(GLOB_RECURSE SOURCES ${SOURCES} 
+                "CherryUSB/port/ch32/usb_dc_usbhs.c"
+                "./CherryUSB/core/usbd_core.c"
+                "./CherryUSB/class/hid/usbd_hid.c"
+                )
 add_compile_definitions(CONFIG_USB_HS)
 add_compile_definitions(CONFIG_CHERRYUSB)
 else()
@@ -116,18 +120,12 @@ add_link_options(-T ${LINKER_SCRIPT})
 # 编译可执行文件
 add_subdirectory(u8g2)
 add_subdirectory(sfud)
-add_subdirectory(cherryusb)
 add_executable(${PROJECT_NAME}.elf ${SOURCES} ${LINKER_SCRIPT})
 
 # 链接静态库
 target_link_libraries(${PROJECT_NAME}.elf u8g2)
 target_link_libraries(${PROJECT_NAME}.elf sfud)
 target_link_libraries(${PROJECT_NAME}.elf m)
-target_link_libraries(${PROJECT_NAME}.elf cherryusb)
-
-if(CONFIG_CHERRYUSB)
-else()
-endif()
 
 # 输出hex和bin
 set(HEX_FILE ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.hex)

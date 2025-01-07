@@ -9,11 +9,11 @@
 #include "keyboard.h"
 #include "fezui_var.h"
 
-#define LEFT 16
-#define TOP 16
-#define TILE_HEIGHT 32
-#define TILE_WIDTH 64
-#define MARGIN 4
+#define CENTER 32
+#define PADDING 64
+#define TILE_HEIGHT 40
+#define TILE_WIDTH 40
+#define MARGIN 24
 
 #define DRAW_IN_TEMP_BUFFER(code) {memset(tile_buffer, 0, sizeof(tile_buffer));\
             uint8_t *buf_bak = fezui.u8g2.tile_buf_ptr;\
@@ -21,6 +21,8 @@
             code\
             fezui.u8g2.tile_buf_ptr = buf_bak;\
             }
+
+static uint8_t delay;
 
 static enum {
     TILE_NONE,
@@ -64,7 +66,7 @@ static fezui_animation_base_t open_animation;
 static fezui_animation_base_t open_menu_animation;
 static fezui_animation_base_t icon_animation;
 
-static float offset_y;
+static float offset;
 static fezui_page_t *pages[] = {&homepage, &oscilloscopepage, &statisticpage, &settingspage};
 static uint8_t tile_buffer[1024];
 
@@ -122,14 +124,19 @@ static const unsigned char setting_bitmap_e80f [] U8X8_PROGMEM = {
 };
 
 
+fezui_page_t* launcherpage_get_current_page()
+{
+    return pages[mainmenu.listbox.list.selected_index];
+}
+
 static void tile_float_in(Frame * frame, int32_t duration, int32_t offset)
 {
     frame->centerFrom.x = WIDTH / 2;
     frame->centerFrom.y = HEIGHT / 2;
     frame->widthFrom = 0;
-    frame->widthTo = WIDTH / 2;
+    frame->widthTo = TILE_WIDTH;
     frame->heightFrom = 0;
-    frame->heightTo = HEIGHT / 2;
+    frame->heightTo = TILE_HEIGHT;
     frame->animation.duration = duration;
     frame->angleTo = 0;
     //frame->state = TILE_SHOWING;
@@ -210,7 +217,7 @@ void launcherpage_init()
     fezui_animation_begin(&open_animation, 250);
     icon_animation.duration = 10;
     fezui_animation_begin(&icon_animation, 0);
-    pages[mainmenu.listbox.list.selected_index]->page_load_cb(pages[mainmenu.listbox.list.selected_index]);
+    launcherpage_get_current_page()->page_load_cb(launcherpage_get_current_page());
     state = TILE_OPENING;
 }
 
@@ -319,23 +326,28 @@ static void draw_tile(Frame *frame)
 
 static void launcherpage_tick(void *page)
 {
-    // offset_y = ;
+    if (delay)
+    {
+        delay--;
+    }
+    
+    // offset = ;
     if (isPageOpen)
     {
-        pages[mainmenu.listbox.list.selected_index]->page_tick_cb(pages[mainmenu.listbox.list.selected_index]);
+        launcherpage_get_current_page()->page_tick_cb(launcherpage_get_current_page());
     }
     if (open_animation.value == 1 && state == TILE_OPENING)
     {
         return;
     }
-    CONVERGE_TO_ROUNDED(offset_y, -(mainmenu.listbox.list.selected_index * (MARGIN + TILE_HEIGHT)), fezui.speed);
+    CONVERGE_TO_ROUNDED(offset, -(mainmenu.listbox.list.selected_index * (MARGIN + TILE_HEIGHT)), fezui.speed);
 
     if (!isPageOpen)
     {
         for (int i = 0; i < 4; i++)
         {
-            frames[i].centerTo.x = LEFT + TILE_WIDTH/2;
-            frames[i].centerTo.y = (offset_y + TOP + (TILE_HEIGHT + MARGIN) * i) + TILE_HEIGHT/2;
+            frames[i].centerTo.x = (offset + PADDING + (TILE_WIDTH + MARGIN) * i);
+            frames[i].centerTo.y = CENTER;
         }
     }
 }
@@ -355,7 +367,7 @@ static void launcherpage_draw(void *page)
         u8g2_SetFont(&(fezui.u8g2), u8g2_font_5x8_mr);
         break;
     case LANG_ZH:
-        u8g2_SetFont(&(fezui.u8g2), u8g2_font_wqy13_t_gb2312b);
+        u8g2_SetFont(&(fezui.u8g2), u8g2_font_wqy13_t_gb2312a);
         break;
     default:
         break;
@@ -366,7 +378,7 @@ static void launcherpage_draw(void *page)
     fezui_animation_calculate(&icon_animation);
     if (open_animation.value == 1 && state == TILE_OPENING)
     {
-        pages[mainmenu.listbox.list.selected_index]->page_draw_cb(pages[mainmenu.listbox.list.selected_index]);
+        launcherpage_get_current_page()->page_draw_cb(launcherpage_get_current_page());
         return;
     }
     
@@ -375,7 +387,7 @@ static void launcherpage_draw(void *page)
     {
         if (open_menu_animation.value < 0.5)
         {
-            pages[mainmenu.listbox.list.selected_index]->page_draw_cb(pages[mainmenu.listbox.list.selected_index]);
+            launcherpage_get_current_page()->page_draw_cb(launcherpage_get_current_page());
             fezui_veil_full_screen(&fezui, open_menu_animation.value * 14);
         }
         else
@@ -432,7 +444,7 @@ static void launcherpage_draw(void *page)
     {
         u8g2_SetDrawColor(&(fezui.u8g2), 1);
         DRAW_IN_TEMP_BUFFER(
-            pages[mainmenu.listbox.list.selected_index]->page_draw_cb(pages[mainmenu.listbox.list.selected_index]);
+            launcherpage_get_current_page()->page_draw_cb(launcherpage_get_current_page());
             fezui_veil(&fezui, 0, 0, WIDTH, HEIGHT, 7 - open_animation.value * 7, 1);
         );
         for (int i = 0; i < 1024; i++)
@@ -472,9 +484,11 @@ static void launcherpage_load(void *page)
 
 void launcherpage_open_menu()
 {
+    delay = 2;
     for (int i = 0; i < 4; i++)
     {
-        tile_float_in(&frames[i],500 ,50*i);
+        uint8_t distance = abs(i - mainmenu.listbox.list.selected_index);
+        tile_float_in(&frames[i],500 ,50*distance);
     }
     isPageOpen = false;
     icon_animation.duration = 500;
@@ -506,32 +520,37 @@ void launcherpage_open()
 
 static void launcherpage_event_handler(void *e)
 {
+    if (delay)
+    {
+        return;
+    }
     switch (*(uint16_t *)e)
     {
     case KEY_UP_ARROW:
         if (isPageOpen)
         {
-            pages[mainmenu.listbox.list.selected_index]->event_handler(e);
-        }
-        else
-        {
-            fezui_animated_listbox_index_increase(&mainmenu, -1);
-        }
-        break;
-    case KEY_DOWN_ARROW:
-        if (isPageOpen)
-        {
-            pages[mainmenu.listbox.list.selected_index]->event_handler(e);
+            launcherpage_get_current_page()->event_handler(e);
         }
         else
         {
             fezui_animated_listbox_index_increase(&mainmenu, 1);
         }
         break;
+    case KEY_DOWN_ARROW:
+        if (isPageOpen)
+        {
+            launcherpage_get_current_page()->event_handler(e);
+        }
+        else
+        {
+            fezui_animated_listbox_index_increase(&mainmenu, -1);
+        }
+        break;
+    case KEY_SPACEBAR:
     case KEY_ENTER:
         if (isPageOpen)
         {
-            pages[mainmenu.listbox.list.selected_index]->event_handler(e);
+            launcherpage_get_current_page()->event_handler(e);
         }
         else
         {
@@ -541,7 +560,7 @@ static void launcherpage_event_handler(void *e)
     case KEY_ESC:
         if (isPageOpen)
         {
-            if (pages[mainmenu.listbox.list.selected_index] != &homepage)
+            if (launcherpage_get_current_page() != &homepage)
             {
                 launcherpage_open_menu();
             }   

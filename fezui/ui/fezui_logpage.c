@@ -46,6 +46,7 @@ static void logpage_event_handler(void *e)
         if (target_ordinate + 64 > scrollview.content_height)
             target_ordinate = scrollview.content_height - 64;
         break;
+    case KEY_SPACEBAR:
     case KEY_ENTER:
         fezui_frame_go_back(&g_mainframe);
         break;

@@ -30,8 +30,6 @@
 #define TILE3                 21
 #define TILE4                 31
 
-static uint8_t delay;
-
 static fezui_rolling_number_t key1_num=
 {
     .number=0,
@@ -90,14 +88,6 @@ static void homepage_tick(void *page)
     fezui_rolling_number_update(&fezui, &key4_num);
     fezui_rolling_number_update(&fezui, &kps_num);
     fezui_rolling_number_update(&fezui, &max_kps_num);
-    
-    if (delay > 0)
-    {
-        delay--;
-        layer_reset(0);
-        layer_reset(1);
-        layer_reset(2);
-    }
 }
 
 static void draw_chart(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y, u8g2_uint_t w,
@@ -181,10 +171,13 @@ static void homepage_draw(void *page)
 
 static void homepage_load(void *page)
 {
+    layer_reset(0);
+    layer_reset(1);
+    layer_reset(2);
     // fezui_scrolling_text_init(&fezui,&scrolling_text,15,0.1,u8g2_font_4x6_mr,"HELLO!");
     // fezui_scrolling_text_begin_once(&scrolling_text);
     g_keyboard_send_report_enable = true;
-    delay = 3;
+    g_debug_enable = false;
 }
 
 static void homepage_event_handler(void *e)
@@ -194,6 +187,8 @@ static void homepage_event_handler(void *e)
     case KEY_UP_ARROW:
         break;
     case KEY_DOWN_ARROW:
+        break;
+    case KEY_SPACEBAR:
         break;
     case KEY_ENTER:
         break;

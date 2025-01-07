@@ -207,6 +207,7 @@ static void calibrationpage_event_handler(void *e)
     case KEY_DOWN_ARROW:
         fezui_list_base_index_increase(&calibrationmenu, 1);
         break;
+    case KEY_SPACEBAR:
     case KEY_ENTER:
         switch (calibration_state)
         {

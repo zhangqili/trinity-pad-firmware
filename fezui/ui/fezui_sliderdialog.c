@@ -32,7 +32,7 @@ static void sliderdialog_draw(void *page)
         u8g2_SetFont(&(fezui.u8g2), u8g2_font_6x13_mr);
         break;
     case LANG_ZH:
-        u8g2_SetFont(&(fezui.u8g2), u8g2_font_wqy13_t_gb2312b);
+        u8g2_SetFont(&(fezui.u8g2), u8g2_font_wqy13_t_gb2312a);
         break;
     default:
         break;
@@ -82,6 +82,7 @@ static void sliderdialog_event_handler(void *e)
     case KEY_DOWN_ARROW:
         fezui_rangebase_increase(&rangebase,-1);
         break;
+    case KEY_SPACEBAR:
     case KEY_ENTER:
         fezui_frame_close_dialog(&g_mainframe);
         break;

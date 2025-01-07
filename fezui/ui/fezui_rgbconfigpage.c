@@ -347,6 +347,7 @@ static void rgbconfigpage_event_handler(void *e)
             set_target_color();
         }
         break;
+    case KEY_SPACEBAR:
     case KEY_ENTER:
         if (key_selected)
         {

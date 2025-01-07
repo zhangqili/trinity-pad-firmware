@@ -4,6 +4,7 @@
 #include "command.h"
 #include "keyboard.h"
 #include "mouse.h"
+#include "ch32v30x.h"
 
 #define ENABLE_MOUSE
 
@@ -306,7 +307,7 @@ uint32_t g_usb_raw_report_count1;
 
 USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t read_buffer[HIDRAW_OUT_EP_SIZE];
 USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t send_buffer[HIDRAW_IN_EP_SIZE];
-void usbd_event_handler(uint8_t event)
+void usbd_event_handler(uint8_t busid, uint8_t event)
 {
     switch (event) {
         case USBD_EVENT_RESET:
@@ -329,7 +330,7 @@ void usbd_event_handler(uint8_t event)
             break;
         case USBD_EVENT_CONFIGURED:
             /* setup first out ep read transfer */
-            usbd_ep_start_read(HIDRAW_OUT_EP, read_buffer, HIDRAW_OUT_EP_SIZE);
+            usbd_ep_start_read(0, HIDRAW_OUT_EP, read_buffer, HIDRAW_OUT_EP_SIZE);
             //fezui_notification_begin(&fezui,&fezui_notification,"USBD_EVENT_CONFIGURED",500,0.1);
             break;
         case USBD_EVENT_SET_REMOTE_WAKEUP:
@@ -343,31 +344,31 @@ void usbd_event_handler(uint8_t event)
     }
 }
 
-void usbd_hid_kayboard_int_callback(uint8_t ep, uint32_t nbytes)
+void usbd_hid_kayboard_int_callback(uint8_t busid, uint8_t ep, uint32_t nbytes)
 {
     hid_keyboard_state = HID_STATE_IDLE;
     g_usb_report_count++;
     //usbd_ep_start_write(HID_KEYBOARD_INT_EP, g_keyboard_6kro_buffer.buffer, 8);
     //usbd_ep_start_write(HID_MOUSE_INT_EP, (uint8_t*)&g_mouse, 4);
 }
-void usbd_hid_mouse_int_callback(uint8_t ep, uint32_t nbytes)
+void usbd_hid_mouse_int_callback(uint8_t busid, uint8_t ep, uint32_t nbytes)
 {
     hid_mouse_state = HID_STATE_IDLE;
     //usbd_ep_start_write(HID_MOUSE_INT_EP, (uint8_t*)&g_mouse, 4);
     //usbd_ep_start_write(HID_KEYBOARD_INT_EP, g_keyboard_6kro_buffer.buffer, 8);
 }
 
-static void usbd_hid_custom_in_callback(uint8_t ep, uint32_t nbytes)
+static void usbd_hid_custom_in_callback(uint8_t busid, uint8_t ep, uint32_t nbytes)
 {
     //USB_LOG_RAW("actual in len:%ld\r\n", nbytes);
     g_usb_raw_report_count++;
     custom_state = HID_STATE_IDLE;
 }
 
-static void usbd_hid_custom_out_callback(uint8_t ep, uint32_t nbytes)
+static void usbd_hid_custom_out_callback(uint8_t busid, uint8_t ep, uint32_t nbytes)
 {
     //USB_LOG_RAW("actual out len:%ld\r\n", nbytes);
-    usbd_ep_start_read(HIDRAW_OUT_EP, read_buffer, 64);
+    usbd_ep_start_read(0, HIDRAW_OUT_EP, read_buffer, 64);
     //char out_buf[32];
     //sprintf(out_buf,"%x",read_buffer[1]);
     command_prase(read_buffer+1,sizeof(read_buffer)-1);
@@ -402,16 +403,16 @@ struct usbd_interface intf2;//INOUT
 
 void hid_init(void)
 {
-    usbd_desc_register(hid_descriptor);
-    usbd_add_interface(usbd_hid_init_intf(&intf0, hid_keyboard_report_desc, HID_KEYBOARD_REPORT_DESC_SIZE));
-    usbd_add_endpoint(&hid_keyboard_in_ep);
-    usbd_add_interface(usbd_hid_init_intf(&intf1, hid_mouse_report_desc, HID_MOUSE_REPORT_DESC_SIZE));
-    usbd_add_endpoint(&hid_mouse_in_ep);
-    usbd_add_interface(usbd_hid_init_intf(&intf2, hid_raw_report_desc, HID_RAW_REPORT_DESC_SIZE));
-    usbd_add_endpoint(&custom_in_ep);
-    usbd_add_endpoint(&custom_out_ep);
+    usbd_desc_register(0, hid_descriptor);
+    usbd_add_interface(0, usbd_hid_init_intf(0, &intf0, hid_keyboard_report_desc, HID_KEYBOARD_REPORT_DESC_SIZE));
+    usbd_add_endpoint(0, &hid_keyboard_in_ep);
+    usbd_add_interface(0, usbd_hid_init_intf(0, &intf1, hid_mouse_report_desc, HID_MOUSE_REPORT_DESC_SIZE));
+    usbd_add_endpoint(0, &hid_mouse_in_ep);
+    usbd_add_interface(0, usbd_hid_init_intf(0, &intf2, hid_raw_report_desc, HID_RAW_REPORT_DESC_SIZE));
+    usbd_add_endpoint(0, &custom_in_ep);
+    usbd_add_endpoint(0, &custom_out_ep);
 
-    usbd_initialize(); 
+    usbd_initialize(0, USBHS_BASE, usbd_event_handler); 
 }
 
 USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t keyboard_write_buffer[64];
@@ -426,7 +427,7 @@ void hid_keyboard_send(uint8_t*buffer)
         //g_usb_keyboard_interval = 0;
     }
     memcpy(keyboard_write_buffer, buffer, 8);
-    int ret = usbd_ep_start_write(HID_KEYBOARD_INT_EP, keyboard_write_buffer, 8);
+    int ret = usbd_ep_start_write(0, HID_KEYBOARD_INT_EP, keyboard_write_buffer, 8);
     if (ret < 0) {
         return;
     }
@@ -442,7 +443,7 @@ void hid_mouse_send(uint8_t*buffer)
         return;
     }
     memcpy(mouse_write_buffer, buffer, 4);
-    int ret = usbd_ep_start_write(HID_MOUSE_INT_EP, mouse_write_buffer, 4);
+    int ret = usbd_ep_start_write(0, HID_MOUSE_INT_EP, mouse_write_buffer, 4);
     if (ret < 0) {
         return;
     }
@@ -457,7 +458,7 @@ void hid_raw_send(uint8_t*buffer,int size)
     }
     memcpy(hid_raw_write_buffer, buffer, size);
     hid_raw_write_buffer[0] = 0x02;
-    int ret = usbd_ep_start_write(HIDRAW_IN_EP, hid_raw_write_buffer, 64);
+    int ret = usbd_ep_start_write(0, HIDRAW_IN_EP, hid_raw_write_buffer, 64);
     if (ret < 0) {
         return;
     }
@@ -487,7 +488,7 @@ void hid_mouse_test(void)
         mouse_cfg.y += 0;
 
         memcpy(keyboard_write_buffer, (uint8_t *)&mouse_cfg, 4);
-        int ret = usbd_ep_start_write(HID_MOUSE_INT_EP, keyboard_write_buffer, 4);
+        int ret = usbd_ep_start_write(0, HID_MOUSE_INT_EP, keyboard_write_buffer, 4);
         if (ret < 0) {
             return;
         }

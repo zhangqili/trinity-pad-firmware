@@ -438,6 +438,7 @@ static void advancedconfigpage_event_handler(void *e)
             fezui_animated_listbox_index_increase(current_menu, 1);
         }
         break;
+    case KEY_SPACEBAR:
     case KEY_ENTER:
         if (configing)
         {

@@ -64,7 +64,7 @@ static void advancedsettingspage_draw(void* page)
         u8g2_SetFont(&(fezui.u8g2), u8g2_font_6x13_mr);
         break;
     case LANG_ZH:
-        u8g2_SetFont(&(fezui.u8g2), u8g2_font_wqy13_t_gb2312b);
+        u8g2_SetFont(&(fezui.u8g2), u8g2_font_wqy13_t_gb2312a);
         break;
     default:
         break;
@@ -89,6 +89,7 @@ static void advancedsettingspage_event_handler(void* e)
         case KEY_DOWN_ARROW:
             fezui_animated_listbox_index_increase(&advancedsettingsmenu, 1);
             break;
+        case KEY_SPACEBAR:
         case KEY_ENTER:
             fezui_animated_listbox_click(&advancedsettingsmenu);
             break;

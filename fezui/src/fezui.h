@@ -11,6 +11,7 @@
 #include "u8g2.h"
 #include "fezui_def.h"
 #include "stdio.h"
+#include "stdlib.h"
 #include "stdbool.h"
 #include "math.h"
 #include "string.h"

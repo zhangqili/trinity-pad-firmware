@@ -63,6 +63,7 @@ static void panelpage_event_handler(void *e)
     case KEY_DOWN_ARROW:
         fezui_list_base_index_increase(&panelmenu, -1);
         break;
+    case KEY_SPACEBAR:
     case KEY_ENTER:
         fezui_list_base_click(&panelmenu);
         break;

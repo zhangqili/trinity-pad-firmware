@@ -94,6 +94,11 @@ static void key_enter_cb()
     fezui_input(KEY_ENTER);
 }
 
+static void key_space_cb()
+{
+    fezui_input(KEY_SPACEBAR);
+}
+
 static void key_esc_cb()
 {
     fezui_input(KEY_ESC);
@@ -128,7 +133,7 @@ void fezui_init()
     advancedsettingspage_init();
 
     fezui_frame_init(&g_mainframe, &launcherpage, &frame_animation);
-    key_attach(&KEY_KNOB, KEY_EVENT_DOWN, key_enter_cb);
+    key_attach(&KEY_KNOB, KEY_EVENT_DOWN, key_space_cb);
     key_attach(&KEY_KNOB_CLOCKWISE, KEY_EVENT_DOWN, key_up_cb);
     key_attach(&KEY_KNOB_ANTICLOCKWISE, KEY_EVENT_DOWN, key_down_cb);
     key_attach(&KEY_FN_K5, KEY_EVENT_DOWN, key_enter_cb);

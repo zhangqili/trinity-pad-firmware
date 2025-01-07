@@ -73,6 +73,7 @@ static void statisticpage_event_handler(void *e)
         if (target_ordinate + 64 > scrollview.content_height)
             target_ordinate = scrollview.content_height - 64;
         break;
+    case KEY_SPACEBAR:
     case KEY_ENTER:
         break;
     case KEY_ESC:

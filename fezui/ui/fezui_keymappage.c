@@ -149,6 +149,7 @@ static void keymappage_event_handler(void *e)
             show_binding_text();
         }
         break;
+    case KEY_SPACEBAR:
     case KEY_ENTER:
         if (key_selected)
         {

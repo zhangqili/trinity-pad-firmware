@@ -1171,29 +1171,23 @@ void key_update2(Key* key, bool state)
     key->state = state;
 }
 
-#define KEY_SCAN(key, pin_state) {\
-bool state = (*(key)).state;\
-key_update((key), (pin_state));\
-if ((*(key)).state && !state) { keyboard_event_handler(MK_EVENT((*(key)).id,KEY_EVENT_DOWN)); }\
-}
-
 void keyboard_scan()
 {
-    KEY_SCAN(&KEY_FN_K1, FN_K1_READ);
-    KEY_SCAN(&KEY_FN_K2, FN_K2_READ);
-    KEY_SCAN(&KEY_FN_K3, FN_K3_READ);
-    KEY_SCAN(&KEY_FN_K4, FN_K4_READ);
-    KEY_SCAN(&KEY_FN_K5, FN_K5_READ);
-    KEY_SCAN(&KEY_FN_K6, FN_K6_READ);
-    KEY_SCAN(&KEY_KNOB, KNOB_READ);
+    keyboard_key_update(&KEY_FN_K1, FN_K1_READ);
+    keyboard_key_update(&KEY_FN_K2, FN_K2_READ);
+    keyboard_key_update(&KEY_FN_K3, FN_K3_READ);
+    keyboard_key_update(&KEY_FN_K4, FN_K4_READ);
+    keyboard_key_update(&KEY_FN_K5, FN_K5_READ);
+    keyboard_key_update(&KEY_FN_K6, FN_K6_READ);
+    keyboard_key_update(&KEY_KNOB, KNOB_READ);
     if (g_keyboard_knob_flag)
     {
         g_keyboard_knob_flag--;
     }
     if (!g_keyboard_knob_flag)
     {
-        KEY_SCAN(&KEY_KNOB_CLOCKWISE, false);
-        KEY_SCAN(&KEY_KNOB_ANTICLOCKWISE, false);
+        keyboard_key_update(&KEY_KNOB_CLOCKWISE, false);
+        keyboard_key_update(&KEY_KNOB_ANTICLOCKWISE, false);
     }
 }
 void keyboard_system_reset()
@@ -1234,8 +1228,8 @@ void keyboard_user_handler(uint8_t code)
     switch (code)
     {
     case USER_OPENMENU:
-        void launcherpage_open_menu();
-        if (g_mainframe.pages[g_mainframe.current_page_index] == &launcherpage)
+        fezui_page_t* launcherpage_get_current_page();
+        if (launcherpage_get_current_page() == &homepage)
         {
             launcherpage_open_menu();
             layer_reset(0);

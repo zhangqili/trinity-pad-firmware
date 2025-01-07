@@ -103,6 +103,7 @@ static void keylistpage_event_handler(void *e)
     case KEY_DOWN_ARROW:
         fezui_animated_listbox_index_increase(&keylist, 1);
         break;
+    case KEY_SPACEBAR:
     case KEY_ENTER:
         fezui_animated_listbox_click(&keylist);
         break;

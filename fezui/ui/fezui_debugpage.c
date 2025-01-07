@@ -98,6 +98,7 @@ static void debugpage_event_handler(void *e)
         fezui_rangebase_increase(&rangebase, -1);
         targetnum+=(uint16_t)((-1)*(&rangebase)->interval);
         break;
+    case KEY_SPACEBAR:
     case KEY_ENTER:
         g_keyboard_send_report_enable=false;
         g_current_layer = 0;

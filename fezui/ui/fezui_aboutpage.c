@@ -217,6 +217,7 @@ static void aboutpage_event_handler(void *e)
             target_ordinate=+text_box_height;
         }
         break;
+    case KEY_SPACEBAR:
     case KEY_ENTER:
         break;
     case KEY_ESC:

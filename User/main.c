@@ -902,13 +902,13 @@ void EXTI9_5_IRQHandler(void)
         g_keyboard_knob_flag = 8;
         if (GPIO_ReadInputDataBit(EC11_B_GPIO_Port, EC11_B_Pin))
         {
-            key_update(&KEY_KNOB_CLOCKWISE, false);
-            key_update(&KEY_KNOB_ANTICLOCKWISE, true);
+            keyboard_key_update(&KEY_KNOB_CLOCKWISE, false);
+            keyboard_key_update(&KEY_KNOB_ANTICLOCKWISE, true);
         }
         else
         {
-            key_update(&KEY_KNOB_CLOCKWISE, true);
-            key_update(&KEY_KNOB_ANTICLOCKWISE, false);
+            keyboard_key_update(&KEY_KNOB_CLOCKWISE, true);
+            keyboard_key_update(&KEY_KNOB_ANTICLOCKWISE, false);
         }
         EXTI_ClearITPendingBit(EXTI_Line6); // 清除中断标志
     }
