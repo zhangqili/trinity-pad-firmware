@@ -7,12 +7,14 @@
 #include "analog.h"
 #include "keyboard_conf.h"
 #include "rgb.h"
-#include "stdio.h"
-#include "lfs.h"
 #include "action.h"
 #include "filter.h"
 #include "mouse.h"
 #include "record.h"
+#include "storage.h"
+
+#include "stdio.h"
+#include "string.h"
 
 __WEAK const uint16_t g_default_keymap[LAYER_NUM][ADVANCED_KEY_NUM + KEY_NUM];
 __WEAK AdvancedKey g_keyboard_advanced_keys[ADVANCED_KEY_NUM];
@@ -33,6 +35,8 @@ volatile bool g_keyboard_send_report_enable = true;
 
 volatile bool g_debug_enable;
 volatile bool g_keyboard_send_flag;
+
+uint8_t g_current_config_index;
 
 uint16_t keyboard_get_keycode(uint8_t id)
 {
@@ -98,6 +102,15 @@ void keyboard_event_handler(KeyboardEvent event)
             case SYSTEM_DEBUG:
                 g_debug_enable = !g_debug_enable;
                 break;
+            case SYSTEM_RESET_TO_DEFAULT:
+                keyboard_reset_to_default();
+                break;
+            case SYSTEM_CONFIG0:
+            case SYSTEM_CONFIG1:
+            case SYSTEM_CONFIG2:
+            case SYSTEM_CONFIG3:
+                keyboard_set_config_index((keycode >> 8) & 0x0F);
+                break;
             default:
                 break;
             }       
@@ -143,12 +156,12 @@ void keyboard_add_buffer(uint16_t keycode)
     }
 }
 
-void keyboard_buffer_send(void)
+int keyboard_buffer_send(void)
 {
 #ifdef NKRO_ENABLE
-    keyboard_NKRObuffer_send(&g_keyboard_nkro_buffer);
+    return keyboard_NKRObuffer_send(&g_keyboard_nkro_buffer);
 #else
-    keyboard_6KRObuffer_send(&g_keyboard_6kro_buffer);
+    return keyboard_6KRObuffer_send(&g_keyboard_6kro_buffer);
 #endif
 }
 
@@ -176,9 +189,9 @@ int keyboard_6KRObuffer_add(Keyboard_6KROBuffer *buf, uint16_t key)
     }
 }
 
-void keyboard_6KRObuffer_send(Keyboard_6KROBuffer* buf)
+int keyboard_6KRObuffer_send(Keyboard_6KROBuffer* buf)
 {
-    keyboard_hid_send(buf->buffer, sizeof(buf->buffer));
+    return keyboard_hid_send(buf->buffer, sizeof(buf->buffer));
 }
 
 void keyboard_6KRObuffer_clear(Keyboard_6KROBuffer* buf)
@@ -203,9 +216,9 @@ int keyboard_NKRObuffer_add(Keyboard_NKROBuffer*buf,uint16_t key)
     return 0;
 }
 
-void keyboard_NKRObuffer_send(Keyboard_NKROBuffer*buf)
+int keyboard_NKRObuffer_send(Keyboard_NKROBuffer*buf)
 {
-    keyboard_hid_send(buf->buffer, buf->length);
+    return keyboard_hid_send(buf->buffer, buf->length);
 }
 
 void keyboard_NKRObuffer_clear(Keyboard_NKROBuffer*buf)
@@ -215,13 +228,15 @@ void keyboard_NKRObuffer_clear(Keyboard_NKROBuffer*buf)
 
 void keyboard_init(void)
 {
+    storage_mount();
+    g_current_config_index = storage_read_config_index();
 #ifdef NKRO_ENABLE
     static uint8_t buffer[64];
     keyboard_NKRObuffer_init(&g_keyboard_nkro_buffer, buffer, sizeof(buffer));
 #endif
 }
 
-void keyboard_factory_reset(void)
+void keyboard_reset_to_default(void)
 {
     memcpy(g_keymap, g_default_keymap, sizeof(g_keymap));
     for (uint8_t i = 0; i < ADVANCED_KEY_NUM; i++)
@@ -235,8 +250,15 @@ void keyboard_factory_reset(void)
         advanced_key_set_deadzone(g_keyboard_advanced_keys + i, DEFAULT_UPPER_DEADZONE, DEFAULT_LOWER_DEADZONE);
     }
     rgb_factory_reset();
-    keyboard_save();
-    //keyboard_system_reset();
+}
+
+void keyboard_factory_reset(void)
+{
+    keyboard_reset_to_default();
+    for (int i = 0; i < 4; i++)
+    {
+        storage_save_config(i);
+    }
 }
 
 __WEAK void keyboard_system_reset(void)
@@ -260,73 +282,34 @@ __WEAK void keyboard_scan(void)
 
 void keyboard_recovery(void)
 {
-    // mount the filesystem
-    int err = lfs_mount(&g_lfs, &g_lfs_config);
-    // reformat if we can't mount the filesystem
-    // this should only happen on the first boot
-    if (err)
-    {
-        lfs_format(&g_lfs, &g_lfs_config);
-        lfs_mount(&g_lfs, &g_lfs_config);
-    }
-    lfs_file_open(&g_lfs, &g_lfs_file, "config1.dat", LFS_O_RDWR | LFS_O_CREAT);
-    lfs_file_rewind(&g_lfs, &g_lfs_file);
-    for (uint8_t i = 0; i < ADVANCED_KEY_NUM; i++)
-    {
-        lfs_file_read(&g_lfs, &g_lfs_file, ((void *)(&g_keyboard_advanced_keys[i])) + sizeof(Key) + 4*sizeof(AnalogValue),
-                      sizeof(AdvancedKey) - sizeof(Key) - 4*sizeof(AnalogValue));
-    }
-    lfs_file_read(&g_lfs, &g_lfs_file, g_keymap, sizeof(g_keymap));
-    lfs_file_read(&g_lfs, &g_lfs_file, &g_rgb_switch, sizeof(g_rgb_switch));
-    lfs_file_read(&g_lfs, &g_lfs_file, &g_rgb_configs, sizeof(g_rgb_configs));
-    // remember the storage is not updated until the file is closed successfully
-    lfs_file_close(&g_lfs, &g_lfs_file);
-    printf("recovery = %d", err);
-    // release any resources we were using
-    lfs_unmount(&g_lfs);
-    // print the boot count
+    storage_read_config(g_current_config_index);
 }
 
 void keyboard_save(void)
 {
-    // mount the filesystem
-    int err = lfs_mount(&g_lfs, &g_lfs_config);
-    // reformat if we can't mount the filesystem
-    // this should only happen on the first boot
-    if (err)
+    storage_save_config(g_current_config_index);
+}
+
+void keyboard_set_config_index(uint8_t index)
+{
+    if (index < 4)
     {
-        lfs_format(&g_lfs, &g_lfs_config);
-        lfs_mount(&g_lfs, &g_lfs_config);
+        g_current_config_index = index;
     }
-    // read current count
-    lfs_file_open(&g_lfs, &g_lfs_file, "config1.dat", LFS_O_RDWR | LFS_O_CREAT);
-    lfs_file_rewind(&g_lfs, &g_lfs_file);
-    for (uint8_t i = 0; i < ADVANCED_KEY_NUM; i++)
-    {
-        lfs_file_write(&g_lfs, &g_lfs_file, ((void *)(&g_keyboard_advanced_keys[i])) + sizeof(Key) + 4*sizeof(AnalogValue),
-                       sizeof(AdvancedKey) - sizeof(Key) - 4*sizeof(AnalogValue));
-    }
-    lfs_file_write(&g_lfs, &g_lfs_file, g_keymap, sizeof(g_keymap));
-    lfs_file_write(&g_lfs, &g_lfs_file, &g_rgb_switch, sizeof(g_rgb_switch));
-    lfs_file_write(&g_lfs, &g_lfs_file, &g_rgb_configs, sizeof(g_rgb_configs));
-    // remember the storage is not updated until the file is closed successfully
-    err = lfs_file_close(&g_lfs, &g_lfs_file);
-    printf("save = %d", err);
-    // release any resources we were using
-    lfs_unmount(&g_lfs);
-    // print the boot count
+    storage_save_config_index(g_current_config_index);
+    keyboard_recovery();
 }
 
 void keyboard_send_report(void)
 {
     static uint32_t mouse_value;
     if (g_keyboard_send_report_enable 
-#ifndef CONTINUOUS_POLL
+#ifndef CONTINOUS_POLL
         && g_keyboard_send_flag
 #endif
     )
     {
-#ifndef CONTINUOUS_POLL
+#ifndef CONTINOUS_POLL
         g_keyboard_send_flag = false;
 #endif
         keyboard_buffer_clear();
@@ -340,7 +323,10 @@ void keyboard_send_report(void)
         {        
             keyboard_event_handler(MK_EVENT(g_keyboard_keys[i].id, g_keyboard_keys[i].state ? KEYBOARD_EVENT_KEY_TRUE : KEYBOARD_EVENT_KEY_FALSE));
         }
-        keyboard_buffer_send();
+        if (keyboard_buffer_send())
+        {
+            g_keyboard_send_flag = true;
+        }
         if ((*(uint32_t*)&g_mouse)!=mouse_value)
         {
             mouse_buffer_send(&g_mouse);
@@ -358,10 +344,11 @@ __WEAK void keyboard_task(void)
     keyboard_send_report();
 }
 
-__WEAK void keyboard_hid_send(uint8_t *report, uint16_t len)
+__WEAK int keyboard_hid_send(uint8_t *report, uint16_t len)
 {
     UNUSED(report);
     UNUSED(len);
+    return 0;
 }
 __WEAK void keyboard_delay(uint32_t ms)
 {

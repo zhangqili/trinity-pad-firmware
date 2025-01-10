@@ -511,7 +511,7 @@ void launcherpage_open()
     Frame *frame = &frames[mainmenu.listbox.list.selected_index];
     fezui_animation_begin(&frame->animation, 0);
     tile_open(frame,500,0);
-    fezui_animation_begin(&open_animation, 250);
+    fezui_animation_begin(&open_animation, 500);
     icon_animation.duration = 500;
     fezui_animation_begin(&icon_animation, 0);
     pages[mainmenu.listbox.list.selected_index]->page_load_cb(pages[mainmenu.listbox.list.selected_index]);

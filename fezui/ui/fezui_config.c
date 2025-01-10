@@ -324,15 +324,6 @@ void fezui_reset()
 
 void fezui_save()
 {
-    // mount the filesystem
-    int err = lfs_mount(&g_lfs, &g_lfs_config);
-    // reformat if we can't mount the filesystem
-    // this should only happen on the first boot
-    if (err)
-    {
-        lfs_format(&g_lfs, &g_lfs_config);
-        lfs_mount(&g_lfs, &g_lfs_config);
-    }
     // read current count
     lfs_file_open(&g_lfs, &g_lfs_file, "fezui.dat", LFS_O_RDWR | LFS_O_CREAT);
     lfs_file_rewind(&g_lfs, &g_lfs_file);
@@ -343,24 +334,12 @@ void fezui_save()
     lfs_file_write(&g_lfs, &g_lfs_file, &fezui.show_fps, sizeof(fezui.show_fps));
     lfs_file_write(&g_lfs, &g_lfs_file, &fezui.lang, sizeof(fezui.lang));
     // remember the storage is not updated until the file is closed successfully
-    err = lfs_file_close(&g_lfs, &g_lfs_file);
+    int err = lfs_file_close(&g_lfs, &g_lfs_file);
     printf("save = %d", err);
-    // release any resources we were using
-    lfs_unmount(&g_lfs);
-    // print the boot count
 }
 
 void fezui_recovery()
 {
-    // mount the filesystem
-    int err = lfs_mount(&g_lfs, &g_lfs_config);
-    // reformat if we can't mount the filesystem
-    // this should only happen on the first boot
-    if (err)
-    {
-        lfs_format(&g_lfs, &g_lfs_config);
-        lfs_mount(&g_lfs, &g_lfs_config);
-    }
     lfs_file_open(&g_lfs, &g_lfs_file, "fezui.dat", LFS_O_RDWR | LFS_O_CREAT);
     lfs_file_rewind(&g_lfs, &g_lfs_file);
     lfs_file_read(&g_lfs, &g_lfs_file, &fezui.contrast, sizeof(fezui.contrast));
@@ -371,8 +350,4 @@ void fezui_recovery()
     lfs_file_read(&g_lfs, &g_lfs_file, &fezui.lang, sizeof(fezui.lang));
     // remember the storage is not updated until the file is closed successfully
     lfs_file_close(&g_lfs, &g_lfs_file);
-    printf("recovery = %d", err);
-    // release any resources we were using
-    lfs_unmount(&g_lfs);
-    // print the boot count
 }

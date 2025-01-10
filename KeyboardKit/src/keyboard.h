@@ -59,22 +59,23 @@ extern volatile bool g_keyboard_send_report_enable;
 extern volatile bool g_debug_enable;
 extern volatile bool g_keyboard_send_flag;
 
+extern uint8_t g_current_config_index;
 
 void keyboard_event_handler(KeyboardEvent event);
 
 uint16_t keyboard_get_keycode(uint8_t id);
 void keyboard_add_buffer(uint16_t keycode);
 
-void keyboard_buffer_send(void);
+int keyboard_buffer_send(void);
 void keyboard_buffer_clear(void);
 
 int keyboard_6KRObuffer_add(Keyboard_6KROBuffer *buf, uint16_t key);
-void keyboard_6KRObuffer_send(Keyboard_6KROBuffer *buf);
+int keyboard_6KRObuffer_send(Keyboard_6KROBuffer *buf);
 void keyboard_6KRObuffer_clear(Keyboard_6KROBuffer *buf);
 
 void keyboard_NKRObuffer_init(Keyboard_NKROBuffer*buf,uint8_t* data_buf,uint8_t length);
 int keyboard_NKRObuffer_add(Keyboard_NKROBuffer*buf,uint16_t key);
-void keyboard_NKRObuffer_send(Keyboard_NKROBuffer*buf);
+int keyboard_NKRObuffer_send(Keyboard_NKROBuffer*buf);
 void keyboard_NKRObuffer_clear(Keyboard_NKROBuffer*buf);
 
 
@@ -83,6 +84,7 @@ void keyboard_advanced_key_update_state(AdvancedKey *key, bool state);
 
 void keyboard_init(void);
 void keyboard_system_reset(void);
+void keyboard_reset_to_default(void);
 void keyboard_factory_reset(void);
 void keyboard_jump_to_bootloader(void);
 void keyboard_user_handler(uint8_t code);
@@ -91,8 +93,9 @@ void keyboard_send_report(void);
 void keyboard_post_process(void);
 void keyboard_recovery(void);
 void keyboard_save(void);
+void keyboard_set_config_index(uint8_t index);
 void keyboard_task(void);
 void keyboard_delay(uint32_t ms);
-void keyboard_hid_send(uint8_t *report, uint16_t len);
+int keyboard_hid_send(uint8_t *report, uint16_t len);
 
 #endif /* KEYBOARD_H_ */

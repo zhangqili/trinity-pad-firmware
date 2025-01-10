@@ -1104,12 +1104,12 @@ AnalogValue advanced_key_normalize(AdvancedKey* key, AnalogValue value)
 }
 
 
-void keyboard_hid_send(uint8_t *report, uint16_t len)
+int keyboard_hid_send(uint8_t *report, uint16_t len)
 {
 #ifdef CONFIG_CHERRYUSB
-hid_keyboard_send(report);
+    return hid_keyboard_send(report);
 #else
-USBHS_Endp_DataUp(HID_KEYBOARD_INT_EP,report,len,DEF_UEP_CPY_LOAD);
+    return !USBHS_Endp_DataUp(HID_KEYBOARD_INT_EP,report,len,DEF_UEP_CPY_LOAD);
 #endif
 }
 void launcherpage_open_menu();

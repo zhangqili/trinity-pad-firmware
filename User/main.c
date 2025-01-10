@@ -737,8 +737,13 @@ int main(void)
     ADC_Function_Init();
     // Encoder_Init_TIM8();
     sfud_device_init(&sfud_norflash0);
-    fezui_init();
     keyboard_init();
+    keyboard_scan();
+    if (KEY_FN_K4.state && KEY_FN_K5.state)
+    {
+        keyboard_factory_reset();
+    }
+    fezui_init();
     record_init();
     rgb_init();
     TIM1_Init();
