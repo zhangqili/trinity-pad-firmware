@@ -41,7 +41,6 @@ extern "C" {
 #define usb_device_descriptor_length hid_descriptor[0]
 #define usb_config_descriptor (&hid_descriptor[18])
 #define usb_config_descriptor_length ((uint16_t)hid_descriptor[20] + ((uint16_t)hid_descriptor[21] << 8))
-#define usb_config_descriptor_length ((uint16_t)hid_descriptor[20] + ((uint16_t)hid_descriptor[21] << 8))
 #define usb_string0_descriptor (hid_descriptor+18+USB_HID_CONFIG_DESC_SIZ)
 #define usb_string0_descriptor_length (hid_descriptor[18+USB_HID_CONFIG_DESC_SIZ])
 #define usb_string1_descriptor (usb_string0_descriptor+usb_string0_descriptor_length)

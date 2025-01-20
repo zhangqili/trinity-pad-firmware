@@ -430,11 +430,11 @@ void USBHS_IRQHandler( void )
                                 /* Add your code here */
                             }
                         }
-                        //if( USBHS_SetupReqLen == 0 )
-                        //{
-                        //    USBHSD->UEP0_TX_LEN = 0;
-                        //    USBHSD->UEP0_TX_CTRL = USBHS_UEP_T_TOG_DATA1 | USBHS_UEP_T_RES_ACK;
-                        //}
+                        if( USBHS_SetupReqLen == 0 )
+                        {
+                            USBHSD->UEP0_TX_LEN = 0;
+                            USBHSD->UEP0_TX_CTRL = USBHS_UEP_T_TOG_DATA1 | USBHS_UEP_T_RES_ACK;
+                        }
                         break;
 
                     
@@ -588,7 +588,7 @@ void USBHS_IRQHandler( void )
                         /* get usb device descriptor */
                         case USB_DESCR_TYP_DEVICE:
                             pUSBHS_Descr = usb_device_descriptor;
-                            len = usb_device_descriptor_length;
+                            len = (uint16_t)usb_device_descriptor_length;
                             break;
 
                         /* get usb configuration descriptor */
@@ -601,17 +601,17 @@ void USBHS_IRQHandler( void )
                         case USB_DESCR_TYP_HID:
                             if( USBHS_SetupReqIndex == 0x00 )
                             {
-                                pUSBHS_Descr = &hid_descriptor[ 18 + 18];
+                                pUSBHS_Descr = &hid_descriptor[ 0 + 18 + 9 + 9];
                                 len = 9;
                             }
                             else if( USBHS_SetupReqIndex == 0x01 )
                             {
-                                pUSBHS_Descr = &hid_descriptor[ 43 + 18 ];
+                                pUSBHS_Descr = &hid_descriptor[ 25 + 18 + 9 + 9];
                                 len = 9;
                             }
                             else if( USBHS_SetupReqIndex == 0x02 )
                             {
-                                pUSBHS_Descr = &hid_descriptor[ 68 + 18 ];
+                                pUSBHS_Descr = &hid_descriptor[ 50 + 18 + 9 + 9];
                                 len = 9;
                             }
                             else
