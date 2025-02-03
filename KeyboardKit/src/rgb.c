@@ -21,30 +21,27 @@ uint8_t g_rgb_buffer[RGB_BUFFER_LENGTH];
 RGBConfig g_rgb_configs[RGB_NUM];
 ColorRGB g_rgb_colors[RGB_NUM];
 bool g_rgb_switch = true;
-uint32_t RGB_Tick;
 
 #ifdef RGB_USE_LIST_EXPERIMENTAL
 static RGBArgumentList rgb_argument_list;
 static RGBArgumentListNode RGB_Argument_List_Buffer[ARGUMENT_BUFFER_LENGTH];
-#else
+#endif
 static RGBLoopQueue rgb_argument_queue;
 static RGBLoopQueueElm RGB_Argument_Buffer[ARGUMENT_BUFFER_LENGTH];
-#endif
 
 void rgb_init(void)
 {
 #ifdef RGB_USE_LIST_EXPERIMENTAL
     rgb_forward_list_init(&rgb_argument_list, RGB_Argument_List_Buffer, ARGUMENT_BUFFER_LENGTH);
-#else
-    rgb_loop_queue_init(&rgb_argument_queue, RGB_Argument_Buffer, ARGUMENT_BUFFER_LENGTH);
 #endif
+    rgb_loop_queue_init(&rgb_argument_queue, RGB_Argument_Buffer, ARGUMENT_BUFFER_LENGTH);
     for (uint16_t i = 0; i < RGB_BUFFER_LENGTH; i++)
     {
         g_rgb_buffer[i] = NONE_PULSE;
     }
 }
 
-#define COLOR_INTERVAL(key, low, up) (uint8_t)((key) < 0 ? (low) : ((key) > 1.0 ? (up) : (key) * (up)))
+#define COLOR_INTERVAL(key, low, up) (uint8_t)((key) < 0 ? (low) : ((key) > ANALOG_VALUE_MAX ? (up) : (key) * (up)))
 #define FORWARD_LINK_SKIP_AND_REMOVE_THIS(__index)\
             if ((__index) == rgb_argument_list.head)\
             {\
@@ -72,6 +69,11 @@ void rgb_update(void)
     memset(g_rgb_colors, 0, sizeof(g_rgb_colors));
     
 #ifdef RGB_USE_LIST_EXPERIMENTAL
+    rgb_loop_queue_foreach(&rgb_argument_queue, RGBLoopQueueElm, item)
+    {
+        rgb_forward_list_push(&rgb_argument_list, *item);
+        rgb_loop_queue_pop(&rgb_argument_queue);
+    }
     RGBArgumentListNode * last_node = NULL;
     for (int16_t iterator = rgb_argument_list.head; iterator >= 0;)
     {
@@ -83,7 +85,7 @@ void rgb_update(void)
 #endif
         RGBConfig *config = g_rgb_configs + item->rgb_ptr;
         RGBLocation *location = (RGBLocation *)&g_rgb_locations[item->rgb_ptr];
-        uint32_t duration = RGB_Tick - item->begin_time;
+        uint32_t duration = g_keyboard_tick - item->begin_time;
         float distance = duration * config->speed;
 #ifndef RGB_USE_LIST_EXPERIMENTAL
         if (duration > RGB_MAX_DURATION)
@@ -181,7 +183,7 @@ void rgb_update(void)
         uint8_t rgb_index = g_rgb_mapping[g_keyboard_advanced_keys[i].key.id];
         intensity = g_keyboard_advanced_keys[i].value < g_keyboard_advanced_keys[i].upper_deadzone
                         ? 0
-                    : g_keyboard_advanced_keys[i].value > 1.0
+                    : g_keyboard_advanced_keys[i].value > ANALOG_VALUE_MAX
                         ? 1.0
                         : g_keyboard_advanced_keys[i].value;
         switch (g_rgb_configs[rgb_index].mode)
@@ -195,9 +197,9 @@ void rgb_update(void)
         case RGB_MODE_TRIGGER:
             if (g_keyboard_advanced_keys[i].key.state)
             {
-                g_rgb_configs[rgb_index].begin_time = RGB_Tick;
+                g_rgb_configs[rgb_index].begin_time = g_keyboard_tick;
             }
-            intensity = powf(1 - g_rgb_configs[rgb_index].speed, RGB_Tick - g_rgb_configs[rgb_index].begin_time);
+            intensity = powf(1 - g_rgb_configs[rgb_index].speed, g_keyboard_tick - g_rgb_configs[rgb_index].begin_time);
             temp_rgb.r = (uint8_t)((float)(g_rgb_configs[rgb_index].rgb.r) * intensity);
             temp_rgb.g = (uint8_t)((float)(g_rgb_configs[rgb_index].rgb.g) * intensity);
             temp_rgb.b = (uint8_t)((float)(g_rgb_configs[rgb_index].rgb.b) * intensity);
@@ -212,7 +214,7 @@ void rgb_update(void)
         case RGB_MODE_CYCLE:
             temp_hsv.s = g_rgb_configs[i].hsv.s;
             temp_hsv.v = g_rgb_configs[i].hsv.v;
-            temp_hsv.h = (uint16_t)(g_rgb_configs[i].hsv.h + (RGB_Tick % (uint16_t)(360 / g_rgb_configs[i].speed)) * g_rgb_configs[i].speed) % 360;
+            temp_hsv.h = (uint16_t)(g_rgb_configs[i].hsv.h + (g_keyboard_tick % (uint16_t)(360 / g_rgb_configs[i].speed)) * g_rgb_configs[i].speed) % 360;
             color_set_hsv(&temp_rgb, &temp_hsv);
             color_mix(&g_rgb_colors[rgb_index], &temp_rgb);
             break;
@@ -258,12 +260,12 @@ void rgb_init_flash(void)
 {
     float intensity;
     ColorRGB temp_rgb;
-    uint32_t begin_time = RGB_Tick;
+    uint32_t begin_time = g_keyboard_tick;
     RGBLocation location = PORT_LOCATION;
     bool animation_playing = false;
-    while (RGB_Tick - begin_time < RGB_FLASH_MAX_DURATION)
+    while (g_keyboard_tick - begin_time < RGB_FLASH_MAX_DURATION)
     {
-        float distance = (RGB_Tick - begin_time) * RGB_FLASH_RIPPLE_SPEED;
+        float distance = (g_keyboard_tick - begin_time) * RGB_FLASH_RIPPLE_SPEED;
         memset(g_rgb_colors, 0, sizeof(g_rgb_colors));
         animation_playing = false;
         for (int8_t i = 0; i < RGB_NUM; i++)
@@ -308,10 +310,10 @@ void rgb_flash(void)
 {
     float intensity;
     ColorRGB temp_rgb;
-    uint32_t begin_time = RGB_Tick;
-    while (RGB_Tick - begin_time < RGB_FLASH_MAX_DURATION)
+    uint32_t begin_time = g_keyboard_tick;
+    while (g_keyboard_tick - begin_time < RGB_FLASH_MAX_DURATION)
     {
-        float distance = (RGB_Tick - begin_time);
+        float distance = (g_keyboard_tick - begin_time);
         memset(g_rgb_colors, 0, sizeof(g_rgb_colors));
         intensity = (RGB_FLASH_MAX_DURATION/2 - fabs(distance - (RGB_FLASH_MAX_DURATION/2)))/((float)(RGB_FLASH_MAX_DURATION/2));
         for (int8_t i = 0; i < RGB_NUM; i++)
@@ -365,19 +367,14 @@ void rgb_activate(uint16_t id)
     }
     RGBArgument a;
     a.rgb_ptr = g_rgb_mapping[id];
-    a.begin_time = RGB_Tick;
+    a.begin_time = g_keyboard_tick;
     switch (g_rgb_configs[a.rgb_ptr].mode)
     {
     case RGB_MODE_STRING:
     case RGB_MODE_FADING_STRING:
     case RGB_MODE_DIAMOND_RIPPLE:
     case RGB_MODE_FADING_DIAMOND_RIPPLE:
-    
-#ifdef RGB_USE_LIST_EXPERIMENTAL
-        rgb_forward_list_push(&rgb_argument_list, a);
-#else
         rgb_loop_queue_push(&rgb_argument_queue, a);
-#endif
         break;
     default:
         break;

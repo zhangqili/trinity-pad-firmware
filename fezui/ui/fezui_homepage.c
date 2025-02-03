@@ -177,7 +177,7 @@ static void homepage_load(void *page)
     // fezui_scrolling_text_init(&fezui,&scrolling_text,15,0.1,u8g2_font_4x6_mr,"HELLO!");
     // fezui_scrolling_text_begin_once(&scrolling_text);
     g_keyboard_send_report_enable = true;
-    g_debug_enable = false;
+    g_keyboard_state = KEYBOARD_IDLE;
 }
 
 static void homepage_event_handler(void *e)

@@ -856,7 +856,7 @@ void TIM7_IRQHandler(void)
         {
             count = 0;
             fezui_tick++;
-            RGB_Tick++;
+            g_keyboard_tick++;
         }
         // if(!HAL_GPIO_ReadPin(MENU_GPIO_Port, MENU_Pin))
         //for (uint8_t i = 0; i < ADVANCED_KEY_NUM; i++)
@@ -874,7 +874,7 @@ void TIM7_IRQHandler(void)
         //    mouse_buffer_send(&g_mouse);
         //}
         
-        if (g_debug_enable)
+        if (g_keyboard_state == KEYBOARD_DEBUG)
         {
             buffer[0] = 0x02;
             buffer[1] = 0xFF;
