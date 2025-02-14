@@ -30,6 +30,7 @@
 #include "record.h"
 #include "mouse.h"
 #include "keyboard.h"
+#include "command.h"
 #include "usbd_user.h"
 #ifdef CONFIG_CHERRYUSB
 #else
@@ -874,10 +875,11 @@ void TIM7_IRQHandler(void)
         //    mouse_buffer_send(&g_mouse);
         //}
         
-        if (g_keyboard_state == KEYBOARD_DEBUG)
+        switch (g_keyboard_state)
         {
+        case KEYBOARD_DEBUG:
             buffer[0] = 0x02;
-            buffer[1] = 0xFF;
+            buffer[1] = 0xFE;
             for (int i = 0; i < 4; i++)
             {
                 buffer[2 + 10 * i] = i;
@@ -886,12 +888,16 @@ void TIM7_IRQHandler(void)
                 memcpy(buffer + 4 + 10 * i + 4, &g_keyboard_advanced_keys[i].value, sizeof(float));
 
             }
-            #ifdef CONFIG_CHERRYUSB
-            void hid_raw_send(uint8_t *buffer, int size);
-            hid_raw_send(buffer, 18);
-            #else
-            USBHS_Endp_DataUp(HIDRAW_IN_EP, buffer, 64, DEF_UEP_CPY_LOAD);
-            #endif
+            hid_send(buffer + 1, 63);
+            break;
+        case KEYBOARD_UPLOAD_CONFIG:
+            if (!load_cargo())
+            {
+              g_keyboard_state = KEYBOARD_IDLE;
+            }
+            break;
+        default:
+            break;
         }
     }
 }

@@ -1241,3 +1241,16 @@ void keyboard_user_handler(uint8_t code)
         break;
     }
 }
+
+int hid_send(uint8_t *report, uint16_t len)
+{
+    static uint8_t send_buffer[64];
+    send_buffer[0] = 0x02;
+    memcpy(send_buffer + 1, report, 63);
+#ifdef CONFIG_CHERRYUSB
+    int hid_raw_send(uint8_t *send_buffer, int size);
+    return hid_raw_send(send_buffer, 64);
+#else
+    return !USBHS_Endp_DataUp(HIDRAW_IN_EP, send_buffer, 64, DEF_UEP_CPY_LOAD);
+#endif
+}

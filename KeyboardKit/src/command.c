@@ -8,6 +8,8 @@
 #include "keyboard_def.h"
 #include "rgb.h"
 #include "string.h"
+#include "fezui.h"
+#include "fezui_var.h"
 
 __WEAK const uint8_t command_advanced_key_mapping[ADVANCED_KEY_NUM];
 // static const uint8_t command_rgb_mapping[] = {0, 1, 2, 3};
@@ -70,7 +72,7 @@ void unload_cargo(uint8_t *buf)
         {
             uint8_t size = ((ADVANCED_KEY_NUM + KEY_NUM)-layer_page_index*LAYER_PAGE_LENGTH)*sizeof(uint16_t);
             size = size > LAYER_PAGE_LENGTH*sizeof(uint16_t) ? LAYER_PAGE_LENGTH*sizeof(uint16_t) : size;
-            memcpy(&g_keymap[layer_index][layer_page_index*16], buf + 3, size);
+            memcpy(&g_keymap[layer_index][layer_page_index*LAYER_PAGE_LENGTH], buf + 3, size);
         }
         break;
     case 4: // Dynamic Key
@@ -88,6 +90,7 @@ void unload_cargo(uint8_t *buf)
 static uint16_t page_index;
 void start_load_cargo(void)
 {
+    fezui_notification_begin(&fezui,&fezui_notification,"start upload",200,0.1);
     page_index = 0;
 }
 
@@ -182,6 +185,11 @@ int load_cargo(void)
     case 4: // Dynamic Key
         buf[1] = 0x04;
         uint8_t dk_index = (page_index & 0xFF);
+        if (dk_index >= DYNAMIC_KEY_NUM)
+        {
+            page_index=0x8000;
+            return 1;
+        }
         if (g_keyboard_dynamic_keys[dk_index].type != DYNAMIC_KEY_NONE)
         {
             buf[2] = dk_index;
@@ -190,6 +198,7 @@ int load_cargo(void)
         else
         {
             page_index=0x8000;
+            return 1;
         }
         if (!hid_send(buf,63))
         {

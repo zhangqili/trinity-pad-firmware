@@ -452,18 +452,19 @@ void hid_mouse_send(uint8_t*buffer)
 }
 
 USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t hid_raw_write_buffer[64];
-void hid_raw_send(uint8_t*buffer,int size)
+int hid_raw_send(uint8_t*buffer,int size)
 {
     if (custom_state == HID_STATE_BUSY) {
-        return;
+        return 1;
     }
     memcpy(hid_raw_write_buffer, buffer, size);
     hid_raw_write_buffer[0] = 0x02;
     int ret = usbd_ep_start_write(0, HIDRAW_IN_EP, hid_raw_write_buffer, 64);
     if (ret < 0) {
-        return;
+        return 1;
     }
     custom_state = HID_STATE_BUSY;
+    return 0;
 }
 
 struct hid_mouse {

@@ -59,6 +59,7 @@ include_directories(User
                     usb
                     littlefs
                     fram
+                    snake
                     CherryUSB/core
                     CherryUSB/common
                     CherryUSB/class/hid
@@ -80,11 +81,13 @@ file(GLOB_RECURSE SOURCES
                 "lefl/*.c" 
                 "fezui/ui/*.c" 
                 "fezui/src/*.c" 
+                "fezui/dialog/*.c" 
                 "Peripheral/src/*.c" 
                 "littlefs/*.c" 
                 "fram/*.c" 
                 "Startup/startup_ch32v30x_D8C.S"
                 "usb/*.c"
+                "snake/*.c"
                 )
 
 if(CONFIG_CHERRYUSB)
