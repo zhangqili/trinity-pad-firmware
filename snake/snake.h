@@ -12,7 +12,7 @@
 #include "color.h"
 
 #define SNAKE_ZONE_WIDTH 16
-#define SNAKE_ZONE_HEIGHT 6
+#define SNAKE_ZONE_HEIGHT 7
 #define SNAKE_MAX_LENGTH (SNAKE_ZONE_WIDTH*SNAKE_ZONE_HEIGHT)
 
 typedef struct __SnakeNode{

@@ -275,7 +275,13 @@ void fezui_draw_rolling_number(fezui_t *fezui_ptr, u8g2_uint_t x, u8g2_uint_t y,
     u8g2_SetFontPosBottom(&(fezui_ptr->u8g2));
     uint8_t font_height = u8g2_GetMaxCharHeight(&(fezui_ptr->u8g2));
     uint8_t font_width = u8g2_GetMaxCharWidth(&(fezui_ptr->u8g2));
-    u8g2_SetClipWindow(&(fezui_ptr->u8g2), x, y - font_height, x + rolling_number->digit * font_width, y + 1);
+    int16_t clip_y = y - font_height;
+    if (clip_y < 0)
+    {
+        clip_y=0;
+    }
+    
+    u8g2_SetClipWindow(&(fezui_ptr->u8g2), x, clip_y, x + rolling_number->digit * font_width, y + 1);
     for (uint8_t i = 0; i < rolling_number->digit; i++)
     {
         for (uint8_t j = 0; j < 10; j++)
