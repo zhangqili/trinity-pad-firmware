@@ -18,7 +18,8 @@
 #include "fezui_var.h"
 
 static const Keycode snake_layer[ADVANCED_KEY_NUM + KEY_NUM] = {
-    KEY_TRANSPARENT,KEY_TRANSPARENT,KEY_TRANSPARENT,KEY_TRANSPARENT,KEY_TRANSPARENT,KEY_TRANSPARENT,KEY_TRANSPARENT,KEY_TRANSPARENT,KEY_TRANSPARENT,KEY_TRANSPARENT,KEY_TRANSPARENT,KEY_TRANSPARENT,KEY_TRANSPARENT,        KEY_USER | (USER_SNAKE_QUIT << 8),
+    KEY_USER | (USER_SNAKE_LEFT << 8),KEY_USER | (USER_SNAKE_DOWN << 8),KEY_USER | (USER_SNAKE_UP << 8),KEY_USER | (USER_SNAKE_RIGHT << 8),
+    KEY_TRANSPARENT,KEY_TRANSPARENT,KEY_TRANSPARENT,KEY_TRANSPARENT,KEY_TRANSPARENT,KEY_USER | (USER_SNAKE_RESTART << 8),KEY_USER | (USER_SNAKE_QUIT << 8),KEY_USER | (USER_SNAKE_SPEED_UP << 8),KEY_USER | (USER_SNAKE_SPEED_DOWN << 8)
 };
 
 #define snake_foreach(q, type, item) for (uint16_t __index = (q)->front; __index != (q)->rear; __index = (__index + 1) % (q)->len)\
@@ -76,12 +77,13 @@ void draw_snake(Snake *snake)
     snake_foreach(snake, SnakeNode, item)
     {
         //color_mix(&g_rgb_colors[snake_zone_mapping[item->y][item->x]], &snake->color);
+        u8g2_DrawBox(&fezui.u8g2,item->x*8,(item->y+2)*8,8,8);
     }
     ColorRGB color = snake->apple_color;
     color.r = color.r * snake->intensity;
     color.g = color.g * snake->intensity;
     color.b = color.b * snake->intensity;
-    //color_mix(&g_rgb_colors[snake_zone_mapping[snake->apple.y][snake->apple.x]], &color);
+    u8g2_DrawBox(&fezui.u8g2,snake->apple.x*8,(snake->apple.y+2)*8,8,8);
     uint8_t rgb_index = 0;
     switch (snake->next_direction)
     {
@@ -155,7 +157,6 @@ void snake_speed_down(Snake *snake)
 
 void snake_move(Snake *snake)
 {
-
     if (snake->next_tick == 0xFFFFFFFF)
     {
         return;
@@ -220,8 +221,6 @@ void snake_move(Snake *snake)
     snake_push(snake, t);
     if (t.x == snake->apple.x && t.y == snake->apple.y)
     {
-        extern uint32_t pulse_counter;
-        pulse_counter = 0;
         snake_place_apple(snake);
     }
     else

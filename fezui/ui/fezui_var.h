@@ -80,4 +80,6 @@ void calibrationpage_init();
 
 extern fezui_page_t logpage;
 
+extern fezui_page_t snakepage;
+
 #endif /* FEZUI_VAR_H_ */

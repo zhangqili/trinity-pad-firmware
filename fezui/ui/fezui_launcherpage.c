@@ -14,6 +14,7 @@
 #define TILE_HEIGHT 40
 #define TILE_WIDTH 40
 #define MARGIN 24
+#define MENU_ITEMS_NUM 5
 
 #define DRAW_IN_TEMP_BUFFER(code) {memset(tile_buffer, 0, sizeof(tile_buffer));\
             uint8_t *buf_bak = fezui.u8g2.tile_buf_ptr;\
@@ -54,20 +55,21 @@ typedef struct
 } Frame;
 
 static fezui_animated_listbox_t mainmenu;
-static const char *mainmenu_items[4][LANG_NUM] =
+static const char *mainmenu_items[5][LANG_NUM] =
     {
         {"Home", "主页"},
         {"Oscilloscope", "示波器"},
         {"Statistic", "统计数据"},
+        {"Snake", "贪食蛇"},
         {"Settings", "设置"}};
 static bool isPageOpen = true;
-static Frame frames[4];
+static Frame frames[5];
 static fezui_animation_base_t open_animation;
 static fezui_animation_base_t open_menu_animation;
 static fezui_animation_base_t icon_animation;
 
 static float offset;
-static fezui_page_t *pages[] = {&homepage, &oscilloscopepage, &statisticpage, &settingspage};
+static fezui_page_t *pages[MENU_ITEMS_NUM] = {&homepage, &oscilloscopepage, &statisticpage, &snakepage, &settingspage};
 static uint8_t tile_buffer[1024];
 
 static const unsigned char home_bitmap_e80f [] U8X8_PROGMEM = {
@@ -178,8 +180,8 @@ static void tile_open(Frame * frame, int32_t duration, int32_t offset)
 void launcherpage_open();
 void launcherpage_init()
 {
-    fezui_animated_listbox_init(&mainmenu, (void **)mainmenu_items, 4, main_menu_cb, i18n_item_draw, i18n_item_get_cursor);
-    for (int i = 0; i < 4; i++)
+    fezui_animated_listbox_init(&mainmenu, (void **)mainmenu_items, 5, main_menu_cb, i18n_item_draw, i18n_item_get_cursor);
+    for (int i = 0; i < MENU_ITEMS_NUM; i++)
     {
         frames[i].animation.easing_func = fezui_animation_cubic_ease;
         frames[i].animation.mode = EASE_OUT;
@@ -200,11 +202,12 @@ void launcherpage_init()
     frames[0].icon = (uint8_t*)home_bitmap_e80f;
     frames[1].icon = (uint8_t*)oscilloscope_bitmap_e80f;
     frames[2].icon = (uint8_t*)statistic_bitmap_e80f;
-    frames[3].icon = (uint8_t*)setting_bitmap_e80f;
+    //frames[3].icon = (uint8_t*)setting_bitmap_e80f;
+    frames[4].icon = (uint8_t*)setting_bitmap_e80f;
 
     mainmenu.listbox.list.selected_index = 0;
     isPageOpen = true;
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < MENU_ITEMS_NUM; i++)
     {
         if (i != mainmenu.listbox.list.selected_index)
         {
@@ -344,7 +347,7 @@ static void launcherpage_tick(void *page)
 
     if (!isPageOpen)
     {
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < MENU_ITEMS_NUM; i++)
         {
             frames[i].centerTo.x = (offset + PADDING + (TILE_WIDTH + MARGIN) * i);
             frames[i].centerTo.y = CENTER;
@@ -468,6 +471,9 @@ static void main_menu_cb(void *menu)
         fezui_frame_navigate(&g_mainframe, &statisticpage);
         break;
     case 3:
+        fezui_frame_navigate(&g_mainframe, &snakepage);
+        break;
+    case 4:
         fezui_frame_navigate(&g_mainframe, &settingspage);
         break;
     default:
@@ -485,7 +491,7 @@ static void launcherpage_load(void *page)
 void launcherpage_open_menu()
 {
     delay = 2;
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < MENU_ITEMS_NUM; i++)
     {
         uint8_t distance = abs(i - mainmenu.listbox.list.selected_index);
         tile_float_in(&frames[i],500 ,50*distance);
@@ -501,7 +507,7 @@ void launcherpage_open_menu()
 void launcherpage_open()
 {
     isPageOpen = true;
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < MENU_ITEMS_NUM; i++)
     {
         if (i != mainmenu.listbox.list.selected_index)
         {

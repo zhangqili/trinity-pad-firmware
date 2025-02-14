@@ -10,6 +10,7 @@
 #include "fezui_var.h"
 #include "lfs.h"
 #include "usbd_user.h"
+#include "snake.h"
 #ifdef CONFIG_CHERRYUSB
 #else
 #include "ch32v30x_usbhs_device.h"
@@ -1237,7 +1238,32 @@ void keyboard_user_handler(uint8_t code)
             layer_reset(2);
         }
         break;
+    case USER_SNAKE_LAUNCH:
+        snake_launch(&g_snake);
+        break;
+    case USER_SNAKE_QUIT:
+        snake_quit(&g_snake);
+        break;
+    case USER_SNAKE_PAUSE:
+        snake_pause(&g_snake);
+        break;
+    case USER_SNAKE_SPEED_UP:
+        snake_speed_up(&g_snake);
+        break;
+    case USER_SNAKE_SPEED_DOWN:
+        snake_speed_down(&g_snake);
+        break;
+    case USER_SNAKE_RESTART:
+        snake_restart(&g_snake);
+        break;
+    case USER_SNAKE_LEFT:
+    case USER_SNAKE_UP:
+    case USER_SNAKE_RIGHT:
+    case USER_SNAKE_DOWN:
+        snake_turn(&g_snake, code&0x07);
+        break;
     default:
+        g_keyboard_state = KEYBOARD_IDLE;
         break;
     }
 }
