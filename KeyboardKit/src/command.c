@@ -8,8 +8,6 @@
 #include "keyboard_def.h"
 #include "rgb.h"
 #include "string.h"
-#include "fezui.h"
-#include "fezui_var.h"
 
 __WEAK const uint8_t command_advanced_key_mapping[ADVANCED_KEY_NUM];
 // static const uint8_t command_rgb_mapping[] = {0, 1, 2, 3};
@@ -90,7 +88,6 @@ void unload_cargo(uint8_t *buf)
 static uint16_t page_index;
 void start_load_cargo(void)
 {
-    fezui_notification_begin(&fezui,&fezui_notification,"start upload",200,0.1);
     page_index = 0;
 }
 
