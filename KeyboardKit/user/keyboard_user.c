@@ -1207,7 +1207,7 @@ void keyboard_delay(uint32_t ms)
 }
 
 
-void mouse_hid_send(uint8_t *report, uint16_t len)
+int mouse_hid_send(uint8_t *report, uint16_t len)
 {
 #ifdef CONFIG_CHERRYUSB
     hid_mouse_send(report);

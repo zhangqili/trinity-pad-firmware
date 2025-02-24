@@ -55,6 +55,8 @@ include_directories(User
                     KeyboardKit/src
                     KeyboardKit/user
                     KeyboardKit/littlefs
+                    KeyboardKit/usb
+                    KeyboardKit/usb/lufa
                     lefl
                     usb
                     littlefs
@@ -78,6 +80,7 @@ file(GLOB_RECURSE SOURCES
                 "KeyboardKit/src/*.c" 
                 "KeyboardKit/user/*.c" 
                 "KeyboardKit/littlefs/*.c" 
+                #"KeyboardKit/usb/hid_descriptor.c" 
                 "lefl/*.c" 
                 "fezui/ui/*.c" 
                 "fezui/src/*.c" 

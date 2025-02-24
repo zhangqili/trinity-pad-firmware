@@ -436,19 +436,20 @@ int hid_keyboard_send(uint8_t*buffer)
 }
 
 USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t mouse_write_buffer[64];
-void hid_mouse_send(uint8_t*buffer)
+int hid_mouse_send(uint8_t*buffer)
 {
     //static uint8_t hid_mouse_buzy_count = 0;
     if (hid_mouse_state == HID_STATE_BUSY) {
-        g_usb_mouse_report_count++;
-        return;
+        //g_usb_mouse_report_count++;
+        return 1;
     }
     memcpy(mouse_write_buffer, buffer, 4);
     int ret = usbd_ep_start_write(0, HID_MOUSE_INT_EP, mouse_write_buffer, 4);
     if (ret < 0) {
-        return;
+        return 1;
     }
     hid_mouse_state = HID_STATE_BUSY;
+    return 0;
 }
 
 USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t hid_raw_write_buffer[64];
