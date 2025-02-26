@@ -156,6 +156,7 @@ static void usbd_hid_keyboard_out_callback(uint8_t busid, uint8_t ep, uint32_t n
     UNUSED(nbytes);
     usbd_ep_start_read(0, KEYBOARD_EPOUT_ADDR, keyboard_buffer.read_buffer, 64);
     g_keyboard_led_state = keyboard_buffer.read_buffer[0];
+    fezui.screensaver_countdown = fezui.screensaver_timeout;
 }
 
 

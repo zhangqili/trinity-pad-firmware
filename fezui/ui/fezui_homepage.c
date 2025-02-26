@@ -68,6 +68,9 @@ static fezui_rolling_number_t max_kps_num=
     .digit=2
 };
 
+static const unsigned char capslock_bitmap[] U8X8_PROGMEM = {
+    0x04, 0x0E, 0x1F, 0x04, 0x04
+};
 
 static void homepage_tick(void *page)
 {
@@ -145,17 +148,21 @@ static void homepage_draw(void *page)
 
     u8g2_SetFont(&(fezui.u8g2), u8g2_font_4x6_mr);
 
+    u8g2_SetDrawColor(&(fezui.u8g2), 2);
     if (g_current_layer == 1)
     {
         u8g2_DrawBox(&(fezui.u8g2), 65, 1, MARGIN_UP - 2, MARGIN_UP - 2);
-        u8g2_SetDrawColor(&(fezui.u8g2), 2);
         u8g2_DrawUTF8(&(fezui.u8g2), 68, MARGIN_UP - 2, "S");
     }
     if (g_current_layer == 2)
     {
-        u8g2_DrawBox(&(fezui.u8g2), 65 + MARGIN_UP - 2, 1, MARGIN_UP - 2, MARGIN_UP - 2);
-        u8g2_SetDrawColor(&(fezui.u8g2), 2);
-        u8g2_DrawUTF8(&(fezui.u8g2), 68 + MARGIN_UP - 2, MARGIN_UP - 2, "A");
+        u8g2_DrawBox(&(fezui.u8g2), 65 + MARGIN_UP - 1, 1, MARGIN_UP - 2, MARGIN_UP - 2);
+        u8g2_DrawUTF8(&(fezui.u8g2), 68 + MARGIN_UP - 1, MARGIN_UP - 2, "A");
+    }
+    if (g_keyboard_led_state & BIT(1))
+    {
+        u8g2_DrawBox(&(fezui.u8g2), 65 + MARGIN_UP*2 - 2, 1, MARGIN_UP - 2, MARGIN_UP - 2);
+        u8g2_DrawXBMP(&(fezui.u8g2), 68 + MARGIN_UP*2 - 3, 3, 5 ,5, capslock_bitmap);
     }
 
     //fezui_printf(&fezui,66,32,"%ld",g_usb_report_count1);
