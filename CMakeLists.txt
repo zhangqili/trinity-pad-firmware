@@ -44,7 +44,6 @@ add_compile_options(-Ofast)
 # 编译信息等级
 add_compile_options(-Wall)
 
-set(CONFIG_CHERRYUSB 0)
 # 头文件路径
 include_directories(User
                     Core
@@ -93,7 +92,6 @@ file(GLOB_RECURSE SOURCES
                 "snake/*.c"
                 )
 
-if(CONFIG_CHERRYUSB)
 include_directories(CherryUSB/port/ch32)
 file(GLOB_RECURSE SOURCES ${SOURCES} 
                 "CherryUSB/port/ch32/usb_dc_usbhs.c"
@@ -101,11 +99,6 @@ file(GLOB_RECURSE SOURCES ${SOURCES}
                 "./CherryUSB/class/hid/usbd_hid.c"
                 )
 add_compile_definitions(CONFIG_USB_HS)
-add_compile_definitions(CONFIG_CHERRYUSB)
-else()
-include_directories(wch_usb)
-file(GLOB_RECURSE SOURCES ${SOURCES} "wch_usb/*.c")
-endif()
 
 # 链接参数
 set(LINKER_SCRIPT  ${CMAKE_SOURCE_DIR}/Ld/Link.ld)

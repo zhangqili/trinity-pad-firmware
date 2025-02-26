@@ -77,6 +77,33 @@
 #define RECORD_MAX_KEY_NUM      8
 #define KPS_REFRESH_RATE        144
 
+/*******/
+/* USB */
+/*******/
+#define USB_POLLING_INTERVAL_MS 1
+#define FIXED_CONTROL_ENDPOINT_SIZE 0x40
+#define VENDOR_ID 0xffff
+#define PRODUCT_ID 0xffff
+#define DEVICE_VER 2
+#define FIXED_NUM_CONFIGURATIONS 1
+
+#define MANUFACTURER "Lzq12345"
+#define PRODUCT "Trinity Keypad"
+#define SERIAL_NUMBER "2022123456"
+
+#define RAW_ENABLE
+//#define KEYBOARD_SHARED_EP
+#define SHARED_EP_ENABLE
+#define NKRO_ENABLE
+#define MOUSE_ENABLE
+#define MOUSE_SHARED_EP
+#define EXTRAKEY_ENABLE
+#define JOYSTICK_ENABLE
+#define JOYSTICK_SHARED_EP
+//#define DIGITIZER_ENABLE
+//#define DIGITIZER_SHARED_EP
+//#define PROGRAMMABLE_BUTTON_ENABLE
+
 /****************/
 /* User Defines */
 /****************/

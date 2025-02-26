@@ -370,7 +370,7 @@ static void launcherpage_draw(void *page)
         u8g2_SetFont(&(fezui.u8g2), u8g2_font_5x8_mr);
         break;
     case LANG_ZH:
-        u8g2_SetFont(&(fezui.u8g2), u8g2_font_wqy13_t_gb2312a);
+        u8g2_SetFont(&(fezui.u8g2), u8g2_font_wqy13_t_chinese1);
         break;
     default:
         break;

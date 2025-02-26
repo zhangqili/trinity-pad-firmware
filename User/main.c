@@ -32,11 +32,6 @@
 #include "keyboard.h"
 #include "command.h"
 #include "usbd_user.h"
-#ifdef CONFIG_CHERRYUSB
-#else
-#include "ch32v30x_usbhs_device.h"
-//#include "usbd_composite_hid.h"
-#endif
 
 /* Global typedef */
 
@@ -756,13 +751,7 @@ int main(void)
     DMA1_Tx_Init(DMA1_Channel1, (u32)&ADC1->RDATAR, (u32)ADC_Buffer, ADVANCED_KEY_NUM*64);
     DMA_Cmd(DMA1_Channel1, ENABLE);
     ADC_SoftwareStartConvCmd(ADC1, ENABLE);
-#ifdef CONFIG_CHERRYUSB
-    hid_init();
-#else
-	USBHS_RCC_Init();
-	USBHS_Device_Init(ENABLE);
-	//USB_Sleep_Wakeup_CFG( );
-#endif
+    usb_init();
     
     keyboard_recovery();
     Delay_Ms(100);//Delete this line forbidden!!!
@@ -773,10 +762,6 @@ int main(void)
     TIM7_INT_Init(14400 / 8 - 1, 10 - 1);
     rgb_init_flash();
     analog_reset_range();
-#ifdef CONFIG_CHERRYUSB
-#else
-    USBHSD->UEP1_RX_CTRL = (USBHSD->UEP1_RX_CTRL & ~USBHS_UEP_R_RES_MASK) | USBHS_UEP_R_RES_ACK;
-#endif
     while (1)
     {
         // extern void hid_keyboard_test(void);
@@ -813,12 +798,12 @@ void TIM6_IRQHandler(void)
             if (fezui.screensaver_countdown)
                 fezui.screensaver_countdown--;
             record_kps_history_timer();
-            g_usb_report_count1 = g_usb_report_count;
-            g_usb_report_count = 0;
-            g_usb_mouse_report_count1 = g_usb_mouse_report_count;
-            g_usb_mouse_report_count = 0;
-            g_usb_raw_report_count1 = g_usb_raw_report_count;
-            g_usb_raw_report_count = 0;
+            //g_usb_report_count1 = g_usb_report_count;
+            //g_usb_report_count = 0;
+            //g_usb_mouse_report_count1 = g_usb_mouse_report_count;
+            //g_usb_mouse_report_count = 0;
+            //g_usb_raw_report_count1 = g_usb_raw_report_count;
+            //g_usb_raw_report_count = 0;
             g_fezui_run_time++;
         }
         fezui_timer_handler();

@@ -242,8 +242,8 @@ void keyid_prase(uint16_t id, char *str, uint16_t str_len)
     case KEY_USER:
         ADD_STRING("User Defined");
         break;
-    case KEY_SYSTEM:
-        ADD_STRING("System Defined");
+    case KEYBOARD_OPERATION:
+        ADD_STRING("Keyboard Defined");
         break;
     case KEY_TRANSPARENT:
         ADD_STRING("Transparent");

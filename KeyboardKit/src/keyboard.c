@@ -11,6 +11,7 @@
 #include "mouse.h"
 #include "record.h"
 #include "storage.h"
+#include "report.h"
 
 #include "stdio.h"
 #include "string.h"
@@ -27,12 +28,6 @@ uint8_t g_keyboard_led_state;
 
 uint32_t g_keyboard_tick;
 
-#ifdef NKRO_ENABLE
-Keyboard_NKROBuffer g_keyboard_nkro_buffer;
-#else
-Keyboard_6KROBuffer g_keyboard_6kro_buffer;
-#endif
-
 uint8_t g_keyboard_knob_flag;
 volatile bool g_keyboard_send_report_enable = true;
 
@@ -40,6 +35,14 @@ KEYBOARD_STATE g_keyboard_state;
 volatile uint8_t g_keyboard_send_flags;
 
 uint8_t g_current_config_index;
+
+#ifdef NKRO_ENABLE
+bool g_keyboard_nkro_enable;
+static Keyboard_NKROBuffer keyboard_nkro_buffer;
+#endif
+static Keyboard_6KROBuffer keyboard_6kro_buffer;
+static uint16_t keyboard_consumer_buffer;
+static uint16_t keyboard_system_buffer;
 
 Keycode keyboard_get_keycode(uint8_t id)
 {
@@ -76,14 +79,22 @@ void keyboard_event_handler(KeyboardEvent event)
     case KEYBOARD_EVENT_KEY_UP:
         if ((event.keycode & 0xFF) <= KEY_EXSEL)
         {
-            BIT_SET(g_keyboard_send_flags, KEYBOARD_SEND_FLAG);
+            BIT_SET(g_keyboard_send_flags, KEYBOARD_REPORT_FLAG);
         }
         else
         {
             switch (event.keycode & 0xFF)
             {
             case MOUSE_COLLECTION:
-                BIT_SET(g_keyboard_send_flags, MOUSE_SEND_FLAG);
+                BIT_SET(g_keyboard_send_flags, MOUSE_REPORT_FLAG);
+                break;
+            case CONSUMER_COLLECTION:
+                keyboard_consumer_buffer = 0;
+                BIT_SET(g_keyboard_send_flags, CONSUMER_REPORT_FLAG);
+                break;
+            case SYSTEM_COLLECTION:
+                keyboard_system_buffer = 0;
+                BIT_SET(g_keyboard_send_flags, SYSTEM_REPORT_FLAG);
                 break;
             case LAYER_CONTROL:
                 layer_control(event.keycode,event.event);
@@ -96,47 +107,58 @@ void keyboard_event_handler(KeyboardEvent event)
     case KEYBOARD_EVENT_KEY_DOWN:
         if ((event.keycode & 0xFF) <= KEY_EXSEL)
         {
-            BIT_SET(g_keyboard_send_flags, KEYBOARD_SEND_FLAG);
+            BIT_SET(g_keyboard_send_flags, KEYBOARD_REPORT_FLAG);
         }
         else
         {
             switch (event.keycode & 0xFF)
             {
             case MOUSE_COLLECTION:
-                BIT_SET(g_keyboard_send_flags, MOUSE_SEND_FLAG);
+                BIT_SET(g_keyboard_send_flags, MOUSE_REPORT_FLAG);
+                break;
+            case CONSUMER_COLLECTION:
+                keyboard_consumer_buffer = CONSUMER_KEYCODE_TO_RAWCODE((event.keycode >> 8) & 0xFF);
+                BIT_SET(g_keyboard_send_flags, CONSUMER_REPORT_FLAG);
+                break;
+            case SYSTEM_COLLECTION:
+                keyboard_system_buffer = (event.keycode >> 8) & 0xFF;
+                BIT_SET(g_keyboard_send_flags, SYSTEM_REPORT_FLAG);
                 break;
             case LAYER_CONTROL:
                 layer_control(event.keycode,event.event);
                 break;
-            case KEY_SYSTEM:
+            case KEYBOARD_OPERATION:
                 switch ((event.keycode >> 8) & 0xFF)
                 {
-            case SYSTEM_RESET:
-                keyboard_system_reset();
+                case KEYBOARD_REBOOT:
+                    keyboard_reboot();
                     break;
-            case SYSTEM_FACTORY_RESET:
-                keyboard_factory_reset();
+                case KEYBOARD_FACTORY_RESET:
+                    keyboard_factory_reset();
                     break;
-            case SYSTEM_SAVE:
-                keyboard_save();
+                case KEYBOARD_SAVE:
+                    keyboard_save();
                     break;
-            case SYSTEM_BOOTLOADER:
-                keyboard_jump_to_bootloader();
+                case KEYBOARD_BOOTLOADER:
+                    keyboard_jump_to_bootloader();
                     break;
-            case SYSTEM_DEBUG:
-                g_keyboard_state = (g_keyboard_state != KEYBOARD_DEBUG);
+                case KEYBOARD_TOGGLE_DEBUG:
+                    g_keyboard_state = (g_keyboard_state != KEYBOARD_DEBUG);
                     break;
-            case SYSTEM_RESET_TO_DEFAULT:
-                keyboard_reset_to_default();
+                case KEYBOARD_RESET_TO_DEFAULT:
+                    keyboard_reset_to_default();
                     break;
-            case SYSTEM_CONFIG0:
-            case SYSTEM_CONFIG1:
-            case SYSTEM_CONFIG2:
-            case SYSTEM_CONFIG3:
-                keyboard_set_config_index((event.keycode >> 8) & 0x0F);
+                case KEYBOARD_TOGGLE_NKRO:
+                    g_keyboard_nkro_enable = !g_keyboard_nkro_enable;
                     break;
-            default:
-                break;
+                case KEYBOARD_CONFIG0:
+                case KEYBOARD_CONFIG1:
+                case KEYBOARD_CONFIG2:
+                case KEYBOARD_CONFIG3:
+                    keyboard_set_config_index((event.keycode >> 8) & 0x0F);
+                    break;
+                default:
+                    break;
                 }
                 break;
             case KEY_USER:
@@ -187,10 +209,15 @@ void keyboard_add_buffer(uint16_t keycode)
     if ((keycode & 0xFF) <= KEY_EXSEL)
     {
 #ifdef NKRO_ENABLE
-        keyboard_NKRObuffer_add(&g_keyboard_nkro_buffer, keycode);
-#else
-        keyboard_6KRObuffer_add(&g_keyboard_6kro_buffer, keycode);
+        if (g_keyboard_nkro_enable)
+        {
+            keyboard_NKRObuffer_add(&keyboard_nkro_buffer, keycode);
+        }
+        else
 #endif
+        {
+            keyboard_6KRObuffer_add(&keyboard_6kro_buffer, keycode);
+        }
     }
     else
     {
@@ -202,6 +229,18 @@ void keyboard_add_buffer(uint16_t keycode)
         case DYNAMIC_KEY:
             dynamic_key_add_buffer(&g_keyboard_dynamic_keys[keycode >> 8]);
             break;
+        case CONSUMER_COLLECTION:
+            if (!keyboard_consumer_buffer)
+            {
+                keyboard_consumer_buffer = CONSUMER_KEYCODE_TO_RAWCODE((keycode >> 8) & 0xFF);
+            }
+            break;
+        case SYSTEM_COLLECTION:
+            if (!keyboard_system_buffer)
+            {
+                keyboard_system_buffer = (keycode >> 8) & 0xFF;
+            }
+            break;
         default:
             break;
         }
@@ -211,19 +250,23 @@ void keyboard_add_buffer(uint16_t keycode)
 int keyboard_buffer_send(void)
 {
 #ifdef NKRO_ENABLE
-    return keyboard_NKRObuffer_send(&g_keyboard_nkro_buffer);
-#else
-    return keyboard_6KRObuffer_send(&g_keyboard_6kro_buffer);
+    if (g_keyboard_nkro_enable)
+    {
+        return keyboard_NKRObuffer_send(&keyboard_nkro_buffer);
+    }
 #endif
+    return keyboard_6KRObuffer_send(&keyboard_6kro_buffer);
 }
 
 void keyboard_buffer_clear(void)
 {
 #ifdef NKRO_ENABLE
-    keyboard_NKRObuffer_clear(&g_keyboard_nkro_buffer);
-#else
-    keyboard_6KRObuffer_clear(&g_keyboard_6kro_buffer);
+    if (g_keyboard_nkro_enable)
+    {
+        keyboard_NKRObuffer_clear(&keyboard_nkro_buffer);
+    }
 #endif
+    keyboard_6KRObuffer_clear(&keyboard_6kro_buffer);
 }
 
 int keyboard_6KRObuffer_add(Keyboard_6KROBuffer *buf, Keycode keycode)
@@ -284,7 +327,7 @@ void keyboard_init(void)
     g_current_config_index = storage_read_config_index();
 #ifdef NKRO_ENABLE
     static uint8_t buffer[64];
-    keyboard_NKRObuffer_init(&g_keyboard_nkro_buffer, buffer, sizeof(buffer));
+    keyboard_NKRObuffer_init(&keyboard_nkro_buffer, buffer, sizeof(buffer));
 #endif
 }
 
@@ -314,7 +357,7 @@ void keyboard_factory_reset(void)
     }
 }
 
-__WEAK void keyboard_system_reset(void)
+__WEAK void keyboard_reboot(void)
 {
 }
 
@@ -376,22 +419,36 @@ void keyboard_send_report(void)
         {        
             keyboard_event_handler(keyboard_make_event(&g_keyboard_keys[i], g_keyboard_keys[i].report_state ? KEYBOARD_EVENT_KEY_TRUE : KEYBOARD_EVENT_KEY_FALSE));
         }
-        if (BIT_GET(g_keyboard_send_flags,KEYBOARD_SEND_FLAG))
+        if (BIT_GET(g_keyboard_send_flags,KEYBOARD_REPORT_FLAG))
         {
             if (!keyboard_buffer_send())
             {
-                BIT_RESET(g_keyboard_send_flags,KEYBOARD_SEND_FLAG);
+                BIT_RESET(g_keyboard_send_flags,KEYBOARD_REPORT_FLAG);
             }
         }
-        if (BIT_GET(g_keyboard_send_flags,MOUSE_SEND_FLAG))
+        if (BIT_GET(g_keyboard_send_flags,MOUSE_REPORT_FLAG))
         {
             if ((*(uint32_t*)&g_mouse)!=mouse_value)
             {
                 if (!mouse_buffer_send(&g_mouse))
                 {
-                    BIT_RESET(g_keyboard_send_flags,MOUSE_SEND_FLAG);
+                    BIT_RESET(g_keyboard_send_flags,MOUSE_REPORT_FLAG);
                 }
                 mouse_value = *(uint32_t*)&g_mouse;
+            }
+        }
+        if (BIT_GET(g_keyboard_send_flags,CONSUMER_REPORT_FLAG))
+        {
+            if (!keyboard_extra_hid_send(REPORT_ID_CONSUMER, keyboard_consumer_buffer))
+            {
+                BIT_RESET(g_keyboard_send_flags,CONSUMER_REPORT_FLAG);
+            }
+        }
+        if (BIT_GET(g_keyboard_send_flags,SYSTEM_REPORT_FLAG))
+        {
+            if (!keyboard_extra_hid_send(REPORT_ID_SYSTEM, keyboard_system_buffer))
+            {
+                BIT_RESET(g_keyboard_send_flags,SYSTEM_REPORT_FLAG);
             }
         }
     }
@@ -404,6 +461,13 @@ __WEAK void keyboard_task(void)
     analog_check();
     keyboard_post_process();
     keyboard_send_report();
+}
+
+__WEAK int keyboard_extra_hid_send(uint8_t report_id, uint16_t usage)
+{
+    UNUSED(report_id);
+    UNUSED(usage);
+    return 0;
 }
 
 __WEAK int keyboard_hid_send(uint8_t *report, uint16_t len)

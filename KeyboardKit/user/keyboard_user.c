@@ -11,10 +11,6 @@
 #include "lfs.h"
 #include "usbd_user.h"
 #include "snake.h"
-#ifdef CONFIG_CHERRYUSB
-#else
-#include "ch32v30x_usbhs_device.h"
-#endif
 
 const uint16_t g_default_keymap[LAYER_NUM][ADVANCED_KEY_NUM + KEY_NUM] = {
     {
@@ -1107,11 +1103,7 @@ AnalogValue advanced_key_normalize(AdvancedKey* key, AnalogValue value)
 
 int keyboard_hid_send(uint8_t *report, uint16_t len)
 {
-#ifdef CONFIG_CHERRYUSB
-    return hid_keyboard_send(report);
-#else
-    return !USBHS_Endp_DataUp(HID_KEYBOARD_INT_EP,report,len,DEF_UEP_CPY_LOAD);
-#endif
+    return hid_keyboard_send(report, len);
 }
 void launcherpage_open_menu();
 void key_update1(Key* key, bool state)
@@ -1209,19 +1201,7 @@ void keyboard_delay(uint32_t ms)
 
 int mouse_hid_send(uint8_t *report, uint16_t len)
 {
-#ifdef CONFIG_CHERRYUSB
-    hid_mouse_send(report);
-#else
-    //static uint8_t mouse_write_buffer[64];
-    //memcpy(mouse_write_buffer+1, report, 4);
-    //mouse_write_buffer[0]=1;
-    //mouse_write_buffer[1]=0;
-    //mouse_write_buffer[2]=0;
-    //mouse_write_buffer[3]=0;
-    //mouse_write_buffer[4]=0;
-    //USBHS_Endp_DataUp(HID_MOUSE_INT_EP,mouse_write_buffer,64,DEF_UEP_CPY_LOAD);
-    USBHS_Endp_DataUp(HID_MOUSE_INT_EP,report,len,DEF_UEP_CPY_LOAD);
-#endif
+    return hid_mouse_send(report);
 }
 
 void keyboard_user_handler(uint8_t code)
@@ -1270,13 +1250,10 @@ void keyboard_user_handler(uint8_t code)
 
 int hid_send(uint8_t *report, uint16_t len)
 {
-    static uint8_t send_buffer[64];
-    send_buffer[0] = 0x02;
-    memcpy(send_buffer + 1, report, 63);
-#ifdef CONFIG_CHERRYUSB
-    int hid_raw_send(uint8_t *send_buffer, int size);
-    return hid_raw_send(send_buffer, 64);
-#else
-    return !USBHS_Endp_DataUp(HIDRAW_IN_EP, send_buffer, 64, DEF_UEP_CPY_LOAD);
-#endif
+    return hid_raw_send(report, len);
+}
+
+int keyboard_extra_hid_send(uint8_t report_id, uint16_t usage)
+{
+    return hid_extra_send(report_id, usage);
 }

@@ -11,11 +11,7 @@
 #include "fezui_var.h"
 #include "rgb.h"
 #include "keyboard.h"
-#ifdef CONFIG_CHERRYUSB
 #include "usbd_user.h"
-#else
-#include "usbd_composite_hid.h"
-#endif
 
 #define MARGIN_LEFT           65
 #define PADDING_UP            0

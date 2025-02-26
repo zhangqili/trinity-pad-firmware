@@ -53,8 +53,14 @@ typedef enum
     KEYBOARD_UPLOAD_CONFIG
 } KEYBOARD_STATE;
 
-#define KEYBOARD_SEND_FLAG 0
-#define MOUSE_SEND_FLAG 1
+enum KEYBOARD_REPORT_FLAG
+{
+    KEYBOARD_REPORT_FLAG = 0,
+    MOUSE_REPORT_FLAG = 1,
+    CONSUMER_REPORT_FLAG = 2,
+    SYSTEM_REPORT_FLAG = 3,
+};
+
 
 extern Key g_keyboard_keys[KEY_NUM];
 extern AdvancedKey g_keyboard_advanced_keys[ADVANCED_KEY_NUM];
@@ -67,7 +73,9 @@ extern uint8_t g_keyboard_led_state;
 
 extern uint32_t g_keyboard_tick;
 
-extern Keyboard_6KROBuffer g_keyboard_6kro_buffer;
+#ifdef NKRO_ENABLE
+extern bool g_keyboard_nkro_enable;
+#endif
 
 extern uint8_t g_keyboard_knob_flag;
 extern volatile bool g_keyboard_send_report_enable;
@@ -100,7 +108,7 @@ void keyboard_key_update(Key *key, bool state);
 void keyboard_advanced_key_update_state(AdvancedKey *key, bool state);
 
 void keyboard_init(void);
-void keyboard_system_reset(void);
+void keyboard_reboot(void);
 void keyboard_reset_to_default(void);
 void keyboard_factory_reset(void);
 void keyboard_jump_to_bootloader(void);
@@ -113,6 +121,7 @@ void keyboard_save(void);
 void keyboard_set_config_index(uint8_t index);
 void keyboard_task(void);
 void keyboard_delay(uint32_t ms);
+int keyboard_extra_hid_send(uint8_t report_id, uint16_t usage);
 int keyboard_hid_send(uint8_t *report, uint16_t len);
 
 #endif /* KEYBOARD_H_ */
