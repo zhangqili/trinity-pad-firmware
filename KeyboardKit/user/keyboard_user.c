@@ -83,9 +83,9 @@ Key g_keyboard_keys[KEY_NUM] =
     {.id = 12},
 };
 
-static const AnalogValue table[] =
+static const float table[] =
 {
-    -0.002425,
+    0.000000,
     0.000880,
     0.004171,
     0.007448,
@@ -1088,16 +1088,19 @@ static const AnalogValue table[] =
     1.002575,
 };
 
-AnalogValue advanced_key_normalize(AdvancedKey* key, AnalogValue value)
+AnalogValue advanced_key_normalize(AdvancedKey* advanced_key, AnalogValue value)
 {
-    AnalogValue x;
-    x = (key->upper_bound - value) / (key->upper_bound - key->lower_bound);
-    uint16_t index = x / 0.001;
+#ifdef OPTIMIZE_FOR_FLOAT_DIVISION
+    float x = (advanced_key->upper_bound - value) * advanced_key->range_reciprocal;
+#else
+    float x = (advanced_key->upper_bound - value) / (float)(advanced_key->upper_bound - advanced_key->lower_bound);
+#endif
+    uint16_t index = x * 1000.0f;
     if (index < 1000)
-        return table[index];
+        return (ANALOG_VALUE_MAX - ANALOG_VALUE_MIN)*table[index];
     if (index > 5000)
-        return 0;
-    return 1.002575;
+        return ANALOG_VALUE_MIN;
+    return ANALOG_VALUE_MAX;
 }
 
 

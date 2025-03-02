@@ -8,6 +8,7 @@
 #include "fezui_var.h"
 #include "main.h"
 #include "usbd_user.h"
+#include "analog.h"
 
 // static float target_ordinate = 0;
 // static float target_abscissa = 0;
@@ -57,7 +58,7 @@ static void debugpage_draw(void *page)
 
     for (uint8_t i = 0; i < 8; i++)
     {
-        fezui_printf_right_aligned(&fezui,(i+1)*16,24,"%d",debug[i]);
+        //fezui_printf_right_aligned(&fezui,(i+1)*16,24,"%d",debug[i]);
         //fezui_printf_right_aligned(&fezui,(i+1)*16,32,"%d",read_buffer[i]);
         //fezui_printf_right_aligned(&fezui,(i+1)*16,40,"%d",read_buffer[i+8]);
         //fezui_printf_right_aligned(&fezui,(i+1)*16,48,"%d",read_buffer[i+16]);
@@ -65,10 +66,26 @@ static void debugpage_draw(void *page)
     }
     
     
-    //fezui_printf(&fezui,0,16,"%ld",g_usb_report_count1);
-    //fezui_printf(&fezui,32,16,"%ld",g_usb_mouse_report_count1);
-    //fezui_printf(&fezui,64,16,"%ld",g_usb_raw_report_count1);
-    //fezui_printf(&fezui,96,16,"%ld",g_usb_report_count1);
+    fezui_printf(&fezui,0,16,"%ld",g_keyboard_advanced_keys[0].value);
+    fezui_printf(&fezui,32,16,"%ld",g_keyboard_advanced_keys[1].value);
+    fezui_printf(&fezui,64,16,"%ld",g_keyboard_advanced_keys[2].value);
+    fezui_printf(&fezui,96,16,"%ld",g_keyboard_advanced_keys[3].value);
+    fezui_printf(&fezui,0,24,"%ld",g_keyboard_advanced_keys[0].raw);
+    fezui_printf(&fezui,32,24,"%ld",g_keyboard_advanced_keys[1].raw);
+    fezui_printf(&fezui,64,24,"%ld",g_keyboard_advanced_keys[2].raw);
+    fezui_printf(&fezui,96,24,"%ld",g_keyboard_advanced_keys[3].raw);
+    fezui_printf(&fezui,0,32,"%f", (g_keyboard_advanced_keys[0].upper_bound - g_keyboard_advanced_keys[0].raw) / (float)(g_keyboard_advanced_keys[0].upper_bound - g_keyboard_advanced_keys[0].lower_bound));
+    fezui_printf(&fezui,32,32,"%f",(g_keyboard_advanced_keys[1].upper_bound - g_keyboard_advanced_keys[1].raw) / (float)(g_keyboard_advanced_keys[1].upper_bound - g_keyboard_advanced_keys[1].lower_bound));
+    fezui_printf(&fezui,64,32,"%f",(g_keyboard_advanced_keys[2].upper_bound - g_keyboard_advanced_keys[2].raw) / (float)(g_keyboard_advanced_keys[2].upper_bound - g_keyboard_advanced_keys[2].lower_bound));
+    fezui_printf(&fezui,96,32,"%f",(g_keyboard_advanced_keys[3].upper_bound - g_keyboard_advanced_keys[3].raw) / (float)(g_keyboard_advanced_keys[3].upper_bound - g_keyboard_advanced_keys[3].lower_bound));
+    fezui_printf(&fezui,0,40,"%ld",g_keyboard_advanced_keys[0].trigger_distance);
+    fezui_printf(&fezui,32,40,"%ld",g_keyboard_advanced_keys[1].trigger_distance);
+    fezui_printf(&fezui,64,40,"%ld",g_keyboard_advanced_keys[2].trigger_distance);
+    fezui_printf(&fezui,96,40,"%ld",g_keyboard_advanced_keys[3].trigger_distance);
+    fezui_printf(&fezui,0,48,"%ld",g_keyboard_advanced_keys[0].release_distance);
+    fezui_printf(&fezui,32,48,"%ld",g_keyboard_advanced_keys[1].release_distance);
+    fezui_printf(&fezui,64,48,"%ld",g_keyboard_advanced_keys[2].release_distance);
+    fezui_printf(&fezui,96,48,"%ld",g_keyboard_advanced_keys[3].release_distance);
 
     fezui_draw_cursor(&fezui, &g_fezui_cursor);
 }

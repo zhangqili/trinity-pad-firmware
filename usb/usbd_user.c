@@ -39,7 +39,7 @@ const USBDescriptor usb_descriptor =
     ///////////////////////////////////////
     /// string2 descriptor
     ///////////////////////////////////////
-    0x1e,                       /* bLength */
+    0x18,                       /* bLength */
     USB_DESCRIPTOR_TYPE_STRING, /* bDescriptorType */
     'T', 0x00,                  /* wcChar0 */
     'r', 0x00,                  /* wcChar1 */
@@ -49,12 +49,9 @@ const USBDescriptor usb_descriptor =
     't', 0x00,                  /* wcChar5 */
     'y', 0x00,                  /* wcChar6 */
     ' ', 0x00,                  /* wcChar7 */
-    'K', 0x00,                  /* wcChar8 */
-    'e', 0x00,                  /* wcChar9 */
-    'y', 0x00,                  /* wcChar10 */
-    'p', 0x00,                  /* wcChar11 */
-    'a', 0x00,                  /* wcChar12 */
-    'd', 0x00,                  /* wcChar13 */
+    'P', 0x00,                  /* wcChar8 */
+    'a', 0x00,                  /* wcChar9 */
+    'd', 0x00,                  /* wcChar10 */
     ///////////////////////////////////////
     /// string3 descriptor
     ///////////////////////////////////////

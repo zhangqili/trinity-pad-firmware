@@ -13,8 +13,8 @@
 #define ADVANCED_KEY_NUM      4
 #define KEY_NUM               (6+3)
 #define USE_FLOAT_VALUE
-//#define NKRO_ENABLE
 //#define CONTINUOUS_POLL
+#define OPTIMIZE_FOR_FLOAT_DIVISION
 
 /********************/
 /* Keyboard Default */
@@ -23,7 +23,7 @@
 #define DEFAULT_CALIBRATION_MODE    KEY_AUTO_CALIBRATION_UNDEFINED
 #define DEFAULT_TRIGGER_DISTANCE    0.08
 #define DEFAULT_RELEASE_DISTANCE    0.08
-#define DEFAULT_UPPER_DEADZONE      0.04
+#define DEFAULT_UPPER_DEADZONE      0.01
 #define DEFAULT_LOWER_DEADZONE      0.2
 #define DEFAULT_ACTIVATION_VALUE    0.5
 #define DEFAULT_DEACTIVATION_VALUE  0.49
@@ -82,7 +82,7 @@
 /*******/
 #define USB_POLLING_INTERVAL_MS 1
 #define FIXED_CONTROL_ENDPOINT_SIZE 0x40
-#define VENDOR_ID 0xffff
+#define VENDOR_ID 0xfeed
 #define PRODUCT_ID 0xffff
 #define DEVICE_VER 2
 #define FIXED_NUM_CONFIGURATIONS 1
