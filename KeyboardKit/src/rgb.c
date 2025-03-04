@@ -212,9 +212,9 @@ void rgb_update(void)
             color_mix(&g_rgb_colors[rgb_index], &g_rgb_configs[rgb_index].rgb);
             break;
         case RGB_MODE_CYCLE:
-            temp_hsv.s = g_rgb_configs[i].hsv.s;
-            temp_hsv.v = g_rgb_configs[i].hsv.v;
-            temp_hsv.h = (uint16_t)(g_rgb_configs[i].hsv.h + (g_keyboard_tick % (uint16_t)(360 / g_rgb_configs[i].speed)) * g_rgb_configs[i].speed) % 360;
+            temp_hsv.s = g_rgb_configs[rgb_index].hsv.s;
+            temp_hsv.v = g_rgb_configs[rgb_index].hsv.v;
+            temp_hsv.h = (uint16_t)(g_rgb_configs[rgb_index].hsv.h + (g_keyboard_tick % (uint16_t)(360 / g_rgb_configs[rgb_index].speed)) * g_rgb_configs[rgb_index].speed) % 360;
             color_set_hsv(&temp_rgb, &temp_hsv);
             color_mix(&g_rgb_colors[rgb_index], &temp_rgb);
             break;

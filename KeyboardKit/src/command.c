@@ -57,7 +57,8 @@ void unload_cargo(uint8_t *buf)
                 g_rgb_configs[g_rgb_mapping[key_index]].rgb.r = buf[1 + 9 * i + 2];
                 g_rgb_configs[g_rgb_mapping[key_index]].rgb.g = buf[1 + 9 * i + 3];
                 g_rgb_configs[g_rgb_mapping[key_index]].rgb.b = buf[1 + 9 * i + 4];
-                memcpy(&buf[1 + 9 * i + 5], &g_rgb_configs[g_rgb_mapping[key_index]].speed, sizeof(float));
+                rgb_to_hsv(&g_rgb_configs[g_rgb_mapping[key_index]].hsv, &g_rgb_configs[g_rgb_mapping[key_index]].rgb);
+                memcpy(&g_rgb_configs[g_rgb_mapping[key_index]].speed, &buf[1 + 9 * i + 5], sizeof(float));
             }
         }
         break;
@@ -137,7 +138,6 @@ int load_cargo(void)
                 buf[2 + 9 * i + 2] = g_rgb_configs[rgb_index].rgb.r;
                 buf[2 + 9 * i + 3] = g_rgb_configs[rgb_index].rgb.g;
                 buf[2 + 9 * i + 4] = g_rgb_configs[rgb_index].rgb.b;
-                rgb_to_hsv(&g_rgb_configs[rgb_index].hsv, &g_rgb_configs[rgb_index].rgb);
                 memcpy(&buf[2 + 9 * i + 5], &g_rgb_configs[rgb_index].speed, sizeof(float));
             }
             else
