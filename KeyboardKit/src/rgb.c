@@ -127,6 +127,7 @@ void rgb_update(void)
                 case RGB_MODE_STRING:
                     intensity = (1.0f - fabsf(distance - fabsf(location->x - g_rgb_locations[j].x)));
                     intensity = intensity > 0 ? intensity : 0;
+                    intensity = fabsf(location->y - g_rgb_locations[j].y) < 0.5 ? intensity : 0;
                     break;
                 case RGB_MODE_FADING_STRING:
                     intensity = (distance - fabsf(location->x - g_rgb_locations[j].x));
@@ -134,12 +135,12 @@ void rgb_update(void)
                     {
                         intensity = FADING_DISTANCE - intensity > 0 ? FADING_DISTANCE - intensity : 0;
                         intensity /= FADING_DISTANCE;
-                        break;
                     }
                     else
                     {
                         intensity = 1.0f + intensity > 0 ? 1.0f + intensity : 0;
                     }
+                    intensity = fabsf(location->y - g_rgb_locations[j].y) < 0.5 ? intensity : 0;
                     break;
                 case RGB_MODE_DIAMOND_RIPPLE:
                     intensity = (1.0f - fabsf(distance - MANHATTAN_DISTANCE(location, g_rgb_locations + j)));
