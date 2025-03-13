@@ -17,7 +17,7 @@ void unload_cargo(uint8_t *buf)
     {
     case PACKET_DATA_ADVANCED_KEY: // Advanced Key
         {
-            PacketAdvancedKey* packet = buf;
+            PacketAdvancedKey* packet = (PacketAdvancedKey*)buf;
             uint16_t key_index = g_keyboard_advanced_keys_inverse_mapping[packet->index];
             g_keyboard_advanced_keys[key_index].mode = packet->mode;
             g_keyboard_advanced_keys[key_index].activation_value = packet->activation_value;
@@ -34,13 +34,13 @@ void unload_cargo(uint8_t *buf)
         break;
     case PACKET_DATA_RGB_SWITCH: // Global LED
         {
-            PacketRGBSwitch* packet = buf;
+            PacketRGBSwitch* packet = (PacketRGBSwitch*)buf;
             g_rgb_switch = packet->state;
         }
         break;
     case PACKET_DATA_RGB_CONFIG: // LED
         {
-            PacketRGBConfigs* packet = buf;
+            PacketRGBConfigs* packet = (PacketRGBConfigs*)buf;
             for (uint8_t i = 0; i < packet->length; i++)
             {
                 uint16_t key_index = g_rgb_mapping[packet->data[i].index];
@@ -58,7 +58,7 @@ void unload_cargo(uint8_t *buf)
         break;
     case PACKET_DATA_KEYMAP: // Keymap
         {
-            PacketKeymap* packet = buf;
+            PacketKeymap* packet = (PacketKeymap*)buf;
             if (packet->layer < LAYER_NUM && packet->start + packet->length <= (ADVANCED_KEY_NUM + KEY_NUM))
             {
                 memcpy(&g_keymap[packet->layer][packet->start], packet->keymap, packet->length * sizeof(Keycode));
@@ -67,7 +67,7 @@ void unload_cargo(uint8_t *buf)
         break;
     case PACKET_DATA_DYNAMIC_KEY: // Dynamic Key
         {
-            PacketDynamicKey* packet = buf;
+            PacketDynamicKey *packet = (PacketDynamicKey *)buf;
             if (packet->index<DYNAMIC_KEY_NUM)
             {
                 memcpy(&g_keyboard_dynamic_keys[packet->index], &packet->dynamic_key, sizeof(DynamicKey));
@@ -95,16 +95,16 @@ int load_cargo(void)
     {
     case PACKET_DATA_ADVANCED_KEY: // Advanced Key
         {
-            PacketAdvancedKey *packet = buf;
+            PacketAdvancedKey *packet = (PacketAdvancedKey *)buf;
             packet->type = PACKET_DATA_ADVANCED_KEY;
             uint8_t key_index = page_index & 0xFF;
             packet->index = g_keyboard_advanced_keys[key_index].key.id;
             packet->mode = g_keyboard_advanced_keys[key_index].mode;
-            memcpy(&packet->activation_value,&g_keyboard_advanced_keys[key_index].activation_value,sizeof(AnalogValue)*10);
-            if (!hid_send(buf,63))
+            memcpy(&packet->activation_value, &g_keyboard_advanced_keys[key_index].activation_value, sizeof(AnalogValue) * 10);
+            if (!hid_send(buf, 63))
             {
                 page_index++;
-                if ((page_index & 0xFF)>=ADVANCED_KEY_NUM)
+                if ((page_index & 0xFF) >= ADVANCED_KEY_NUM)
                 {
                     page_index = 0x0100;
                 }
@@ -114,7 +114,7 @@ int load_cargo(void)
         break;
     case PACKET_DATA_RGB_SWITCH: // Global LED
         {
-            PacketRGBSwitch *packet = buf;
+            PacketRGBSwitch *packet = (PacketRGBSwitch *)buf;
             packet->type = PACKET_DATA_RGB_SWITCH;
             packet->state = g_rgb_switch;
             if (!hid_send(buf,63))
@@ -126,7 +126,7 @@ int load_cargo(void)
         break;
     case PACKET_DATA_RGB_CONFIG: // LED
         {
-            PacketRGBConfigs *packet = buf;
+            PacketRGBConfigs *packet = (PacketRGBConfigs *)buf;
             uint8_t key_base_index = (page_index & 0xFF)*6;
             packet->type = PACKET_DATA_RGB_CONFIG;
             packet->length = key_base_index + 6 <= RGB_NUM ? 6 : RGB_NUM - key_base_index;
@@ -159,7 +159,7 @@ int load_cargo(void)
 #define LAYER_PAGE_EXPECTED_NUM ((ADVANCED_KEY_NUM + KEY_NUM + 15) / 16)
     case PACKET_DATA_KEYMAP: // Keymap
         {
-            PacketKeymap *packet = buf;
+            PacketKeymap *packet = (PacketKeymap *)buf;
             packet->type = PACKET_DATA_KEYMAP;
             uint8_t layer_index = (page_index & 0xFF) / LAYER_PAGE_EXPECTED_NUM;
             uint8_t layer_page_index = (page_index & 0xFF) % LAYER_PAGE_EXPECTED_NUM;
@@ -181,7 +181,7 @@ int load_cargo(void)
         return 1;
         break;
     case PACKET_DATA_DYNAMIC_KEY: // Dynamic Key
-        PacketDynamicKey *packet = buf;
+        PacketDynamicKey *packet = (PacketDynamicKey *)buf;
         packet->type = PACKET_DATA_DYNAMIC_KEY;
         uint8_t dk_index = (page_index & 0xFF);
         if (dk_index >= DYNAMIC_KEY_NUM)
@@ -189,16 +189,8 @@ int load_cargo(void)
             page_index=0x8000;
             return 1;
         }
-        if (g_keyboard_dynamic_keys[dk_index].type != DYNAMIC_KEY_NONE)
-        {
-            packet->index = dk_index;
-            memcpy(&packet->dynamic_key,&g_keyboard_dynamic_keys[dk_index],sizeof(DynamicKey));
-        }
-        else
-        {
-            page_index=0x8000;
-            return 1;
-        }
+        packet->index = dk_index;
+        memcpy(&packet->dynamic_key,&g_keyboard_dynamic_keys[dk_index],sizeof(DynamicKey));
         if (!hid_send(buf,63))
         {
             page_index++;

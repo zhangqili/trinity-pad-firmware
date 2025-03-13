@@ -78,7 +78,7 @@ static const char* device_name = "Trinity Pad";
 static float device_name_offsets[11] = {WIDTH,WIDTH,WIDTH,WIDTH,WIDTH,WIDTH,WIDTH,WIDTH,WIDTH,WIDTH,WIDTH};
 static uint8_t device_name_width[11] = {10,6,3,9,3,5,5,6,10,8,10};
 
-static const char* device_version = "Version: 1.0.0";
+static const char* device_version = "Version: 0.1.0";
 static float device_version_offsets[14] = {WIDTH,WIDTH,WIDTH,WIDTH,WIDTH,WIDTH,WIDTH,WIDTH,WIDTH,WIDTH,WIDTH,WIDTH,WIDTH,WIDTH};
 
 static const char* device_information[]={
