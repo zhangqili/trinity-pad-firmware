@@ -30,7 +30,7 @@ static void advancedsettings_menu_cb(void* menu)
             fezui_notification_begin(&fezui, &fezui_notification, "Configuration saved!", 500, 0.1);
             break;
         case 3:
-            keyboard_system_reset();
+            keyboard_reboot();
             break;
         case 4:
             fezui_reset();

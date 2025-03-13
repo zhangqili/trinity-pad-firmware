@@ -12,7 +12,6 @@
 #define LAYER_NUM             3
 #define ADVANCED_KEY_NUM      4
 #define KEY_NUM               (6+3)
-#define USE_FLOAT_VALUE
 //#define CONTINUOUS_POLL
 #define OPTIMIZE_FOR_FLOAT_DIVISION
 

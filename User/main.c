@@ -32,6 +32,7 @@
 #include "keyboard.h"
 #include "command.h"
 #include "usbd_user.h"
+#include "packet.h"
 
 /* Global typedef */
 
@@ -863,17 +864,17 @@ void TIM7_IRQHandler(void)
         switch (g_keyboard_state)
         {
         case KEYBOARD_DEBUG:
-            buffer[0] = 0x02;
-            buffer[1] = 0xFE;
+            PacketDebug* packet = (PacketDebug*)buffer;
+            packet->code = 0xFE;
+            packet->length = 4;
             for (int i = 0; i < 4; i++)
             {
-                buffer[2 + 10 * i] = i;
-                buffer[3 + 10 * i] = g_keyboard_advanced_keys[i].key.state;
-                memcpy(buffer + 4 + 10 * i, &g_keyboard_advanced_keys[i].raw, sizeof(float));
-                memcpy(buffer + 4 + 10 * i + 4, &g_keyboard_advanced_keys[i].value, sizeof(float));
-
+                packet->data[i].index = i;
+                packet->data[i].state = g_keyboard_advanced_keys[i].key.state;
+                packet->data[i].value = g_keyboard_advanced_keys[i].value;
+                packet->data[i].raw = g_keyboard_advanced_keys[i].raw;
             }
-            hid_send(buffer + 1, 63);
+            hid_send(buffer, 63);
             break;
         case KEYBOARD_UPLOAD_CONFIG:
             if (!load_cargo())

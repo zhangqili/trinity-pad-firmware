@@ -61,7 +61,7 @@ const uint16_t g_default_keymap[LAYER_NUM][ADVANCED_KEY_NUM + KEY_NUM] = {
 };
 const uint8_t g_rgb_mapping[ADVANCED_KEY_NUM] = {0, 1, 2, 3};
 const RGBLocation g_rgb_locations[RGB_NUM] = {{0, 0}, {1, 0}, {2, 0}, {3, 0}};
-const uint8_t command_advanced_key_mapping[] = {0, 1, 2, 3};
+const uint8_t g_keyboard_advanced_keys_inverse_mapping[] = {0, 1, 2, 3};
 AdvancedKey g_keyboard_advanced_keys[ADVANCED_KEY_NUM] =
 {
     {.key.id = 0},
@@ -1108,64 +1108,6 @@ int keyboard_hid_send(uint8_t *report, uint16_t len)
 {
     return hid_keyboard_send(report, len);
 }
-void launcherpage_open_menu();
-void key_update1(Key* key, bool state)
-{
-    if ((!(key->state)) && state)
-    {
-        if (g_keyboard_send_report_enable)
-        {   
-            if (g_current_layer == 1)
-            {
-                launcherpage_open_menu();
-                //fezui_frame_navigate(&g_mainframe, &launcherpage);
-            }
-            else
-            {
-                g_current_layer = g_current_layer == 2 ? 0 : 2;
-            }
-        }
-        else if (key->key_cb[KEY_EVENT_DOWN])
-        {
-            key->key_cb[KEY_EVENT_DOWN](key);
-        }
-    }
-    if ((key->state) && (!state))
-    {
-        if (key->key_cb[KEY_EVENT_UP])
-            key->key_cb[KEY_EVENT_UP](key);
-    }
-    key->state = state;
-}
-
-void key_update2(Key* key, bool state)
-{
-    if ((!(key->state)) && state)
-    {
-        if (g_keyboard_send_report_enable)
-        {
-            if (g_current_layer == 2)
-            {
-                launcherpage_open_menu();
-                //fezui_frame_navigate(&g_mainframe, &launcherpage);
-            }
-            else
-            {
-                g_current_layer = g_current_layer == 1 ? 0 : 1;
-            }
-        }
-        else if (key->key_cb[KEY_EVENT_DOWN])
-        {
-            key->key_cb[KEY_EVENT_DOWN](key);
-        }
-    }
-    if ((key->state) && (!state))
-    {
-        if (key->key_cb[KEY_EVENT_UP])
-            key->key_cb[KEY_EVENT_UP](key);
-    }
-    key->state = state;
-}
 
 void keyboard_scan()
 {
@@ -1186,7 +1128,7 @@ void keyboard_scan()
         keyboard_key_update(&KEY_KNOB_ANTICLOCKWISE, false);
     }
 }
-void keyboard_system_reset()
+void keyboard_reboot()
 {
     //__set_FAULTMASK(1);
     __disable_irq();

@@ -92,13 +92,6 @@ enum
     HID_STATE_BUSY
 };
 
-typedef struct __HIDBuffer
-{
-    uint8_t read_buffer[64];
-    uint8_t send_buffer[64];
-    uint8_t state;
-} HIDBuffer;
-
 USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX HIDBuffer keyboard_buffer;
 USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX HIDBuffer mouse_buffer;
 USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX HIDBuffer raw_buffer;
