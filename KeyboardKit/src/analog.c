@@ -46,7 +46,7 @@ void analog_check(void)
 {
     for (uint8_t i = 0; i < ADVANCED_KEY_NUM; i++)
     {
-        if (g_keyboard_advanced_keys[i].mode != KEY_DIGITAL_MODE)
+        if (g_keyboard_advanced_keys[i].config.mode != KEY_DIGITAL_MODE)
         {
             advanced_key_update_raw(g_keyboard_advanced_keys + i, g_ADC_Averages[i]);
         }

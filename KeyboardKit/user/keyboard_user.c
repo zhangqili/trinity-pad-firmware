@@ -1091,9 +1091,9 @@ static const float table[] =
 AnalogValue advanced_key_normalize(AdvancedKey* advanced_key, AnalogValue value)
 {
 #ifdef OPTIMIZE_FOR_FLOAT_DIVISION
-    float x = (advanced_key->upper_bound - value) * advanced_key->range_reciprocal;
+    float x = (advanced_key->config.upper_bound - value) * advanced_key->range_reciprocal;
 #else
-    float x = (advanced_key->upper_bound - value) / (float)(advanced_key->upper_bound - advanced_key->lower_bound);
+    float x = (advanced_key->config.upper_bound - value) / (float)(advanced_key->config.upper_bound - advanced_key->config.lower_bound);
 #endif
     uint16_t index = x * 1000.0f;
     if (index < 1000)
