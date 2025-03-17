@@ -78,19 +78,19 @@ static void debugpage_draw(void *page)
     //fezui_printf_right_aligned(&fezui,64,32,"%d",packet->type);
     //fezui_printf_right_aligned(&fezui,96,32,"%d",packet->index);
     //fezui_printf_right_aligned(&fezui,128,32,"%d",packet->mode);
-    //fezui_printf_right_aligned(&fezui,32,40,"%.3f",packet->activation_value);
-    //fezui_printf_right_aligned(&fezui,64,40,"%.3f",packet->deactivation_value);
-    //fezui_printf_right_aligned(&fezui,96,40,"%.3f",packet->trigger_distance);
-    //fezui_printf_right_aligned(&fezui,128,40,"%.3f",packet->release_distance);
+    //fezui_printf_right_aligned(&fezui,32,40,"%.3f",packet->config.activation_value);
+    //fezui_printf_right_aligned(&fezui,64,40,"%.3f",packet->config.deactivation_value);
+    //fezui_printf_right_aligned(&fezui,96,40,"%.3f",packet->config.trigger_distance);
+    //fezui_printf_right_aligned(&fezui,128,40,"%.3f",packet->config.release_distance);
 
     //fezui_printf_right_aligned(&fezui,32,48,"%d",packet->code);
     //fezui_printf_right_aligned(&fezui,64,48,"%d",packet->type);
     //fezui_printf_right_aligned(&fezui,96,48,"%d",packet->index);
     //fezui_printf_right_aligned(&fezui,128,48,"%d",g_keyboard_advanced_keys[3].mode);
-    //fezui_printf_right_aligned(&fezui,32,56,"%.3f",g_keyboard_advanced_keys[3].activation_value);
-    //fezui_printf_right_aligned(&fezui,64,56,"%.3f",g_keyboard_advanced_keys[3].deactivation_value);
-    //fezui_printf_right_aligned(&fezui,96,56,"%.3f",g_keyboard_advanced_keys[3].trigger_distance);
-    //fezui_printf_right_aligned(&fezui,128,56,"%.3f",g_keyboard_advanced_keys[3].release_distance);
+    //fezui_printf_right_aligned(&fezui,32,56,"%.3f",g_keyboard_advanced_keys[3].config.activation_value);
+    //fezui_printf_right_aligned(&fezui,64,56,"%.3f",g_keyboard_advanced_keys[3].config.deactivation_value);
+    //fezui_printf_right_aligned(&fezui,96,56,"%.3f",g_keyboard_advanced_keys[3].config.trigger_distance);
+    //fezui_printf_right_aligned(&fezui,128,56,"%.3f",g_keyboard_advanced_keys[3].config.release_distance);
 
     //fezui_printf(&fezui,0,16,"%ld",g_keyboard_advanced_keys[0].value);
     //fezui_printf(&fezui,32,16,"%ld",g_keyboard_advanced_keys[1].value);
@@ -100,18 +100,18 @@ static void debugpage_draw(void *page)
     //fezui_printf(&fezui,32,24,"%ld",g_keyboard_advanced_keys[1].raw);
     //fezui_printf(&fezui,64,24,"%ld",g_keyboard_advanced_keys[2].raw);
     //fezui_printf(&fezui,96,24,"%ld",g_keyboard_advanced_keys[3].raw);
-    //fezui_printf(&fezui,0,32,"%f", (g_keyboard_advanced_keys[0].upper_bound - g_keyboard_advanced_keys[0].raw) / (float)(g_keyboard_advanced_keys[0].upper_bound - g_keyboard_advanced_keys[0].lower_bound));
-    //fezui_printf(&fezui,32,32,"%f",(g_keyboard_advanced_keys[1].upper_bound - g_keyboard_advanced_keys[1].raw) / (float)(g_keyboard_advanced_keys[1].upper_bound - g_keyboard_advanced_keys[1].lower_bound));
-    //fezui_printf(&fezui,64,32,"%f",(g_keyboard_advanced_keys[2].upper_bound - g_keyboard_advanced_keys[2].raw) / (float)(g_keyboard_advanced_keys[2].upper_bound - g_keyboard_advanced_keys[2].lower_bound));
-    //fezui_printf(&fezui,96,32,"%f",(g_keyboard_advanced_keys[3].upper_bound - g_keyboard_advanced_keys[3].raw) / (float)(g_keyboard_advanced_keys[3].upper_bound - g_keyboard_advanced_keys[3].lower_bound));
-    //fezui_printf(&fezui,0,40,"%ld",g_keyboard_advanced_keys[0].trigger_distance);
-    //fezui_printf(&fezui,32,40,"%ld",g_keyboard_advanced_keys[1].trigger_distance);
-    //fezui_printf(&fezui,64,40,"%ld",g_keyboard_advanced_keys[2].trigger_distance);
-    //fezui_printf(&fezui,96,40,"%ld",g_keyboard_advanced_keys[3].trigger_distance);
-    //fezui_printf(&fezui,0,48,"%ld",g_keyboard_advanced_keys[0].release_distance);
-    //fezui_printf(&fezui,32,48,"%ld",g_keyboard_advanced_keys[1].release_distance);
-    //fezui_printf(&fezui,64,48,"%ld",g_keyboard_advanced_keys[2].release_distance);
-    //fezui_printf(&fezui,96,48,"%ld",g_keyboard_advanced_keys[3].release_distance);
+    //fezui_printf(&fezui,0,32,"%f", (g_keyboard_advanced_keys[0].config.upper_bound - g_keyboard_advanced_keys[0].raw) / (float)(g_keyboard_advanced_keys[0].config.upper_bound - g_keyboard_advanced_keys[0].config.lower_bound));
+    //fezui_printf(&fezui,32,32,"%f",(g_keyboard_advanced_keys[1].config.upper_bound - g_keyboard_advanced_keys[1].raw) / (float)(g_keyboard_advanced_keys[1].config.upper_bound - g_keyboard_advanced_keys[1].config.lower_bound));
+    //fezui_printf(&fezui,64,32,"%f",(g_keyboard_advanced_keys[2].config.upper_bound - g_keyboard_advanced_keys[2].raw) / (float)(g_keyboard_advanced_keys[2].config.upper_bound - g_keyboard_advanced_keys[2].config.lower_bound));
+    //fezui_printf(&fezui,96,32,"%f",(g_keyboard_advanced_keys[3].config.upper_bound - g_keyboard_advanced_keys[3].raw) / (float)(g_keyboard_advanced_keys[3].config.upper_bound - g_keyboard_advanced_keys[3].config.lower_bound));
+    //fezui_printf(&fezui,0,40,"%ld",g_keyboard_advanced_keys[0].config.trigger_distance);
+    //fezui_printf(&fezui,32,40,"%ld",g_keyboard_advanced_keys[1].config.trigger_distance);
+    //fezui_printf(&fezui,64,40,"%ld",g_keyboard_advanced_keys[2].config.trigger_distance);
+    //fezui_printf(&fezui,96,40,"%ld",g_keyboard_advanced_keys[3].config.trigger_distance);
+    //fezui_printf(&fezui,0,48,"%ld",g_keyboard_advanced_keys[0].config.release_distance);
+    //fezui_printf(&fezui,32,48,"%ld",g_keyboard_advanced_keys[1].config.release_distance);
+    //fezui_printf(&fezui,64,48,"%ld",g_keyboard_advanced_keys[2].config.release_distance);
+    //fezui_printf(&fezui,96,48,"%ld",g_keyboard_advanced_keys[3].config.release_distance);
 
     fezui_draw_cursor(&fezui, &g_fezui_cursor);
 }

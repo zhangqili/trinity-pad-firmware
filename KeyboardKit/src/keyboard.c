@@ -337,15 +337,15 @@ __WEAK void keyboard_reset_to_default(void)
     memcpy(g_keymap, g_default_keymap, sizeof(g_keymap));
     for (uint8_t i = 0; i < ADVANCED_KEY_NUM; i++)
     {
-        g_keyboard_advanced_keys[i].mode = DEFAULT_ADVANCED_KEY_MODE;
-        g_keyboard_advanced_keys[i].trigger_distance = DEFAULT_TRIGGER_DISTANCE * (ANALOG_VALUE_MAX - ANALOG_VALUE_MIN);
-        g_keyboard_advanced_keys[i].release_distance = DEFAULT_RELEASE_DISTANCE * (ANALOG_VALUE_MAX - ANALOG_VALUE_MIN);
-        g_keyboard_advanced_keys[i].activation_value = DEFAULT_ACTIVATION_VALUE * (ANALOG_VALUE_MAX - ANALOG_VALUE_MIN);
-        g_keyboard_advanced_keys[i].deactivation_value = DEFAULT_DEACTIVATION_VALUE * (ANALOG_VALUE_MAX - ANALOG_VALUE_MIN);
-        g_keyboard_advanced_keys[i].calibration_mode = DEFAULT_CALIBRATION_MODE;
+        g_keyboard_advanced_keys[i].config.mode = DEFAULT_ADVANCED_KEY_MODE;
+        g_keyboard_advanced_keys[i].config.trigger_distance = DEFAULT_TRIGGER_DISTANCE * ANALOG_VALUE_RANGE;
+        g_keyboard_advanced_keys[i].config.release_distance = DEFAULT_RELEASE_DISTANCE * ANALOG_VALUE_RANGE;
+        g_keyboard_advanced_keys[i].config.activation_value = DEFAULT_ACTIVATION_VALUE * ANALOG_VALUE_RANGE;
+        g_keyboard_advanced_keys[i].config.deactivation_value = DEFAULT_DEACTIVATION_VALUE * ANALOG_VALUE_RANGE;
+        g_keyboard_advanced_keys[i].config.calibration_mode = DEFAULT_CALIBRATION_MODE;
         advanced_key_set_deadzone(g_keyboard_advanced_keys + i, 
-            DEFAULT_UPPER_DEADZONE * (ANALOG_VALUE_MAX - ANALOG_VALUE_MIN), 
-            DEFAULT_LOWER_DEADZONE * (ANALOG_VALUE_MAX - ANALOG_VALUE_MIN));
+            DEFAULT_UPPER_DEADZONE * ANALOG_VALUE_RANGE, 
+            DEFAULT_LOWER_DEADZONE * ANALOG_VALUE_RANGE);
     }
     rgb_factory_reset();
     memset(g_keyboard_dynamic_keys, 0, sizeof(g_keyboard_dynamic_keys));
@@ -409,7 +409,7 @@ void keyboard_send_report(void)
     )
     {
 #ifdef CONTINOUS_POLL
-        usb_send_flags = 0x03;
+        BIT_SET(g_keyboard_send_flags,KEYBOARD_REPORT_FLAG);
 #endif
         keyboard_buffer_clear();
         mouse_buffer_clear(&g_mouse);
@@ -421,13 +421,6 @@ void keyboard_send_report(void)
         for (int i = 0; i < KEY_NUM; i++)
         {        
             keyboard_event_handler(keyboard_make_event(&g_keyboard_keys[i], g_keyboard_keys[i].report_state ? KEYBOARD_EVENT_KEY_TRUE : KEYBOARD_EVENT_KEY_FALSE));
-        }
-        if (BIT_GET(g_keyboard_send_flags,KEYBOARD_REPORT_FLAG))
-        {
-            if (!keyboard_buffer_send())
-            {
-                BIT_RESET(g_keyboard_send_flags,KEYBOARD_REPORT_FLAG);
-            }
         }
         if (BIT_GET(g_keyboard_send_flags,MOUSE_REPORT_FLAG))
         {
@@ -452,6 +445,13 @@ void keyboard_send_report(void)
             if (!keyboard_extra_hid_send(REPORT_ID_SYSTEM, keyboard_system_buffer))
             {
                 BIT_RESET(g_keyboard_send_flags,SYSTEM_REPORT_FLAG);
+            }
+        }
+        if (BIT_GET(g_keyboard_send_flags,KEYBOARD_REPORT_FLAG))
+        {
+            if (!keyboard_buffer_send())
+            {
+                BIT_RESET(g_keyboard_send_flags,KEYBOARD_REPORT_FLAG);
             }
         }
     }
