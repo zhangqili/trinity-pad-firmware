@@ -822,7 +822,11 @@ void analog_average()
         {
             ADC_sum += ADC_Buffer[i + j * ADVANCED_KEY_NUM];
         }
+#ifndef ENABLE_FIXED_POINT_EXPERIMENTAL
         g_ADC_Averages[i] = ADC_sum/64.0f;
+#else
+        g_ADC_Averages[i] = ADC_sum>>6;
+#endif
 #ifdef ENABLE_FILTER
         g_ADC_Averages[i] = adaptive_schimidt_filter(g_analog_filters+i,g_ADC_Averages[i]);
 #endif
@@ -833,7 +837,6 @@ void TIM7_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 void TIM7_IRQHandler(void)
 {
     static uint8_t count = 0;
-    static uint8_t buffer[64];
     //static bool flag = true;
     if (TIM_GetITStatus(TIM7, TIM_IT_Update) != RESET)
     {
@@ -854,27 +857,10 @@ void TIM7_IRQHandler(void)
         //    }
         //}        
         keyboard_task();
-        //if (flag)
-        //{
-        //    flag = false;
-        //    keyboard_6KRObuffer_send(&g_keyboard_6kro_buffer);
-        //    mouse_buffer_send(&g_mouse);
-        //}
-        
         switch (g_keyboard_state)
         {
         case KEYBOARD_DEBUG:
-            PacketDebug* packet = (PacketDebug*)buffer;
-            packet->code = 0xFE;
-            packet->length = 4;
-            for (int i = 0; i < 4; i++)
-            {
-                packet->data[i].index = i;
-                packet->data[i].state = g_keyboard_advanced_keys[i].key.state;
-                packet->data[i].value = g_keyboard_advanced_keys[i].value;
-                packet->data[i].raw = g_keyboard_advanced_keys[i].raw;
-            }
-            hid_send(buffer, 63);
+            send_debug_info();
             break;
         case KEYBOARD_UPLOAD_CONFIG:
             if (!load_cargo())

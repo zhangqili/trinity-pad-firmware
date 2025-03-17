@@ -13,6 +13,7 @@
 #define ADVANCED_KEY_NUM      4
 #define KEY_NUM               (6+3)
 //#define CONTINUOUS_POLL
+//#define ENABLE_FIXED_POINT_EXPERIMENTAL
 #define OPTIMIZE_FOR_FLOAT_DIVISION
 
 /********************/

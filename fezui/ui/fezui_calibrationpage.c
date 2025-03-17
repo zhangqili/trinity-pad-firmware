@@ -72,7 +72,7 @@ static void drawrawdata(uint8_t x, uint8_t y, uint8_t n)
     fezui_printf_right_aligned(&fezui, WIDTH - MARGIN_RIGHT, MARGIN_TOP + ROW_HEIGHT * 1, "%d", g_keyboard_advanced_keys[n].config.mode);
 
     fezui_printf(&fezui, MARGIN_LEFT, MARGIN_TOP + ROW_HEIGHT * 2, "raw");
-    fezui_printf_right_aligned(&fezui, WIDTH / 2 - MARGIN_RIGHT, MARGIN_TOP + ROW_HEIGHT * 2, "%4.1f", g_keyboard_advanced_keys[n].raw);
+    fezui_printf_right_aligned(&fezui, WIDTH / 2 - MARGIN_RIGHT, MARGIN_TOP + ROW_HEIGHT * 2, "%4.3f", g_keyboard_advanced_keys[n].raw);
 
     fezui_printf(&fezui, WIDTH / 2 + MARGIN_LEFT, MARGIN_TOP + ROW_HEIGHT * 2, "value");
     fezui_printf_right_aligned(&fezui, WIDTH - MARGIN_RIGHT, MARGIN_TOP + ROW_HEIGHT * 2, "%.3f", g_keyboard_advanced_keys[n].value);

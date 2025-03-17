@@ -115,9 +115,9 @@ void advanced_key_update_state(AdvancedKey* advanced_key, bool state)
 __WEAK AnalogValue advanced_key_normalize(AdvancedKey* advanced_key, AnalogRawValue value)
 {
 #ifdef OPTIMIZE_FOR_FLOAT_DIVISION
-    return  (ANALOG_VALUE_MAX - ANALOG_VALUE_MIN) * (advanced_key->config.upper_bound - value) * advanced_key->range_reciprocal;
+    return  ANALOG_VALUE_RANGE * (advanced_key->config.upper_bound - value) * advanced_key->range_reciprocal;
 #else
-    return  (ANALOG_VALUE_MAX - ANALOG_VALUE_MIN) * (advanced_key->config.upper_bound - value) / (advanced_key->config.upper_bound - advanced_key->config.lower_bound);
+    return  ANALOG_VALUE_RANGE * (advanced_key->config.upper_bound - value) / (advanced_key->config.upper_bound - advanced_key->config.lower_bound);
 #endif
 }
 

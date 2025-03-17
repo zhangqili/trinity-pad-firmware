@@ -19,8 +19,8 @@ typedef float AnalogRawValue;
 #define ANALOG_VALUE_MIN 0.0f
 #endif
 #else
-typedef int32_t AnalogValue;
-typedef int32_t AnalogRawValue;
+typedef uint16_t AnalogValue;
+typedef uint16_t AnalogRawValue;
 #ifndef ANALOG_VALUE_MAX
 #define ANALOG_VALUE_MAX 65535
 #endif
@@ -28,6 +28,7 @@ typedef int32_t AnalogRawValue;
 #define ANALOG_VALUE_MIN 0
 #endif
 #endif
+#define ANALOG_VALUE_RANGE (ANALOG_VALUE_MAX - ANALOG_VALUE_MIN)
 
 typedef enum
 {

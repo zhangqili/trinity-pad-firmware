@@ -79,9 +79,9 @@ AnalogRawValue ringbuf_avg(RingBuf* ringbuf)
     {
         avg += ringbuf->datas[i];
     }
-
-    avg /= RING_BUF_LEN;
-    //avg = ((avg >> 2) & 0x01) + (avg >> 3);
-
-    return (AnalogValue)avg;
+#ifdef OPTIMIZE_FOR_FLOAT_DIVISION
+    return (AnalogValue)(avg*(1/((float)RING_BUF_LEN)));
+#else
+    return (AnalogValue)(avg/RING_BUF_LEN);
+#endif
 }
