@@ -92,7 +92,16 @@ void unload_cargo(uint8_t *buf)
             PacketDynamicKey *packet = (PacketDynamicKey *)buf;
             if (packet->index<DYNAMIC_KEY_NUM)
             {
-                memcpy(&g_keyboard_dynamic_keys[packet->index], &packet->dynamic_key, sizeof(DynamicKey));
+                switch (((DynamicKey*)packet->dynamic_key)->type)
+                {
+                case DYNAMIC_KEY_STROKE:
+                    dynamic_key_stroke_anti_normalize((DynamicKeyStroke4x4*)&g_keyboard_dynamic_keys[packet->index],
+                        (DynamicKeyStroke4x4Normalized*)&packet->dynamic_key);
+                    break;
+                default:
+                    memcpy(&g_keyboard_dynamic_keys[packet->index], &packet->dynamic_key, sizeof(DynamicKey));
+                    break;
+                }
             }
         }
         break;
@@ -206,7 +215,16 @@ int load_cargo(void)
             return 1;
         }
         packet->index = dk_index;
-        memcpy(&packet->dynamic_key,&g_keyboard_dynamic_keys[dk_index],sizeof(DynamicKey));
+        switch (g_keyboard_dynamic_keys[dk_index].type)
+        {
+        case DYNAMIC_KEY_STROKE:
+            dynamic_key_stroke_normalize((DynamicKeyStroke4x4Normalized*)&packet->dynamic_key,
+                (DynamicKeyStroke4x4*)&g_keyboard_dynamic_keys[dk_index]);
+            break;
+        default:
+            memcpy(&packet->dynamic_key,&g_keyboard_dynamic_keys[dk_index],sizeof(DynamicKey));
+            break;
+        }
         if (!hid_send(buf,63))
         {
             page_index++;

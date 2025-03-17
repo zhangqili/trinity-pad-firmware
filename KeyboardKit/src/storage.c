@@ -40,6 +40,26 @@ void advanced_key_config_anti_normalize(AdvancedKeyConfiguration* config, Advanc
     config->lower_bound = buffer->lower_bound;
 }
 
+void dynamic_key_stroke_normalize(DynamicKeyStroke4x4Normalized* buffer, DynamicKeyStroke4x4* dks)
+{
+    memcpy(buffer, dks, offsetof(DynamicKeyStroke4x4,press_begin_distance));
+    buffer->press_begin_distance = dks->press_begin_distance / (float)ANALOG_VALUE_RANGE;
+    buffer->press_fully_distance = dks->press_fully_distance / (float)ANALOG_VALUE_RANGE;
+    buffer->release_begin_distance = dks->release_begin_distance / (float)ANALOG_VALUE_RANGE;
+    buffer->release_fully_distance = dks->release_fully_distance / (float)ANALOG_VALUE_RANGE;
+    memcpy(buffer->key_end_time, dks->key_end_time, sizeof(DynamicKeyStroke4x4) - offsetof(DynamicKeyStroke4x4,key_end_time));
+}
+
+void dynamic_key_stroke_anti_normalize(DynamicKeyStroke4x4* dks, DynamicKeyStroke4x4Normalized* buffer)
+{
+    memcpy(dks, buffer, offsetof(DynamicKeyStroke4x4,press_begin_distance));
+    dks->press_begin_distance = buffer->press_begin_distance * ANALOG_VALUE_RANGE;
+    dks->press_fully_distance = buffer->press_fully_distance * ANALOG_VALUE_RANGE;
+    dks->release_begin_distance = buffer->release_begin_distance * ANALOG_VALUE_RANGE;
+    dks->release_fully_distance = buffer->release_fully_distance * ANALOG_VALUE_RANGE;
+    memcpy(dks->key_end_time, buffer->key_end_time, sizeof(DynamicKeyStroke4x4) - offsetof(DynamicKeyStroke4x4,key_end_time));
+}
+
 static inline void save_advanced_key_config(lfs_t *lfs, lfs_file_t *file, AdvancedKey* key)
 {
     AdvancedKeyConfigurationNormalized buffer;
@@ -116,6 +136,20 @@ void storage_read_config(uint8_t index)
     lfs_file_read(&g_lfs, &lfs_file, &g_rgb_switch, sizeof(g_rgb_switch));
     lfs_file_read(&g_lfs, &lfs_file, &g_rgb_configs, sizeof(g_rgb_configs));
     lfs_file_read(&g_lfs, &lfs_file, g_keyboard_dynamic_keys, sizeof(g_keyboard_dynamic_keys));
+    for (uint8_t i = 0; i < DYNAMIC_KEY_NUM; i++)
+    {
+        DynamicKey buffer;
+        lfs_file_read(&g_lfs, &lfs_file, &buffer, sizeof(DynamicKey));
+        switch (buffer.type)
+        {
+        case DYNAMIC_KEY_STROKE:
+            dynamic_key_stroke_anti_normalize((DynamicKeyStroke4x4*)&g_keyboard_dynamic_keys[i], (DynamicKeyStroke4x4Normalized*)&buffer);
+            break;
+        default:
+            memcpy(&g_keyboard_dynamic_keys[i], &buffer, sizeof(DynamicKey));
+            break;
+        }
+    }
     // remember the storage is not updated until the file is closed successfully
     lfs_file_close(&g_lfs, &lfs_file);
 }
@@ -135,7 +169,20 @@ void storage_save_config(uint8_t index)
     lfs_file_write(&g_lfs, &lfs_file, g_keymap, sizeof(g_keymap));
     lfs_file_write(&g_lfs, &lfs_file, &g_rgb_switch, sizeof(g_rgb_switch));
     lfs_file_write(&g_lfs, &lfs_file, &g_rgb_configs, sizeof(g_rgb_configs));
-    lfs_file_write(&g_lfs, &lfs_file, g_keyboard_dynamic_keys, sizeof(g_keyboard_dynamic_keys));
+    for (uint8_t i = 0; i < DYNAMIC_KEY_NUM; i++)
+    {
+        switch (g_keyboard_dynamic_keys[i].type)
+        {
+        case DYNAMIC_KEY_STROKE:
+            DynamicKeyStroke4x4Normalized buffer;
+            dynamic_key_stroke_normalize(&buffer, (DynamicKeyStroke4x4*)&g_keyboard_dynamic_keys[i]);
+            lfs_file_write(&g_lfs, &lfs_file, &buffer, sizeof(DynamicKey));
+            break;
+        default:
+            lfs_file_write(&g_lfs, &lfs_file, &g_keyboard_dynamic_keys[i], sizeof(DynamicKey));
+            break;
+        }
+    }
     // remember the storage is not updated until the file is closed successfully
     lfs_file_close(&g_lfs, &lfs_file);
 }

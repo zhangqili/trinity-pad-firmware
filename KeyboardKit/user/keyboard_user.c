@@ -1108,7 +1108,7 @@ AnalogValue advanced_key_normalize(AdvancedKey* advanced_key, AnalogValue value)
     {
         index = length - 1;
     }
-    return table[index] * ANALOG_VALUE_RANGE;
+    return table[index] * ANALOG_VALUE_RANGE + ANALOG_VALUE_MIN;
 }
 
 

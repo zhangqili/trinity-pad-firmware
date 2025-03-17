@@ -234,7 +234,7 @@ void keyid_prase(uint16_t id, char *str, uint16_t str_len)
     switch (id & 0xFF)
     {
     case MOUSE_COLLECTION:
-        ADD_STRING(g_hid_usage_names[MOUSE_COLLECTION + 8 + KEY_MODIFIER(id)]);
+        ADD_STRING(g_hid_usage_names[MOUSE_COLLECTION + 8 + MODIFIER(id)]);
         break;
     case LAYER_CONTROL:
         ADD_STRING("Layer Control");

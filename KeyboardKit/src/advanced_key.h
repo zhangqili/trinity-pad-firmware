@@ -50,17 +50,17 @@ typedef struct __AdvancedKeyConfiguration
     uint8_t mode;
     uint8_t calibration_mode;
     
-    AnalogValue activation_value;
-    AnalogValue deactivation_value;
+    AnalogValue activation_value;   //relative
+    AnalogValue deactivation_value; //relative
     
-    AnalogValue trigger_distance;
-    AnalogValue release_distance;
-    AnalogValue trigger_speed;
-    AnalogValue release_speed;
-    AnalogValue upper_deadzone;
-    AnalogValue lower_deadzone;
-    AnalogRawValue upper_bound;
-    AnalogRawValue lower_bound;
+    AnalogValue trigger_distance;   //relative
+    AnalogValue release_distance;   //relative
+    AnalogValue trigger_speed;      //relative
+    AnalogValue release_speed;      //relative
+    AnalogValue upper_deadzone;     //relative
+    AnalogValue lower_deadzone;     //relative
+    AnalogRawValue upper_bound;     //absolute
+    AnalogRawValue lower_bound;     //absolute
 } AdvancedKeyConfiguration;
 
 typedef struct __AdvancedKey
