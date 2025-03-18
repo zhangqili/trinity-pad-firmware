@@ -17,6 +17,7 @@
 #define CONFIG_USB_DBG_LEVEL USB_DBG_INFO
 #endif
 
+#define CONFIG_USBDEV_ADVANCE_DESC
 /* Enable print with color */
 #define CONFIG_USB_PRINTF_COLOR_ENABLE
 

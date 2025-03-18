@@ -1165,6 +1165,7 @@ void keyboard_user_handler(uint8_t code)
         fezui_page_t* launcherpage_get_current_page();
         if (launcherpage_get_current_page() == &homepage)
         {
+            void launcherpage_open_menu();
             launcherpage_open_menu();
             layer_reset(0);
             layer_reset(1);
