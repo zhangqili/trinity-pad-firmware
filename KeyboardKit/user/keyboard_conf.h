@@ -15,6 +15,7 @@
 //#define CONTINUOUS_POLL
 //#define ENABLE_FIXED_POINT_EXPERIMENTAL
 #define OPTIMIZE_FOR_FLOAT_DIVISION
+#define DEBUG_INTERVAL 1
 
 /********************/
 /* Keyboard Default */

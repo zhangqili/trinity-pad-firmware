@@ -21,6 +21,10 @@
 
 #define VAR_LOOP_DECREMENT(x,min,max,delta) if((x)>(min)) (x)-=(delta);else (x)=(max);
 
+#define VAR_INCREMENT(x,min,max,delta) if((x)<(max)) (x)+=(delta);
+
+#define VAR_DECREMENT(x,min,max,delta) if((x)>(min)) (x)-=(delta);
+
 #define CONVERGE_TO_ROUNDED(x,y,m) (x)=(x)+(m)*((y)+0.5f-(x))
 
 #define CONVERGE_TO(x,y,m) (x)=(x)+(m)*((y)-(x))

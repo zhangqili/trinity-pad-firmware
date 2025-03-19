@@ -191,7 +191,7 @@ void fezui_render_handler()
         u8g2_SetDrawColor(&(fezui.u8g2), 1);
         u8g2_DrawBox(&fezui.u8g2, 95 + 14, 0, WIDTH - 95 - 14, 11);
         u8g2_SetDrawColor(&(fezui.u8g2), 2);
-        u8g2_SetFont(&(fezui.u8g2), fez_font_6x10_m);
+        u8g2_SetFont(&(fezui.u8g2), u8g2_font_micro_tr);
         u8g2_DrawUTF8(&(fezui.u8g2), 95 + 15, 10, g_fpsstr);
     }
     u8g2_SendBuffer(&(fezui.u8g2));

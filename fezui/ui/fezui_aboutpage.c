@@ -109,6 +109,14 @@ static float target_ordinate=0;
 
 static fezui_scrolling_text_t url_text;
 
+static uint8_t game_buffer[WIDTH*HEIGHT/8];
+
+static uint8_t life_game;
+
+static uint16_t count;
+
+static uint16_t interval = 8;
+
 void draw_gemini()
 {
     DRAW_LINE_BETWEEN(ALPHA,TAU);
@@ -131,6 +139,7 @@ void draw_gemini()
 
 static void aboutpage_tick(void *page)
 {
+    count++;
     CONVERGE_TO(icon_x,target_icon_x,0.05);
     CONVERGE_TO(url_y,target_url_y,0.05);
     CONVERGE_TO_ROUNDED(device_name_offsets[0],target_icon_x,0.2);
@@ -152,8 +161,78 @@ static void aboutpage_tick(void *page)
     }
     fezui_scrolling_text_update(&url_text);
 }
+
+#define GET_CELL(buffer,x,y)    BIT_GET((buffer)[((((y)+HEIGHT)%HEIGHT)/8)*WIDTH +(((x)+WIDTH)%WIDTH)],(((y)+HEIGHT)%HEIGHT)%8) 
+#define SET_CELL(buffer,x,y)    BIT_SET((buffer)[((((y)+HEIGHT)%HEIGHT)/8)*WIDTH +(((x)+WIDTH)%WIDTH)],(((y)+HEIGHT)%HEIGHT)%8) 
+#define RESET_CELL(buffer,x,y)  BIT_RESET((buffer)[((((y)+HEIGHT)%HEIGHT)/8)*WIDTH +(((x)+WIDTH)%WIDTH)],(((y)+HEIGHT)%HEIGHT)%8)
+
+static int get_cell_num(uint8_t* buffer, int8_t x, int8_t y)
+{
+    int num = 0;
+    for (int i = -1; i < 2; i++)
+    {
+        for (int j = -1; j < 2; j++)
+        {
+            if (i == 0 && j == 0)
+            {
+                continue;
+            }
+            if (GET_CELL(buffer,x+i,y+j))
+            {
+                num++;
+            }
+        }
+    }
+    return num;
+}
+
+
 static void aboutpage_draw(void *page)
 {
+    if (life_game == 2)
+    {
+        if (count >= interval)
+        {
+            count = 0;
+            for (int i = 0; i < WIDTH; i++)
+            {
+                for (int j = 0; j < HEIGHT; j++)
+                {
+                    int num = get_cell_num(game_buffer, i, j);
+                    if (GET_CELL(game_buffer,i,j))
+                    {
+                        if (num < 2 || num > 3)
+                        {
+                            RESET_CELL(fezui.u8g2.tile_buf_ptr,i,j);
+                        }
+                        else
+                        {
+                            SET_CELL(fezui.u8g2.tile_buf_ptr,i,j);
+                        }
+                    }
+                    else
+                    {
+                        if (num == 3)
+                        {
+                            SET_CELL(fezui.u8g2.tile_buf_ptr,i,j);
+                        }
+                        else
+                        {
+                            RESET_CELL(fezui.u8g2.tile_buf_ptr,i,j);
+                        }
+                        
+                    }
+                }
+            }
+            memcpy(game_buffer, fezui.u8g2.tile_buf_ptr,WIDTH*HEIGHT/8);
+        }
+        else
+        {
+            memcpy(fezui.u8g2.tile_buf_ptr,game_buffer, WIDTH*HEIGHT/8);
+        }
+        
+        return;
+    }
     u8g2_SetFont(&(fezui.u8g2), u8g2_font_helvB12_tr);
     for (uint8_t i = 0; i < 11; i++)
     {
@@ -195,6 +274,11 @@ static void aboutpage_draw(void *page)
     u8g2_SetFont(&fezui.u8g2, u8g2_font_3x3basic_tr);
     u8g2_DrawUTF8X2(&fezui.u8g2, ((u8g2_int_t)icon_x+11), 48 + 8, "FEZ");
     u8g2_DrawUTF8X2(&fezui.u8g2, ((u8g2_int_t)icon_x+19), 48 + 8 + 8, "UI");
+    if (life_game == 1)
+    {
+        memcpy(game_buffer,fezui.u8g2.tile_buf_ptr,WIDTH*HEIGHT/8);
+        life_game = 2;
+    }
 }
 
 static void aboutpage_event_handler(void *e)
@@ -208,6 +292,7 @@ static void aboutpage_event_handler(void *e)
             ordinate=-text_box_height;
             target_ordinate=-text_box_height;
         }
+        VAR_DECREMENT(interval,0,100,1);
         break;
     case KEY_DOWN_ARROW:
         target_ordinate-=10;
@@ -216,9 +301,12 @@ static void aboutpage_event_handler(void *e)
             ordinate=+text_box_height;
             target_ordinate=+text_box_height;
         }
+        VAR_INCREMENT(interval,0,100,1);
         break;
     case KEY_SPACEBAR:
     case KEY_ENTER:
+        if (!life_game) 
+            life_game = 1;
         break;
     case KEY_ESC:
         fezui_frame_go_back(&g_mainframe);
@@ -231,6 +319,7 @@ static void aboutpage_event_handler(void *e)
 
 static void aboutpage_load(void *page)
 {
+    life_game = 0;
     fezui_scrolling_text_init(&fezui, &url_text, 128, 0.2, u8g2_font_4x6_mr, PROJECT_URL);
     fezui_scrolling_text_begin(&url_text);
     ordinate=-text_box_height;
