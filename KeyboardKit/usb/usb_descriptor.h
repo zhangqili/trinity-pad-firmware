@@ -45,7 +45,7 @@
 #include "progmem.h"
 #include <stddef.h>
 #include <inttypes.h>
-#include "keyboard_conf.h"
+#include "keyboard.h"
 
 #define ATTR_PACKED __attribute__((packed))
 /** Concatenates the given input into a single token, via the C Preprocessor.
@@ -497,7 +497,7 @@ extern const USB_Descriptor_String_t PROGMEM SerialNumberString;
 #include "usb_descriptor_common.h"
 
 #ifdef JOYSTICK_ENABLE
-//#    include "joystick.h"
+#    include "joystick.h"
 #endif
 
 #ifdef OS_DETECTION_ENABLE

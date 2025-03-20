@@ -10,6 +10,8 @@
 #include "stdbool.h"
 #include "stdint.h"
 #include "keycode.h"
+#include "keyboard_def.h"
+#include "analog.h"
 
 /**
  * \file
@@ -70,20 +72,33 @@ typedef struct {
 
 extern joystick_config_t joystick_axes[JOYSTICK_AXIS_COUNT];
 
-typedef struct __Joystick {
-    uint8_t buttons[(JOYSTICK_BUTTON_COUNT - 1) / 8 + 1];
-    int16_t axes[JOYSTICK_AXIS_COUNT];
-#ifdef JOYSTICK_HAS_HAT
-    int8_t hat;
+#if JOYSTICK_AXIS_RESOLUTION > 8
+typedef int16_t JoystickAxis;
+#else
+typedef int8_t JoystickAxis;
 #endif
-    bool dirty;
-} Joystick;
+
+typedef struct {
+#if JOYSTICK_AXIS_COUNT > 0
+    JoystickAxis axes[JOYSTICK_AXIS_COUNT];
+#endif
+
+#ifdef JOYSTICK_HAS_HAT
+    int8_t  hat : 4;
+    uint8_t reserved : 4;
+#endif
+
+#if JOYSTICK_BUTTON_COUNT > 0
+    uint8_t buttons[(JOYSTICK_BUTTON_COUNT - 1) / 8 + 1];
+#endif
+} __PACKED Joystick;
 
 extern Joystick g_joystick;
 
 #define joystick_buffer_clear(x) memset((x), 0, sizeof(Joystick))
 
 void joystick_add_buffer(Keycode keycode);
+void joystick_set_axis(Keycode keycode, AnalogValue value);
 int joystick_buffer_send(Joystick *buf);
 int joystick_hid_send(uint8_t *report, uint16_t len);
 
