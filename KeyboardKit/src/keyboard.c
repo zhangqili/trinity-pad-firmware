@@ -97,6 +97,9 @@ void keyboard_event_handler(KeyboardEvent event)
                 keyboard_system_buffer = 0;
                 BIT_SET(g_keyboard_send_flags, SYSTEM_REPORT_FLAG);
                 break;
+            case JOYSTICK_COLLECTION:
+                BIT_SET(g_keyboard_send_flags, JOYSTICK_REPORT_FLAG);
+                break;
             case LAYER_CONTROL:
                 layer_control(event.keycode,event.event);
                 break;
@@ -124,6 +127,9 @@ void keyboard_event_handler(KeyboardEvent event)
             case SYSTEM_COLLECTION:
                 keyboard_system_buffer = MODIFIER(event.keycode);
                 BIT_SET(g_keyboard_send_flags, SYSTEM_REPORT_FLAG);
+                break;
+            case JOYSTICK_COLLECTION:
+                BIT_SET(g_keyboard_send_flags, JOYSTICK_REPORT_FLAG);
                 break;
             case LAYER_CONTROL:
                 layer_control(event.keycode,event.event);
@@ -241,6 +247,9 @@ void keyboard_add_buffer(uint16_t keycode)
             {
                 keyboard_system_buffer = MODIFIER(keycode);
             }
+            break;
+        case JOYSTICK_COLLECTION:
+            joystick_add_buffer(MODIFIER(keycode));
             break;
         default:
             break;
@@ -413,6 +422,7 @@ void keyboard_send_report(void)
 #endif
         keyboard_buffer_clear();
         mouse_buffer_clear(&g_mouse);
+        joystick_buffer_clear(&g_joystick);
 
         for (int i = 0; i < ADVANCED_KEY_NUM; i++)
         {
@@ -452,6 +462,13 @@ void keyboard_send_report(void)
             if (!keyboard_buffer_send())
             {
                 BIT_RESET(g_keyboard_send_flags,KEYBOARD_REPORT_FLAG);
+            }
+        }
+        if (BIT_GET(g_keyboard_send_flags,JOYSTICK_REPORT_FLAG))
+        {
+            if (!joystick_buffer_send(&g_joystick))
+            {
+                BIT_RESET(g_keyboard_send_flags,JOYSTICK_REPORT_FLAG);
             }
         }
     }

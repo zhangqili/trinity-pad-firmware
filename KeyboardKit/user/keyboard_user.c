@@ -1211,3 +1211,8 @@ int keyboard_extra_hid_send(uint8_t report_id, uint16_t usage)
 {
     return hid_extra_send(report_id, usage);
 }
+
+int joystick_hid_send(uint8_t *report, uint16_t len)
+{
+    return hid_joystick_send(report, len);
+}

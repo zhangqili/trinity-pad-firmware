@@ -497,7 +497,7 @@ extern const USB_Descriptor_String_t PROGMEM SerialNumberString;
 #include "usb_descriptor_common.h"
 
 #ifdef JOYSTICK_ENABLE
-#    include "joystick.h"
+//#    include "joystick.h"
 #endif
 
 #ifdef OS_DETECTION_ENABLE
