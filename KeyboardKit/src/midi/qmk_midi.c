@@ -1,4 +1,3 @@
-#include <LUFA/Drivers/USB/USB.h>
 #include "qmk_midi.h"
 #include "sysex_tools.h"
 #include "midi.h"
@@ -14,7 +13,7 @@
  * MIDI
  ******************************************************************************/
 
-MidiDevice midi_device;
+MIDIDevice midi_device;
 
 #define SYSEX_START_OR_CONT 0x40
 #define SYSEX_ENDS_IN_1 0x50
@@ -25,8 +24,8 @@ MidiDevice midi_device;
 #define SYS_COMMON_2 0x20
 #define SYS_COMMON_3 0x30
 
-static void usb_send_func(MidiDevice* device, uint16_t cnt, uint8_t byte0, uint8_t byte1, uint8_t byte2) {
-    MIDI_EventPacket_t event;
+static void usb_send_func(MIDIDevice* device, uint16_t cnt, uint8_t byte0, uint8_t byte1, uint8_t byte2) {
+    MIDIEventPacket event;
     event.Data1 = byte0;
     event.Data2 = byte1;
     event.Data3 = byte2;
@@ -77,8 +76,8 @@ static void usb_send_func(MidiDevice* device, uint16_t cnt, uint8_t byte0, uint8
     send_midi_packet(&event);
 }
 
-static void usb_get_midi(MidiDevice* device) {
-    MIDI_EventPacket_t event;
+static void usb_get_midi(MIDIDevice* device) {
+    MIDIEventPacket event;
     while (recv_midi_packet(&event)) {
         midi_packet_length_t length = midi_packet_length(event.Data1);
         uint8_t              input[3];
@@ -103,7 +102,7 @@ static void usb_get_midi(MidiDevice* device) {
     }
 }
 
-static void fallthrough_callback(MidiDevice* device, uint16_t cnt, uint8_t byte0, uint8_t byte1, uint8_t byte2) {
+static void fallthrough_callback(MIDIDevice* device, uint16_t cnt, uint8_t byte0, uint8_t byte1, uint8_t byte2) {
 #ifdef AUDIO_ENABLE
     if (cnt == 3) {
         switch (byte0 & 0xF0) {
@@ -121,7 +120,7 @@ static void fallthrough_callback(MidiDevice* device, uint16_t cnt, uint8_t byte0
 #endif
 }
 
-static void cc_callback(MidiDevice* device, uint8_t chan, uint8_t num, uint8_t val) {
+static void cc_callback(MIDIDevice* device, uint8_t chan, uint8_t num, uint8_t val) {
     // sending it back on the next channel
     // midi_send_cc(device, (chan + 1) % 16, num, val);
 }

@@ -52,10 +52,10 @@ extern "C" {
 
 typedef enum { IDLE, ONE_BYTE_MESSAGE = 1, TWO_BYTE_MESSAGE = 2, THREE_BYTE_MESSAGE = 3, SYSEX_MESSAGE } input_state_t;
 
-typedef void (*midi_no_byte_func_t)(MidiDevice* device);
+typedef void (*midi_no_byte_func_t)(MIDIDevice* device);
 
 /**
- * \struct _midi_device
+ * \struct __MIDIDevice
  *
  * @brief This structure represents the input and output functions and
  * processing data for a midi device.
@@ -64,7 +64,7 @@ typedef void (*midi_no_byte_func_t)(MidiDevice* device);
  * something virtual.
  * You should not need to modify this structure directly.
  */
-struct _midi_device {
+struct __MIDIDevice {
     // output send function
     midi_var_byte_func_t send_func;
 
@@ -116,7 +116,7 @@ struct _midi_device {
  * @param cnt the number of bytes you are processing
  * @param input the bytes to process
  */
-void midi_device_input(MidiDevice* device, uint8_t cnt, uint8_t* input);
+void midi_device_input(MIDIDevice* device, uint8_t cnt, uint8_t* input);
 
 /**
  * @brief Set the callback function that will be used for sending output
@@ -128,7 +128,7 @@ void midi_device_input(MidiDevice* device, uint8_t cnt, uint8_t* input);
  * \param device the midi device to associate this callback with
  * \param send_func the callback function that will do the sending
  */
-void midi_device_set_send_func(MidiDevice* device, midi_var_byte_func_t send_func);
+void midi_device_set_send_func(MIDIDevice* device, midi_var_byte_func_t send_func);
 
 /**
  * @brief Set a callback which is called at the beginning of the
@@ -139,7 +139,7 @@ void midi_device_set_send_func(MidiDevice* device, midi_var_byte_func_t send_fun
  * \param device the midi device to associate this callback with
  * \param midi_no_byte_func_t the actual callback function
  */
-void midi_device_set_pre_input_process_func(MidiDevice* device, midi_no_byte_func_t pre_process_func);
+void midi_device_set_pre_input_process_func(MIDIDevice* device, midi_no_byte_func_t pre_process_func);
 
 /**@}*/
 

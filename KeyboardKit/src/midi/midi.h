@@ -48,7 +48,7 @@ extern "C" {
  *
  * @param device the device to initialize
  */
-void midi_device_init(MidiDevice* device); // [implementation in midi_device.c]
+void midi_device_init(MIDIDevice* device); // [implementation in midi_device.c]
 
 /**
  * @brief Process input data
@@ -58,7 +58,7 @@ void midi_device_init(MidiDevice* device); // [implementation in midi_device.c]
  *
  * @param device the device to process
  */
-void midi_device_process(MidiDevice* device); // [implementation in midi_device.c]
+void midi_device_process(MIDIDevice* device); // [implementation in midi_device.c]
 
 /**@}*/
 
@@ -76,7 +76,7 @@ void midi_device_process(MidiDevice* device); // [implementation in midi_device.
  * @param num the cc num
  * @param val the value of that cc num
  */
-void midi_send_cc(MidiDevice* device, uint8_t chan, uint8_t num, uint8_t val);
+void midi_send_cc(MIDIDevice* device, uint8_t chan, uint8_t num, uint8_t val);
 
 /**
  * @brief Send a note on message via the given device.
@@ -86,7 +86,7 @@ void midi_send_cc(MidiDevice* device, uint8_t chan, uint8_t num, uint8_t val);
  * @param num the note number
  * @param vel the note velocity
  */
-void midi_send_noteon(MidiDevice* device, uint8_t chan, uint8_t num, uint8_t vel);
+void midi_send_noteon(MIDIDevice* device, uint8_t chan, uint8_t num, uint8_t vel);
 
 /**
  * @brief Send a note off message via the given device.
@@ -96,7 +96,7 @@ void midi_send_noteon(MidiDevice* device, uint8_t chan, uint8_t num, uint8_t vel
  * @param num the note number
  * @param vel the note velocity
  */
-void midi_send_noteoff(MidiDevice* device, uint8_t chan, uint8_t num, uint8_t vel);
+void midi_send_noteoff(MIDIDevice* device, uint8_t chan, uint8_t num, uint8_t vel);
 
 /**
  * @brief Send an after touch message via the given device.
@@ -106,7 +106,7 @@ void midi_send_noteoff(MidiDevice* device, uint8_t chan, uint8_t num, uint8_t ve
  * @param note_num the note number
  * @param amt the after touch amount
  */
-void midi_send_aftertouch(MidiDevice* device, uint8_t chan, uint8_t note_num, uint8_t amt);
+void midi_send_aftertouch(MIDIDevice* device, uint8_t chan, uint8_t note_num, uint8_t amt);
 
 /**
  * @brief Send a pitch bend message via the given device.
@@ -115,7 +115,7 @@ void midi_send_aftertouch(MidiDevice* device, uint8_t chan, uint8_t note_num, ui
  * @param chan the channel to send on, 0-15
  * @param amt the bend amount range: -8192..8191, 0 means no bend
  */
-void midi_send_pitchbend(MidiDevice* device, uint8_t chan, int16_t amt); // range -8192, 8191
+void midi_send_pitchbend(MIDIDevice* device, uint8_t chan, int16_t amt); // range -8192, 8191
 
 /**
  * @brief Send a program change message via the given device.
@@ -124,7 +124,7 @@ void midi_send_pitchbend(MidiDevice* device, uint8_t chan, int16_t amt); // rang
  * @param chan the channel to send on, 0-15
  * @param num the program to change to
  */
-void midi_send_programchange(MidiDevice* device, uint8_t chan, uint8_t num);
+void midi_send_programchange(MIDIDevice* device, uint8_t chan, uint8_t num);
 
 /**
  * @brief Send a channel pressure message via the given device.
@@ -133,56 +133,56 @@ void midi_send_programchange(MidiDevice* device, uint8_t chan, uint8_t num);
  * @param chan the channel to send on, 0-15
  * @param amt the amount of channel pressure
  */
-void midi_send_channelpressure(MidiDevice* device, uint8_t chan, uint8_t amt);
+void midi_send_channelpressure(MIDIDevice* device, uint8_t chan, uint8_t amt);
 
 /**
  * @brief Send a clock message via the given device.
  *
  * @param device the device to use for sending
  */
-void midi_send_clock(MidiDevice* device);
+void midi_send_clock(MIDIDevice* device);
 
 /**
  * @brief Send a tick message via the given device.
  *
  * @param device the device to use for sending
  */
-void midi_send_tick(MidiDevice* device);
+void midi_send_tick(MIDIDevice* device);
 
 /**
  * @brief Send a start message via the given device.
  *
  * @param device the device to use for sending
  */
-void midi_send_start(MidiDevice* device);
+void midi_send_start(MIDIDevice* device);
 
 /**
  * @brief Send a continue message via the given device.
  *
  * @param device the device to use for sending
  */
-void midi_send_continue(MidiDevice* device);
+void midi_send_continue(MIDIDevice* device);
 
 /**
  * @brief Send a stop message via the given device.
  *
  * @param device the device to use for sending
  */
-void midi_send_stop(MidiDevice* device);
+void midi_send_stop(MIDIDevice* device);
 
 /**
  * @brief Send an active sense message via the given device.
  *
  * @param device the device to use for sending
  */
-void midi_send_activesense(MidiDevice* device);
+void midi_send_activesense(MIDIDevice* device);
 
 /**
  * @brief Send a reset message via the given device.
  *
  * @param device the device to use for sending
  */
-void midi_send_reset(MidiDevice* device);
+void midi_send_reset(MIDIDevice* device);
 
 /**
  * @brief Send a tc quarter frame message via the given device.
@@ -190,7 +190,7 @@ void midi_send_reset(MidiDevice* device);
  * @param device the device to use for sending
  * @param time the time of this quarter frame, range 0..16383
  */
-void midi_send_tcquarterframe(MidiDevice* device, uint8_t time);
+void midi_send_tcquarterframe(MIDIDevice* device, uint8_t time);
 
 /**
  * @brief Send a song position message via the given device.
@@ -198,7 +198,7 @@ void midi_send_tcquarterframe(MidiDevice* device, uint8_t time);
  * @param device the device to use for sending
  * @param pos the song position
  */
-void midi_send_songposition(MidiDevice* device, uint16_t pos);
+void midi_send_songposition(MIDIDevice* device, uint16_t pos);
 
 /**
  * @brief Send a song select message via the given device.
@@ -206,14 +206,14 @@ void midi_send_songposition(MidiDevice* device, uint16_t pos);
  * @param device the device to use for sending
  * @param song the song to select
  */
-void midi_send_songselect(MidiDevice* device, uint8_t song);
+void midi_send_songselect(MIDIDevice* device, uint8_t song);
 
 /**
  * @brief Send a tune request message via the given device.
  *
  * @param device the device to use for sending
  */
-void midi_send_tunerequest(MidiDevice* device);
+void midi_send_tunerequest(MIDIDevice* device);
 
 /**
  * @brief Send a byte via the given device.
@@ -226,7 +226,7 @@ void midi_send_tunerequest(MidiDevice* device);
  * @param device the device to use for sending
  * @param b the byte to send
  */
-void midi_send_byte(MidiDevice* device, uint8_t b);
+void midi_send_byte(MIDIDevice* device, uint8_t b);
 
 /**
  * @brief Send up to 3 bytes of data
@@ -239,7 +239,7 @@ void midi_send_byte(MidiDevice* device, uint8_t b);
  * @param byte1 the second byte, ignored if cnt % 4 != 2
  * @param byte2 the third byte, ignored if cnt % 4 != 3
  */
-void midi_send_data(MidiDevice* device, uint16_t count, uint8_t byte0, uint8_t byte1, uint8_t byte2);
+void midi_send_data(MIDIDevice* device, uint16_t count, uint8_t byte0, uint8_t byte1, uint8_t byte2);
 
 /**
  * @brief Send an array of formatted midi data.
@@ -250,7 +250,7 @@ void midi_send_data(MidiDevice* device, uint16_t count, uint8_t byte0, uint8_t b
  * @param count the count of bytes to send
  * @param array the array of bytes
  */
-void midi_send_array(MidiDevice* device, uint16_t count, uint8_t* array);
+void midi_send_array(MIDIDevice* device, uint16_t count, uint8_t* array);
 
 /**@}*/
 
@@ -273,7 +273,7 @@ void midi_send_array(MidiDevice* device, uint16_t count, uint8_t* array);
  * @param device the device associate with
  * @param func the callback function to register
  */
-void midi_register_cc_callback(MidiDevice* device, midi_three_byte_func_t func);
+void midi_register_cc_callback(MIDIDevice* device, midi_three_byte_func_t func);
 
 /**
  * @brief Register a note on callback.
@@ -281,7 +281,7 @@ void midi_register_cc_callback(MidiDevice* device, midi_three_byte_func_t func);
  * @param device the device associate with
  * @param func the callback function to register
  */
-void midi_register_noteon_callback(MidiDevice* device, midi_three_byte_func_t func);
+void midi_register_noteon_callback(MIDIDevice* device, midi_three_byte_func_t func);
 
 /**
  * @brief Register a note off callback.
@@ -289,7 +289,7 @@ void midi_register_noteon_callback(MidiDevice* device, midi_three_byte_func_t fu
  * @param device the device associate with
  * @param func the callback function to register
  */
-void midi_register_noteoff_callback(MidiDevice* device, midi_three_byte_func_t func);
+void midi_register_noteoff_callback(MIDIDevice* device, midi_three_byte_func_t func);
 
 /**
  * @brief Register an after touch callback.
@@ -298,7 +298,7 @@ void midi_register_noteoff_callback(MidiDevice* device, midi_three_byte_func_t f
  * @param func the callback function to register
  */
 
-void midi_register_aftertouch_callback(MidiDevice* device, midi_three_byte_func_t func);
+void midi_register_aftertouch_callback(MIDIDevice* device, midi_three_byte_func_t func);
 
 /**
  * @brief Register a pitch bend callback.
@@ -306,7 +306,7 @@ void midi_register_aftertouch_callback(MidiDevice* device, midi_three_byte_func_
  * @param device the device associate with
  * @param func the callback function to register
  */
-void midi_register_pitchbend_callback(MidiDevice* device, midi_three_byte_func_t func);
+void midi_register_pitchbend_callback(MIDIDevice* device, midi_three_byte_func_t func);
 
 /**
  * @brief Register a song position callback.
@@ -314,7 +314,7 @@ void midi_register_pitchbend_callback(MidiDevice* device, midi_three_byte_func_t
  * @param device the device associate with
  * @param func the callback function to register
  */
-void midi_register_songposition_callback(MidiDevice* device, midi_three_byte_func_t func);
+void midi_register_songposition_callback(MIDIDevice* device, midi_three_byte_func_t func);
 
 // two byte funcs
 
@@ -324,7 +324,7 @@ void midi_register_songposition_callback(MidiDevice* device, midi_three_byte_fun
  * @param device the device associate with
  * @param func the callback function to register
  */
-void midi_register_progchange_callback(MidiDevice* device, midi_two_byte_func_t func);
+void midi_register_progchange_callback(MIDIDevice* device, midi_two_byte_func_t func);
 
 /**
  * @brief Register a channel pressure callback.
@@ -332,7 +332,7 @@ void midi_register_progchange_callback(MidiDevice* device, midi_two_byte_func_t 
  * @param device the device associate with
  * @param func the callback function to register
  */
-void midi_register_chanpressure_callback(MidiDevice* device, midi_two_byte_func_t func);
+void midi_register_chanpressure_callback(MIDIDevice* device, midi_two_byte_func_t func);
 
 /**
  * @brief Register a song select callback.
@@ -340,7 +340,7 @@ void midi_register_chanpressure_callback(MidiDevice* device, midi_two_byte_func_
  * @param device the device associate with
  * @param func the callback function to register
  */
-void midi_register_songselect_callback(MidiDevice* device, midi_two_byte_func_t func);
+void midi_register_songselect_callback(MIDIDevice* device, midi_two_byte_func_t func);
 
 /**
  * @brief Register a tc quarter frame callback.
@@ -348,7 +348,7 @@ void midi_register_songselect_callback(MidiDevice* device, midi_two_byte_func_t 
  * @param device the device associate with
  * @param func the callback function to register
  */
-void midi_register_tc_quarterframe_callback(MidiDevice* device, midi_two_byte_func_t func);
+void midi_register_tc_quarterframe_callback(MIDIDevice* device, midi_two_byte_func_t func);
 
 // one byte funcs
 
@@ -360,7 +360,7 @@ void midi_register_tc_quarterframe_callback(MidiDevice* device, midi_two_byte_fu
  * @param device the device associate with
  * @param func the callback function to register
  */
-void midi_register_realtime_callback(MidiDevice* device, midi_one_byte_func_t func);
+void midi_register_realtime_callback(MIDIDevice* device, midi_one_byte_func_t func);
 
 /**
  * @brief Register a tune request callback.
@@ -368,7 +368,7 @@ void midi_register_realtime_callback(MidiDevice* device, midi_one_byte_func_t fu
  * @param device the device associate with
  * @param func the callback function to register
  */
-void midi_register_tunerequest_callback(MidiDevice* device, midi_one_byte_func_t func);
+void midi_register_tunerequest_callback(MIDIDevice* device, midi_one_byte_func_t func);
 
 /**
  * @brief Register a sysex callback.
@@ -376,7 +376,7 @@ void midi_register_tunerequest_callback(MidiDevice* device, midi_one_byte_func_t
  * @param device the device associate with
  * @param func the callback function to register
  */
-void midi_register_sysex_callback(MidiDevice* device, midi_sysex_func_t func);
+void midi_register_sysex_callback(MIDIDevice* device, midi_sysex_func_t func);
 
 /**
  * @brief Register fall through callback.
@@ -388,7 +388,7 @@ void midi_register_sysex_callback(MidiDevice* device, midi_sysex_func_t func);
  * @param device the device associate with
  * @param func the callback function to register
  */
-void midi_register_fallthrough_callback(MidiDevice* device, midi_var_byte_func_t func);
+void midi_register_fallthrough_callback(MIDIDevice* device, midi_var_byte_func_t func);
 
 /**
  * @brief Register a catch all callback.
@@ -399,7 +399,7 @@ void midi_register_fallthrough_callback(MidiDevice* device, midi_var_byte_func_t
  * @param device the device associate with
  * @param func the callback function to register
  */
-void midi_register_catchall_callback(MidiDevice* device, midi_var_byte_func_t func);
+void midi_register_catchall_callback(MIDIDevice* device, midi_var_byte_func_t func);
 
 /**@}*/
 

@@ -24,10 +24,10 @@
 #endif
 
 // forward declarations, internally used to call the callbacks
-void midi_input_callbacks(MidiDevice* device, uint16_t cnt, uint8_t byte0, uint8_t byte1, uint8_t byte2);
-void midi_process_byte(MidiDevice* device, uint8_t input);
+void midi_input_callbacks(MIDIDevice* device, uint16_t cnt, uint8_t byte0, uint8_t byte1, uint8_t byte2);
+void midi_process_byte(MIDIDevice* device, uint8_t input);
 
-void midi_device_init(MidiDevice* device) {
+void midi_device_init(MIDIDevice* device) {
     device->input_state = IDLE;
     device->input_count = 0;
     bytequeue_init(&device->input_queue, device->input_queue_data, MIDI_INPUT_QUEUE_LENGTH);
@@ -58,21 +58,21 @@ void midi_device_init(MidiDevice* device) {
     device->pre_input_process_callback = NULL;
 }
 
-void midi_device_input(MidiDevice* device, uint8_t cnt, uint8_t* input) {
+void midi_device_input(MIDIDevice* device, uint8_t cnt, uint8_t* input) {
     uint8_t i;
     for (i = 0; i < cnt; i++)
         bytequeue_enqueue(&device->input_queue, input[i]);
 }
 
-void midi_device_set_send_func(MidiDevice* device, midi_var_byte_func_t send_func) {
+void midi_device_set_send_func(MIDIDevice* device, midi_var_byte_func_t send_func) {
     device->send_func = send_func;
 }
 
-void midi_device_set_pre_input_process_func(MidiDevice* device, midi_no_byte_func_t pre_process_func) {
+void midi_device_set_pre_input_process_func(MIDIDevice* device, midi_no_byte_func_t pre_process_func) {
     device->pre_input_process_callback = pre_process_func;
 }
 
-void midi_device_process(MidiDevice* device) {
+void midi_device_process(MIDIDevice* device) {
     // call the pre_input_process_callback if there is one
     if (device->pre_input_process_callback) device->pre_input_process_callback(device);
 
@@ -87,7 +87,7 @@ void midi_device_process(MidiDevice* device) {
     }
 }
 
-void midi_process_byte(MidiDevice* device, uint8_t input) {
+void midi_process_byte(MIDIDevice* device, uint8_t input) {
     if (midi_is_realtime(input)) {
         // call callback, store and restore state
         input_state_t state = device->input_state;
@@ -175,7 +175,7 @@ void midi_process_byte(MidiDevice* device, uint8_t input) {
     }
 }
 
-void midi_input_callbacks(MidiDevice* device, uint16_t cnt, uint8_t byte0, uint8_t byte1, uint8_t byte2) {
+void midi_input_callbacks(MIDIDevice* device, uint16_t cnt, uint8_t byte0, uint8_t byte1, uint8_t byte2) {
     // did we end up calling a callback?
     bool called = false;
     if (device->input_state == SYSEX_MESSAGE) {

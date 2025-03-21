@@ -38,6 +38,7 @@
 #define SDI_PRINT   SDI_PR_CLOSE
 #endif
 
+#define dprintf printf
 
 void Delay_Init(void);
 void Delay_Us (uint32_t n);

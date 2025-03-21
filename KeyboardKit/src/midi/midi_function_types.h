@@ -31,16 +31,16 @@ extern "C" {
 #include <stdbool.h>
 
 // forward declaration
-typedef struct _midi_device MidiDevice;
+typedef struct __MIDIDevice MIDIDevice;
 
-typedef void (*midi_one_byte_func_t)(MidiDevice *device, uint8_t byte);
-typedef void (*midi_two_byte_func_t)(MidiDevice *device, uint8_t byte0, uint8_t byte1);
-typedef void (*midi_three_byte_func_t)(MidiDevice *device, uint8_t byte0, uint8_t byte1, uint8_t byte2);
+typedef void (*midi_one_byte_func_t)(MIDIDevice *device, uint8_t byte);
+typedef void (*midi_two_byte_func_t)(MIDIDevice *device, uint8_t byte0, uint8_t byte1);
+typedef void (*midi_three_byte_func_t)(MIDIDevice *device, uint8_t byte0, uint8_t byte1, uint8_t byte2);
 // all bytes after count bytes should be ignored
-typedef void (*midi_var_byte_func_t)(MidiDevice *device, uint16_t count, uint8_t byte0, uint8_t byte1, uint8_t byte2);
+typedef void (*midi_var_byte_func_t)(MIDIDevice *device, uint16_t count, uint8_t byte0, uint8_t byte1, uint8_t byte2);
 
 // the start byte tells you how far into the sysex message you are, the data_length tells you how many bytes data is
-typedef void (*midi_sysex_func_t)(MidiDevice *device, uint16_t start_byte, uint8_t data_length, uint8_t *data);
+typedef void (*midi_sysex_func_t)(MIDIDevice *device, uint16_t start_byte, uint8_t data_length, uint8_t *data);
 
 #ifdef __cplusplus
 }
