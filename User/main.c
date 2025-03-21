@@ -33,6 +33,8 @@
 #include "command.h"
 #include "usbd_user.h"
 #include "packet.h"
+#include "qmk_midi.h"
+#include "process_midi.h"
 
 /* Global typedef */
 
@@ -735,6 +737,7 @@ int main(void)
     // Encoder_Init_TIM8();
     sfud_device_init(&sfud_norflash0);
     keyboard_init();
+    setup_midi();
     keyboard_scan();
     if (KEY_FN_K4.state && KEY_FN_K5.state)
     {

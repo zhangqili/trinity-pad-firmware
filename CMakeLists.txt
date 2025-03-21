@@ -52,6 +52,9 @@ include_directories(User
                     fezui/ui
                     fezui/src
                     KeyboardKit/src
+                    KeyboardKit/src/midi
+                    KeyboardKit/src/midi/bytequeue
+                    KeyboardKit/src/midi/Config
                     KeyboardKit/user
                     KeyboardKit/littlefs
                     KeyboardKit/usb
@@ -64,6 +67,7 @@ include_directories(User
                     CherryUSB/core
                     CherryUSB/common
                     CherryUSB/class/hid
+                    CherryUSB/class/midi
                     )
                     
 
@@ -77,6 +81,8 @@ file(GLOB_RECURSE SOURCES
                 "Core/core_riscv.c" 
                 "Debug/debug.c"
                 "KeyboardKit/src/*.c" 
+                "KeyboardKit/src/midi/*.c" 
+                "KeyboardKit/src/midi/bytequeue*.c" 
                 "KeyboardKit/user/*.c" 
                 "KeyboardKit/littlefs/*.c" 
                 #"KeyboardKit/usb/hid_descriptor.c" 
