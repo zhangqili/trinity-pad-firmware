@@ -763,6 +763,16 @@ int main(void)
     TIM7_INT_Init(14400 / 8 - 1, 10 - 1);
     rgb_init_flash();
     analog_reset_range();
+    //void midi_task_286ms(uint8_t busid);
+    //while (1)
+    //{
+    //    midi_task_286ms(0);
+    //    GPIO_WriteBit(LED_GPIO_Port, LED_Pin, !GPIO_ReadInputDataBit(LED_GPIO_Port, LED_Pin));
+    //    rgb_update();
+    //    Delay_Ms(286);
+    //
+    //}
+    
     while (1)
     {
         // extern void hid_keyboard_test(void);

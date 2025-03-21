@@ -1216,3 +1216,8 @@ int joystick_hid_send(uint8_t *report, uint16_t len)
 {
     return hid_joystick_send(report, len);
 }
+
+//__WEAK int midi_send(MIDIBuffer *buffer)
+//{
+//    return usb_midi_send((uint8_t*)buffer);
+//}

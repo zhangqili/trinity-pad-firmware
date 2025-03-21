@@ -6,6 +6,9 @@
 #include "mouse.h"
 #include "ch32v30x.h"
 #include "usb_descriptor.h"
+#ifdef MIDI_ENABLE
+#include "usb_midi.h"
+#endif
 
 static const uint8_t *device_descriptor_callback(uint8_t speed)
 {
@@ -78,14 +81,15 @@ const struct usb_descriptor usb_descriptor = {
 
 enum
 {
-    HID_STATE_IDLE = 0,
-    HID_STATE_BUSY
+    USB_STATE_IDLE = 0,
+    USB_STATE_BUSY
 };
 
-USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX HIDBuffer keyboard_buffer;
-USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX HIDBuffer mouse_buffer;
-USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX HIDBuffer raw_buffer;
-USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX HIDBuffer shared_buffer;
+volatile USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX USBBuffer keyboard_buffer;
+volatile USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX USBBuffer mouse_buffer;
+volatile USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX USBBuffer raw_buffer;
+volatile USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX USBBuffer shared_buffer;
+volatile USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX USBBuffer midi_buffer;
 /*!< hid state ! Data can be sent only when state is idle  */
 
 static void usbd_event_handler(uint8_t busid, uint8_t event)
@@ -94,8 +98,8 @@ static void usbd_event_handler(uint8_t busid, uint8_t event)
     switch (event)
     {
     case USBD_EVENT_RESET:
-        keyboard_buffer.state = HID_STATE_IDLE;
-        raw_buffer.state = HID_STATE_IDLE;
+        keyboard_buffer.state = USB_STATE_IDLE;
+        raw_buffer.state = USB_STATE_IDLE;
         break;
     case USBD_EVENT_CONNECTED:
         break;
@@ -125,7 +129,7 @@ static void usbd_hid_keyboard_in_callback(uint8_t busid, uint8_t ep, uint32_t nb
     UNUSED(busid);
     UNUSED(ep);
     UNUSED(nbytes);
-    keyboard_buffer.state = HID_STATE_IDLE;
+    keyboard_buffer.state = USB_STATE_IDLE;
 }
 
 static void usbd_hid_keyboard_out_callback(uint8_t busid, uint8_t ep, uint32_t nbytes)
@@ -146,7 +150,7 @@ static void usbd_hid_raw_in_callback(uint8_t busid, uint8_t ep, uint32_t nbytes)
     UNUSED(busid);
     UNUSED(ep);
     UNUSED(nbytes);
-    raw_buffer.state = HID_STATE_IDLE;
+    raw_buffer.state = USB_STATE_IDLE;
 }
 
 static void usbd_hid_raw_out_callback(uint8_t busid, uint8_t ep, uint32_t nbytes)
@@ -164,15 +168,32 @@ static void usbd_hid_shared_in_callback(uint8_t busid, uint8_t ep, uint32_t nbyt
     UNUSED(busid);
     UNUSED(ep);
     UNUSED(nbytes);
-    shared_buffer.state = HID_STATE_IDLE;
+    shared_buffer.state = USB_STATE_IDLE;
 }
 
-__unused static void usbd_hid_mouse_in_callback(uint8_t busid, uint8_t ep, uint32_t nbytes)
+//static void usbd_hid_mouse_in_callback(uint8_t busid, uint8_t ep, uint32_t nbytes)
+//{
+//    UNUSED(busid);
+//    UNUSED(ep);
+//    UNUSED(nbytes);
+//    mouse_buffer.state = USB_STATE_IDLE;
+//}
+
+/* Store example melody as an array of note values */
+void usbd_midi_bulk_out(uint8_t busid, uint8_t ep, uint32_t nbytes)
 {
-    UNUSED(busid);
-    UNUSED(ep);
-    UNUSED(nbytes);
-    mouse_buffer.state = HID_STATE_IDLE;
+    (void)busid;
+    (void)ep;
+    (void)nbytes;
+}
+
+void usbd_midi_bulk_in(uint8_t busid, uint8_t ep, uint32_t nbytes)
+{
+    (void)busid;
+    (void)ep;
+    (void)nbytes;
+
+    midi_buffer.state = USB_STATE_IDLE;
 }
 
 static struct usbd_endpoint keyboard_in_ep = {
@@ -199,9 +220,22 @@ static struct usbd_endpoint shared_in_ep = {
     .ep_cb = usbd_hid_shared_in_callback,
     .ep_addr = SHARED_EPIN_ADDR};
 
+
+struct usbd_endpoint midi_out_ep = {
+    .ep_addr = MIDI_EPOUT_ADDR,
+    .ep_cb = usbd_midi_bulk_out
+};
+
+struct usbd_endpoint midi_in_ep = {
+    .ep_addr = MIDI_EPIN_ADDR,
+    .ep_cb = usbd_midi_bulk_in
+};
+
 static struct usbd_interface intf0;
 static struct usbd_interface intf1;
 static struct usbd_interface intf2;
+static struct usbd_interface intf3;
+static struct usbd_interface intf4;
 //static struct usbd_interface intf3;
 
 void usb_init(void)
@@ -217,6 +251,11 @@ void usb_init(void)
     //usbd_add_endpoint(0, &mouse_in_ep);
     usbd_add_interface(0, usbd_hid_init_intf(0, &intf2, SharedReport, sizeof(SharedReport)));
     usbd_add_endpoint(0, &shared_in_ep);
+    usbd_add_interface(0, &intf3);
+    usbd_add_interface(0, &intf4);
+    usbd_add_endpoint(0, &midi_out_ep);
+    usbd_add_endpoint(0, &midi_in_ep);
+
     usbd_initialize(0, USBHS_BASE, usbd_event_handler);
 }
 
@@ -224,7 +263,7 @@ int hid_keyboard_send(uint8_t *buffer, uint8_t size)
 {
     if (size <= 8)
     {
-        if (keyboard_buffer.state == HID_STATE_BUSY)
+        if (keyboard_buffer.state == USB_STATE_BUSY)
         {
             return 1;
         }
@@ -234,11 +273,11 @@ int hid_keyboard_send(uint8_t *buffer, uint8_t size)
         {
             return 1;
         }
-        keyboard_buffer.state = HID_STATE_BUSY;
+        keyboard_buffer.state = USB_STATE_BUSY;
     }
     else
     {
-        if (shared_buffer.state == HID_STATE_BUSY)
+        if (shared_buffer.state == USB_STATE_BUSY)
         {
             return 1;
         }
@@ -249,14 +288,14 @@ int hid_keyboard_send(uint8_t *buffer, uint8_t size)
         {
             return 1;
         }
-        shared_buffer.state = HID_STATE_BUSY;
+        shared_buffer.state = USB_STATE_BUSY;
     }
     return 0;
 }
 
 int hid_mouse_send(uint8_t *buffer)
 {
-    if (shared_buffer.state == HID_STATE_BUSY)
+    if (shared_buffer.state == USB_STATE_BUSY)
     {
         return 1;
     }
@@ -270,13 +309,13 @@ int hid_mouse_send(uint8_t *buffer)
     {
         return 1;
     }
-    shared_buffer.state = HID_STATE_BUSY;
+    shared_buffer.state = USB_STATE_BUSY;
     return 0;
 }
 
 int hid_raw_send(uint8_t *buffer, int size)
 {
-    if (raw_buffer.state == HID_STATE_BUSY)
+    if (raw_buffer.state == USB_STATE_BUSY)
     {
         return 1;
     }
@@ -297,13 +336,13 @@ int hid_raw_send(uint8_t *buffer, int size)
     {
         return 1;
     }
-    raw_buffer.state = HID_STATE_BUSY;
+    raw_buffer.state = USB_STATE_BUSY;
     return 0;
 }
 
 int hid_extra_send(uint8_t report_id, uint16_t usage)
 {
-    if (shared_buffer.state == HID_STATE_BUSY)
+    if (shared_buffer.state == USB_STATE_BUSY)
     {
         return 1;
     }
@@ -317,13 +356,13 @@ int hid_extra_send(uint8_t report_id, uint16_t usage)
     {
         return 1;
     }
-    shared_buffer.state = HID_STATE_BUSY;
+    shared_buffer.state = USB_STATE_BUSY;
     return 0;
 }
 
 int hid_joystick_send(uint8_t *buffer, int size)
 {
-    if (shared_buffer.state == HID_STATE_BUSY)
+    if (shared_buffer.state == USB_STATE_BUSY)
     {
         return 1;
     }
@@ -337,6 +376,71 @@ int hid_joystick_send(uint8_t *buffer, int size)
     {
         return 1;
     }
-    shared_buffer.state = HID_STATE_BUSY;
+    shared_buffer.state = USB_STATE_BUSY;
+    return 0;
+}
+
+
+void midi_task_286ms(uint8_t busid)
+{
+    static uint32_t s_note_pos;
+    static uint32_t s_note_pos_prev;
+    static uint8_t buffer[4];
+    static const uint8_t s_note_sequence[] = {
+        74, 78, 81, 86, 90, 93, 98, 102, 57, 61, 66, 69, 73, 78, 81, 85, 88, 92, 97, 100, 97, 92, 88, 85, 81, 78,
+        74, 69, 66, 62, 57, 62, 66, 69, 74, 78, 81, 86, 90, 93, 97, 102, 97, 93, 90, 85, 81, 78, 73, 68, 64, 61,
+        56, 61, 64, 68, 74, 78, 81, 86, 90, 93, 98, 102
+    };
+    const uint8_t cable_num = 0; /* MIDI jack associated with USB endpoint */
+    const uint8_t channel = 1;   /* 0 for channel 1 */
+    int ret;
+
+    if (usb_device_is_configured(busid) == false) {
+        return;
+    }
+
+    buffer[0] = (cable_num << 4) | MIDI_CIN_NOTE_ON;
+    buffer[1] = NoteOn | channel;
+    buffer[2] = s_note_sequence[s_note_pos];
+    buffer[3] = 127;  /* velocity */
+    usb_midi_send(buffer);
+    while (midi_buffer.state) {
+    }
+
+    if (s_note_pos > 0) {
+        s_note_pos_prev = s_note_pos - 1;
+    } else {
+        s_note_pos_prev = sizeof(s_note_sequence) - 1;
+    }
+    buffer[0] = (cable_num << 4) | MIDI_CIN_NOTE_OFF;
+    buffer[1] = NoteOff | channel;
+    buffer[2] = s_note_sequence[s_note_pos_prev];
+    buffer[3] = 0;  /* velocity */
+    usb_midi_send(buffer);
+    while (midi_buffer.state) {
+    }
+
+    s_note_pos++;
+    if (s_note_pos >= sizeof(s_note_sequence)) {
+        s_note_pos = 0;
+    }
+}
+
+int usb_midi_send(uint8_t* buffer)
+{
+    if (midi_buffer.state == USB_STATE_BUSY)
+    {
+        return 1;
+    }
+    else
+    {
+    }
+    memcpy(midi_buffer.send_buffer, buffer, 4);
+    int ret = usbd_ep_start_write(0, MIDI_EPIN_ADDR, midi_buffer.send_buffer, 4);
+    if (ret < 0)
+    {
+        return 1;
+    }
+    midi_buffer.state = USB_STATE_BUSY;
     return 0;
 }

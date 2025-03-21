@@ -64,6 +64,7 @@ include_directories(User
                     CherryUSB/core
                     CherryUSB/common
                     CherryUSB/class/hid
+                    CherryUSB/class/midi
                     )
                     
 
