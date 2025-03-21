@@ -128,12 +128,22 @@ static void cc_callback(MIDIDevice* device, uint8_t chan, uint8_t num, uint8_t v
 void midi_init(void);
 
 void setup_midi(void) {
-#ifdef MIDI_ADVANCED
     midi_init();
-#endif
     midi_device_init(&midi_device);
     midi_device_set_send_func(&midi_device, usb_send_func);
     midi_device_set_pre_input_process_func(&midi_device, usb_get_midi);
     midi_register_fallthrough_callback(&midi_device, fallthrough_callback);
     midi_register_cc_callback(&midi_device, cc_callback);
+}
+
+
+__WEAK void send_midi_packet(MIDIEventPacket* event)
+{
+    UNUSED(event);
+}
+
+__WEAK bool recv_midi_packet(MIDIEventPacket* const event)
+{
+    UNUSED(event);
+    return false;
 }

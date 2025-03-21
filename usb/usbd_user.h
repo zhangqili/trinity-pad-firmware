@@ -26,7 +26,7 @@ extern uint32_t g_usb_raw_report_count1;
 
 extern uint32_t g_usb_keyboard_interval;
 
-extern volatile USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX USBBuffer raw_buffer;
+extern USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX USBBuffer raw_buffer;
 
 void usb_init(void);
 int hid_keyboard_send(uint8_t *buffer, uint8_t size);

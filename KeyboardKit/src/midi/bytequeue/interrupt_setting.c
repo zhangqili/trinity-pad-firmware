@@ -21,6 +21,7 @@
 // implementations of the typedef and these functions
 
 #include "interrupt_setting.h"
+/*
 #if defined(__AVR__)
 #    include <avr/interrupt.h>
 
@@ -34,7 +35,7 @@ void restore_interrupt_setting(interrupt_setting_t setting) {
     SREG = setting;
 }
 #elif defined(__arm__)
-#    include <ch.h>
+//#    include <ch.h>
 
 interrupt_setting_t store_and_clear_interrupt(void) {
     chSysLock();
@@ -45,3 +46,4 @@ void restore_interrupt_setting(interrupt_setting_t setting) {
     chSysUnlock();
 }
 #endif
+*/

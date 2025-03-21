@@ -6,6 +6,7 @@
 #include "mouse.h"
 #include "ch32v30x.h"
 #include "usb_descriptor.h"
+#include "qmk_midi.h"
 #ifdef MIDI_ENABLE
 #include "usb_midi.h"
 #endif
@@ -85,11 +86,11 @@ enum
     USB_STATE_BUSY
 };
 
-volatile USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX USBBuffer keyboard_buffer;
-volatile USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX USBBuffer mouse_buffer;
-volatile USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX USBBuffer raw_buffer;
-volatile USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX USBBuffer shared_buffer;
-volatile USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX USBBuffer midi_buffer;
+USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX USBBuffer keyboard_buffer;
+USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX USBBuffer mouse_buffer;
+USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX USBBuffer raw_buffer;
+USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX USBBuffer shared_buffer;
+USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX USBBuffer midi_buffer;
 /*!< hid state ! Data can be sent only when state is idle  */
 
 static void usbd_event_handler(uint8_t busid, uint8_t event)
@@ -387,13 +388,10 @@ void midi_task_286ms(uint8_t busid)
     static uint32_t s_note_pos_prev;
     static uint8_t buffer[4];
     static const uint8_t s_note_sequence[] = {
-        74, 78, 81, 86, 90, 93, 98, 102, 57, 61, 66, 69, 73, 78, 81, 85, 88, 92, 97, 100, 97, 92, 88, 85, 81, 78,
-        74, 69, 66, 62, 57, 62, 66, 69, 74, 78, 81, 86, 90, 93, 97, 102, 97, 93, 90, 85, 81, 78, 73, 68, 64, 61,
-        56, 61, 64, 68, 74, 78, 81, 86, 90, 93, 98, 102
+        74
     };
     const uint8_t cable_num = 0; /* MIDI jack associated with USB endpoint */
     const uint8_t channel = 1;   /* 0 for channel 1 */
-    int ret;
 
     if (usb_device_is_configured(busid) == false) {
         return;
@@ -403,7 +401,7 @@ void midi_task_286ms(uint8_t busid)
     buffer[1] = NoteOn | channel;
     buffer[2] = s_note_sequence[s_note_pos];
     buffer[3] = 127;  /* velocity */
-    usb_midi_send(buffer);
+    send_midi_packet((MIDIEventPacket*)buffer);
     while (midi_buffer.state) {
     }
 
@@ -416,7 +414,7 @@ void midi_task_286ms(uint8_t busid)
     buffer[1] = NoteOff | channel;
     buffer[2] = s_note_sequence[s_note_pos_prev];
     buffer[3] = 0;  /* velocity */
-    usb_midi_send(buffer);
+    send_midi_packet((MIDIEventPacket*)buffer);
     while (midi_buffer.state) {
     }
 

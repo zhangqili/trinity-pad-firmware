@@ -27,27 +27,27 @@ void bytequeue_init(byteQueue_t* queue, uint8_t* dataArray, byteQueueIndex_t arr
 }
 
 bool bytequeue_enqueue(byteQueue_t* queue, uint8_t item) {
-    interrupt_setting_t setting = store_and_clear_interrupt();
+    //interrupt_setting_t setting = store_and_clear_interrupt();
     // full
     if (((queue->end + 1) % queue->length) == queue->start) {
-        restore_interrupt_setting(setting);
+        //restore_interrupt_setting(setting);
         return false;
     } else {
         queue->data[queue->end] = item;
         queue->end              = (queue->end + 1) % queue->length;
-        restore_interrupt_setting(setting);
+        //restore_interrupt_setting(setting);
         return true;
     }
 }
 
 byteQueueIndex_t bytequeue_length(byteQueue_t* queue) {
     byteQueueIndex_t    len;
-    interrupt_setting_t setting = store_and_clear_interrupt();
+    //interrupt_setting_t setting = store_and_clear_interrupt();
     if (queue->end >= queue->start)
         len = queue->end - queue->start;
     else
         len = (queue->length - queue->start) + queue->end;
-    restore_interrupt_setting(setting);
+    //restore_interrupt_setting(setting);
     return len;
 }
 
@@ -58,7 +58,7 @@ uint8_t bytequeue_get(byteQueue_t* queue, byteQueueIndex_t index) {
 
 // we just update the start index to remove elements
 void bytequeue_remove(byteQueue_t* queue, byteQueueIndex_t numToRemove) {
-    interrupt_setting_t setting = store_and_clear_interrupt();
+    //interrupt_setting_t setting = store_and_clear_interrupt();
     queue->start                = (queue->start + numToRemove) % queue->length;
-    restore_interrupt_setting(setting);
+    //restore_interrupt_setting(setting);
 }

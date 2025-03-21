@@ -11,6 +11,7 @@
 #include "lfs.h"
 #include "usbd_user.h"
 #include "snake.h"
+#include "qmk_midi.h"
 
 const uint16_t g_default_keymap[LAYER_NUM][ADVANCED_KEY_NUM + KEY_NUM] = {
     {
@@ -1215,6 +1216,11 @@ int keyboard_extra_hid_send(uint8_t report_id, uint16_t usage)
 int joystick_hid_send(uint8_t *report, uint16_t len)
 {
     return hid_joystick_send(report, len);
+}
+
+void send_midi_packet(MIDIEventPacket* event)
+{
+    usb_midi_send((uint8_t*)event);
 }
 
 //__WEAK int midi_send(MIDIBuffer *buffer)
