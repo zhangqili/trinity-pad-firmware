@@ -8,6 +8,7 @@
 #include "fezui.h"
 #include "keyboard.h"
 #include "fezui_var.h"
+#include "layer.h"
 
 
 static fezui_animated_listbox_t mainmenu;

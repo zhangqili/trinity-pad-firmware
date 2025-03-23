@@ -13,9 +13,11 @@
 #define ADVANCED_KEY_NUM      4
 #define KEY_NUM               (6+3)
 //#define CONTINUOUS_POLL
-//#define ENABLE_FIXED_POINT_EXPERIMENTAL
+//#define FIXED_POINT_EXPERIMENTAL
 #define OPTIMIZE_FOR_FLOAT_DIVISION
 #define DEBUG_INTERVAL 1
+#define DYNAMICKEY_ENABLE
+#define STORAGE_ENABLE
 
 /********************/
 /* Keyboard Default */
@@ -39,7 +41,7 @@
 /*******/
 /* RGB */
 /*******/
-#define ENABLE_RGB              
+#define RGB_ENABLE              
 #define RGB_NUM                 (ADVANCED_KEY_NUM)
 #define ONE_PULSE               (7)
 #define ZERO_PULSE              (3)
@@ -71,17 +73,17 @@
 /* Filter */
 /**********/
 #define TOLERANCE               3
-#define ENABLE_FILTER
+#define FILTER_ENABLE
 
 /**********/
 /* Record */
 /**********/
 #define STATIC_RECORD
-#define ENABLE_ANALOG_HISTORY
-#define ENABLE_KPS
-#define ENABLE_KPS_HISTORY
-#define ENABLE_BIT_STREAM
-#define ENABLE_COUNTER
+#define ANALOG_HISTORY_ENABLE
+#define KPS_ENABLE
+#define KPS_HISTORY_ENABLE
+#define BIT_STREAM_ENABLE
+#define COUNTER_ENABLE
 
 #define KPS_HISTORY_LENGTH      65
 #define BIT_STREAM_LENGTH       128
@@ -100,7 +102,7 @@
 #define FIXED_NUM_CONFIGURATIONS 1
 
 #define MANUFACTURER "Lzq12345"
-#define PRODUCT "Trinity Keypad"
+#define PRODUCT "Trinity Pad"
 #define SERIAL_NUMBER "2022123456"
 
 #define RAW_ENABLE

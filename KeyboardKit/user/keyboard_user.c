@@ -12,6 +12,8 @@
 #include "usbd_user.h"
 #include "snake.h"
 #include "qmk_midi.h"
+#include "layer.h"
+
 
 const uint16_t g_default_keymap[LAYER_NUM][ADVANCED_KEY_NUM + KEY_NUM] = {
     {
@@ -1143,10 +1145,6 @@ void keyboard_reboot()
     __disable_irq();
     NVIC_SystemReset();
 }
-void keyboard_post_process()
-{
-    
-}
 void keyboard_delay(uint32_t ms)
 {
     Delay_Ms(ms);
@@ -1158,9 +1156,13 @@ int mouse_hid_send(uint8_t *report, uint16_t len)
     return hid_mouse_send(report);
 }
 
-void keyboard_user_handler(uint8_t code)
+void keyboard_user_event_handler(KeyboardEvent event)
 {
-    switch (code)
+    if (event.event != KEYBOARD_EVENT_KEY_DOWN)
+    {
+        return;
+    }
+    switch (MODIFIER(event.keycode))
     {
     case USER_OPENMENU:
         fezui_page_t* launcherpage_get_current_page();
@@ -1171,6 +1173,8 @@ void keyboard_user_handler(uint8_t code)
             layer_reset(0);
             layer_reset(1);
             layer_reset(2);
+            layer_reset(3);
+            layer_reset(4);
         }
         break;
     case USER_SNAKE_LAUNCH:
@@ -1195,7 +1199,7 @@ void keyboard_user_handler(uint8_t code)
     case USER_SNAKE_UP:
     case USER_SNAKE_RIGHT:
     case USER_SNAKE_DOWN:
-        snake_turn(&g_snake, code&0x07);
+        snake_turn(&g_snake, MODIFIER(event.keycode)&0x07);
         break;
     default:
         g_keyboard_state = KEYBOARD_IDLE;
@@ -1208,7 +1212,7 @@ int hid_send(uint8_t *report, uint16_t len)
     return hid_raw_send(report, len);
 }
 
-int keyboard_extra_hid_send(uint8_t report_id, uint16_t usage)
+int extra_key_hid_send(uint8_t report_id, uint16_t usage)
 {
     return hid_extra_send(report_id, usage);
 }
@@ -1222,8 +1226,3 @@ void send_midi_packet(MIDIEventPacket* event)
 {
     usb_midi_send((uint8_t*)event);
 }
-
-//__WEAK int midi_send(MIDIBuffer *buffer)
-//{
-//    return usb_midi_send((uint8_t*)buffer);
-//}

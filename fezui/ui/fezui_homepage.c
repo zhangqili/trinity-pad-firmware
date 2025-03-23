@@ -12,6 +12,7 @@
 #include "rgb.h"
 #include "keyboard.h"
 #include "usbd_user.h"
+#include "layer.h"
 
 #define MARGIN_LEFT           65
 #define PADDING_UP            0

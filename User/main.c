@@ -825,12 +825,12 @@ void analog_average()
         {
             ADC_sum += ADC_Buffer[i + j * ADVANCED_KEY_NUM];
         }
-#ifndef ENABLE_FIXED_POINT_EXPERIMENTAL
+#ifndef FIXED_POINT_EXPERIMENTAL
         g_ADC_Averages[i] = ADC_sum/64.0f;
 #else
         g_ADC_Averages[i] = ADC_sum>>6;
 #endif
-#ifdef ENABLE_FILTER
+#ifdef FILTER_ENABLE
         g_ADC_Averages[i] = adaptive_schimidt_filter(g_analog_filters+i,g_ADC_Averages[i]);
 #endif
     }

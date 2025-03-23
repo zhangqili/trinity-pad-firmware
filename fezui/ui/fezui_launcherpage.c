@@ -8,6 +8,7 @@
 #include "fezui.h"
 #include "keyboard.h"
 #include "fezui_var.h"
+#include "layer.h"
 
 #define CENTER 32
 #define PADDING 64

@@ -6,12 +6,9 @@
 #include "keyboard.h"
 #include "analog.h"
 #include "keyboard_conf.h"
-#include "rgb.h"
-#include "dynamic_key.h"
 #include "mouse.h"
+#include "layer.h"
 #include "record.h"
-#include "storage.h"
-#include "joystick.h"
 #include "report.h"
 #include "process_midi.h"
 
@@ -19,13 +16,30 @@
 #include "string.h"
 #include "math.h"
 
+#ifdef RGB_ENABLE
+#include "rgb.h"
+#endif
+#ifdef STORAGE_ENABLE
+#include "storage.h"
+#endif
+#ifdef DYNAMICKEY_ENABLE
+#include "dynamic_key.h"
+#endif
+#ifdef EXTRAKEY_ENABLE
+#include "extra_key.h"
+#endif
+#ifdef JOYSTICK_ENABLE
+#include "joystick.h"
+#endif
+#ifdef MIDI_ENABLE
+#include "qmk_midi.h"
+#endif
+
 __WEAK const Keycode g_default_keymap[LAYER_NUM][ADVANCED_KEY_NUM + KEY_NUM];
 __WEAK AdvancedKey g_keyboard_advanced_keys[ADVANCED_KEY_NUM];
 __WEAK Key g_keyboard_keys[KEY_NUM];
 
 uint16_t g_keymap[LAYER_NUM][ADVANCED_KEY_NUM + KEY_NUM];
-
-DynamicKey g_keyboard_dynamic_keys[DYNAMIC_KEY_NUM];
 
 uint8_t g_keyboard_led_state;
 
@@ -44,122 +58,124 @@ bool g_keyboard_nkro_enable;
 static Keyboard_NKROBuffer keyboard_nkro_buffer;
 #endif
 static Keyboard_6KROBuffer keyboard_6kro_buffer;
-static uint16_t keyboard_consumer_buffer;
-static uint16_t keyboard_system_buffer;
 
 KeyboardEvent keyboard_make_event(Key*key, uint8_t event)
 {
     if (event == KEYBOARD_EVENT_KEY_DOWN)
         layer_cache_set(key->id, g_current_layer);
-    Keycode keycode = layer_cache_get_keycode(key->id);
-    return MK_EVENT(keycode, event);
+    return MK_EVENT(layer_cache_get_keycode(key->id), event);
 }
 
 void keyboard_event_handler(KeyboardEvent event)
 {
+    switch (KEYCODE(event.keycode))
+    {
+#ifdef MOUSE_ENABLE
+    case MOUSE_COLLECTION:
+        mouse_event_handler(event);
+        break;
+#endif
+#ifdef EXTRAKEY_ENABLE
+    case CONSUMER_COLLECTION:
+    case SYSTEM_COLLECTION:
+        extra_key_event_handler(event);
+        break;
+#endif
+#ifdef JOYSTICK_ENABLE
+    case JOYSTICK_COLLECTION:
+        joystick_event_handler(event);
+        break;
+#endif
+#ifdef DYNAMICKEY_ENABLE
+    case DYNAMIC_KEY:
+        if (event.event == KEYBOARD_EVENT_KEY_TRUE)
+        {
+            dynamic_key_add_buffer(&g_keyboard_dynamic_keys[MODIFIER(event.keycode)]);
+        }
+        break;
+#endif
+    case LAYER_CONTROL:
+        layer_control(event);
+        break;
+    case KEYBOARD_OPERATION:
+        keyboard_operation_event_handler(event);
+        break;
+    case KEY_USER:
+        keyboard_user_event_handler(event);
+        break;
+        
+    default:
+        switch (event.event)
+        {
+        case KEYBOARD_EVENT_KEY_UP:
+        case KEYBOARD_EVENT_KEY_DOWN:
+            BIT_SET(g_keyboard_send_flags, KEYBOARD_REPORT_FLAG);
+            break;
+        case KEYBOARD_EVENT_KEY_TRUE:
+            if (KEYCODE(event.keycode) <= KEY_EXSEL)
+            {
+#ifdef NKRO_ENABLE
+                if (g_keyboard_nkro_enable)
+                {
+                    keyboard_NKRObuffer_add(&keyboard_nkro_buffer, event.keycode);
+                }
+                else
+#endif
+                {
+                    keyboard_6KRObuffer_add(&keyboard_6kro_buffer, event.keycode);
+                }
+            }
+            break;
+        case KEYBOARD_EVENT_KEY_FALSE:
+            break;
+        default:
+            break;
+        }
+        break;
+    }
+}
+
+void keyboard_operation_event_handler(KeyboardEvent event)
+{
     switch (event.event)
     {
     case KEYBOARD_EVENT_KEY_UP:
-        if (KEYCODE(event.keycode) <= KEY_EXSEL)
-        {
-            BIT_SET(g_keyboard_send_flags, KEYBOARD_REPORT_FLAG);
-        }
-        else
-        {
-            switch (KEYCODE(event.keycode))
-            {
-            case MOUSE_COLLECTION:
-                BIT_SET(g_keyboard_send_flags, MOUSE_REPORT_FLAG);
-                break;
-            case CONSUMER_COLLECTION:
-                keyboard_consumer_buffer = 0;
-                BIT_SET(g_keyboard_send_flags, CONSUMER_REPORT_FLAG);
-                break;
-            case SYSTEM_COLLECTION:
-                keyboard_system_buffer = 0;
-                BIT_SET(g_keyboard_send_flags, SYSTEM_REPORT_FLAG);
-                break;
-            case JOYSTICK_COLLECTION:
-                BIT_SET(g_keyboard_send_flags, JOYSTICK_REPORT_FLAG);
-                break;
-            case LAYER_CONTROL:
-                layer_control(event.keycode,event.event);
-                break;
-            default:
-                break;
-            }
-        }
         break;
     case KEYBOARD_EVENT_KEY_DOWN:
-        if (KEYCODE(event.keycode) <= KEY_EXSEL)
+        switch (MODIFIER(event.keycode))
         {
-            BIT_SET(g_keyboard_send_flags, KEYBOARD_REPORT_FLAG);
-        }
-        else
-        {
-            switch (KEYCODE(event.keycode))
-            {
-            case MOUSE_COLLECTION:
-                BIT_SET(g_keyboard_send_flags, MOUSE_REPORT_FLAG);
-                break;
-            case CONSUMER_COLLECTION:
-                keyboard_consumer_buffer = CONSUMER_KEYCODE_TO_RAWCODE(MODIFIER(event.keycode));
-                BIT_SET(g_keyboard_send_flags, CONSUMER_REPORT_FLAG);
-                break;
-            case SYSTEM_COLLECTION:
-                keyboard_system_buffer = MODIFIER(event.keycode);
-                BIT_SET(g_keyboard_send_flags, SYSTEM_REPORT_FLAG);
-                break;
-            case JOYSTICK_COLLECTION:
-                BIT_SET(g_keyboard_send_flags, JOYSTICK_REPORT_FLAG);
-                break;
-            case LAYER_CONTROL:
-                layer_control(event.keycode,event.event);
-                break;
-            case KEYBOARD_OPERATION:
-                switch (MODIFIER(event.keycode))
-                {
-                case KEYBOARD_REBOOT:
-                    keyboard_reboot();
-                    break;
-                case KEYBOARD_FACTORY_RESET:
-                    keyboard_factory_reset();
-                    break;
-                case KEYBOARD_SAVE:
-                    keyboard_save();
-                    break;
-                case KEYBOARD_BOOTLOADER:
-                    keyboard_jump_to_bootloader();
-                    break;
-                case KEYBOARD_TOGGLE_DEBUG:
-                    g_keyboard_state = (g_keyboard_state != KEYBOARD_DEBUG);
-                    break;
-                case KEYBOARD_RESET_TO_DEFAULT:
-                    keyboard_reset_to_default();
-                    break;
-                case KEYBOARD_TOGGLE_NKRO:
-                    g_keyboard_nkro_enable = !g_keyboard_nkro_enable;
-                    break;
-                case KEYBOARD_CONFIG0:
-                case KEYBOARD_CONFIG1:
-                case KEYBOARD_CONFIG2:
-                case KEYBOARD_CONFIG3:
-                    keyboard_set_config_index((event.keycode >> 8) & 0x0F);
-                    break;
-                default:
-                    break;
-                }
-                break;
-            case KEY_USER:
-                keyboard_user_handler(MODIFIER(event.keycode));
-                break;
-            default:
-                break;
-            }
+        case KEYBOARD_REBOOT:
+            keyboard_reboot();
+            break;
+        case KEYBOARD_FACTORY_RESET:
+            keyboard_factory_reset();
+            break;
+        case KEYBOARD_SAVE:
+            keyboard_save();
+            break;
+        case KEYBOARD_BOOTLOADER:
+            keyboard_jump_to_bootloader();
+            break;
+        case KEYBOARD_TOGGLE_DEBUG:
+            g_keyboard_state = (g_keyboard_state != KEYBOARD_DEBUG);
+            break;
+        case KEYBOARD_RESET_TO_DEFAULT:
+            keyboard_reset_to_default();
+            break;
+        case KEYBOARD_TOGGLE_NKRO:
+            g_keyboard_nkro_enable = !g_keyboard_nkro_enable;
+            break;
+        case KEYBOARD_CONFIG0:
+        case KEYBOARD_CONFIG1:
+        case KEYBOARD_CONFIG2:
+        case KEYBOARD_CONFIG3:
+            keyboard_set_config_index((event.keycode >> 8) & 0x0F);
+            break;
+        default:
+            break;
         }
         break;
     case KEYBOARD_EVENT_KEY_TRUE:
-        keyboard_add_buffer(event.keycode);
         break;
     case KEYBOARD_EVENT_KEY_FALSE:
         break;
@@ -175,13 +191,13 @@ void keyboard_advanced_key_event_handler(AdvancedKey*key, KeyboardEvent event)
     case KEYBOARD_EVENT_KEY_DOWN:
         layer_cache_set(key->key.id, g_current_layer);
         keyboard_event_handler(event);
-#ifdef ENABLE_RGB
+#ifdef RGB_ENABLE
         rgb_activate(key->key.id);
 #endif
-#ifdef ENABLE_KPS
+#ifdef KPS_ENABLE
         record_kps_tick();
 #endif
-#ifdef ENABLE_COUNTER
+#ifdef COUNTER_ENABLE
         g_key_counts[key->key.id]++;
 #endif
         break;
@@ -191,6 +207,7 @@ void keyboard_advanced_key_event_handler(AdvancedKey*key, KeyboardEvent event)
     case KEYBOARD_EVENT_KEY_TRUE:
         switch (KEYCODE(event.keycode))
         {
+#ifdef JOYSTICK_ENABLE
         case JOYSTICK_COLLECTION:
             if (MODIFIER(event.keycode) & 0xE0)
             {
@@ -198,9 +215,10 @@ void keyboard_advanced_key_event_handler(AdvancedKey*key, KeyboardEvent event)
                 joystick_set_axis(MODIFIER(event.keycode), key->value);
                 break;
             }
+#endif
             // fall through
         default:
-            keyboard_add_buffer(event.keycode);
+            keyboard_event_handler(event);
             break;
         }
         break;
@@ -208,52 +226,6 @@ void keyboard_advanced_key_event_handler(AdvancedKey*key, KeyboardEvent event)
         break;
     default:
         break;
-    }
-}
-
-void keyboard_add_buffer(uint16_t keycode)
-{
-    if (KEYCODE(keycode) <= KEY_EXSEL)
-    {
-#ifdef NKRO_ENABLE
-        if (g_keyboard_nkro_enable)
-        {
-            keyboard_NKRObuffer_add(&keyboard_nkro_buffer, keycode);
-        }
-        else
-#endif
-        {
-            keyboard_6KRObuffer_add(&keyboard_6kro_buffer, keycode);
-        }
-    }
-    else
-    {
-        switch (KEYCODE(keycode))
-        {
-        case MOUSE_COLLECTION:
-            mouse_add_buffer(MODIFIER(keycode));
-            break;
-        case DYNAMIC_KEY:
-            dynamic_key_add_buffer(&g_keyboard_dynamic_keys[MODIFIER(keycode)]);
-            break;
-        case CONSUMER_COLLECTION:
-            if (!keyboard_consumer_buffer)
-            {
-                keyboard_consumer_buffer = CONSUMER_KEYCODE_TO_RAWCODE(MODIFIER(keycode));
-            }
-            break;
-        case SYSTEM_COLLECTION:
-            if (!keyboard_system_buffer)
-            {
-                keyboard_system_buffer = MODIFIER(keycode);
-            }
-            break;
-        case JOYSTICK_COLLECTION:
-            joystick_add_buffer(MODIFIER(keycode));
-            break;
-        default:
-            break;
-        }
     }
 }
 
@@ -328,8 +300,18 @@ void keyboard_NKRObuffer_clear(Keyboard_NKROBuffer*buf)
 
 void keyboard_init(void)
 {
+#ifdef STORAGE_ENABLE
     storage_mount();
     g_current_config_index = storage_read_config_index();
+#else
+    keyboard_reset_to_default();
+#endif
+#ifdef RGB_ENABLE
+    rgb_init();
+#endif
+#ifdef MIDI_ENABLE
+    setup_midi();
+#endif
 }
 
 __WEAK void keyboard_reset_to_default(void)
@@ -347,17 +329,23 @@ __WEAK void keyboard_reset_to_default(void)
             DEFAULT_UPPER_DEADZONE * ANALOG_VALUE_RANGE, 
             DEFAULT_LOWER_DEADZONE * ANALOG_VALUE_RANGE);
     }
+#ifdef RGB_ENABLE
     rgb_factory_reset();
+#endif
+#ifdef DYNAMICKEY_ENABLE
     memset(g_keyboard_dynamic_keys, 0, sizeof(g_keyboard_dynamic_keys));
+#endif
 }
 
 void keyboard_factory_reset(void)
 {
     keyboard_reset_to_default();
+#ifdef STORAGE_ENABLE
     for (int i = 0; i < STORAGE_CONFIG_FILE_NUM; i++)
     {
         storage_save_config(i);
     }
+#endif
 }
 
 __WEAK void keyboard_reboot(void)
@@ -368,9 +356,9 @@ __WEAK void keyboard_jump_to_bootloader(void)
 {
 }
 
-__WEAK void keyboard_user_handler(uint8_t code)
+__WEAK void keyboard_user_event_handler(KeyboardEvent event)
 {
-    UNUSED(code);
+    UNUSED(event);
 }
 
 
@@ -381,30 +369,44 @@ __WEAK void keyboard_scan(void)
 
 void keyboard_recovery(void)
 {
+#ifdef STORAGE_ENABLE
     storage_read_config(g_current_config_index);
+#else
+    keyboard_reset_to_default();
+#endif
 }
 
 void keyboard_save(void)
 {
+#ifdef STORAGE_ENABLE
     storage_save_config(g_current_config_index);
+#endif
 }
 
 void keyboard_set_config_index(uint8_t index)
 {
+#ifdef STORAGE_ENABLE
     if (index < STORAGE_CONFIG_FILE_NUM)
     {
         g_current_config_index = index;
     }
     storage_save_config_index(g_current_config_index);
+#else
+    UNUSED(index);
+#endif
+
     keyboard_recovery();
 }
 
 void keyboard_send_report(void)
 {
-    static uint32_t mouse_value;
     keyboard_buffer_clear();
-    mouse_buffer_clear(&g_mouse);
-    joystick_buffer_clear(&g_joystick);
+#ifdef MOUSE_ENABLE
+    mouse_buffer_clear();
+#endif
+#ifdef JOYSTICK_ENABLE
+    joystick_buffer_clear();
+#endif
 
     if (g_keyboard_send_report_enable 
 #ifndef CONTINOUS_POLL
@@ -424,31 +426,31 @@ void keyboard_send_report(void)
 #ifdef CONTINOUS_POLL
         BIT_SET(g_keyboard_send_flags,KEYBOARD_REPORT_FLAG);
 #endif
+#ifdef MOUSE_ENABLE
         if (BIT_GET(g_keyboard_send_flags,MOUSE_REPORT_FLAG))
         {
-            if ((*(uint32_t*)&g_mouse)!=mouse_value)
+            if (!mouse_buffer_send())
             {
-                if (!mouse_buffer_send(&g_mouse))
-                {
-                    BIT_RESET(g_keyboard_send_flags,MOUSE_REPORT_FLAG);
-                }
-                mouse_value = *(uint32_t*)&g_mouse;
+                BIT_RESET(g_keyboard_send_flags,MOUSE_REPORT_FLAG);
             }
         }
+#endif
+#ifdef EXTRAKEY_ENABLE
         if (BIT_GET(g_keyboard_send_flags,CONSUMER_REPORT_FLAG))
         {
-            if (!keyboard_extra_hid_send(REPORT_ID_CONSUMER, keyboard_consumer_buffer))
+            if (!consumer_key_buffer_send())
             {
                 BIT_RESET(g_keyboard_send_flags,CONSUMER_REPORT_FLAG);
             }
         }
         if (BIT_GET(g_keyboard_send_flags,SYSTEM_REPORT_FLAG))
         {
-            if (!keyboard_extra_hid_send(REPORT_ID_SYSTEM, keyboard_system_buffer))
+            if (!system_key_buffer_send())
             {
                 BIT_RESET(g_keyboard_send_flags,SYSTEM_REPORT_FLAG);
             }
         }
+#endif
         if (BIT_GET(g_keyboard_send_flags,KEYBOARD_REPORT_FLAG))
         {
             if (!keyboard_buffer_send())
@@ -456,13 +458,15 @@ void keyboard_send_report(void)
                 BIT_RESET(g_keyboard_send_flags,KEYBOARD_REPORT_FLAG);
             }
         }
+#ifdef JOYSTICK_ENABLE
         if (BIT_GET(g_keyboard_send_flags,JOYSTICK_REPORT_FLAG))
         {
-            if (!joystick_buffer_send(&g_joystick))
+            if (!joystick_buffer_send())
             {
                 BIT_RESET(g_keyboard_send_flags,JOYSTICK_REPORT_FLAG);
             }
         }
+#endif
     }
 }
 
@@ -471,15 +475,7 @@ __WEAK void keyboard_task(void)
     keyboard_scan();
     analog_average();
     analog_check();
-    keyboard_post_process();
     keyboard_send_report();
-}
-
-__WEAK int keyboard_extra_hid_send(uint8_t report_id, uint16_t usage)
-{
-    UNUSED(report_id);
-    UNUSED(usage);
-    return 0;
 }
 
 __WEAK int keyboard_hid_send(uint8_t *report, uint16_t len)
@@ -491,9 +487,6 @@ __WEAK int keyboard_hid_send(uint8_t *report, uint16_t len)
 __WEAK void keyboard_delay(uint32_t ms)
 {
     UNUSED(ms);
-}
-__WEAK void keyboard_post_process(void)
-{
 }
 
 void keyboard_key_update(Key *key, bool state)
@@ -515,10 +508,13 @@ void keyboard_advanced_key_update_state(AdvancedKey *key, bool state)
     const Keycode keycode = layer_cache_get_keycode(key->key.id);
     switch (KEYCODE(keycode))
     {
+#ifdef DYNAMICKEY_ENABLE
     case DYNAMIC_KEY:
         const uint8_t dynamic_key_index = (keycode>>8)&0xFF;
         dynamic_key_update(&g_keyboard_dynamic_keys[dynamic_key_index], key, state);
         break;
+#endif
+#ifdef MIDI_ENABLE
     case MIDI_COLLECTION:
     case MIDI_NOTE:
         float intensity = fabs(key->difference/(float)MIDI_REF_VELOCITY);
@@ -530,18 +526,20 @@ void keyboard_advanced_key_update_state(AdvancedKey *key, bool state)
         if (!key->key.state && state)
         {
             KeyboardEvent event = keyboard_make_event(&key->key, KEYBOARD_EVENT_KEY_DOWN);
-            midi_event_handler(event, true, velocity);
+            midi_event_handler(event, velocity);
             keyboard_advanced_key_event_handler(key,event);
         }
         if (key->key.state && !state)
         {
             KeyboardEvent event = keyboard_make_event(&key->key, KEYBOARD_EVENT_KEY_UP);
-            midi_event_handler(event, true, velocity);
+            midi_event_handler(event, velocity);
             keyboard_advanced_key_event_handler(key,event);
         }
         advanced_key_update_state(key, state);
         key->key.report_state = state;
         break;
+#endif
+#ifdef JOYSTICK_ENABLE
     case JOYSTICK_COLLECTION:
         if (MODIFIER(keycode) & 0xE0)
         {
@@ -549,6 +547,7 @@ void keyboard_advanced_key_update_state(AdvancedKey *key, bool state)
             key->key.report_state = true;
             break;
         }
+#endif
         // fall through
     default:
         if (!key->key.state && state)

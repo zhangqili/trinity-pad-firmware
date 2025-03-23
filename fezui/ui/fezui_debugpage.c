@@ -10,6 +10,7 @@
 #include "usbd_user.h"
 #include "analog.h"
 #include "packet.h"
+#include "layer.h"
 
 // static float target_ordinate = 0;
 // static float target_abscissa = 0;
