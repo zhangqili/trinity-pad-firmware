@@ -51,14 +51,7 @@ include_directories(User
                     Peripheral/inc
                     fezui/ui
                     fezui/src
-                    KeyboardKit/src
-                    KeyboardKit/src/midi
-                    KeyboardKit/src/midi/bytequeue
-                    KeyboardKit/src/midi/Config
-                    KeyboardKit/user
-                    KeyboardKit/littlefs
-                    KeyboardKit/usb
-                    KeyboardKit/usb/lufa
+                    libamp_user
                     lefl
                     usb
                     littlefs
@@ -80,12 +73,7 @@ file(GLOB_RECURSE SOURCES
                 "User/*.c"
                 "Core/core_riscv.c" 
                 "Debug/debug.c"
-                "KeyboardKit/src/*.c" 
-                "KeyboardKit/src/midi/*.c" 
-                "KeyboardKit/src/midi/bytequeue*.c" 
-                "KeyboardKit/user/*.c" 
-                "KeyboardKit/littlefs/*.c" 
-                #"KeyboardKit/usb/hid_descriptor.c" 
+                "libamp_user/*.c" 
                 "lefl/*.c" 
                 "fezui/ui/*.c" 
                 "fezui/src/*.c" 
@@ -125,11 +113,13 @@ add_link_options(-T ${LINKER_SCRIPT})
 # 编译可执行文件
 add_subdirectory(u8g2)
 add_subdirectory(sfud)
+add_subdirectory(libamp)
 add_executable(${PROJECT_NAME}.elf ${SOURCES} ${LINKER_SCRIPT})
 
 # 链接静态库
 target_link_libraries(${PROJECT_NAME}.elf u8g2)
 target_link_libraries(${PROJECT_NAME}.elf sfud)
+target_link_libraries(${PROJECT_NAME}.elf libamp)
 target_link_libraries(${PROJECT_NAME}.elf m)
 
 # 输出hex和bin

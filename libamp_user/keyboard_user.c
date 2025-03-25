@@ -1202,7 +1202,7 @@ void keyboard_user_event_handler(KeyboardEvent event)
         snake_turn(&g_snake, MODIFIER(event.keycode)&0x07);
         break;
     default:
-        g_keyboard_state = KEYBOARD_IDLE;
+        g_keyboard_state = KEYBOARD_STATE_IDLE;
         break;
     }
 }

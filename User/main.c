@@ -862,13 +862,13 @@ void TIM7_IRQHandler(void)
         keyboard_task();
         switch (g_keyboard_state)
         {
-        case KEYBOARD_DEBUG:
+        case KEYBOARD_STATE_DEBUG:
             send_debug_info();
             break;
-        case KEYBOARD_UPLOAD_CONFIG:
+        case KEYBOARD_STATE_UPLOAD_CONFIG:
             if (!load_cargo())
             {
-              g_keyboard_state = KEYBOARD_IDLE;
+              g_keyboard_state = KEYBOARD_STATE_IDLE;
             }
             break;
         default:
