@@ -7,7 +7,7 @@
 #include "fezui.h"
 #include "fezui_var.h"
 #include "fram.h"
-#include "lfs.h"
+#include "storage.h"
 #include "record.h"
 #include "main.h"
 

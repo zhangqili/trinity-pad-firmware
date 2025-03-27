@@ -7,3 +7,6 @@
 [submodule "KeyboardKit/usb/lufa"]
 	path = libamp/usb/lufa
 	url = https://github.com/abcminiuser/lufa
+[submodule "libamp"]
+	path = libamp
+	url = https://github.com/zhangqili/libamp.git

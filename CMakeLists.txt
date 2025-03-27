@@ -45,23 +45,25 @@ add_compile_options(-Ofast)
 add_compile_options(-Wall)
 
 # 头文件路径
-include_directories(User
-                    Core
-                    Debug 
-                    Peripheral/inc
-                    fezui/ui
-                    fezui/src
-                    libamp_user
-                    lefl
-                    usb
-                    littlefs
-                    fram
-                    snake
-                    CherryUSB/core
-                    CherryUSB/common
-                    CherryUSB/class/hid
-                    CherryUSB/class/midi
-                    )
+include_directories(
+    User
+    Core
+    Debug 
+    Peripheral/inc
+    fezui/ui
+    fezui/src
+    libamp_user
+    lefl
+    usb
+    littlefs
+    fram
+    snake
+    CherryUSB/core
+    CherryUSB/common
+    CherryUSB/class/hid
+    CherryUSB/class/midi
+    CherryUSB/port/ch32
+)
                     
 
 # 宏定义
@@ -70,28 +72,28 @@ add_compile_definitions(U8G2_USE_LARGE_FONTS)
 
 # 源码文件
 file(GLOB_RECURSE SOURCES 
-                "User/*.c"
-                "Core/core_riscv.c" 
-                "Debug/debug.c"
-                "libamp_user/*.c" 
-                "lefl/*.c" 
-                "fezui/ui/*.c" 
-                "fezui/src/*.c" 
-                "fezui/dialog/*.c" 
-                "Peripheral/src/*.c" 
-                "littlefs/*.c" 
-                "fram/*.c" 
-                "Startup/startup_ch32v30x_D8C.S"
-                "usb/*.c"
-                "snake/*.c"
-                )
+    "User/*.c"
+    "Core/core_riscv.c" 
+    "Debug/debug.c"
+    "libamp_user/*.c" 
+    "lefl/*.c" 
+    "fezui/ui/*.c" 
+    "fezui/src/*.c" 
+    "fezui/dialog/*.c" 
+    "Peripheral/src/*.c" 
+    "littlefs/*.c" 
+    "fram/*.c" 
+    "Startup/startup_ch32v30x_D8C.S"
+    "usb/*.c"
+    "snake/*.c"
+)
 
-include_directories(CherryUSB/port/ch32)
 file(GLOB_RECURSE SOURCES ${SOURCES} 
-                "CherryUSB/port/ch32/usb_dc_usbhs.c"
-                "./CherryUSB/core/usbd_core.c"
-                "./CherryUSB/class/hid/usbd_hid.c"
-                )
+    "CherryUSB/port/ch32/usb_dc_usbhs.c"
+    "./CherryUSB/core/usbd_core.c"
+    "./CherryUSB/class/hid/usbd_hid.c"
+)
+
 add_compile_definitions(CONFIG_USB_HS)
 
 # 链接参数
