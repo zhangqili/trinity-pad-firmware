@@ -1114,12 +1114,6 @@ AnalogValue advanced_key_normalize(AdvancedKey* advanced_key, AnalogValue value)
     return table[index] * ANALOG_VALUE_RANGE + ANALOG_VALUE_MIN;
 }
 
-
-int keyboard_hid_send(uint8_t *report, uint16_t len)
-{
-    return hid_keyboard_send(report, len);
-}
-
 void keyboard_scan()
 {
     keyboard_key_update(&KEY_FN_K1, FN_K1_READ);
@@ -1148,12 +1142,6 @@ void keyboard_reboot()
 void keyboard_delay(uint32_t ms)
 {
     Delay_Ms(ms);
-}
-
-
-int mouse_hid_send(uint8_t *report, uint16_t len)
-{
-    return hid_mouse_send(report);
 }
 
 void keyboard_user_event_handler(KeyboardEvent event)
@@ -1207,22 +1195,43 @@ void keyboard_user_event_handler(KeyboardEvent event)
     }
 }
 
-int hid_send(uint8_t *report, uint16_t len)
+
+int hid_send_shared_ep(uint8_t *report, uint16_t len)
 {
-    return hid_raw_send(report, len);
+    return usb_send_shared_ep(report, len);
 }
 
-int extra_key_hid_send(uint8_t report_id, uint16_t usage)
+int hid_send_keyboard(uint8_t *report, uint16_t len)
 {
-    return hid_extra_send(report_id, usage);
+    return usb_send_keyboard(report, len);
 }
 
-int joystick_hid_send(uint8_t *report, uint16_t len)
+int hid_send_nkro(uint8_t *report, uint16_t len)
 {
-    return hid_joystick_send(report, len);
+    return usb_send_shared_ep(report, len);
 }
 
-void send_midi_packet(MIDIEventPacket* event)
+int hid_send_extra_key(uint8_t*report,uint16_t len)
 {
-    usb_midi_send((uint8_t*)event);
+    return usb_send_shared_ep(report, len);
+}
+
+int hid_send_mouse(uint8_t*report,uint16_t len)
+{
+    return usb_send_shared_ep(report, len);
+}
+
+int hid_send_joystick(uint8_t*report,uint16_t len)
+{
+    return usb_send_shared_ep(report, len);
+}
+
+int hid_send_raw(uint8_t *report, uint16_t len)
+{
+    return usb_send_raw(report, len);
+}
+
+void send_midi(uint8_t *report, uint16_t len)
+{
+    usb_send_midi(report, len);
 }
