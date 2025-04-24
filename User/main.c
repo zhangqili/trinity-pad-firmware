@@ -737,7 +737,6 @@ int main(void)
     // Encoder_Init_TIM8();
     sfud_device_init(&sfud_norflash0);
     keyboard_init();
-    setup_midi();
     keyboard_scan();
     if (KEY_FN_K4.state && KEY_FN_K5.state)
     {
@@ -745,10 +744,8 @@ int main(void)
     }
     fezui_init();
     record_init();
-    rgb_init();
     TIM1_Init();
     DMA_TIM1_Init();
-    rgb_factory_reset();
     EXTI_INT_INIT();
     DMA_Cmd(DMA1_Channel5, ENABLE);
 
@@ -768,18 +765,12 @@ int main(void)
     analog_reset_range();
     while (1)
     {
-        // extern void hid_keyboard_test(void);
-        // hid_keyboard_test();
         fezui_render_handler();
         rgb_update();
 
         fram_write_bytes(0x400, g_key_counts, sizeof(g_key_counts));
         GPIO_WriteBit(LED_GPIO_Port, LED_Pin, !GPIO_ReadInputDataBit(LED_GPIO_Port, LED_Pin));
-        // if(usb_state!=usb_device_is_configured())
-        //{
-        //     fezui_notification_begin(&fezui,&fezui_notification,"USB Connected",REFRESH_RATE*3,0.5);
-        // }
-        // usb_state=usb_device_is_configured;
+
     }
 }
 
@@ -815,12 +806,11 @@ void TIM6_IRQHandler(void)
         record_kps_timer();
     }
 }
-void analog_average()
+void analog_average(void)
 {
-    uint32_t ADC_sum;
     for (uint8_t i = 0; i < ADVANCED_KEY_NUM; i++)
     {
-        ADC_sum = 0;
+        uint32_t ADC_sum = 0;
         for (uint8_t j = 0; j < 64; j++)
         {
             ADC_sum += ADC_Buffer[i + j * ADVANCED_KEY_NUM];
@@ -833,6 +823,47 @@ void analog_average()
 #ifdef FILTER_ENABLE
         g_ADC_Averages[i] = adaptive_schimidt_filter(g_analog_filters+i,g_ADC_Averages[i]);
 #endif
+    }
+}
+
+void keyboard_task(void)
+{
+    keyboard_scan();
+    for (uint8_t i = 0; i < ADVANCED_KEY_NUM; i++)
+    {
+        uint32_t ADC_sum = 0;
+        for (uint8_t j = 0; j < 64; j++)
+        {
+            ADC_sum += ADC_Buffer[i + j * ADVANCED_KEY_NUM];
+        }
+#ifndef FIXED_POINT_EXPERIMENTAL
+        g_ADC_Averages[i] = ADC_sum/64.0f;
+#else
+        g_ADC_Averages[i] = ADC_sum>>6;
+#endif
+#ifdef FILTER_ENABLE
+        g_ADC_Averages[i] = adaptive_schimidt_filter(g_analog_filters+i,g_ADC_Averages[i]);
+#endif
+        AdvancedKey* key = &g_keyboard_advanced_keys[i];
+        if (key->config.mode != KEY_DIGITAL_MODE)
+        {
+            advanced_key_update_raw(key, g_ADC_Averages[i]);
+        }
+    }
+    switch (g_keyboard_state)
+    {
+    case KEYBOARD_STATE_DEBUG:
+      send_debug_info();
+      break;
+    case KEYBOARD_STATE_UPLOAD_CONFIG:
+      if (!load_cargo())
+      {
+        g_keyboard_state = KEYBOARD_STATE_IDLE;
+      }
+      break;
+    default:
+      keyboard_send_report();
+      break;
     }
 }
 
@@ -860,20 +891,6 @@ void TIM7_IRQHandler(void)
         //    }
         //}        
         keyboard_task();
-        switch (g_keyboard_state)
-        {
-        case KEYBOARD_STATE_DEBUG:
-            send_debug_info();
-            break;
-        case KEYBOARD_STATE_UPLOAD_CONFIG:
-            if (!load_cargo())
-            {
-              g_keyboard_state = KEYBOARD_STATE_IDLE;
-            }
-            break;
-        default:
-            break;
-        }
     }
 }
 

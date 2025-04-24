@@ -9,6 +9,7 @@
 /********************/
 /* Keyboard General */
 /********************/
+#define REPORT_RATE 8000
 #define LAYER_NUM             3
 #define ADVANCED_KEY_NUM      4
 #define KEY_NUM               (6+3)
@@ -57,6 +58,11 @@
 #define RGB_DEFAULT_MODE        RGB_MODE_LINEAR
 #define RGB_DEFAULT_SPEED       0.015
 #define RGB_DEFAULT_COLOR_HSV   {273, 78, 99}
+
+/*********/
+/* MOUSE */
+/*********/
+#define MOUSE_MAX_VALUE 1
 
 /************/
 /* Joystick */
