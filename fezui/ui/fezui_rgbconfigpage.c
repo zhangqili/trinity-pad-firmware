@@ -22,7 +22,7 @@ static fezui_list_base_t rgb_config_menu;
 static const char *rgb_config_menu_items[] = {"Mode", "R", "G", "B", "H", "S", "V", "Speed"};
 
 static const char *rgb_mode_items[] = {"Fixed", "Static", "Cycle", "Linear", "Trigger", "String", "Fading String", "Diamond Ripple", "Fading Diamond Ripple", "Jelly"};
-static const char *rgb_global_mode_items[] = {"OFF", "ON"};
+static const char *rgb_global_mode_items[] = {"OFF", "Blank","Rainbow","Wave"};
 
 static ColorRGB *target_rgb;
 static ColorHSV *target_hsv;
@@ -104,9 +104,9 @@ static void rgbconfigpage_tick(void *page)
                 {
                     fezui_cursor_set(
                         &target_config_cursor,
-                        WIDTH - 1 - strlen(rgb_global_mode_items[g_rgb_switch]) * 5,
+                        WIDTH - 1 - strlen(rgb_global_mode_items[g_rgb_base_config.mode]) * 5,
                         rgb_config_menu.selected_index * ROW_HEIGHT,
-                        1 + strlen(rgb_global_mode_items[g_rgb_switch]) * 5,
+                        1 + strlen(rgb_global_mode_items[g_rgb_base_config.mode]) * 5,
                         ROW_HEIGHT);
                 }
             }
@@ -174,7 +174,7 @@ static void rgbconfigpage_draw(void *page)
     }
     else
     {
-        fezui_printf_right_aligned(&fezui, WIDTH, ROW_HEIGHT * 1, rgb_global_mode_items[g_rgb_switch]);
+        fezui_printf_right_aligned(&fezui, WIDTH, ROW_HEIGHT * 1, rgb_global_mode_items[g_rgb_base_config.mode]);
     }
 
     u8g2_SetFont(&(fezui.u8g2), u8g2_font_5x8_mr);
@@ -225,7 +225,7 @@ static void rgbconfigpage_event_handler(void *e)
                     }
                     else
                     {
-                        g_rgb_switch = !g_rgb_switch;
+                        VAR_LOOP_INCREMENT(g_rgb_base_config.mode, RGB_BASE_MODE_OFF, RGB_BASE_MODE_WAVE, 1)
                     }
                     break;
                 case 1:
@@ -293,7 +293,7 @@ static void rgbconfigpage_event_handler(void *e)
                     }
                     else
                     {
-                        g_rgb_switch = !g_rgb_switch;
+                        VAR_LOOP_DECREMENT(g_rgb_base_config.mode, RGB_BASE_MODE_OFF, RGB_BASE_MODE_WAVE, 1)
                     }
                     break;
                 case 1:

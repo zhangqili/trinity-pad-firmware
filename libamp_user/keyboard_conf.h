@@ -58,6 +58,8 @@
 #define RGB_DEFAULT_MODE        RGB_MODE_LINEAR
 #define RGB_DEFAULT_SPEED       0.015
 #define RGB_DEFAULT_COLOR_HSV   {273, 78, 99}
+#define RGB_GAMMA_ENABLE
+#define RGB_GAMMA               2.2f
 
 /*********/
 /* MOUSE */
