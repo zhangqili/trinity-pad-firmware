@@ -853,17 +853,26 @@ void keyboard_task(void)
     switch (g_keyboard_state)
     {
     case KEYBOARD_STATE_DEBUG:
-      send_debug_info();
-      break;
+        send_debug_info();
+        break;
     case KEYBOARD_STATE_UPLOAD_CONFIG:
-      if (!load_cargo())
-      {
-        g_keyboard_state = KEYBOARD_STATE_IDLE;
-      }
-      break;
+        if (!load_cargo())
+        {
+          g_keyboard_state = KEYBOARD_STATE_IDLE;
+        }
+        break;
     default:
-      keyboard_send_report();
-      break;
+        if (g_keyboard_send_report_enable 
+#ifndef CONTINOUS_POLL
+            && g_keyboard_report_flags
+#endif
+        )
+        {
+            keyboard_clear_buffer();
+            keyboard_fill_buffer();
+            keyboard_send_report();
+        }
+        break;
     }
 }
 

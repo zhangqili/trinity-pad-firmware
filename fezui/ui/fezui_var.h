@@ -10,6 +10,7 @@
 #include "fezui.h"
 #include "keyboard.h"
 
+extern const uint8_t u8g2_font_wqy13_t_custom[3590]  U8G2_FONT_SECTION("u8g2_font_wqy13_t_custom");
 extern const uint8_t fez_font_6x10_m[204] U8G2_FONT_SECTION("fez_font_6x10_m");
 extern fezui_t fezui;
 
