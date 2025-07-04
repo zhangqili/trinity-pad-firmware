@@ -122,7 +122,7 @@ void snake_launch(Snake *snake)
 void snake_quit(Snake *snake)
 {
     snake->running = false;
-    storage_read_config(g_current_config_index);
+    storage_read_config();
 }
 
 void snake_pause(Snake *snake)

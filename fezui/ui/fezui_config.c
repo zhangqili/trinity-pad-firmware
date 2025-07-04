@@ -293,31 +293,33 @@ void fezui_reset()
 void fezui_save()
 {
     lfs_file_t lfs_file;
+    lfs_t * lfs = storage_get_lfs();
     // read current count
-    lfs_file_open(&g_lfs, &lfs_file, "fezui.dat", LFS_O_RDWR | LFS_O_CREAT);
-    lfs_file_rewind(&g_lfs, &lfs_file);
-    lfs_file_write(&g_lfs, &lfs_file, &fezui.contrast, sizeof(fezui.contrast));
-    lfs_file_write(&g_lfs, &lfs_file, &fezui.invert, sizeof(fezui.invert));
-    lfs_file_write(&g_lfs, &lfs_file, &fezui.speed, sizeof(fezui.speed));
-    lfs_file_write(&g_lfs, &lfs_file, &fezui.screensaver_timeout, sizeof(fezui.screensaver_timeout));
-    lfs_file_write(&g_lfs, &lfs_file, &fezui.show_fps, sizeof(fezui.show_fps));
-    lfs_file_write(&g_lfs, &lfs_file, &fezui.lang, sizeof(fezui.lang));
+    lfs_file_open(lfs, &lfs_file, "fezui.dat", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_file_rewind(lfs, &lfs_file);
+    lfs_file_write(lfs, &lfs_file, &fezui.contrast, sizeof(fezui.contrast));
+    lfs_file_write(lfs, &lfs_file, &fezui.invert, sizeof(fezui.invert));
+    lfs_file_write(lfs, &lfs_file, &fezui.speed, sizeof(fezui.speed));
+    lfs_file_write(lfs, &lfs_file, &fezui.screensaver_timeout, sizeof(fezui.screensaver_timeout));
+    lfs_file_write(lfs, &lfs_file, &fezui.show_fps, sizeof(fezui.show_fps));
+    lfs_file_write(lfs, &lfs_file, &fezui.lang, sizeof(fezui.lang));
     // remember the storage is not updated until the file is closed successfully
-    int err = lfs_file_close(&g_lfs, &lfs_file);
+    int err = lfs_file_close(lfs, &lfs_file);
     printf("save = %d", err);
 }
 
 void fezui_recovery()
 {
     lfs_file_t lfs_file;
-    lfs_file_open(&g_lfs, &lfs_file, "fezui.dat", LFS_O_RDWR | LFS_O_CREAT);
-    lfs_file_rewind(&g_lfs, &lfs_file);
-    lfs_file_read(&g_lfs, &lfs_file, &fezui.contrast, sizeof(fezui.contrast));
-    lfs_file_read(&g_lfs, &lfs_file, &fezui.invert, sizeof(fezui.invert));
-    lfs_file_read(&g_lfs, &lfs_file, &fezui.speed, sizeof(fezui.speed));
-    lfs_file_read(&g_lfs, &lfs_file, &fezui.screensaver_timeout, sizeof(fezui.screensaver_timeout));
-    lfs_file_read(&g_lfs, &lfs_file, &fezui.show_fps, sizeof(fezui.show_fps));
-    lfs_file_read(&g_lfs, &lfs_file, &fezui.lang, sizeof(fezui.lang));
+    lfs_t * lfs = storage_get_lfs();
+    lfs_file_open(lfs, &lfs_file, "fezui.dat", LFS_O_RDWR | LFS_O_CREAT);
+    lfs_file_rewind(lfs, &lfs_file);
+    lfs_file_read(lfs, &lfs_file, &fezui.contrast, sizeof(fezui.contrast));
+    lfs_file_read(lfs, &lfs_file, &fezui.invert, sizeof(fezui.invert));
+    lfs_file_read(lfs, &lfs_file, &fezui.speed, sizeof(fezui.speed));
+    lfs_file_read(lfs, &lfs_file, &fezui.screensaver_timeout, sizeof(fezui.screensaver_timeout));
+    lfs_file_read(lfs, &lfs_file, &fezui.show_fps, sizeof(fezui.show_fps));
+    lfs_file_read(lfs, &lfs_file, &fezui.lang, sizeof(fezui.lang));
     // remember the storage is not updated until the file is closed successfully
-    lfs_file_close(&g_lfs, &lfs_file);
+    lfs_file_close(lfs, &lfs_file);
 }
