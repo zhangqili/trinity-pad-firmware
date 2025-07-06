@@ -793,12 +793,6 @@ void TIM6_IRQHandler(void)
             if (fezui.screensaver_countdown)
                 fezui.screensaver_countdown--;
             record_kps_history_timer();
-            //g_usb_report_count1 = g_usb_report_count;
-            //g_usb_report_count = 0;
-            //g_usb_mouse_report_count1 = g_usb_mouse_report_count;
-            //g_usb_mouse_report_count = 0;
-            //g_usb_raw_report_count1 = g_usb_raw_report_count;
-            //g_usb_raw_report_count = 0;
             g_fezui_run_time++;
         }
         fezui_timer_handler();

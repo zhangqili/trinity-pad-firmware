@@ -28,6 +28,8 @@ static fezui_animated_listbox_t listbox;
 static fezui_flyout_numberic_dialog_t dialog;
 static fezui_rangebase_t rangebase;
 
+extern USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t raw_out_buffer[64];
+
 void listbox_cb(void *l)
 {
 }
@@ -61,10 +63,10 @@ static void debugpage_draw(void *page)
     for (uint8_t i = 0; i < 8; i++)
     {
         fezui_printf_right_aligned(&fezui,(i+1)*16,24,"%d",debug[i]);
-        fezui_printf_right_aligned(&fezui,(i+1)*16,32,"%d",raw_buffer.read_buffer[i]);
-        fezui_printf_right_aligned(&fezui,(i+1)*16,40,"%d",raw_buffer.read_buffer[i+8]);
-        fezui_printf_right_aligned(&fezui,(i+1)*16,48,"%d",raw_buffer.read_buffer[i+16]);
-        fezui_printf_right_aligned(&fezui,(i+1)*16,56,"%d",raw_buffer.read_buffer[i+24]);
+        fezui_printf_right_aligned(&fezui,(i+1)*16,32,"%d",raw_out_buffer[i]);
+        fezui_printf_right_aligned(&fezui,(i+1)*16,40,"%d",raw_out_buffer[i+8]);
+        fezui_printf_right_aligned(&fezui,(i+1)*16,48,"%d",raw_out_buffer[i+16]);
+        fezui_printf_right_aligned(&fezui,(i+1)*16,56,"%d",raw_out_buffer[i+24]);
     }
     
     //PacketRGBConfigs *packet = (PacketRGBConfigs *)raw_buffer.read_buffer;
