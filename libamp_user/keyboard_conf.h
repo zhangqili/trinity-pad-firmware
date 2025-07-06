@@ -122,6 +122,7 @@
 #define PRODUCT_ID 0xffff
 #define DEVICE_VER 2
 #define FIXED_NUM_CONFIGURATIONS 1
+#define USB_ENDPOINTS_ARE_REORDERABLE
 
 #define MANUFACTURER "Lzq12345"
 #define PRODUCT "Trinity Pad"

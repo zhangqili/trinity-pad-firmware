@@ -115,7 +115,6 @@ static void usbd_event_handler(uint8_t busid, uint8_t event)
     case USBD_EVENT_CONFIGURED:
         memset(keyboard_buffer.read_buffer, 0, sizeof(keyboard_buffer.read_buffer));
         memset(raw_buffer.read_buffer, 0, sizeof(raw_buffer.read_buffer));
-        usbd_ep_start_read(0, KEYBOARD_EPOUT_ADDR, keyboard_buffer.read_buffer, 64);
         usbd_ep_start_read(0, RAW_EPOUT_ADDR, raw_buffer.read_buffer, 64);
         break;
     case USBD_EVENT_SET_REMOTE_WAKEUP:
@@ -127,6 +126,24 @@ static void usbd_event_handler(uint8_t busid, uint8_t event)
     }
 }
 
+void usbd_hid_set_report(uint8_t busid, uint8_t intf, uint8_t report_id, uint8_t report_type, uint8_t *report, uint32_t report_len)
+{
+    (void)busid;
+    (void)intf;
+    (void)report_type;
+    if (report_len == 2)
+    {
+        if (report_id == REPORT_ID_KEYBOARD || report_id == REPORT_ID_NKRO) {
+            g_keyboard_led_state = report[1];
+        }
+    }
+    else
+    {
+        g_keyboard_led_state = report[0];
+    }
+}
+
+
 static void usbd_hid_keyboard_in_callback(uint8_t busid, uint8_t ep, uint32_t nbytes)
 {
     UNUSED(busid);
@@ -134,18 +151,6 @@ static void usbd_hid_keyboard_in_callback(uint8_t busid, uint8_t ep, uint32_t nb
     UNUSED(nbytes);
     keyboard_buffer.state = USB_STATE_IDLE;
 }
-
-static void usbd_hid_keyboard_out_callback(uint8_t busid, uint8_t ep, uint32_t nbytes)
-{
-    // USB_LOG_RAW("actual out len:%ld\r\n", nbytes);
-    UNUSED(busid);
-    UNUSED(ep);
-    UNUSED(nbytes);
-    usbd_ep_start_read(0, KEYBOARD_EPOUT_ADDR, keyboard_buffer.read_buffer, 64);
-    g_keyboard_led_state = keyboard_buffer.read_buffer[0];
-}
-
-
 
 static void usbd_hid_raw_in_callback(uint8_t busid, uint8_t ep, uint32_t nbytes)
 {
@@ -202,10 +207,6 @@ static struct usbd_endpoint keyboard_in_ep = {
     .ep_cb = usbd_hid_keyboard_in_callback,
     .ep_addr = KEYBOARD_EPIN_ADDR};
 
-static struct usbd_endpoint keyboard_out_ep = {
-    .ep_cb = usbd_hid_keyboard_out_callback,
-    .ep_addr = KEYBOARD_EPOUT_ADDR};
-
 static struct usbd_endpoint raw_in_ep = {
     .ep_cb = usbd_hid_raw_in_callback,
     .ep_addr = RAW_EPIN_ADDR};
@@ -245,7 +246,6 @@ void usb_init(void)
     usbd_desc_register(0, &usb_descriptor);
     usbd_add_interface(0, usbd_hid_init_intf(0, &intf0, KeyboardReport, sizeof(KeyboardReport)));
     usbd_add_endpoint(0, &keyboard_in_ep);
-    usbd_add_endpoint(0, &keyboard_out_ep);
     usbd_add_interface(0, usbd_hid_init_intf(0, &intf1, RawReport, sizeof(RawReport)));
     usbd_add_endpoint(0, &raw_in_ep);
     usbd_add_endpoint(0, &raw_out_ep);
