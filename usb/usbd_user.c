@@ -6,6 +6,7 @@
 #include "ch32v30x.h"
 #include "usb_descriptor.h"
 #include "qmk_midi.h"
+#include "lamp_array.h"
 
 static const uint8_t *device_descriptor_callback(uint8_t speed)
 {
@@ -77,17 +78,50 @@ const struct usb_descriptor usb_descriptor = {
     .string_descriptor_callback = string_descriptor_callback,
 };
 
+void usbd_hid_get_report(uint8_t busid, uint8_t intf, uint8_t report_id, uint8_t report_type, uint8_t **data, uint32_t *len)
+{
+    (void)busid;
+    (void)report_type;
+    switch (intf)
+    {
+    case SHARED_INTERFACE:
+        switch (report_id)
+        {
+        case REPORT_ID_LIGHTING_LAMP_ARRAY_ATTRIBUTES:
+            {
+                *len = lamp_array_get_lamp_array_attributes_report(*data);
+            }
+            break;
+        case REPORT_ID_LIGHTING_LAMP_ATTRIBUTES_RESPONSE:
+            {
+                *len = lamp_array_get_lamp_attributes_report(*data);
+            }
+            break;
+        default:
+            (*data[0]) = 0;
+            *len = 1;
+            break;
+        }
+        break;
+    default:
+        (*data[0]) = 0;
+        *len = 1;
+        break;
+    }
+}
+
+
 void usbd_hid_set_report(uint8_t busid, uint8_t intf, uint8_t report_id, uint8_t report_type, uint8_t *report, uint32_t report_len)
 {
     (void)busid;
     (void)intf;
     (void)report_type;
-    switch (intf)
-    {
-    case KEYBOARD_INTERFACE:
+    if (intf == KEYBOARD_INTERFACE
 #if defined(SHARED_EP_ENABLE) && !defined(KEYBOARD_SHARED_EP)
-    case SHARED_INTERFACE:
+    || intf == SHARED_INTERFACE
 #endif
+    )
+    {
         if (report_len == 2)
         {
             if (report_id == REPORT_ID_KEYBOARD || report_id == REPORT_ID_NKRO) {
@@ -98,14 +132,34 @@ void usbd_hid_set_report(uint8_t busid, uint8_t intf, uint8_t report_id, uint8_t
         {
             g_keyboard_led_state = report[0];
         }
-        break;
-    default:
-        break;
     }
+    if (intf == SHARED_INTERFACE)
+    {
+        switch (report_id) {
+            case REPORT_ID_LIGHTING_LAMP_ATTRIBUTES_REQUEST: {
+                lamp_array_set_lamp_attributes_id(report);
+                break;
+            }
+            case REPORT_ID_LIGHTING_LAMP_MULTI_UPDATE: {
+                lamp_array_set_multiple_lamps(report);
+                break;   
+            }
+            case REPORT_ID_LIGHTING_LAMP_RANGE_UPDATE: {
+                lamp_array_set_lamp_range(report);
+                break;   
+            }
+            case REPORT_ID_LIGHTING_LAMP_ARRAY_CONTROL: {
+                lamp_array_set_autonomous_mode(report);
+                break;
+            }
+            default: {
+                break;
+            }
+        }
+    }
+    
 }
 
-/* Store example melody as an array of note values */
-    
 #ifndef KEYBOARD_SHARED_EP
 static bool keyboard_state;
 USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t keyboard_buffer[KEYBOARD_EPSIZE];

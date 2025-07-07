@@ -5,7 +5,7 @@ set(CMAKE_COLOR_DIAGNOSTICS ON)
 cmake_minimum_required(VERSION 3.18)
 
 # 工具链设置
-set(TOOLPATH  "/usr/share/MRS2/MRS-linux-x64/resources/app/resources/linux/components/WCH/Toolchain/RISC-V Embedded GCC12/bin/riscv-wch-elf-")
+set(TOOLPATH  "C:/MounRiver/MounRiver_Studio2/resources/app/resources/win32/components/WCH/Toolchain/RISC-V Embedded GCC12/bin/riscv-wch-elf-")
 
 if (WIN32)
 	MESSAGE(STATUS "Now is windows!")
