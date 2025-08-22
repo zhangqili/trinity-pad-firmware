@@ -30,7 +30,6 @@
 #include "record.h"
 #include "mouse.h"
 #include "keyboard.h"
-#include "command.h"
 #include "usbd_user.h"
 #include "packet.h"
 #include "qmk_midi.h"
@@ -800,74 +799,53 @@ void TIM6_IRQHandler(void)
         record_kps_timer();
     }
 }
-void analog_average(void)
+
+
+AnalogRawValue advanced_key_read(AdvancedKey *advanced_key)
 {
-    for (uint8_t i = 0; i < ADVANCED_KEY_NUM; i++)
-    {
-        uint32_t ADC_sum = 0;
-        for (uint8_t j = 0; j < 64; j++)
-        {
-            ADC_sum += ADC_Buffer[i + j * ADVANCED_KEY_NUM];
-        }
-#ifndef FIXED_POINT_EXPERIMENTAL
-        g_ADC_Averages[i] = ADC_sum/64.0f;
-#else
-        g_ADC_Averages[i] = ADC_sum>>6;
-#endif
+    AnalogRawValue raw = advanced_key_read_raw(advanced_key);
 #ifdef FILTER_ENABLE
-        g_ADC_Averages[i] = adaptive_schimidt_filter(g_analog_filters+i,g_ADC_Averages[i]);
+    raw = adaptive_schimidt_filter(&g_analog_filters[advanced_key->key.id], raw);
 #endif
+    if (advanced_key->config.mode == ADVANCED_KEY_DIGITAL_MODE)
+    {
+        switch (advanced_key->key.id)
+        {
+        case 0:
+            raw = K1_READ;
+            break;
+        case 1:
+            raw = K2_READ;
+            break;
+        case 2:
+            raw = K3_READ;
+            break;
+        case 3:
+            raw = K4_READ;
+            break;
+        default:
+            raw = 0;
+            break;
+        }
     }
+    return raw;
 }
 
-void keyboard_task(void)
+AnalogRawValue advanced_key_read_raw(AdvancedKey *advanced_key)
 {
-    keyboard_scan();
-    for (uint8_t i = 0; i < ADVANCED_KEY_NUM; i++)
+    uint32_t ADC_sum = 0;
+    int id = advanced_key->key.id;
+    AnalogRawValue raw = 0.0f;
+    for (uint8_t j = 0; j < 64; j++)
     {
-        uint32_t ADC_sum = 0;
-        for (uint8_t j = 0; j < 64; j++)
-        {
-            ADC_sum += ADC_Buffer[i + j * ADVANCED_KEY_NUM];
-        }
+        ADC_sum += ADC_Buffer[id + j * ADVANCED_KEY_NUM];
+    }
 #ifndef FIXED_POINT_EXPERIMENTAL
-        g_ADC_Averages[i] = ADC_sum/64.0f;
+    raw = ADC_sum/64.0f;
 #else
-        g_ADC_Averages[i] = ADC_sum>>6;
+    raw = ADC_sum>>6;
 #endif
-#ifdef FILTER_ENABLE
-        g_ADC_Averages[i] = adaptive_schimidt_filter(g_analog_filters+i,g_ADC_Averages[i]);
-#endif
-        AdvancedKey* key = &g_keyboard_advanced_keys[i];
-        if (key->config.mode != KEY_DIGITAL_MODE)
-        {
-            advanced_key_update_raw(key, g_ADC_Averages[i]);
-        }
-    }
-    switch (g_keyboard_state)
-    {
-    case KEYBOARD_STATE_DEBUG:
-        send_debug_info();
-        break;
-    case KEYBOARD_STATE_UPLOAD_CONFIG:
-        if (!load_cargo())
-        {
-          g_keyboard_state = KEYBOARD_STATE_IDLE;
-        }
-        break;
-    default:
-        if (g_keyboard_send_report_enable 
-#ifndef CONTINOUS_POLL
-            && g_keyboard_report_flags
-#endif
-        )
-        {
-            keyboard_clear_buffer();
-            keyboard_fill_buffer();
-            keyboard_send_report();
-        }
-        break;
-    }
+    return raw;
 }
 
 void TIM7_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));

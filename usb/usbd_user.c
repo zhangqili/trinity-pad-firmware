@@ -1,12 +1,12 @@
 #include "usbd_user.h"
 #include "fezui.h"
 #include "fezui_var.h"
-#include "command.h"
 #include "keyboard.h"
 #include "ch32v30x.h"
 #include "usb_descriptor.h"
 #include "qmk_midi.h"
 #include "lamp_array.h"
+#include "packet.h"
 
 static const uint8_t *device_descriptor_callback(uint8_t speed)
 {
@@ -222,7 +222,7 @@ static void usbd_hid_raw_out_callback(uint8_t busid, uint8_t ep, uint32_t nbytes
     UNUSED(ep);
     UNUSED(nbytes);
     usbd_ep_start_read(0, RAW_EPOUT_ADDR, raw_out_buffer, 64);
-    command_parse(raw_out_buffer, sizeof(raw_out_buffer));
+    packet_process(raw_out_buffer, sizeof(raw_out_buffer));
 }
 
 static struct usbd_interface raw_intf;
@@ -299,14 +299,18 @@ static void usbd_event_handler(uint8_t busid, uint8_t event)
     case USBD_EVENT_RESET:
         keyboard_state = USB_STATE_IDLE;
         raw_state = USB_STATE_IDLE;
+        shared_state = USB_STATE_IDLE;
         break;
     case USBD_EVENT_CONNECTED:
         break;
     case USBD_EVENT_DISCONNECTED:
         break;
     case USBD_EVENT_RESUME:
+        fezui_notification_begin(&fezui, &fezui_notification, "USBD_EVENT_RESUME", 1000, 0.1);
         break;
     case USBD_EVENT_SUSPEND:
+        g_keyboard_is_suspend = usb_device_is_suspend(0);
+        fezui_notification_begin(&fezui, &fezui_notification, "USBD_EVENT_SUSPEND", 1000, 0.1);
         break;
     case USBD_EVENT_CONFIGURED:
         memset(raw_out_buffer, 0, sizeof(raw_out_buffer));

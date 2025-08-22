@@ -13,6 +13,7 @@
 
 #include "keyboard.h"
 #include "rgb.h"
+#include "layer.h"
 
 #include "fezui.h"
 #include "fezui_var.h"

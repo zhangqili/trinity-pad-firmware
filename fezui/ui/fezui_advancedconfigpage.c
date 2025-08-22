@@ -340,16 +340,16 @@ static void advancedconfigpage_tick(void *page)
 {
     switch (current_config_advanced_key->config.mode)
     {
-    case KEY_DIGITAL_MODE:
+    case ADVANCED_KEY_DIGITAL_MODE:
         current_menu = &keyconfig_digital_mode_menu;
         break;
-    case KEY_ANALOG_NORMAL_MODE:
+    case ADVANCED_KEY_ANALOG_NORMAL_MODE:
         current_menu = &keyconfig_analog_normal_mode_menu;
         break;
-    case KEY_ANALOG_RAPID_MODE:
+    case ADVANCED_KEY_ANALOG_RAPID_MODE:
         current_menu = &keyconfig_analog_rapid_mode_menu;
         break;
-    case KEY_ANALOG_SPEED_MODE:
+    case ADVANCED_KEY_ANALOG_SPEED_MODE:
         current_menu = &keyconfig_analog_speed_mode_menu;
         break;
     default:
@@ -408,12 +408,12 @@ static void advancedconfigpage_event_handler(void *e)
         }
         else if (configing==1)
         {
-            VAR_LOOP_INCREMENT(current_config_advanced_key->config.calibration_mode,KEY_NO_CALIBRATION,KEY_AUTO_CALIBRATION_UNDEFINED,1);
+            VAR_LOOP_INCREMENT(current_config_advanced_key->config.calibration_mode,ADVANCED_KEY_NO_CALIBRATION,ADVANCED_KEY_AUTO_CALIBRATION_UNDEFINED,1);
             advanced_key_reset_range(current_config_advanced_key,current_config_advanced_key->value);
         }
         else if (mode_switching)
         {
-            VAR_LOOP_INCREMENT(current_config_advanced_key->config.mode,KEY_DIGITAL_MODE,KEY_ANALOG_SPEED_MODE,1);
+            VAR_LOOP_INCREMENT(current_config_advanced_key->config.mode,ADVANCED_KEY_DIGITAL_MODE,ADVANCED_KEY_ANALOG_SPEED_MODE,1);
         }
         else
         {
@@ -427,11 +427,11 @@ static void advancedconfigpage_event_handler(void *e)
         }
         else if (configing==1)
         {
-            VAR_LOOP_DECREMENT(current_config_advanced_key->config.calibration_mode,KEY_NO_CALIBRATION,KEY_AUTO_CALIBRATION_UNDEFINED,1);
+            VAR_LOOP_DECREMENT(current_config_advanced_key->config.calibration_mode,ADVANCED_KEY_NO_CALIBRATION,ADVANCED_KEY_AUTO_CALIBRATION_UNDEFINED,1);
         }
         else if (mode_switching)
         {
-            VAR_LOOP_DECREMENT(current_config_advanced_key->config.mode,KEY_DIGITAL_MODE,KEY_ANALOG_SPEED_MODE,1);
+            VAR_LOOP_DECREMENT(current_config_advanced_key->config.mode,ADVANCED_KEY_DIGITAL_MODE,ADVANCED_KEY_ANALOG_SPEED_MODE,1);
         }
         else
         {
@@ -472,16 +472,16 @@ static void advancedconfigpage_load(void *page)
 {
     switch (current_config_advanced_key->config.mode)
     {
-    case KEY_DIGITAL_MODE:
+    case ADVANCED_KEY_DIGITAL_MODE:
         current_menu = &keyconfig_digital_mode_menu;
         break;
-    case KEY_ANALOG_NORMAL_MODE:
+    case ADVANCED_KEY_ANALOG_NORMAL_MODE:
         current_menu = &keyconfig_analog_normal_mode_menu;
         break;
-    case KEY_ANALOG_RAPID_MODE:
+    case ADVANCED_KEY_ANALOG_RAPID_MODE:
         current_menu = &keyconfig_analog_rapid_mode_menu;
         break;
-    case KEY_ANALOG_SPEED_MODE:
+    case ADVANCED_KEY_ANALOG_SPEED_MODE:
         current_menu = &keyconfig_analog_speed_mode_menu;
         break;
     default:

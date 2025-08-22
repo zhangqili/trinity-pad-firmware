@@ -37,9 +37,9 @@ static void calibrate_upper_bound()
 
     for (int i = 0; i < ADVANCED_KEY_NUM; i++)
     {
-        g_keyboard_advanced_keys[i].config.upper_bound = g_ADC_Averages[i];
-        max_values[i] = g_ADC_Averages[i];
-        min_values[i] = g_ADC_Averages[i];
+        g_keyboard_advanced_keys[i].config.upper_bound = g_keyboard_advanced_keys[i].raw;
+        max_values[i] = g_keyboard_advanced_keys[i].raw;
+        min_values[i] = g_keyboard_advanced_keys[i].raw;
     }
 }
 
@@ -50,12 +50,12 @@ static void calibrate_lower_bound()
         if (fabsf(g_keyboard_advanced_keys[i].config.upper_bound - max_values[i]) > fabsf(g_keyboard_advanced_keys[i].config.upper_bound - min_values[i]))
         {
             g_keyboard_advanced_keys[i].config.lower_bound = max_values[i];
-            g_keyboard_advanced_keys[i].config.calibration_mode = KEY_AUTO_CALIBRATION_POSITIVE;
+            g_keyboard_advanced_keys[i].config.calibration_mode = ADVANCED_KEY_AUTO_CALIBRATION_POSITIVE;
         }
         else
         {
             g_keyboard_advanced_keys[i].config.lower_bound = min_values[i];
-            g_keyboard_advanced_keys[i].config.calibration_mode = KEY_AUTO_CALIBRATION_NEGATIVE;
+            g_keyboard_advanced_keys[i].config.calibration_mode = ADVANCED_KEY_AUTO_CALIBRATION_NEGATIVE;
         }
     }
     calibration_state = CALIBRATION_FINISH;
@@ -92,14 +92,14 @@ static void drawrawdata(uint8_t x, uint8_t y, uint8_t n)
     fezui_printf(&fezui, MARGIN_LEFT, MARGIN_TOP + ROW_HEIGHT * ROW_HEIGHT, "calibration mode");
     switch (g_keyboard_advanced_keys[n].config.calibration_mode)
     {
-    case KEY_NO_CALIBRATION:
+    case ADVANCED_KEY_NO_CALIBRATION:
         fezui_printf_right_aligned(&fezui, WIDTH - MARGIN_RIGHT, MARGIN_TOP + ROW_HEIGHT * 7, "OFF");
         break;
 
-    case KEY_AUTO_CALIBRATION_POSITIVE:
+    case ADVANCED_KEY_AUTO_CALIBRATION_POSITIVE:
         fezui_printf_right_aligned(&fezui, WIDTH - MARGIN_RIGHT, MARGIN_TOP + ROW_HEIGHT * 7, "Positive");
         break;
-    case KEY_AUTO_CALIBRATION_NEGATIVE:
+    case ADVANCED_KEY_AUTO_CALIBRATION_NEGATIVE:
         fezui_printf_right_aligned(&fezui, WIDTH - MARGIN_RIGHT, MARGIN_TOP + ROW_HEIGHT * 7, "Negative");
         break;
     default:
@@ -127,13 +127,13 @@ static void calibrationpage_tick(void *page)
     case CALIBRATION_PRESS:
         for (int i = 0; i < ADVANCED_KEY_NUM; i++)
         {
-            if (g_ADC_Averages[i] > max_values[i])
+            if (g_keyboard_advanced_keys[i].raw > max_values[i])
             {
-                max_values[i] = g_ADC_Averages[i];
+                max_values[i] = g_keyboard_advanced_keys[i].raw;
             }
-            if (g_ADC_Averages[i] < min_values[i])
+            if (g_keyboard_advanced_keys[i].raw < min_values[i])
             {
-                min_values[i] = g_ADC_Averages[i];
+                min_values[i] = g_keyboard_advanced_keys[i].raw;
             }
         }
 
