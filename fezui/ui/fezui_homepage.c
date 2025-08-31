@@ -160,7 +160,7 @@ static void homepage_draw(void *page)
         u8g2_DrawBox(&(fezui.u8g2), 65 + MARGIN_UP - 1, 1, MARGIN_UP - 2, MARGIN_UP - 2);
         u8g2_DrawUTF8(&(fezui.u8g2), 68 + MARGIN_UP - 1, MARGIN_UP - 2, "A");
     }
-    if (g_keyboard_led_state & BIT(1))
+    if (g_keyboard_led_state.caps_lock)
     {
         u8g2_DrawBox(&(fezui.u8g2), 65 + MARGIN_UP*2 - 2, 1, MARGIN_UP - 2, MARGIN_UP - 2);
         u8g2_DrawXBMP(&(fezui.u8g2), 68 + MARGIN_UP*2 - 3, 3, 5 ,5, capslock_bitmap);

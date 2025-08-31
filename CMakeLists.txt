@@ -62,6 +62,7 @@ include_directories(
     CherryUSB/class/hid
     CherryUSB/class/midi
     CherryUSB/port/ch32
+    ws2812
 )
                     
 
@@ -84,6 +85,7 @@ file(GLOB_RECURSE SOURCES
     "Startup/startup_ch32v30x_D8C.S"
     "usb/*.c"
     "snake/*.c"
+    "ws2812/*.c"
 )
 
 file(GLOB_RECURSE SOURCES ${SOURCES} 

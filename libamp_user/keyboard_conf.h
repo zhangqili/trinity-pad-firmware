@@ -58,12 +58,6 @@
 /* RGB */
 /*******/
 #define RGB_ENABLE              
-#define RGB_NUM                 (ADVANCED_KEY_NUM)
-#define ONE_PULSE               (7)
-#define ZERO_PULSE              (3)
-#define NONE_PULSE              (0)
-#define RGB_RESET_LENGTH        (60)
-#define RGB_BUFFER_LENGTH       (((RGB_NUM)*(3*8))+RGB_RESET_LENGTH)
 #define RGB_MAX_DURATION        1000
 #define FADING_DISTANCE         5.0f
 #define JELLY_DISTANCE          10.0f

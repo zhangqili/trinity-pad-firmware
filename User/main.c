@@ -605,45 +605,6 @@ void TIM1_Init(void)
 }
 
 /*********************************************************************
- * @fn      DMA1_Init
- *
- * @brief   Initialize DMA for TIM1 ch1
- *
- * @return  none
- */
-void DMA_TIM1_Init(void)
-{
-    DMA_InitTypeDef DMA_InitStructure = {0};
-    // NVIC_InitTypeDef NVIC_InitStructure = {0};
-
-    RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
-
-    DMA_DeInit(DMA1_Channel5);
-    DMA_Cmd(DMA1_Channel5, DISABLE);
-    DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&TIM1->CH1CVR;
-    DMA_InitStructure.DMA_MemoryBaseAddr = (uint32_t)g_rgb_buffer;
-    DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralDST;
-    DMA_InitStructure.DMA_BufferSize = RGB_BUFFER_LENGTH;
-    DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
-    DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
-    DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
-    DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte;
-    DMA_InitStructure.DMA_Mode = DMA_Mode_Circular;
-    DMA_InitStructure.DMA_Priority = DMA_Priority_VeryHigh;
-    DMA_InitStructure.DMA_M2M = DMA_M2M_Disable;
-    DMA_Init(DMA1_Channel5, &DMA_InitStructure);
-
-    DMA_Cmd(DMA1_Channel5, DISABLE);
-
-    // DMA_ITConfig(DMA1_Channel5, DMA_IT_TC, ENABLE);
-
-    // NVIC_InitStructure.NVIC_IRQChannel = DMA1_Channel5_IRQn;
-    // NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-    // NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-    // NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-    // NVIC_Init(&NVIC_InitStructure);
-}
-/*********************************************************************
  * @fn      SYSTICK_Init_Config
  *
  * @brief   SYSTICK_Init_Config.
@@ -735,6 +696,7 @@ int main(void)
     ADC_Function_Init();
     // Encoder_Init_TIM8();
     sfud_device_init(&sfud_norflash0);
+    ws2812_init();
     keyboard_init();
     keyboard_scan();
     if (KEY_FN_K4.state && KEY_FN_K5.state)
