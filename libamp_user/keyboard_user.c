@@ -18,19 +18,19 @@
 
 const uint16_t g_default_keymap[LAYER_NUM][ADVANCED_KEY_NUM + KEY_NUM] = {
     {
-        KEYBINDING(KEY_Z, KEY_NO_MODIFIER),
-        KEYBINDING(KEY_X, KEY_NO_MODIFIER),
-        KEYBINDING(KEY_C, KEY_NO_MODIFIER),
-        KEYBINDING(KEY_V, KEY_NO_MODIFIER),
-        KEYBINDING(KEY_F8, KEY_NO_MODIFIER),
-        KEYBINDING(KEY_F12, KEY_NO_MODIFIER),
-        KEYBINDING(KEY_F2, KEY_LEFT_SHIFT),
-        KEYBINDING(KEY_F2, KEY_NO_MODIFIER),
+        KEYCODE(KEY_Z, KEY_NO_MODIFIER),
+        KEYCODE(KEY_X, KEY_NO_MODIFIER),
+        KEYCODE(KEY_C, KEY_NO_MODIFIER),
+        KEYCODE(KEY_V, KEY_NO_MODIFIER),
+        KEYCODE(KEY_F8, KEY_NO_MODIFIER),
+        KEYCODE(KEY_F12, KEY_NO_MODIFIER),
+        KEYCODE(KEY_F2, KEY_LEFT_SHIFT),
+        KEYCODE(KEY_F2, KEY_NO_MODIFIER),
         LAYER(LAYER_TOGGLE, 2),
         LAYER(LAYER_TOGGLE, 1),
-        KEYBINDING(KEY_ESC, KEY_NO_MODIFIER),
-        KEYBINDING(MOUSE_COLLECTION, MOUSE_WHEEL_UP),
-        KEYBINDING(MOUSE_COLLECTION, MOUSE_WHEEL_DOWN),
+        KEYCODE(KEY_ESC, KEY_NO_MODIFIER),
+        KEYCODE(MOUSE_COLLECTION, MOUSE_WHEEL_UP),
+        KEYCODE(MOUSE_COLLECTION, MOUSE_WHEEL_DOWN),
     },
     {
         KEY_TRANSPARENT,
@@ -1151,7 +1151,7 @@ void keyboard_user_event_handler(KeyboardEvent event)
     {
         return;
     }
-    switch (MODIFIER(event.keycode))
+    switch (KEYCODE_GET_SUB(event.keycode))
     {
     case USER_OPENMENU:
         fezui_page_t* launcherpage_get_current_page();
@@ -1188,7 +1188,7 @@ void keyboard_user_event_handler(KeyboardEvent event)
     case USER_SNAKE_UP:
     case USER_SNAKE_RIGHT:
     case USER_SNAKE_DOWN:
-        snake_turn(&g_snake, MODIFIER(event.keycode)&0x07);
+        snake_turn(&g_snake, KEYCODE_GET_SUB(event.keycode)&0x07);
         break;
     default:
         g_keyboard_config.debug = false;
