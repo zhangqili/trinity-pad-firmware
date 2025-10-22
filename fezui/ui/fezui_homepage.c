@@ -75,6 +75,7 @@ static const unsigned char capslock_bitmap[] U8X8_PROGMEM = {
 
 static void homepage_tick(void *page)
 {
+    extern uint32_t g_key_init_counts[ADVANCED_KEY_NUM+KEY_NUM];
     fezui_rolling_number_set(&key1_num, g_key_counts[0] - g_key_init_counts[0]);
     fezui_rolling_number_set(&key2_num, g_key_counts[1] - g_key_init_counts[1]);
     fezui_rolling_number_set(&key3_num, g_key_counts[2] - g_key_init_counts[2]);

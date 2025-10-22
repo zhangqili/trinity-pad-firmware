@@ -34,6 +34,8 @@
 #include "packet.h"
 #include "qmk_midi.h"
 #include "process_midi.h"
+#include "macro.h"
+#include "ws2812.h"
 
 /* Global typedef */
 
@@ -52,6 +54,7 @@ static uint16_t ADC_Buffer[ADVANCED_KEY_NUM*64];
 #define U8LOG_HEIGHT 30
 u8log_t g_u8log;
 static uint8_t u8log_buffer[U8LOG_WIDTH * U8LOG_HEIGHT];
+uint32_t g_key_init_counts[ADVANCED_KEY_NUM+KEY_NUM];
 
 void User_GPIO_Init(void)
 {
@@ -706,7 +709,6 @@ int main(void)
     fezui_init();
     record_init();
     TIM1_Init();
-    DMA_TIM1_Init();
     EXTI_INT_INIT();
     DMA_Cmd(DMA1_Channel5, ENABLE);
 

@@ -19,6 +19,7 @@
 #define DEBUG_INTERVAL 1
 #define DYNAMICKEY_ENABLE
 #define SUSPEND_ENABLE
+#define MACRO_ENABLE
 
 /********************/
 /* Keyboard Default */
