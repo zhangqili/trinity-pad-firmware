@@ -157,11 +157,11 @@ void fezui_timer_handler()
     uint8_t key_pressed_num = 0;
     for (uint8_t i = 0; i < ADVANCED_KEY_NUM; i++)
     {
-        key_pressed_num += g_keyboard_advanced_keys[i].key.state;
+        key_pressed_num += g_keyboard.advanced_keys[i].key.state;
     }
     for (uint8_t i = 0; i < KEY_NUM; i++)
     {
-        key_pressed_num += g_keyboard_keys[i].state;
+        key_pressed_num += g_keyboard.keys[i].state;
     }
 
     if (g_kps_history_max || key_pressed_num)

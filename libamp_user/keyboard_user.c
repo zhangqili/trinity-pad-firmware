@@ -15,6 +15,7 @@
 #include "layer.h"
 #include "sfud.h"
 #include "ws2812.h"
+#include "encoder.h"
 
 const uint16_t g_default_keymap[LAYER_NUM][ADVANCED_KEY_NUM + KEY_NUM] = {
     {
@@ -66,25 +67,13 @@ const uint16_t g_default_keymap[LAYER_NUM][ADVANCED_KEY_NUM + KEY_NUM] = {
 const uint8_t g_rgb_mapping[ADVANCED_KEY_NUM] = {0, 1, 2, 3};
 const RGBLocation g_rgb_locations[RGB_NUM] = {{0, 2.5}, {1, 2.5}, {2, 2.5}, {3, 2.5}};
 const uint16_t g_analog_map[ADVANCED_KEY_NUM] = {0, 1, 2, 3};
-AdvancedKey g_keyboard_advanced_keys[ADVANCED_KEY_NUM] =
-{
-    {.key.id = 0},
-    {.key.id = 1},
-    {.key.id = 2},
-    {.key.id = 3},
-};
 
-Key g_keyboard_keys[KEY_NUM] =
+Encoder g_encoders[ENCODER_NUM] =
 {
-    {.id = 4},
-    {.id = 5},
-    {.id = 6},
-    {.id = 7},
-    {.id = 8},
-    {.id = 9},
-    {.id = 10},
-    {.id = 11},
-    {.id = 12},
+    {
+        .cw_id = 11,
+        .ccw_id = 12
+    }
 };
 
 static const float table[] =
@@ -1124,15 +1113,6 @@ void keyboard_scan()
     keyboard_key_update(&KEY_FN_K5, FN_K5_READ);
     keyboard_key_update(&KEY_FN_K6, FN_K6_READ);
     keyboard_key_update(&KEY_KNOB, KNOB_READ);
-    if (g_keyboard_knob_flag)
-    {
-        g_keyboard_knob_flag--;
-    }
-    if (!g_keyboard_knob_flag)
-    {
-        keyboard_key_update(&KEY_KNOB_CLOCKWISE, false);
-        keyboard_key_update(&KEY_KNOB_ANTICLOCKWISE, false);
-    }
 }
 void keyboard_reboot()
 {
@@ -1191,7 +1171,7 @@ void keyboard_user_event_handler(KeyboardEvent event)
         snake_turn(&g_snake, KEYCODE_GET_SUB(event.keycode)&0x07);
         break;
     default:
-        g_keyboard_config.debug = false;
+        g_keyboard.config.debug = false;
         break;
     }
 }

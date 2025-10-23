@@ -16,7 +16,7 @@ static fezui_progressbar_t bars[4] =
 
 static void panelmenu_cb(void *m)
 {
-    current_config_advanced_key = g_keyboard_advanced_keys + ((fezui_list_base_t *)m)->selected_index;
+    current_config_advanced_key = g_keyboard.advanced_keys + ((fezui_list_base_t *)m)->selected_index;
     fezui_frame_navigate(&g_mainframe, &advancedconfigpage);
 }
 
@@ -43,7 +43,7 @@ static void panelpage_draw(void *page)
     for (uint8_t i = 0; i < ADVANCED_KEY_NUM; i++)
     {
         u8g2_DrawUTF8(&fezui.u8g2, i * WIDTH / 4 + 2, 10, panelmenu.items[i]);
-        bars[i].value = g_keyboard_advanced_keys[i].value;
+        bars[i].value = g_keyboard.advanced_keys[i].value;
         fezui_draw_progressbar(&fezui, i * WIDTH / 4 + 2, 20, WIDTH / 4 - 2 * 2, 36, bars + i);
     }
     fezui_draw_cursor(&fezui, &g_fezui_cursor);

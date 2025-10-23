@@ -35,6 +35,7 @@
 #include "qmk_midi.h"
 #include "process_midi.h"
 #include "macro.h"
+#include "encoder.h"
 #include "ws2812.h"
 
 /* Global typedef */
@@ -847,16 +848,13 @@ void EXTI9_5_IRQHandler(void)
 {
     if (EXTI_GetITStatus(EXTI_Line6) != RESET) // 产生中断
     {
-        g_keyboard_knob_flag = 8;
         if (GPIO_ReadInputDataBit(EC11_B_GPIO_Port, EC11_B_Pin))
         {
-            keyboard_key_update(&KEY_KNOB_CLOCKWISE, false);
-            keyboard_key_update(&KEY_KNOB_ANTICLOCKWISE, true);
+            encoder_input_delta(0,-1);
         }
         else
         {
-            keyboard_key_update(&KEY_KNOB_CLOCKWISE, true);
-            keyboard_key_update(&KEY_KNOB_ANTICLOCKWISE, false);
+            encoder_input_delta(0,1);
         }
         EXTI_ClearITPendingBit(EXTI_Line6); // 清除中断标志
     }

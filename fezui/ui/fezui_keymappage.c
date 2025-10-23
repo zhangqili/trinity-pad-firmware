@@ -31,7 +31,7 @@ static char binding_text[LAYER_NUM][128];
 extern uint16_t *current_target_key_binding;
 void layer_select_menu_cb(void *menu)
 {
-    current_target_key_binding = &g_keymap[layer_select_menu.selected_index][key_select_list.listbox.list.selected_index];
+    current_target_key_binding = &g_keyboard.keymap[layer_select_menu.selected_index][key_select_list.listbox.list.selected_index];
     fezui_frame_navigate(&g_mainframe, &keylistpage);
 }
 
@@ -105,7 +105,7 @@ static void show_binding_text()
 {
     for (uint8_t i = 0; i < LAYER_NUM; i++)
     {
-        keyid_prase(g_keymap[i][key_select_list.listbox.list.selected_index], binding_text[i], 128);
+        keyid_prase(g_keyboard.keymap[i][key_select_list.listbox.list.selected_index], binding_text[i], 128);
         fezui_scrolling_text_init(&fezui, scrolling_text + i, 78, 0.2, u8g2_font_4x6_mr, binding_text[i]);
         fezui_scrolling_text_begin(scrolling_text + i);
     }

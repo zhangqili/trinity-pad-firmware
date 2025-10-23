@@ -13,13 +13,15 @@
 #define LAYER_NUM             3
 #define ADVANCED_KEY_NUM      4
 #define KEY_NUM               (6+3)
+//#define KEYBOARD_CUSTOM_KEY_ID
 //#define CONTINUOUS_POLL
 //#define FIXED_POINT_EXPERIMENTAL
 #define OPTIMIZE_FOR_FLOAT_DIVISION
-#define DEBUG_INTERVAL 1
 #define DYNAMICKEY_ENABLE
 #define SUSPEND_ENABLE
 #define MACRO_ENABLE
+#define ENCODER_ENABLE
+#define ENCODER_NUM 1
 
 /********************/
 /* Keyboard Default */
@@ -162,15 +164,15 @@
 #define FN_K6_READ            GPIO_READ(FN_K6)
 #define KNOB_READ             GPIO_READ(KNOB)
 
-#define KEY_FN_K1               g_keyboard_keys[0]
-#define KEY_FN_K2               g_keyboard_keys[1]
-#define KEY_FN_K3               g_keyboard_keys[2]
-#define KEY_FN_K4               g_keyboard_keys[3]
-#define KEY_FN_K5               g_keyboard_keys[4]
-#define KEY_FN_K6               g_keyboard_keys[5]
-#define KEY_KNOB                g_keyboard_keys[6]
-#define KEY_KNOB_CLOCKWISE      g_keyboard_keys[7]
-#define KEY_KNOB_ANTICLOCKWISE  g_keyboard_keys[8]
+#define KEY_FN_K1               g_keyboard.keys[0]
+#define KEY_FN_K2               g_keyboard.keys[1]
+#define KEY_FN_K3               g_keyboard.keys[2]
+#define KEY_FN_K4               g_keyboard.keys[3]
+#define KEY_FN_K5               g_keyboard.keys[4]
+#define KEY_FN_K6               g_keyboard.keys[5]
+#define KEY_KNOB                g_keyboard.keys[6]
+#define KEY_KNOB_CLOCKWISE      g_keyboard.keys[7]
+#define KEY_KNOB_ANTICLOCKWISE  g_keyboard.keys[8]
 
 #define KEY_FN_K1_INDEX               0
 #define KEY_FN_K2_INDEX               1
