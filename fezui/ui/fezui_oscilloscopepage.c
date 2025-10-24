@@ -102,10 +102,10 @@ static void oscilloscopepage_draw(void *page)
     fezui_draw_wave(&(fezui), 64 - (u8g2_int_t)offset_x, 0, 64, 32, g_analog_historys + 1, (uint8_t *)g_bit_stream_datas[1]);
     fezui_draw_wave(&(fezui), 0 - (u8g2_int_t)offset_x, 32, 64, 32, g_analog_historys + 2, (uint8_t *)g_bit_stream_datas[2]);
     fezui_draw_wave(&(fezui), 64 - (u8g2_int_t)offset_x, 32, 64, 32, g_analog_historys + 3, (uint8_t *)g_bit_stream_datas[3]);
-    fezui_draw_detailed_wave(&fezui, 128 * 1 - (u8g2_int_t)offset_x, 0, g_keyboard.advanced_keys + 0, g_analog_historys + 0, (uint8_t *)g_bit_stream_datas[0]);
-    fezui_draw_detailed_wave(&fezui, 128 * 2 - (u8g2_int_t)offset_x, 0, g_keyboard.advanced_keys + 1, g_analog_historys + 1, (uint8_t *)g_bit_stream_datas[1]);
-    fezui_draw_detailed_wave(&fezui, 128 * 3 - (u8g2_int_t)offset_x, 0, g_keyboard.advanced_keys + 2, g_analog_historys + 2, (uint8_t *)g_bit_stream_datas[2]);
-    fezui_draw_detailed_wave(&fezui, 128 * 4 - (u8g2_int_t)offset_x, 0, g_keyboard.advanced_keys + 3, g_analog_historys + 3, (uint8_t *)g_bit_stream_datas[3]);
+    fezui_draw_detailed_wave(&fezui, 128 * 1 - (u8g2_int_t)offset_x, 0, g_keyboard_advanced_keys + 0, g_analog_historys + 0, (uint8_t *)g_bit_stream_datas[0]);
+    fezui_draw_detailed_wave(&fezui, 128 * 2 - (u8g2_int_t)offset_x, 0, g_keyboard_advanced_keys + 1, g_analog_historys + 1, (uint8_t *)g_bit_stream_datas[1]);
+    fezui_draw_detailed_wave(&fezui, 128 * 3 - (u8g2_int_t)offset_x, 0, g_keyboard_advanced_keys + 2, g_analog_historys + 2, (uint8_t *)g_bit_stream_datas[2]);
+    fezui_draw_detailed_wave(&fezui, 128 * 4 - (u8g2_int_t)offset_x, 0, g_keyboard_advanced_keys + 3, g_analog_historys + 3, (uint8_t *)g_bit_stream_datas[3]);
 }
 
 static void oscilloscopepage_load(void *page)

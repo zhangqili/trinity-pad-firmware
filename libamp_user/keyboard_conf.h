@@ -164,15 +164,15 @@
 #define FN_K6_READ            GPIO_READ(FN_K6)
 #define KNOB_READ             GPIO_READ(KNOB)
 
-#define KEY_FN_K1               g_keyboard.keys[0]
-#define KEY_FN_K2               g_keyboard.keys[1]
-#define KEY_FN_K3               g_keyboard.keys[2]
-#define KEY_FN_K4               g_keyboard.keys[3]
-#define KEY_FN_K5               g_keyboard.keys[4]
-#define KEY_FN_K6               g_keyboard.keys[5]
-#define KEY_KNOB                g_keyboard.keys[6]
-#define KEY_KNOB_CLOCKWISE      g_keyboard.keys[7]
-#define KEY_KNOB_ANTICLOCKWISE  g_keyboard.keys[8]
+#define KEY_FN_K1               g_keyboard_keys[0]
+#define KEY_FN_K2               g_keyboard_keys[1]
+#define KEY_FN_K3               g_keyboard_keys[2]
+#define KEY_FN_K4               g_keyboard_keys[3]
+#define KEY_FN_K5               g_keyboard_keys[4]
+#define KEY_FN_K6               g_keyboard_keys[5]
+#define KEY_KNOB                g_keyboard_keys[6]
+#define KEY_KNOB_CLOCKWISE      g_keyboard_keys[7]
+#define KEY_KNOB_ANTICLOCKWISE  g_keyboard_keys[8]
 
 #define KEY_FN_K1_INDEX               0
 #define KEY_FN_K2_INDEX               1
