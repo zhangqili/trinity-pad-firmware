@@ -22,6 +22,9 @@
 #define MACRO_ENABLE
 #define ENCODER_ENABLE
 #define ENCODER_NUM 1
+#define OPTIMIZE_KEY_BITMAP
+#define OPTIMIZE_MOVING_AVERAGE_FOR_RINGBUF
+#define DEBOUNCE                0
 
 /********************/
 /* Keyboard Default */
@@ -36,11 +39,10 @@
 #define DEFAULT_DEACTIVATION_VALUE  0.49
 #define DEFAULT_ESTIMATED_RANGE     500
 
-
 /**********/
 /* Analog */
 /**********/
-#define RING_BUF_LEN            64
+#define RING_BUF_LEN            2
 #define CALIBRATION_LPF_ENABLE
 
 /***********/
@@ -60,10 +62,12 @@
 /*******/
 /* RGB */
 /*******/
-#define RGB_ENABLE              
+#define RGB_ENABLE
+#define RGB_NUM                 4
 #define RGB_MAX_DURATION        1000
 #define FADING_DISTANCE         5.0f
 #define JELLY_DISTANCE          10.0f
+#define BUBBLE_DISTANCE         2.5f
 #define PORT_LOCATION           {1.5, 0}
 #define RGB_FLASH_MAX_DURATION  1000
 #define RGB_FLASH_RIPPLE_SPEED  0.02
@@ -76,11 +80,20 @@
 #define RGB_TOP                 0.0f
 #define RGB_RIGHT               3.746f
 #define RGB_BOTTOM              2.834f
-
-/*********/
-/* MOUSE */
-/*********/
-#define MOUSE_MAX_VALUE 1
+//#define RGB_USE_LIST_EXPERIMENTAL
+//#define RGB_CUSTOM_INVERSE_MAPPING
+#define RGB_BASE_MODE_USE_RAINBOW           1
+#define RGB_BASE_MODE_USE_WAVE              1
+#define RGB_MODE_USE_STATIC                 1
+#define RGB_MODE_USE_CYCLE                  1
+#define RGB_MODE_USE_LINEAR                 1
+#define RGB_MODE_USE_TRIGGER                1
+#define RGB_MODE_USE_STRING                 1
+#define RGB_MODE_USE_FADING_STRING          1
+#define RGB_MODE_USE_DIAMOND_RIPPLE         1
+#define RGB_MODE_USE_FADING_DIAMOND_RIPPLE  1
+#define RGB_MODE_USE_JELLY                  1
+#define RGB_MODE_USE_BUBBLE                 1
 
 /************/
 /* Joystick */

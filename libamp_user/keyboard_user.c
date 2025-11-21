@@ -64,7 +64,7 @@ const uint16_t g_default_keymap[LAYER_NUM][ADVANCED_KEY_NUM + KEY_NUM] = {
         KEY_TRANSPARENT,
     },
 };
-const uint8_t g_rgb_mapping[ADVANCED_KEY_NUM] = {0, 1, 2, 3};
+const uint16_t g_rgb_mapping[ADVANCED_KEY_NUM] = {0, 1, 2, 3};
 const RGBLocation g_rgb_locations[RGB_NUM] = {{0, 2.5}, {1, 2.5}, {2, 2.5}, {3, 2.5}};
 const uint16_t g_analog_map[ADVANCED_KEY_NUM] = {0, 1, 2, 3};
 
