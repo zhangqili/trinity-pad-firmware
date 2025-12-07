@@ -121,7 +121,7 @@ static void debugpage_draw(void *page)
 
 static void debugpage_load(void *page)
 {
-    g_keyboard_send_report_enable=true;
+    g_keyboard_config.enable_report=true;
     fezui_flyout_numberic_dialog_init(&dialog, &targetnum, FEZUI_TYPE_FLOAT, 0, 100, 0.1, "NUMBER");
     fezui_flyout_numberic_dialog_show(&dialog);
 }
@@ -139,7 +139,7 @@ static void debugpage_event_handler(void *e)
         break;
     case KEY_SPACEBAR:
     case KEY_ENTER:
-        g_keyboard_send_report_enable=false;
+        g_keyboard_config.enable_report=false;
         g_current_layer = 0;
         fezui_frame_go_back(&g_mainframe);
         break;

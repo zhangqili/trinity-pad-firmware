@@ -765,12 +765,19 @@ void TIM6_IRQHandler(void)
     }
 }
 
-
-AnalogRawValue advanced_key_read(AdvancedKey *advanced_key)
+AnalogRawValue advanced_key_read_raw(AdvancedKey *advanced_key)
 {
-    AnalogRawValue raw = advanced_key_read_raw(advanced_key);
-#ifdef FILTER_ENABLE
-    raw = adaptive_schimidt_filter(&g_analog_filters[advanced_key->key.id], raw);
+    uint32_t ADC_sum = 0;
+    int id = advanced_key->key.id;
+    AnalogRawValue raw = 0.0f;
+    for (uint8_t j = 0; j < 64; j++)
+    {
+        ADC_sum += ADC_Buffer[id + j * ADVANCED_KEY_NUM];
+    }
+#ifndef FIXED_POINT_EXPERIMENTAL
+    raw = ADC_sum/64.0f;
+#else
+    raw = ADC_sum>>6;
 #endif
     if (advanced_key->config.mode == ADVANCED_KEY_DIGITAL_MODE)
     {
@@ -793,23 +800,6 @@ AnalogRawValue advanced_key_read(AdvancedKey *advanced_key)
             break;
         }
     }
-    return raw;
-}
-
-AnalogRawValue advanced_key_read_raw(AdvancedKey *advanced_key)
-{
-    uint32_t ADC_sum = 0;
-    int id = advanced_key->key.id;
-    AnalogRawValue raw = 0.0f;
-    for (uint8_t j = 0; j < 64; j++)
-    {
-        ADC_sum += ADC_Buffer[id + j * ADVANCED_KEY_NUM];
-    }
-#ifndef FIXED_POINT_EXPERIMENTAL
-    raw = ADC_sum/64.0f;
-#else
-    raw = ADC_sum>>6;
-#endif
     return raw;
 }
 

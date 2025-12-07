@@ -360,7 +360,7 @@ static void launcherpage_draw(void *page)
 {
     if (!isPageOpen)
     {
-        g_keyboard_send_report_enable = false;
+        g_keyboard_config.enable_report = false;
         g_current_layer = 0;
         // fezui_animated_listbox_begin(&mainmenu);
     }
@@ -484,7 +484,7 @@ static void main_menu_cb(void *menu)
 
 static void launcherpage_load(void *page)
 {
-    g_keyboard_send_report_enable = false;
+    g_keyboard_config.enable_report = false;
     g_current_layer = 0;
     fezui_animated_listbox_begin(&mainmenu);
 }

@@ -80,7 +80,7 @@ static void menupage_load(void *page)
 {
 #define LEFT 16
 #define UP 16
-    g_keyboard_send_report_enable=false;
+    g_keyboard_config.enable_report=false;
     g_current_layer = 0;
     fezui_animated_listbox_begin(&mainmenu);
 }
