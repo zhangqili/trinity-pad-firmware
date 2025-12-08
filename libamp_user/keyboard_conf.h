@@ -109,8 +109,11 @@
 /**********/
 /* Filter */
 /**********/
-#define TOLERANCE               3
-#define FILTER_ENABLE
+//#define FILTER_ENABLE
+//#define FILTER_HYSTERESIS_ENABLE
+#define FILTER_HYSTERESIS               0
+#define FILTER_TYPE FILTER_TYPE_KALMAN
+#define FILTER_DOMAIN FILTER_DOMAIN_RAW
 
 /**********/
 /* Record */

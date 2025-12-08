@@ -726,6 +726,7 @@ int main(void)
     TIM6_INT_Init(14400 / 144 - 1, 10000 - 1);
     TIM7_INT_Init(14400 / 8 - 1, 10 - 1);
     rgb_init_flash();
+    filter_reset();
     analog_reset_range();
     while (1)
     {
