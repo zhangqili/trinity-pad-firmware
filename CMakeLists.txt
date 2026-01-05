@@ -33,13 +33,14 @@ endif ()
 project(trinity-pad-firmware C CXX ASM)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_C_STANDARD 11)
+set(LIBAMP_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libamp_user)
 
 # 编译参数 一般不用改
 add_compile_options(-march=rv32imafcxw -mabi=ilp32f -mcmodel=medany -msmall-data-limit=8 -mno-save-restore -u _printf_float)
 add_compile_options(-fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -fno-common -fsingle-precision-constant)
 
 # 编译等级
-add_compile_options(-Ofast)
+add_compile_options(-Os)
 
 # 编译信息等级
 add_compile_options(-Wall)

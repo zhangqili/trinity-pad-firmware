@@ -18,6 +18,7 @@
 //#define FIXED_POINT_EXPERIMENTAL
 #define OPTIMIZE_FOR_FLOAT_DIVISION
 #define DYNAMICKEY_ENABLE
+#define DYNAMIC_KEY_NUM 4
 #define SUSPEND_ENABLE
 #define MACRO_ENABLE
 #define ENCODER_ENABLE
@@ -160,6 +161,12 @@
 //#define PROGRAMMABLE_BUTTON_ENABLE
 #define MIDI_ENABLE
 #define LIGHTING_ENABLE
+
+/**********/
+/* Script */
+/**********/
+#define SCRIPT_ENABLE
+#define MQJS_MINIMAL
 
 /****************/
 /* User Defines */

@@ -688,7 +688,7 @@ int main(void)
     NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
     SystemCoreClockUpdate();
     Delay_Init();
-    USART_Printf_Init(115200);
+    USART_Printf_Init(1000000);
     printf("SystemClk:%ld\r\n", SystemCoreClock);
     printf("ChipID:%08lx\r\n", DBGMCU_GetCHIPID());
     //prizntf("This is printf example\r\n");
@@ -718,7 +718,6 @@ int main(void)
     ADC_SoftwareStartConvCmd(ADC1, ENABLE);
     usb_init();
     
-    keyboard_recovery();
     Delay_Ms(100);//Delete this line forbidden!!!
     fram_read_bytes(0x400, g_key_counts, sizeof(g_key_counts));
     memcpy(g_key_init_counts, g_key_counts, sizeof(g_key_counts));
@@ -728,6 +727,7 @@ int main(void)
     rgb_init_flash();
     filter_reset();
     analog_reset_range();
+    fezui_frame_navigate(&g_mainframe, &logpage);
     while (1)
     {
         fezui_render_handler();
