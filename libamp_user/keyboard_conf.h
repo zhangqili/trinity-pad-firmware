@@ -166,7 +166,13 @@
 /* Script */
 /**********/
 #define SCRIPT_ENABLE
-#define MQJS_MINIMAL
+#define SCRIPT_RUNTIME_STRATEGY SCRIPT_AOT
+#define SCRIPT_MEMORY_SIZE  (4 * 1024)
+//#define SCRIPT_MINIMAL
+#define SCRIPT_NO_EVAL
+//#define SCRIPT_SOURCE_BUFFER_SIZE  (512)
+//#define SCRIPT_BYTECODE_BUFFER_SIZE  (512)
+
 
 /****************/
 /* User Defines */

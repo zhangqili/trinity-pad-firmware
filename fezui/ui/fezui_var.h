@@ -12,6 +12,7 @@
 
 extern const uint8_t u8g2_font_wqy13_t_custom[3590]  U8G2_FONT_SECTION("u8g2_font_wqy13_t_custom");
 extern const uint8_t fez_font_6x10_m[204] U8G2_FONT_SECTION("fez_font_6x10_m");
+extern uint8_t secondary_buffer[1024];
 extern fezui_t fezui;
 
 extern u8log_t g_u8log;

@@ -17,7 +17,7 @@
 #define MARGIN 24
 #define MENU_ITEMS_NUM 5
 
-#define DRAW_IN_TEMP_BUFFER(code) {memset(tile_buffer, 0, sizeof(tile_buffer));\
+#define DRAW_IN_TEMP_BUFFER(code) {memset(tile_buffer, 0, 1024);\
             uint8_t *buf_bak = fezui.u8g2.tile_buf_ptr;\
             fezui.u8g2.tile_buf_ptr = tile_buffer;\
             code\
@@ -71,7 +71,7 @@ static fezui_animation_base_t icon_animation;
 
 static float offset;
 static fezui_page_t *pages[MENU_ITEMS_NUM] = {&homepage, &oscilloscopepage, &statisticpage, &snakepage, &settingspage};
-static uint8_t tile_buffer[1024];
+uint8_t *tile_buffer = secondary_buffer;
 
 static const unsigned char home_bitmap_e80f [] U8X8_PROGMEM = {
   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 

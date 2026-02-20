@@ -7,7 +7,7 @@
 #include "fezui_var.h"
 
 char g_fpsstr[8] = {0};
-
+uint8_t secondary_buffer[1024];
 fezui_t fezui={.speed=0.1};
 
 uint8_t g_kps_history_max;

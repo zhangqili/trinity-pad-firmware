@@ -109,7 +109,7 @@ static float target_ordinate=0;
 
 static fezui_scrolling_text_t url_text;
 
-static uint8_t game_buffer[WIDTH*HEIGHT/8];
+uint8_t *game_buffer = secondary_buffer;
 
 static uint8_t life_game;
 

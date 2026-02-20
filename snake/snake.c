@@ -123,7 +123,7 @@ void snake_launch(Snake *snake)
 void snake_quit(Snake *snake)
 {
     snake->running = false;
-    storage_read_config();
+    storage_read_profile();
 }
 
 void snake_pause(Snake *snake)

@@ -727,7 +727,7 @@ int main(void)
     rgb_init_flash();
     filter_reset();
     analog_reset_range();
-    fezui_frame_navigate(&g_mainframe, &logpage);
+    //fezui_frame_navigate(&g_mainframe, &logpage);
     while (1)
     {
         fezui_render_handler();
@@ -868,4 +868,9 @@ void DMA1_Channel1_IRQHandler(void)
         DMA_ClearITPendingBit(DMA1_IT_TC1); // 清除TIM1的中断挂起位。
         // temp_count++;
     }
+}
+
+void _exit(int status) {
+    keyboard_reboot();
+    while (1);
 }
