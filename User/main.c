@@ -817,7 +817,6 @@ void TIM7_IRQHandler(void)
         {
             count = 0;
             fezui_tick++;
-            g_keyboard_tick++;
         }
         // if(!HAL_GPIO_ReadPin(MENU_GPIO_Port, MENU_Pin))
         //for (uint8_t i = 0; i < ADVANCED_KEY_NUM; i++)
@@ -826,7 +825,8 @@ void TIM7_IRQHandler(void)
         //    {
         //        ringbuf_push(&adc_ringbuf[i], ADC_Buffer[i + j * ADVANCED_KEY_NUM]);
         //    }
-        //}        
+        //}  
+        g_keyboard_tick++;      
         keyboard_task();
     }
 }

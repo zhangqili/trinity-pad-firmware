@@ -80,10 +80,15 @@ const struct usb_descriptor usb_descriptor = {
 
 void usbd_hid_get_report(uint8_t busid, uint8_t intf, uint8_t report_id, uint8_t report_type, uint8_t **data, uint32_t *len)
 {
-    (void)busid;
-    (void)report_type;
+    UNUSED(busid);
+    UNUSED(intf);
+    UNUSED(report_id);
+    UNUSED(report_type);
+    UNUSED(data);
+    UNUSED(len);
     switch (intf)
     {
+#ifdef LIGHTING_ENABLE
     case SHARED_INTERFACE:
         switch (report_id)
         {
@@ -103,6 +108,7 @@ void usbd_hid_get_report(uint8_t busid, uint8_t intf, uint8_t report_id, uint8_t
             break;
         }
         break;
+#endif
     default:
         (*data[0]) = 0;
         *len = 1;
@@ -110,12 +116,10 @@ void usbd_hid_get_report(uint8_t busid, uint8_t intf, uint8_t report_id, uint8_t
     }
 }
 
-
 void usbd_hid_set_report(uint8_t busid, uint8_t intf, uint8_t report_id, uint8_t report_type, uint8_t *report, uint32_t report_len)
 {
-    (void)busid;
-    (void)intf;
-    (void)report_type;
+    UNUSED(busid);
+    UNUSED(report_type);
     if (intf == KEYBOARD_INTERFACE
 #if defined(SHARED_EP_ENABLE) && !defined(KEYBOARD_SHARED_EP)
     || intf == SHARED_INTERFACE
@@ -133,6 +137,7 @@ void usbd_hid_set_report(uint8_t busid, uint8_t intf, uint8_t report_id, uint8_t
             g_keyboard_led_state.raw = report[0];
         }
     }
+#ifdef LIGHTING_ENABLE
     if (intf == SHARED_INTERFACE)
     {
         switch (report_id) {
@@ -157,11 +162,13 @@ void usbd_hid_set_report(uint8_t busid, uint8_t intf, uint8_t report_id, uint8_t
             }
         }
     }
-    
+#endif
 }
 
+/* Store example melody as an array of note values */
+    
 #ifndef KEYBOARD_SHARED_EP
-static bool keyboard_state;
+static volatile bool keyboard_state;
 USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t keyboard_buffer[KEYBOARD_EPSIZE];
 
 static void usbd_hid_keyboard_in_callback(uint8_t busid, uint8_t ep, uint32_t nbytes)
@@ -179,6 +186,15 @@ static struct usbd_endpoint keyboard_in_ep = {
 #endif
 
 #if defined(MOUSE_ENABLE) && !defined(MOUSE_SHARED_EP)
+static volatile bool  mouse_state;
+USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t mouse_buffer[MOUSE_EPSIZE];
+
+static void usbd_hid_mouse_in_callback(uint8_t busid, uint8_t ep, uint32_t nbytes)
+{
+    UNUSED(busid); UNUSED(ep); UNUSED(nbytes);
+    mouse_state = USB_STATE_IDLE;
+}
+
 static struct usbd_interface mouse_intf;
 static struct usbd_endpoint mouse_in_ep = {
     .ep_cb = usbd_hid_mouse_in_callback,
@@ -186,7 +202,7 @@ static struct usbd_endpoint mouse_in_ep = {
 #endif
 
 #ifdef SHARED_EP_ENABLE
-static bool shared_state;
+static volatile bool  shared_state;
 USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t shared_buffer[SHARED_EPSIZE];
 
 static void usbd_hid_shared_in_callback(uint8_t busid, uint8_t ep, uint32_t nbytes)
@@ -204,7 +220,7 @@ static struct usbd_endpoint shared_in_ep = {
 #endif
 
 #ifdef RAW_ENABLE
-static bool raw_state;
+static volatile bool  raw_state;
 USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t raw_in_buffer[RAW_EPSIZE];
 USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t raw_out_buffer[RAW_EPSIZE];
 
@@ -236,11 +252,23 @@ static struct usbd_endpoint raw_out_ep = {
 #endif
 
 #ifdef CONSOLE_ENABLE
+static volatile bool  console_state;
+USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t console_buffer[CONSOLE_EPSIZE];
 
+static void usbd_hid_console_in_callback(uint8_t busid, uint8_t ep, uint32_t nbytes)
+{
+    UNUSED(busid); UNUSED(ep); UNUSED(nbytes);
+    console_state = USB_STATE_IDLE;
+}
+
+static struct usbd_interface console_intf;
+static struct usbd_endpoint console_in_ep = {
+    .ep_cb = usbd_hid_console_in_callback,
+    .ep_addr = CONSOLE_EPIN_ADDR};
 #endif
 
 #ifdef MIDI_ENABLE
-static bool midi_state;
+static volatile bool  midi_state;
 USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t midi_in_buffer[4];
 USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t midi_out_buffer[4];
 
@@ -274,10 +302,47 @@ static struct usbd_endpoint midi_in_ep = {
 #endif
 
 #ifdef VIRTSER_ENABLE
+#include "usbd_cdc.h"
+static struct usbd_interface cdc_cmd_intf;
+static struct usbd_interface cdc_data_intf;
 
+static void usbd_cdc_acm_bulk_out(uint8_t busid, uint8_t ep, uint32_t nbytes)
+{
+    UNUSED(busid);
+    UNUSED(ep);
+    UNUSED(nbytes);
+    // TODO
+}
+
+static void usbd_cdc_acm_bulk_in(uint8_t busid, uint8_t ep, uint32_t nbytes)
+{
+    UNUSED(busid);
+    UNUSED(ep);
+    UNUSED(nbytes);
+}
+
+static struct usbd_endpoint cdc_out_ep = {
+    .ep_addr = ENDPOINT_DIR_OUT | CDC_OUT_EPNUM,
+    .ep_cb = usbd_cdc_acm_bulk_out
+};
+static struct usbd_endpoint cdc_in_ep = {
+    .ep_addr = ENDPOINT_DIR_IN | CDC_IN_EPNUM,
+    .ep_cb = usbd_cdc_acm_bulk_in
+};
 #endif
 
 #if defined(JOYSTICK_ENABLE) && !defined(JOYSTICK_SHARED_EP)
+static volatile bool  joystick_state;
+USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t joystick_buffer[JOYSTICK_EPSIZE];
+
+static void usbd_hid_joystick_in_callback(uint8_t busid, uint8_t ep, uint32_t nbytes)
+{
+    UNUSED(busid);
+    UNUSED(ep);
+    UNUSED(nbytes);
+    joystick_state = USB_STATE_IDLE;
+}
+
 static struct usbd_interface joystick_intf;
 static struct usbd_endpoint joystick_in_ep = {
     .ep_cb = usbd_hid_joystick_in_callback,
@@ -285,6 +350,17 @@ static struct usbd_endpoint joystick_in_ep = {
 #endif
 
 #if defined(DIGITIZER_ENABLE) && !defined(DIGITIZER_SHARED_EP)
+static volatile bool  digitizer_state;
+USB_NOCACHE_RAM_SECTION USB_MEM_ALIGNX uint8_t digitizer_buffer[DIGITIZER_EPSIZE];
+
+static void usbd_hid_digitizer_in_callback(uint8_t busid, uint8_t ep, uint32_t nbytes)
+{
+    UNUSED(busid);
+    UNUSED(ep);
+    UNUSED(nbytes);
+    digitizer_state = USB_STATE_IDLE;
+}
+
 static struct usbd_interface digitizer_intf;
 static struct usbd_endpoint digitizer_in_ep = {
     .ep_cb = usbd_hid_digitizer_in_callback,
@@ -298,19 +374,36 @@ static void usbd_event_handler(uint8_t busid, uint8_t event)
     {
     case USBD_EVENT_RESET:
         keyboard_state = USB_STATE_IDLE;
-        raw_state = USB_STATE_IDLE;
+#ifdef SHARED_EP_ENABLE
         shared_state = USB_STATE_IDLE;
+#endif
+#ifdef RAW_ENABLE
+        raw_state = USB_STATE_IDLE;
+#endif
+#ifdef MIDI_ENABLE
+        midi_state = USB_STATE_IDLE;
+#endif
+#if defined(MOUSE_ENABLE) && !defined(MOUSE_SHARED_EP)
+        mouse_state = USB_STATE_IDLE;
+#endif
+#ifdef CONSOLE_ENABLE
+        console_state = USB_STATE_IDLE;
+#endif
+#if defined(JOYSTICK_ENABLE) && !defined(JOYSTICK_SHARED_EP)
+        joystick_state = USB_STATE_IDLE;
+#endif
+#if defined(DIGITIZER_ENABLE) && !defined(DIGITIZER_SHARED_EP)
+        digitizer_state = USB_STATE_IDLE;
+#endif
         break;
     case USBD_EVENT_CONNECTED:
         break;
     case USBD_EVENT_DISCONNECTED:
         break;
     case USBD_EVENT_RESUME:
-        fezui_notification_begin(&fezui, &fezui_notification, "USBD_EVENT_RESUME", 1000, 0.1);
         break;
     case USBD_EVENT_SUSPEND:
         g_keyboard_is_suspend = usb_device_is_suspend(0);
-        fezui_notification_begin(&fezui, &fezui_notification, "USBD_EVENT_SUSPEND", 1000, 0.1);
         break;
     case USBD_EVENT_CONFIGURED:
         memset(raw_out_buffer, 0, sizeof(raw_out_buffer));
@@ -319,6 +412,8 @@ static void usbd_event_handler(uint8_t busid, uint8_t event)
     case USBD_EVENT_SET_REMOTE_WAKEUP:
         break;
     case USBD_EVENT_CLR_REMOTE_WAKEUP:
+        break;
+    case USBD_EVENT_SOF:
         break;
     default:
         break;
@@ -351,7 +446,8 @@ void usb_init(void)
 #endif
 
 #ifdef CONSOLE_ENABLE
-
+    usbd_add_interface(0, usbd_hid_init_intf(0, &console_intf, ConsoleReport, sizeof(ConsoleReport)));
+    usbd_add_endpoint(0, &console_in_ep);
 #endif
 
 #ifdef MIDI_ENABLE
@@ -362,7 +458,10 @@ void usb_init(void)
 #endif
 
 #ifdef VIRTSER_ENABLE
-
+    usbd_add_interface(0, usbd_cdc_acm_init_intf(0, &cdc_cmd_intf));
+    usbd_add_interface(0, usbd_cdc_acm_init_intf(0, &cdc_data_intf));
+    usbd_add_endpoint(0, &cdc_out_ep);
+    usbd_add_endpoint(0, &cdc_in_ep);
 #endif
 
 #if defined(JOYSTICK_ENABLE) && !defined(JOYSTICK_SHARED_EP)
@@ -384,13 +483,14 @@ int usb_send_shared_ep(uint8_t *buffer, uint8_t size)
     {
         return 1;
     }
+    shared_state = USB_STATE_BUSY;
     memcpy(shared_buffer, buffer, size);
     int ret = usbd_ep_start_write(0, SHARED_EPIN_ADDR, shared_buffer, SHARED_EPSIZE);
     if (ret < 0)
     {
+        shared_state = USB_STATE_IDLE;
         return 1;
     }
-    shared_state = USB_STATE_BUSY;
     return 0;
 }
 
@@ -401,13 +501,14 @@ int usb_send_keyboard(uint8_t *buffer, uint8_t size)
     {
         return 1;
     }
+    keyboard_state = USB_STATE_BUSY;
     memcpy(keyboard_buffer, buffer, KEYBOARD_EPSIZE);
     int ret = usbd_ep_start_write(0, KEYBOARD_EPIN_ADDR, keyboard_buffer, KEYBOARD_EPSIZE);
     if (ret < 0)
     {
+        keyboard_state = USB_STATE_IDLE;
         return 1;
     }
-    keyboard_state = USB_STATE_BUSY;
     return 0;
 }
 
@@ -418,9 +519,7 @@ int usb_send_raw(uint8_t *buffer, uint8_t size)
     {
         return 1;
     }
-    else
-    {
-    }
+    raw_state = USB_STATE_BUSY;
     if (size > 0 && size <= 64)
     {
         memset(raw_in_buffer, 0, 64);
@@ -433,9 +532,9 @@ int usb_send_raw(uint8_t *buffer, uint8_t size)
     int ret = usbd_ep_start_write(0, RAW_EPIN_ADDR, raw_in_buffer, 64);
     if (ret < 0)
     {
+        raw_state = USB_STATE_IDLE;
         return 1;
     }
-    raw_state = USB_STATE_BUSY;
     return 0;
 
 }
@@ -446,18 +545,80 @@ int usb_send_midi(uint8_t *buffer, uint8_t size)
     {
         return 1;
     }
-    else
-    {
-    }
+    midi_state = USB_STATE_BUSY;
     memcpy(midi_in_buffer, buffer, size);
     int ret = usbd_ep_start_write(0, MIDI_EPIN_ADDR, midi_in_buffer, 4);
     if (ret < 0)
     {
+        midi_state = USB_STATE_IDLE;
         return 1;
     }
-    midi_state = USB_STATE_BUSY;
     return 0;
 }
+
+#if defined(MOUSE_ENABLE) && !defined(MOUSE_SHARED_EP)
+int usb_send_mouse(uint8_t *buffer, uint8_t size)
+{
+    if (mouse_state == USB_STATE_BUSY) return 1;
+    mouse_state = USB_STATE_BUSY;
+    memcpy(mouse_buffer, buffer, size);
+    int ret = usbd_ep_start_write(0, MOUSE_EPIN_ADDR, mouse_buffer, MOUSE_EPSIZE);
+    if (ret < 0)
+    {
+        mouse_state = USB_STATE_IDLE;
+        return 1;
+    }
+    return 0;
+}
+#endif
+
+#ifdef CONSOLE_ENABLE
+int usb_send_console(uint8_t *buffer, uint8_t size)
+{
+    if (console_state == USB_STATE_BUSY) return 1;
+    console_state = USB_STATE_BUSY;
+    memcpy(console_buffer, buffer, size);
+    int ret = usbd_ep_start_write(0, CONSOLE_EPIN_ADDR, console_buffer, CONSOLE_EPSIZE);
+    if (ret < 0)
+    {
+        console_state = USB_STATE_IDLE;
+        return 1;
+    }
+    return 0;
+}
+#endif
+
+#if defined(JOYSTICK_ENABLE) && !defined(JOYSTICK_SHARED_EP)
+int usb_send_joystick(uint8_t *buffer, uint8_t size)
+{
+    if (joystick_state == USB_STATE_BUSY) return 1;
+    joystick_state = USB_STATE_BUSY;
+    memcpy(joystick_buffer, buffer, size);
+    int ret = usbd_ep_start_write(0, JOYSTICK_EPIN_ADDR, joystick_buffer, JOYSTICK_EPSIZE);
+    if (ret < 0)
+    {
+        joystick_state = USB_STATE_IDLE;
+        return 1;
+    }
+    return 0;
+}
+#endif
+
+#if defined(DIGITIZER_ENABLE) && !defined(DIGITIZER_SHARED_EP)
+int usb_send_digitizer(uint8_t *buffer, uint8_t size)
+{
+    if (digitizer_state == USB_STATE_BUSY) return 1;
+    digitizer_state = USB_STATE_BUSY;
+    memcpy(digitizer_buffer, buffer, size);
+    int ret = usbd_ep_start_write(0, DIGITIZER_EPIN_ADDR, digitizer_buffer, DIGITIZER_EPSIZE);
+    if (ret < 0)
+    {
+        digitizer_state = USB_STATE_IDLE;
+        return 1;
+    }
+    return 0;
+}
+#endif
 
 //		0x05, 0x01,   //Usage Page (Generic Desktop)
 //		0x09, 0x05,   //Usage (Game Pad)
