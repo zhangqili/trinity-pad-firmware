@@ -698,6 +698,7 @@ int main(void)
     SPI2_Init();
     SPI3_Init();
     ADC_Function_Init();
+    GPIO_WriteBit(ADC_CON_GPIO_Port, ADC_CON_Pin, true);
     // Encoder_Init_TIM8();
     sfud_device_init(&sfud_norflash0);
     ws2812_init();
@@ -731,7 +732,7 @@ int main(void)
     while (1)
     {
         fezui_render_handler();
-        rgb_update();
+        keyboard_process();
 
         fram_write_bytes(0x400, g_key_counts, sizeof(g_key_counts));
         GPIO_WriteBit(LED_GPIO_Port, LED_Pin, !GPIO_ReadInputDataBit(LED_GPIO_Port, LED_Pin));
@@ -808,6 +809,7 @@ void TIM7_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 void TIM7_IRQHandler(void)
 {
     static uint8_t count = 0;
+    static uint32_t timer = 0;
     //static bool flag = true;
     if (TIM_GetITStatus(TIM7, TIM_IT_Update) != RESET)
     {
@@ -818,6 +820,7 @@ void TIM7_IRQHandler(void)
             count = 0;
             fezui_tick++;
         }
+        
         // if(!HAL_GPIO_ReadPin(MENU_GPIO_Port, MENU_Pin))
         //for (uint8_t i = 0; i < ADVANCED_KEY_NUM; i++)
         //{
@@ -873,4 +876,34 @@ void DMA1_Channel1_IRQHandler(void)
 void _exit(int status) {
     keyboard_reboot();
     while (1);
+}
+
+void fezui_input(uint16_t in)
+{
+    fezui_frame_input(&g_mainframe, (void *)&in);
+    fezui.screensaver_countdown = fezui.screensaver_timeout;
+}
+
+void keyboard_key_event_down_callback_user(Key*key)
+{
+    switch (key->id)
+    {
+    case 10:
+        fezui_input(KEY_SPACEBAR);
+        break;
+    case 11:
+        fezui_input(KEY_UP_ARROW);
+        break;
+    case 12:
+        fezui_input(KEY_DOWN_ARROW);
+        break;
+    case 8:
+        fezui_input(KEY_ENTER);
+        break;
+    case 9:
+        fezui_input(KEY_ESC);
+        break;
+    default:
+        break;
+    }
 }
