@@ -7,7 +7,7 @@
 #include "fezui.h"
 #include "fezui_var.h"
 #include "fram.h"
-#include "storage.h"
+#include "file_stream.h"
 #include "record.h"
 #include "main.h"
 
@@ -256,34 +256,31 @@ void fezui_reset()
 
 void fezui_save()
 {
-    lfs_file_t lfs_file;
-    lfs_t * lfs = storage_get_lfs();
     // read current count
-    lfs_file_open(lfs, &lfs_file, "fezui.dat", LFS_O_RDWR | LFS_O_CREAT);
-    lfs_file_rewind(lfs, &lfs_file);
-    lfs_file_write(lfs, &lfs_file, &fezui.contrast, sizeof(fezui.contrast));
-    lfs_file_write(lfs, &lfs_file, &fezui.invert, sizeof(fezui.invert));
-    lfs_file_write(lfs, &lfs_file, &fezui.speed, sizeof(fezui.speed));
-    lfs_file_write(lfs, &lfs_file, &fezui.screensaver_timeout, sizeof(fezui.screensaver_timeout));
-    lfs_file_write(lfs, &lfs_file, &fezui.show_fps, sizeof(fezui.show_fps));
-    lfs_file_write(lfs, &lfs_file, &fezui.lang, sizeof(fezui.lang));
+    FileStream file;
+    fs_open(&file, "fezui.dat", FS_O_RDWR | FS_O_CREAT);
+    fs_write(&fezui.contrast, sizeof(fezui.contrast), 1, &file);
+    fs_write(&fezui.invert, sizeof(fezui.invert), 1, &file);
+    fs_write(&fezui.speed, sizeof(fezui.speed), 1, &file);
+    fs_write(&fezui.screensaver_timeout, sizeof(fezui.screensaver_timeout), 1, &file);
+    fs_write(&fezui.show_fps, sizeof(fezui.show_fps), 1, &file);
+    fs_write(&fezui.lang, sizeof(fezui.lang), 1, &file);
     // remember the storage is not updated until the file is closed successfully
-    int err = lfs_file_close(lfs, &lfs_file);
+    int err = fs_close(&file);
     printf("save = %d", err);
 }
 
 void fezui_recovery()
 {
-    lfs_file_t lfs_file;
-    lfs_t * lfs = storage_get_lfs();
-    lfs_file_open(lfs, &lfs_file, "fezui.dat", LFS_O_RDWR | LFS_O_CREAT);
-    lfs_file_rewind(lfs, &lfs_file);
-    lfs_file_read(lfs, &lfs_file, &fezui.contrast, sizeof(fezui.contrast));
-    lfs_file_read(lfs, &lfs_file, &fezui.invert, sizeof(fezui.invert));
-    lfs_file_read(lfs, &lfs_file, &fezui.speed, sizeof(fezui.speed));
-    lfs_file_read(lfs, &lfs_file, &fezui.screensaver_timeout, sizeof(fezui.screensaver_timeout));
-    lfs_file_read(lfs, &lfs_file, &fezui.show_fps, sizeof(fezui.show_fps));
-    lfs_file_read(lfs, &lfs_file, &fezui.lang, sizeof(fezui.lang));
+    FileStream file;
+    fs_open(&file, "fezui.dat", FS_O_RDWR | FS_O_CREAT);
+    fs_rewind(&file);
+    fs_read(&fezui.contrast, sizeof(fezui.contrast), 1, &file);
+    fs_read(&fezui.invert, sizeof(fezui.invert), 1, &file);
+    fs_read(&fezui.speed, sizeof(fezui.speed), 1, &file);
+    fs_read(&fezui.screensaver_timeout, sizeof(fezui.screensaver_timeout), 1, &file);
+    fs_read(&fezui.show_fps, sizeof(fezui.show_fps), 1, &file);
+    fs_read(&fezui.lang, sizeof(fezui.lang), 1, &file);
     // remember the storage is not updated until the file is closed successfully
-    lfs_file_close(lfs, &lfs_file);
+    fs_close(&file);
 }
