@@ -33,7 +33,7 @@ endif ()
 project(trinity-pad-firmware C CXX ASM)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_C_STANDARD 11)
-set(LIBAMP_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/libamp_user)
+set(LIBAMP_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/User)
 
 # 编译参数 一般不用改
 add_compile_options(-march=rv32imafcxw -mabi=ilp32f -mcmodel=medany -msmall-data-limit=8 -mno-save-restore -u _printf_float)
@@ -64,6 +64,7 @@ include_directories(
     CherryUSB/class/midi
     CherryUSB/port/ch32
     ws2812
+    libamp/usb/template/cherryusb
 )
                     
 
@@ -87,6 +88,7 @@ file(GLOB_RECURSE SOURCES
     "usb/*.c"
     "snake/*.c"
     "ws2812/*.c"
+    "libamp/usb/template/cherryusb/*.c"
 )
 
 file(GLOB_RECURSE SOURCES ${SOURCES} 

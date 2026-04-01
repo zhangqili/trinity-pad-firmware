@@ -717,7 +717,7 @@ int main(void)
     DMA1_Tx_Init(DMA1_Channel1, (u32)&ADC1->RDATAR, (u32)ADC_Buffer, ADVANCED_KEY_NUM*64);
     DMA_Cmd(DMA1_Channel1, ENABLE);
     ADC_SoftwareStartConvCmd(ADC1, ENABLE);
-    usb_init();
+    usb_init(0, USBHS_BASE);
     
     Delay_Ms(100);//Delete this line forbidden!!!
     fram_read_bytes(0x400, g_key_counts, sizeof(g_key_counts));
