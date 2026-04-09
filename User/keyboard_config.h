@@ -15,8 +15,6 @@
 #define KEY_NUM               (6+3)
 //#define KEYBOARD_CUSTOM_KEY_ID
 #define CONTINUOUS_DEBUG
-//#define FIXED_POINT_EXPERIMENTAL
-#define OPTIMIZE_FOR_FLOAT_DIVISION
 #define DYNAMICKEY_ENABLE
 #define DYNAMIC_KEY_NUM 4
 #define SUSPEND_ENABLE
@@ -26,6 +24,8 @@
 #define OPTIMIZE_KEY_BITMAP
 #define OPTIMIZE_MOVING_AVERAGE_FOR_RINGBUF
 #define DEBOUNCE                0
+#define MACRO_NUM               2
+#define LUT_LENGTH              8192
 
 /********************/
 /* Keyboard Default */
@@ -71,9 +71,9 @@
 #define BUBBLE_DISTANCE         2.5f
 #define PORT_LOCATION           {1.5, 0}
 #define RGB_FLASH_MAX_DURATION  1000
-#define RGB_FLASH_RIPPLE_SPEED  0.02
+//#define RGB_FLASH_RIPPLE_SPEED  200
 #define RGB_DEFAULT_MODE        RGB_MODE_LINEAR
-#define RGB_DEFAULT_SPEED       0.015
+#define RGB_DEFAULT_SPEED       30
 #define RGB_DEFAULT_COLOR_HSV   {273, 78, 99}
 #define RGB_GAMMA_ENABLE
 #define RGB_GAMMA               2.2f

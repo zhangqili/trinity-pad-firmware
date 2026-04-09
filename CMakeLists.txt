@@ -65,6 +65,7 @@ include_directories(
     CherryUSB/port/ch32
     ws2812
     libamp/usb/template/cherryusb
+    libamp/usb/template/cherryusb/mtp
 )
                     
 
@@ -89,6 +90,7 @@ file(GLOB_RECURSE SOURCES
     "snake/*.c"
     "ws2812/*.c"
     "libamp/usb/template/cherryusb/*.c"
+    "libamp/usb/template/cherryusb/mtp/*.c"
 )
 
 file(GLOB_RECURSE SOURCES ${SOURCES} 

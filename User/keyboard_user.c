@@ -76,7 +76,7 @@ Encoder g_encoders[ENCODER_NUM] =
     }
 };
 
-static const float table[8192] =
+static const uint16_t table[8192] =
 {
     A_ANTI_NORM(0.00000000), A_ANTI_NORM(0.00201947), A_ANTI_NORM(0.00338510), A_ANTI_NORM(0.00432039), A_ANTI_NORM(0.00504879), A_ANTI_NORM(0.00574574), A_ANTI_NORM(0.00643071), A_ANTI_NORM(0.00709154), A_ANTI_NORM(0.00771623), A_ANTI_NORM(0.00830042), 
     A_ANTI_NORM(0.00885092), A_ANTI_NORM(0.00937546), A_ANTI_NORM(0.00988174), A_ANTI_NORM(0.01037694), A_ANTI_NORM(0.01086372), A_ANTI_NORM(0.01134251), A_ANTI_NORM(0.01181372), A_ANTI_NORM(0.01227775), A_ANTI_NORM(0.01273501), A_ANTI_NORM(0.01318580), 
@@ -903,16 +903,8 @@ static const float table[8192] =
 AnalogValue advanced_key_normalize(AdvancedKey* advanced_key, AnalogValue value)
 {
     const uint16_t length = sizeof(table) / sizeof(table[0]);
-#ifndef ENABLE_FIXED_POINT_EXPERIMENTAL
-#ifdef OPTIMIZE_FOR_FLOAT_DIVISION
-    float x = (advanced_key->config.upper_bound - value) * advanced_key->range_reciprocal;
-#else
-    float x = (advanced_key->config.upper_bound - value) / (float)(advanced_key->config.upper_bound - advanced_key->config.lower_bound);
-#endif
-    int16_t index = x * length;
-#else
-    int16_t index = (advanced_key->config.upper_bound - value) * length / (advanced_key->config.upper_bound - advanced_key->config.lower_bound);
-#endif
+    int32_t delta = (advanced_key->config.upper_bound - value);
+    int16_t index = ((delta * advanced_key->q_scale_to_index) >> 16);
     if (index < 0)
     {
         index = 0;

@@ -28,8 +28,8 @@ static void keyconfig_analog_speed_mode_menu_cb(void *m);
 
 static uint8_t configing = false;
 static bool mode_switching = false;
-static float *target_property;
-static float advancedconfigpage_interval;
+static uint16_t *target_property;
+static uint16_t advancedconfigpage_interval;
 
 static const char *key_calibration_desc[] = {"Off","Positive","Negative","Undefined"};
 
@@ -50,7 +50,7 @@ static fezui_animated_listbox_t *current_menu = &keyconfig_digital_mode_menu;
 AdvancedKey *current_config_advanced_key;
 
 static fezui_progressbar_t mainbar = {.max = 4096, .min = 0, .orientation = ORIENTATION_VERTICAL};
-static fezui_progressbar_t subbar = {.max = 1, .min = 0, .orientation = ORIENTATION_VERTICAL};
+static fezui_progressbar_t subbar = {.max = ANALOG_VALUE_MAX, .min = ANALOG_VALUE_MIN, .orientation = ORIENTATION_VERTICAL};
 
 static void keyconfig_cursor_cb(fezui_t *fezui_ptr, fezui_list_base_t *list, fezui_cursor_t *cursor)
 {
@@ -124,19 +124,19 @@ static void keyconfig_analog_normal_mode_menu_cb(void *m)
         break;
     case 2:
         target_property = &(current_config_advanced_key->config.upper_bound);
-        advancedconfigpage_interval = 0.1;
+        advancedconfigpage_interval = 1;
         break;
     case 3:
         target_property = &(current_config_advanced_key->config.lower_bound);
-        advancedconfigpage_interval = 0.1;
+        advancedconfigpage_interval = 1;
         break;
     case 4:
         target_property = &(current_config_advanced_key->config.activation_value);
-        advancedconfigpage_interval = 0.001;
+        advancedconfigpage_interval = 0.001*ANALOG_VALUE_RANGE;
         break;
     case 5:
         target_property = &(current_config_advanced_key->config.deactivation_value);
-        advancedconfigpage_interval = 0.001;
+        advancedconfigpage_interval = 0.001*ANALOG_VALUE_RANGE;
         break;
     default:
         break;
@@ -157,16 +157,16 @@ static void keyconfig_analog_normal_mode_menu_draw_cb(fezui_t *fezui_ptr, u8g2_u
         fezui_printf_right_aligned(fezui_ptr, x + w, y + h, "%s", key_calibration_desc[current_config_advanced_key->config.calibration_mode]);
         break;
     case 2:
-        fezui_printf_right_aligned(fezui_ptr, x + w, y + h, "%6.1f", current_config_advanced_key->config.upper_bound);
+        fezui_printf_right_aligned(fezui_ptr, x + w, y + h, "%8d", current_config_advanced_key->config.upper_bound);
         break;
     case 3:
-        fezui_printf_right_aligned(fezui_ptr, x + w, y + h, "%6.1f", current_config_advanced_key->config.lower_bound);
+        fezui_printf_right_aligned(fezui_ptr, x + w, y + h, "%8d", current_config_advanced_key->config.lower_bound);
         break;
     case 4:
-        fezui_printf_right_aligned(fezui_ptr, x + w, y + h, "%6.1f%%", (current_config_advanced_key->config.activation_value) * 100);
+        fezui_printf_right_aligned(fezui_ptr, x + w, y + h, "%6.1f%%", (current_config_advanced_key->config.activation_value) / (float)ANALOG_VALUE_RANGE * 100);
         break;
     case 5:
-        fezui_printf_right_aligned(fezui_ptr, x + w, y + h, "%6.1f%%", (current_config_advanced_key->config.deactivation_value) * 100);
+        fezui_printf_right_aligned(fezui_ptr, x + w, y + h, "%6.1f%%", (current_config_advanced_key->config.deactivation_value) / (float)ANALOG_VALUE_RANGE * 100);
         break;
     }
     u8g2_SetFont(&(fezui_ptr->u8g2), font_bk);
@@ -188,27 +188,27 @@ static void keyconfig_analog_rapid_mode_menu_cb(void *m)
         break;
     case 2:
         target_property = &(current_config_advanced_key->config.upper_bound);
-        advancedconfigpage_interval = 0.1;
+        advancedconfigpage_interval = 1;
         break;
     case 3:
         target_property = &(current_config_advanced_key->config.lower_bound);
-        advancedconfigpage_interval = 0.1;
+        advancedconfigpage_interval = 1;
         break;
     case 4:
         target_property = &(current_config_advanced_key->config.trigger_distance);
-        advancedconfigpage_interval = 0.001;
+        advancedconfigpage_interval = 0.001*ANALOG_VALUE_RANGE;;
         break;
     case 5:
         target_property = &(current_config_advanced_key->config.release_distance);
-        advancedconfigpage_interval = 0.001;
+        advancedconfigpage_interval = 0.001*ANALOG_VALUE_RANGE;;
         break;
     case 6:
         target_property = &(current_config_advanced_key->config.upper_deadzone);
-        advancedconfigpage_interval = 0.001;
+        advancedconfigpage_interval = 0.001*ANALOG_VALUE_RANGE;;
         break;
     case 7:
         target_property = &(current_config_advanced_key->config.lower_deadzone);
-        advancedconfigpage_interval = 0.001;
+        advancedconfigpage_interval = 0.001*ANALOG_VALUE_RANGE;;
         break;
     default:
         break;
@@ -229,22 +229,22 @@ static void keyconfig_analog_rapid_mode_menu_draw_cb(fezui_t *fezui_ptr, u8g2_ui
         fezui_printf_right_aligned(fezui_ptr, x + w, y + h, "%s", key_calibration_desc[current_config_advanced_key->config.calibration_mode]);
         break;
     case 2:
-        fezui_printf_right_aligned(fezui_ptr, x + w, y + h, "%6.1f", current_config_advanced_key->config.upper_bound);
+        fezui_printf_right_aligned(fezui_ptr, x + w, y + h, "%6d", current_config_advanced_key->config.upper_bound);
         break;
     case 3:
-        fezui_printf_right_aligned(fezui_ptr, x + w, y + h, "%6.1f", current_config_advanced_key->config.lower_bound);
+        fezui_printf_right_aligned(fezui_ptr, x + w, y + h, "%6d", current_config_advanced_key->config.lower_bound);
         break;
     case 4:
-        fezui_printf_right_aligned(fezui_ptr, x + w, y + h, "%6.1f%%", (current_config_advanced_key->config.trigger_distance) * 100);
+        fezui_printf_right_aligned(fezui_ptr, x + w, y + h, "%6.1f%%", (current_config_advanced_key->config.trigger_distance) / (float)ANALOG_VALUE_RANGE * 100);
         break;
     case 5:
-        fezui_printf_right_aligned(fezui_ptr, x + w, y + h, "%6.1f%%", (current_config_advanced_key->config.release_distance) * 100);
+        fezui_printf_right_aligned(fezui_ptr, x + w, y + h, "%6.1f%%", (current_config_advanced_key->config.release_distance) / (float)ANALOG_VALUE_RANGE * 100);
         break;
     case 6:
-        fezui_printf_right_aligned(fezui_ptr, x + w, y + h, "%6.1f%%", (current_config_advanced_key->config.upper_deadzone) * 100);
+        fezui_printf_right_aligned(fezui_ptr, x + w, y + h, "%6.1f%%", (current_config_advanced_key->config.upper_deadzone) / (float)ANALOG_VALUE_RANGE * 100);
         break;
     case 7:
-        fezui_printf_right_aligned(fezui_ptr, x + w, y + h, "%6.1f%%", (current_config_advanced_key->config.lower_deadzone) * 100);
+        fezui_printf_right_aligned(fezui_ptr, x + w, y + h, "%6.1f%%", (current_config_advanced_key->config.lower_deadzone) / (float)ANALOG_VALUE_RANGE * 100);
         break;
     }
     u8g2_SetFont(&(fezui_ptr->u8g2), font_bk);
@@ -266,27 +266,27 @@ static void keyconfig_analog_speed_mode_menu_cb(void *m)
         break;
     case 2:
         target_property = &(current_config_advanced_key->config.upper_bound);
-        advancedconfigpage_interval = 0.1;
+        advancedconfigpage_interval = 1;
         break;
     case 3:
         target_property = &(current_config_advanced_key->config.lower_bound);
-        advancedconfigpage_interval = 0.1;
+        advancedconfigpage_interval = 1;
         break;
     case 4:
         target_property = &(current_config_advanced_key->config.trigger_speed);
-        advancedconfigpage_interval = 0.001;
+        advancedconfigpage_interval = 0.001*ANALOG_VALUE_RANGE;;
         break;
     case 5:
         target_property = &(current_config_advanced_key->config.release_speed);
-        advancedconfigpage_interval = 0.001;
+        advancedconfigpage_interval = 0.001*ANALOG_VALUE_RANGE;;
         break;
     case 6:
         target_property = &(current_config_advanced_key->config.upper_deadzone);
-        advancedconfigpage_interval = 0.001;
+        advancedconfigpage_interval = 0.001*ANALOG_VALUE_RANGE;;
         break;
     case 7:
         target_property = &(current_config_advanced_key->config.lower_deadzone);
-        advancedconfigpage_interval = 0.001;
+        advancedconfigpage_interval = 0.001*ANALOG_VALUE_RANGE;;
         break;
     default:
         break;
@@ -307,22 +307,22 @@ static void keyconfig_analog_speed_mode_menu_draw_cb(fezui_t *fezui_ptr, u8g2_ui
         fezui_printf_right_aligned(fezui_ptr, x + w, y + h, "%s", key_calibration_desc[current_config_advanced_key->config.calibration_mode]);
         break;
     case 2:
-        fezui_printf_right_aligned(fezui_ptr, x + w, y + h, "%6.1f", current_config_advanced_key->config.upper_bound);
+        fezui_printf_right_aligned(fezui_ptr, x + w, y + h, "%8d", current_config_advanced_key->config.upper_bound);
         break;
     case 3:
-        fezui_printf_right_aligned(fezui_ptr, x + w, y + h, "%6.1f", current_config_advanced_key->config.lower_bound);
+        fezui_printf_right_aligned(fezui_ptr, x + w, y + h, "%8d", current_config_advanced_key->config.lower_bound);
         break;
     case 4:
-        fezui_printf_right_aligned(fezui_ptr, x + w, y + h, "%6.1f%%", (current_config_advanced_key->config.trigger_speed) * 100);
+        fezui_printf_right_aligned(fezui_ptr, x + w, y + h, "%6.1f%%", (current_config_advanced_key->config.trigger_speed) / (float)ANALOG_VALUE_RANGE * 100);
         break;
     case 5:
-        fezui_printf_right_aligned(fezui_ptr, x + w, y + h, "%6.1f%%", (current_config_advanced_key->config.release_speed) * 100);
+        fezui_printf_right_aligned(fezui_ptr, x + w, y + h, "%6.1f%%", (current_config_advanced_key->config.release_speed) / (float)ANALOG_VALUE_RANGE * 100);
         break;
     case 6:
-        fezui_printf_right_aligned(fezui_ptr, x + w, y + h, "%6.1f%%", (current_config_advanced_key->config.upper_deadzone) * 100);
+        fezui_printf_right_aligned(fezui_ptr, x + w, y + h, "%6.1f%%", (current_config_advanced_key->config.upper_deadzone) / (float)ANALOG_VALUE_RANGE * 100);
         break;
     case 7:
-        fezui_printf_right_aligned(fezui_ptr, x + w, y + h, "%6.1f%%", (current_config_advanced_key->config.lower_deadzone) * 100);
+        fezui_printf_right_aligned(fezui_ptr, x + w, y + h, "%6.1f%%", (current_config_advanced_key->config.lower_deadzone) / (float)ANALOG_VALUE_RANGE * 100);
         break;
     }
     u8g2_SetFont(&(fezui_ptr->u8g2), font_bk);
@@ -367,9 +367,7 @@ static void advancedconfigpage_draw(void *page)
     mainbar.value = current_config_advanced_key->raw;
     fezui_draw_progressbar(&fezui, MAINBAR_X, MAINBAR_Y, MAINBAR_W, MAINBAR_H, &mainbar);
 
-    subbar.max = 0;
-    subbar.min = 1;
-    subbar.value = current_config_advanced_key->value;
+    subbar.value = ANALOG_VALUE_RANGE - current_config_advanced_key->value;
     fezui_draw_progressbar(&fezui, SUBBAR_X, SUBBAR_Y, SUBBAR_W, SUBBAR_H, &subbar);
 
     u8g2_DrawHLine(&(fezui.u8g2), MAINBAR_X, MAINBAR_Y + MAINBAR_H - ROUND(MAINBAR_H * (current_config_advanced_key->config.upper_bound) / (4096.0F)), MAINBAR_W);
@@ -390,9 +388,9 @@ static void advancedconfigpage_draw(void *page)
 
     u8g2_SetFont(&(fezui.u8g2), u8g2_font_4x6_mr);
     fezui_printf(&fezui, SPERATOR_X + 2, ROW_HEIGHT, current_config_advanced_key->key.state ? "TRUE" : "FALSE");
-    fezui_printf(&fezui, WIDTH - 4 * 7, 8, "%6.1f%%", current_config_advanced_key->value * 100);
+    fezui_printf(&fezui, WIDTH - 4 * 7, 8, "%6.1f%%", current_config_advanced_key->value /(float)ANALOG_VALUE_RANGE * 100);
 
-    fezui_printf(&fezui, WIDTH - 4 * 6, 16, "%6.1f", current_config_advanced_key->raw);
+    fezui_printf(&fezui, WIDTH - 4 * 6, 16, "%8d", current_config_advanced_key->raw);
     u8g2_SetDrawColor(&(fezui.u8g2), color);
     fezui_draw_cursor(&fezui, &g_fezui_cursor);
 }

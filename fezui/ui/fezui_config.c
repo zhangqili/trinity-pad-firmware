@@ -7,7 +7,7 @@
 #include "fezui.h"
 #include "fezui_var.h"
 #include "fram.h"
-#include "file_stream.h"
+#include "file_system.h"
 #include "record.h"
 #include "main.h"
 
@@ -257,14 +257,14 @@ void fezui_reset()
 void fezui_save()
 {
     // read current count
-    FileStream file;
+    File file;
     fs_open(&file, "fezui.dat", FS_O_RDWR | FS_O_CREAT);
-    fs_write(&fezui.contrast, sizeof(fezui.contrast), 1, &file);
-    fs_write(&fezui.invert, sizeof(fezui.invert), 1, &file);
-    fs_write(&fezui.speed, sizeof(fezui.speed), 1, &file);
-    fs_write(&fezui.screensaver_timeout, sizeof(fezui.screensaver_timeout), 1, &file);
-    fs_write(&fezui.show_fps, sizeof(fezui.show_fps), 1, &file);
-    fs_write(&fezui.lang, sizeof(fezui.lang), 1, &file);
+    fs_write(&file, &fezui.contrast, sizeof(fezui.contrast));
+    fs_write(&file, &fezui.invert, sizeof(fezui.invert));
+    fs_write(&file, &fezui.speed, sizeof(fezui.speed));
+    fs_write(&file, &fezui.screensaver_timeout, sizeof(fezui.screensaver_timeout));
+    fs_write(&file, &fezui.show_fps, sizeof(fezui.show_fps));
+    fs_write(&file, &fezui.lang, sizeof(fezui.lang));
     // remember the storage is not updated until the file is closed successfully
     int err = fs_close(&file);
     printf("save = %d", err);
@@ -272,15 +272,14 @@ void fezui_save()
 
 void fezui_recovery()
 {
-    FileStream file;
+    File file;
     fs_open(&file, "fezui.dat", FS_O_RDWR | FS_O_CREAT);
-    fs_rewind(&file);
-    fs_read(&fezui.contrast, sizeof(fezui.contrast), 1, &file);
-    fs_read(&fezui.invert, sizeof(fezui.invert), 1, &file);
-    fs_read(&fezui.speed, sizeof(fezui.speed), 1, &file);
-    fs_read(&fezui.screensaver_timeout, sizeof(fezui.screensaver_timeout), 1, &file);
-    fs_read(&fezui.show_fps, sizeof(fezui.show_fps), 1, &file);
-    fs_read(&fezui.lang, sizeof(fezui.lang), 1, &file);
+    fs_read(&file, &fezui.contrast, sizeof(fezui.contrast));
+    fs_read(&file, &fezui.invert, sizeof(fezui.invert));
+    fs_read(&file, &fezui.speed, sizeof(fezui.speed));
+    fs_read(&file, &fezui.screensaver_timeout, sizeof(fezui.screensaver_timeout));
+    fs_read(&file, &fezui.show_fps, sizeof(fezui.show_fps));
+    fs_read(&file, &fezui.lang, sizeof(fezui.lang));
     // remember the storage is not updated until the file is closed successfully
     fs_close(&file);
 }

@@ -8,10 +8,10 @@ static fezui_list_base_t panelmenu;
 static const char *panelmenu_items[] = {"KEY1", "KEY2", "KEY3", "KEY4"};
 static fezui_progressbar_t bars[4] =
     {
-        {.max = 0, .min = 1, .orientation = ORIENTATION_VERTICAL},
-        {.max = 0, .min = 1, .orientation = ORIENTATION_VERTICAL},
-        {.max = 0, .min = 1, .orientation = ORIENTATION_VERTICAL},
-        {.max = 0, .min = 1, .orientation = ORIENTATION_VERTICAL},
+        {.max = ANALOG_VALUE_MIN, .min = ANALOG_VALUE_MAX, .orientation = ORIENTATION_VERTICAL},
+        {.max = ANALOG_VALUE_MIN, .min = ANALOG_VALUE_MAX, .orientation = ORIENTATION_VERTICAL},
+        {.max = ANALOG_VALUE_MIN, .min = ANALOG_VALUE_MAX, .orientation = ORIENTATION_VERTICAL},
+        {.max = ANALOG_VALUE_MIN, .min = ANALOG_VALUE_MAX, .orientation = ORIENTATION_VERTICAL},
 };
 
 static void panelmenu_cb(void *m)

@@ -158,7 +158,7 @@ static void rgbconfigpage_draw(void *page)
 
         fezui_printf_right_aligned(&fezui, WIDTH, ROW_HEIGHT * 4, "%d", g_rgb_configs[rgb_key_select_menu.selected_index - 1].rgb.b);
 
-        fezui_printf_right_aligned(&fezui, WIDTH, ROW_HEIGHT * 8, "%0.0f", g_rgb_configs[rgb_key_select_menu.selected_index - 1].speed * 1000);
+        fezui_printf_right_aligned(&fezui, WIDTH, ROW_HEIGHT * 8, "%d", g_rgb_configs[rgb_key_select_menu.selected_index - 1].speed);
 
         //fezui_printf_right_aligned(&fezui, WIDTH, ROW_HEIGHT * 2, "%d", target_rgb->r);
 
@@ -255,7 +255,7 @@ static void rgbconfigpage_event_handler(void *e)
                 case 7:
                     if (rgb_key_select_menu.selected_index)
                     {
-                        g_rgb_configs[rgb_key_select_menu.selected_index - 1].speed += 0.001;
+                        g_rgb_configs[rgb_key_select_menu.selected_index - 1].speed += 1;
                     }
                     else
                     {
@@ -323,7 +323,7 @@ static void rgbconfigpage_event_handler(void *e)
                 case 7:
                     if (rgb_key_select_menu.selected_index)
                     {
-                        g_rgb_configs[rgb_key_select_menu.selected_index - 1].speed -= 0.001;
+                        g_rgb_configs[rgb_key_select_menu.selected_index - 1].speed -= 1;
                     }
                     else
                     {

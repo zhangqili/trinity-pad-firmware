@@ -72,22 +72,22 @@ static void drawrawdata(uint8_t x, uint8_t y, uint8_t n)
     fezui_printf_right_aligned(&fezui, WIDTH - MARGIN_RIGHT, MARGIN_TOP + ROW_HEIGHT * 1, "%d", g_keyboard_advanced_keys[n].config.mode);
 
     fezui_printf(&fezui, MARGIN_LEFT, MARGIN_TOP + ROW_HEIGHT * 2, "raw");
-    fezui_printf_right_aligned(&fezui, WIDTH / 2 - MARGIN_RIGHT, MARGIN_TOP + ROW_HEIGHT * 2, "%4.3f", g_keyboard_advanced_keys[n].raw);
+    fezui_printf_right_aligned(&fezui, WIDTH / 2 - MARGIN_RIGHT, MARGIN_TOP + ROW_HEIGHT * 2, "%8d", g_keyboard_advanced_keys[n].raw);
 
     fezui_printf(&fezui, WIDTH / 2 + MARGIN_LEFT, MARGIN_TOP + ROW_HEIGHT * 2, "value");
-    fezui_printf_right_aligned(&fezui, WIDTH - MARGIN_RIGHT, MARGIN_TOP + ROW_HEIGHT * 2, "%.3f", g_keyboard_advanced_keys[n].value);
+    fezui_printf_right_aligned(&fezui, WIDTH - MARGIN_RIGHT, MARGIN_TOP + ROW_HEIGHT * 2, "%.3f", g_keyboard_advanced_keys[n].value/(float)ANALOG_VALUE_RANGE);
 
     fezui_printf(&fezui, MARGIN_LEFT, MARGIN_TOP + ROW_HEIGHT * 3, "distance");
-    fezui_printf_right_aligned(&fezui, WIDTH - MARGIN_RIGHT, MARGIN_TOP + ROW_HEIGHT * 3, "(%.3f, %.3f)", g_keyboard_advanced_keys[n].config.trigger_distance, g_keyboard_advanced_keys[n].config.release_distance);
+    fezui_printf_right_aligned(&fezui, WIDTH - MARGIN_RIGHT, MARGIN_TOP + ROW_HEIGHT * 3, "(%.3f, %.3f)", g_keyboard_advanced_keys[n].config.trigger_distance/(float)ANALOG_VALUE_RANGE, g_keyboard_advanced_keys[n].config.release_distance/(float)ANALOG_VALUE_RANGE);
 
     fezui_printf(&fezui, MARGIN_LEFT, MARGIN_TOP + ROW_HEIGHT * 4, "speed");
-    fezui_printf_right_aligned(&fezui, WIDTH - MARGIN_RIGHT, MARGIN_TOP + ROW_HEIGHT * 4, "(%.3f, %.3f)", g_keyboard_advanced_keys[n].config.trigger_speed, g_keyboard_advanced_keys[n].config.release_speed);
+    fezui_printf_right_aligned(&fezui, WIDTH - MARGIN_RIGHT, MARGIN_TOP + ROW_HEIGHT * 4, "(%.3f, %.3f)", g_keyboard_advanced_keys[n].config.trigger_speed/(float)ANALOG_VALUE_RANGE, g_keyboard_advanced_keys[n].config.release_speed/(float)ANALOG_VALUE_RANGE);
 
     fezui_printf(&fezui, MARGIN_LEFT, MARGIN_TOP + ROW_HEIGHT * 5, "deadzone");
-    fezui_printf_right_aligned(&fezui, WIDTH - MARGIN_RIGHT, MARGIN_TOP + ROW_HEIGHT * 5, "(%.3f, %.3f)", g_keyboard_advanced_keys[n].config.upper_deadzone, g_keyboard_advanced_keys[n].config.lower_deadzone);
+    fezui_printf_right_aligned(&fezui, WIDTH - MARGIN_RIGHT, MARGIN_TOP + ROW_HEIGHT * 5, "(%.3f, %.3f)", g_keyboard_advanced_keys[n].config.upper_deadzone/(float)ANALOG_VALUE_RANGE, g_keyboard_advanced_keys[n].config.lower_deadzone/(float)ANALOG_VALUE_RANGE);
 
     fezui_printf(&fezui, MARGIN_LEFT, MARGIN_TOP + ROW_HEIGHT * 6, "bound");
-    fezui_printf_right_aligned(&fezui, WIDTH - MARGIN_RIGHT, MARGIN_TOP + ROW_HEIGHT * 6, "(%.3f, %.3f)", g_keyboard_advanced_keys[n].config.upper_bound, g_keyboard_advanced_keys[n].config.lower_bound);
+    fezui_printf_right_aligned(&fezui, WIDTH - MARGIN_RIGHT, MARGIN_TOP + ROW_HEIGHT * 6, "(%4d, %4d)", g_keyboard_advanced_keys[n].config.upper_bound, g_keyboard_advanced_keys[n].config.lower_bound);
 
     fezui_printf(&fezui, MARGIN_LEFT, MARGIN_TOP + ROW_HEIGHT * ROW_HEIGHT, "calibration mode");
     switch (g_keyboard_advanced_keys[n].config.calibration_mode)
