@@ -988,52 +988,6 @@ void keyboard_user_event_handler(KeyboardEvent event)
     }
 }
 
-
-int hid_send_shared_ep(uint8_t *report, uint16_t len)
-{
-    return usb_send_shared_ep(report, len);
-}
-
-int hid_send_keyboard(uint8_t *report, uint16_t len)
-{
-    return usb_send_keyboard(report, len);
-}
-
-int hid_send_nkro(uint8_t *report, uint16_t len)
-{
-    return usb_send_shared_ep(report, len);
-}
-
-int hid_send_extra_key(uint8_t*report,uint16_t len)
-{
-    return usb_send_shared_ep(report, len);
-}
-
-int hid_send_mouse(uint8_t*report,uint16_t len)
-{
-    return usb_send_shared_ep(report, len);
-}
-
-int hid_send_joystick(uint8_t*report,uint16_t len)
-{
-    return usb_send_shared_ep(report, len);
-}
-
-int hid_send_raw(uint8_t *report, uint16_t len)
-{
-    return usb_send_raw(report, len);
-}
-
-void send_midi(uint8_t *report, uint16_t len)
-{
-    usb_send_midi(report, len);
-}
-
-int send_remote_wakeup(void)
-{
-    return usbd_send_remote_wakeup(0);
-}
-
 extern sfud_flash sfud_norflash0;
 
 int flash_read(uint32_t addr, uint32_t size, uint8_t *data)

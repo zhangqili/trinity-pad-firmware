@@ -147,6 +147,8 @@
 #define PRODUCT "Trinity Pad"
 #define SERIAL_NUMBER "2022123456"
 
+#define MAX_ENDPOINTS 16
+
 #define RAW_ENABLE
 //#define KEYBOARD_SHARED_EP
 #define SHARED_EP_ENABLE
@@ -160,6 +162,7 @@
 //#define DIGITIZER_SHARED_EP
 //#define PROGRAMMABLE_BUTTON_ENABLE
 #define MIDI_ENABLE
+#define GAMEPAD_ENABLE
 #define LIGHTING_ENABLE
 
 /**********/
