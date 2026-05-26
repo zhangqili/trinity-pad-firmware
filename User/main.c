@@ -734,6 +734,10 @@ int main(void)
         fezui_render_handler();
         keyboard_process();
 
+#ifdef MTP_ENABLE
+    void usbd_mtp_task(void);
+    usbd_mtp_task();
+#endif
         fram_write_bytes(0x400, g_key_counts, sizeof(g_key_counts));
         GPIO_WriteBit(LED_GPIO_Port, LED_Pin, !GPIO_ReadInputDataBit(LED_GPIO_Port, LED_Pin));
 

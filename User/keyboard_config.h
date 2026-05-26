@@ -26,6 +26,7 @@
 #define DEBOUNCE                0
 #define MACRO_NUM               2
 #define LUT_LENGTH              8192
+#define CONSOLE_ENABLE
 
 /********************/
 /* Keyboard Default */
@@ -163,16 +164,17 @@
 //#define PROGRAMMABLE_BUTTON_ENABLE
 #define MIDI_ENABLE
 #define GAMEPAD_ENABLE
+//#define MTP_ENABLE
 #define LIGHTING_ENABLE
 
 /**********/
 /* Script */
 /**********/
-#define SCRIPT_ENABLE
-#define SCRIPT_RUNTIME_STRATEGY SCRIPT_AOT
-#define SCRIPT_MEMORY_SIZE  (4 * 1024)
+//#define SCRIPT_ENABLE
+//#define SCRIPT_RUNTIME_STRATEGY SCRIPT_AOT
+//#define SCRIPT_MEMORY_SIZE  (4 * 1024)
 //#define SCRIPT_MINIMAL
-#define SCRIPT_NO_EVAL
+//#define SCRIPT_NO_EVAL
 //#define SCRIPT_SOURCE_BUFFER_SIZE  (512)
 //#define SCRIPT_BYTECODE_BUFFER_SIZE  (512)
 
