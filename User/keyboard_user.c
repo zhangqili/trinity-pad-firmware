@@ -11,7 +11,6 @@
 #include "lfs.h"
 #include "usbd_user.h"
 #include "snake.h"
-#include "qmk_midi.h"
 #include "layer.h"
 #include "sfud.h"
 #include "ws2812.h"

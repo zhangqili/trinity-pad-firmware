@@ -32,8 +32,6 @@
 #include "keyboard.h"
 #include "usbd_user.h"
 #include "packet.h"
-#include "qmk_midi.h"
-#include "process_midi.h"
 #include "macro.h"
 #include "encoder.h"
 #include "ws2812.h"
